@@ -1,0 +1,817 @@
+/* =========================================
+   Dashboard Page
+========================================= */
+.customer-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.dashboard-section {
+    display: grid;
+    gap: 18px;
+}
+
+.dashboard-section-top {
+    grid-template-columns: minmax(0, 44fr) minmax(0, 56fr);
+}
+
+.dashboard-section-middle {
+    grid-template-columns: minmax(0, 38fr) minmax(220px, 25fr) minmax(0, 37fr);
+}
+
+.dashboard-section-bottom {
+    grid-template-columns: minmax(0, 65fr) minmax(0, 35fr);
+}
+
+.dashboard-card {
+    min-width: 0;
+    padding: 15px;
+    color: #17233c;
+    background: #ffffff;
+    border: 1px solid #e8edf5;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(19, 33, 60, 0.035);
+}
+
+.dashboard-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 13px;
+}
+
+.section-title {
+    margin: 0;
+    color: #0866e8;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.card-link,
+.dashboard-card a:not(.btn):not(.service-row) {
+    color: #0866e8;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.card-link:hover,
+.dashboard-card a:not(.btn):not(.service-row):hover {
+    color: #006ce5;
+    text-decoration: none;
+}
+
+.customer-dashboard .btn-primary {
+    background-color: #0866e8;
+    border-color: #0866e8;
+}
+
+.customer-dashboard .btn-primary:hover,
+.customer-dashboard .btn-primary:focus {
+    color: #ffffff;
+    background-color: #006ce5;
+    border-color: #006ce5;
+}
+
+.customer-dashboard .btn-outline-primary {
+    color: #0866e8;
+    border-color: #0866e8;
+}
+
+.customer-dashboard .btn-outline-primary:hover,
+.customer-dashboard .btn-outline-primary:focus {
+    color: #ffffff;
+    background-color: #0866e8;
+    border-color: #0866e8;
+}
+
+/* =========================================
+   Next Cleaning
+========================================= */
+.next-cleaning-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 24px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    border-radius: 999px;
+}
+
+.status-confirmed {
+    color: #16803c;
+    background: #e9f8ef;
+}
+
+.next-cleaning-body {
+    display: grid;
+    grid-template-columns: 185px minmax(0, 1fr);
+    gap: 15px;
+}
+
+.next-cleaning-image {
+    width: 185px;
+    height: 145px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.next-cleaning-details h3 {
+    margin: 0 0 10px;
+    color: #13213c;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.cleaning-meta {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.cleaning-meta li {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin-bottom: 7px;
+    color: #667085;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.cleaning-meta i {
+    width: 15px;
+    margin-top: 3px;
+    color: #0866e8;
+    text-align: center;
+}
+
+.cleaner-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+    color: #13213c;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.cleaner-rating i {
+    color: #f2b705;
+}
+
+.next-cleaning-actions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.dashboard-action-btn {
+    width: 100%;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 6px;
+}
+
+/* =========================================
+   Stats
+========================================= */
+.dashboard-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.stat-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+}
+
+.stat-icon {
+    display: inline-flex;
+    width: 56px;
+    height: 56px;
+    flex: 0 0 56px;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    border-radius: 50%;
+}
+
+.stat-icon-blue {
+    color: #0866e8;
+    background: #eaf3ff;
+}
+
+.stat-icon-green {
+    color: #139b52;
+    background: #e9f8ef;
+}
+
+.stat-icon-yellow {
+    color: #c68a00;
+    background: #fff7df;
+}
+
+.stat-icon-purple {
+    color: #7c4dff;
+    background: #f0ebff;
+}
+
+.stat-value {
+    margin-top: 10px;
+    color: #13213c;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.stat-card p {
+    margin: 7px 0 8px;
+    color: #667085;
+    font-size: 13px;
+}
+
+/* =========================================
+   Recent Bookings
+========================================= */
+.booking-row {
+    display: grid;
+    grid-template-columns: 58px minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #eef1f5;
+}
+
+.booking-row:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.booking-thumb {
+    width: 58px;
+    height: 52px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.booking-info h3 {
+    margin: 0 0 4px;
+    color: #13213c;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.booking-info p {
+    margin: 0 0 5px;
+    color: #667085;
+    font-size: 12px;
+}
+
+.booking-price {
+    color: #13213c;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.booking-status {
+    grid-column: 2 / 3;
+    color: #16803c;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.status-cancelled {
+    color: #dc3545;
+}
+
+.booking-actions {
+    grid-row: 1 / span 2;
+    grid-column: 3 / 4;
+    display: flex;
+    gap: 8px;
+}
+
+.booking-btn {
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 6px;
+}
+
+/* =========================================
+   Quick Book Again
+========================================= */
+.quick-book-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.service-row {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    color: #17233c;
+    font-size: 13px;
+    font-weight: 700;
+    background: #fbfcff;
+    border: 1px solid #e8edf5;
+    border-radius: 9px;
+}
+
+.service-row i.fa-chevron-right {
+    margin-left: auto;
+    color: #98a2b3;
+    font-size: 10px;
+}
+
+.service-icon {
+    display: inline-flex;
+    width: 30px;
+    height: 30px;
+    flex: 0 0 30px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+
+.service-blue .service-icon {
+    color: #0866e8;
+    background: #eaf3ff;
+}
+
+.service-green .service-icon {
+    color: #139b52;
+    background: #e9f8ef;
+}
+
+.service-purple .service-icon {
+    color: #7c4dff;
+    background: #f0ebff;
+}
+
+.service-orange .service-icon {
+    color: #d46b08;
+    background: #fff1e5;
+}
+
+.service-cyan .service-icon {
+    color: #0891b2;
+    background: #e6faff;
+}
+
+/* =========================================
+   Credits Rewards
+========================================= */
+.credit-summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
+    gap: 14px;
+    align-items: center;
+    padding: 12px;
+    background: #f7f9fc;
+    border: 1px solid #e8edf5;
+    border-radius: 10px;
+}
+
+.credit-summary span {
+    display: block;
+    margin-bottom: 5px;
+    color: #667085;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.credit-summary strong {
+    color: #13213c;
+    font-size: 22px;
+    line-height: 1;
+}
+
+.credit-summary .credit-green {
+    color: #139b52;
+}
+
+.credit-separator {
+    width: 1px;
+    height: 44px;
+    background: #dce3ee;
+}
+
+.member-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 17px;
+}
+
+.member-icon {
+    display: inline-flex;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    align-items: center;
+    justify-content: center;
+    color: #98a2b3;
+    background: #f1f4f8;
+    border-radius: 50%;
+}
+
+.member-row h3 {
+    margin: 0;
+    color: #13213c;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.member-row p {
+    margin: 4px 0 0;
+    color: #667085;
+    font-size: 12px;
+}
+
+.reward-progress {
+    margin: 14px 0 16px;
+}
+
+.reward-progress .progress {
+    height: 8px;
+    background: #e8edf5;
+    border-radius: 999px;
+}
+
+.reward-progress .progress-bar {
+    width: 49%;
+    background: #0866e8;
+    border-radius: 999px;
+}
+
+.reward-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: #667085;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.reward-footer strong {
+    color: #13213c;
+    white-space: nowrap;
+}
+
+.reward-footer i {
+    color: #0866e8;
+}
+
+/* =========================================
+   Referral Program
+========================================= */
+.referral-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.referral-subcard {
+    padding: 14px;
+    background: #fbfcff;
+    border: 1px solid #e8edf5;
+    border-radius: 10px;
+}
+
+.referral-subcard h3 {
+    margin: 0 0 8px;
+    color: #13213c;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.referral-subcard p {
+    margin: 0 0 14px;
+    color: #667085;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.referral-link-box {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    padding: 6px;
+    background: #ffffff;
+    border: 1px solid #dce5f2;
+    border-radius: 8px;
+}
+
+.referral-link-box span {
+    min-width: 0;
+    flex: 1;
+    padding: 0 10px;
+    overflow: hidden;
+    color: #13213c;
+    font-size: 13px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.copy-referral-btn,
+.send-invite-btn {
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 7px;
+}
+
+.copy-referral-btn {
+    padding-right: 12px;
+    padding-left: 12px;
+}
+
+.share-via {
+    margin: 16px 0 10px;
+    color: #667085;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.social-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.social-buttons a {
+    display: inline-flex;
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    color: #0866e8;
+    background: #eef5ff;
+    border-radius: 50%;
+}
+
+.referral-input {
+    min-height: 40px;
+    margin-bottom: 10px;
+    color: #17233c;
+    font-size: 13px;
+    border-color: #dce5f2;
+    border-radius: 8px;
+}
+
+.referral-message {
+    min-height: 78px;
+    resize: vertical;
+}
+
+.send-invite-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* =========================================
+   Your Referrals
+========================================= */
+.referral-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.referral-metrics div {
+    padding: 10px 8px;
+    text-align: center;
+    background: #f7f9fc;
+    border: 1px solid #e8edf5;
+    border-radius: 9px;
+}
+
+.referral-metrics strong {
+    display: block;
+    color: #13213c;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.referral-metrics span {
+    display: block;
+    margin-top: 6px;
+    color: #667085;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.referral-table-wrap {
+    overflow-x: auto;
+}
+
+.referral-table {
+    width: 100%;
+    min-width: 360px;
+    border-collapse: collapse;
+}
+
+.referral-table th {
+    padding: 9px 0;
+    color: #667085;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-bottom: 1px solid #e8edf5;
+}
+
+.referral-table td {
+    padding: 11px 0;
+    color: #17233c;
+    font-size: 12px;
+    font-weight: 600;
+    border-bottom: 1px solid #eef1f5;
+    vertical-align: middle;
+}
+
+.referral-table tr:last-child td {
+    border-bottom: 0;
+}
+
+.referral-table td:last-child,
+.referral-table th:last-child {
+    text-align: right;
+}
+
+.referral-table i {
+    margin-right: 7px;
+    color: #98a2b3;
+}
+
+.referral-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 22px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.badge-invited {
+    color: #0866e8;
+    background: #eaf3ff;
+}
+
+.badge-success {
+    color: #16803c;
+    background: #e9f8ef;
+}
+
+.credit-plus {
+    margin-left: 6px;
+    color: #139b52;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.view-referrals-link {
+    display: block;
+    margin-top: 13px;
+    text-align: right;
+}
+
+/* =========================================
+   Tablet
+========================================= */
+@media (max-width: 1199.98px) {
+    .dashboard-section-top,
+    .dashboard-section-bottom {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-section-middle {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .recent-bookings-card {
+        grid-column: 1 / -1;
+    }
+
+    .next-cleaning-body {
+        grid-template-columns: 220px minmax(0, 1fr);
+    }
+
+    .next-cleaning-image {
+        width: 220px;
+    }
+}
+
+/* =========================================
+   Mobile
+========================================= */
+@media (max-width: 767.98px) {
+    .customer-dashboard,
+    .dashboard-section {
+        gap: 16px;
+    }
+
+    .dashboard-section-middle,
+    .dashboard-stats-grid,
+    .referral-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-card {
+        padding: 14px;
+        border-radius: 10px;
+    }
+
+    .next-cleaning-body {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .next-cleaning-image {
+        width: 100%;
+        height: 180px;
+    }
+
+    .next-cleaning-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-card {
+        align-items: center;
+    }
+
+    .booking-row {
+        grid-template-columns: 54px minmax(0, 1fr);
+        gap: 11px;
+    }
+
+    .booking-actions {
+        grid-row: auto;
+        grid-column: 1 / -1;
+        flex-wrap: wrap;
+        padding-left: 66px;
+    }
+
+    .booking-status {
+        grid-column: 2 / 3;
+    }
+
+    .credit-summary,
+    .referral-metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .credit-separator {
+        width: 100%;
+        height: 1px;
+    }
+
+    .reward-footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .dashboard-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 430px) {
+    .booking-actions {
+        padding-left: 0;
+    }
+
+    .booking-btn {
+        flex: 1 1 120px;
+    }
+}
