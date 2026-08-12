@@ -32,10 +32,18 @@
 
     <div class="sidebar-overlay" aria-hidden="true"></div>
 
+    <div id="global-success-message" data-message="{{ session('success') }}" hidden></div>
+
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
-    <script src="{{ asset('public/assets/js/main.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        window.AppFlash = {
+            success: @json(session('success'))
+        };
+    </script>
+    <script src="{{ asset('public/assets/js/main.js') }}?v={{ filemtime(public_path('assets/js/main.js')) }}"></script>
 
     @stack('scripts')
 </body>
