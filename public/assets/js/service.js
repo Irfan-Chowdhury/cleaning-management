@@ -22,13 +22,5 @@
             });
         }
 
-        $('.delete-service-btn').on('click', function () {
-            var action = $(this).data('action');
-            var serviceName = $(this).data('name') || 'Selected service';
-
-            $('#delete-service-form').attr('action', action);
-            $('#delete-service-name').text(serviceName);
-            $('#deleteServiceModal').modal('show');
-        });
     });
 })(jQuery);

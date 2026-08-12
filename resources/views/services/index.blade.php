@@ -63,7 +63,7 @@
                                         <a href="{{ route('services.edit', $service) }}" class="btn btn-sm btn-outline-primary service-action-btn" title="Edit">
                                             <i class="fas fa-edit" aria-hidden="true"></i>
                                         </a>
-                                        <button type="button" class="btn btn-sm btn-outline-danger service-action-btn delete-service-btn" title="Delete" data-action="{{ route('services.destroy', $service) }}" data-name="{{ $service->name }}">
+                                        <button type="button" class="btn btn-sm btn-outline-danger service-action-btn js-delete-confirm" title="Delete" data-action="{{ route('services.destroy', $service) }}" data-name="{{ $service->name }}">
                                             <i class="fas fa-trash" aria-hidden="true"></i>
                                         </button>
                                     </div>
@@ -76,30 +76,10 @@
         </div>
     </div>
 
-    <div class="modal fade" id="deleteServiceModal" tabindex="-1" role="dialog" aria-labelledby="deleteServiceModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content service-delete-modal">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteServiceModalLabel">Delete Service</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to delete this service? This action cannot be undone.</p>
-                    <strong id="delete-service-name"></strong>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
-                    <form id="delete-service-form" method="POST" action="#">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    <form id="global-delete-form" method="POST" action="#" class="d-none">
+        @csrf
+        @method('DELETE')
+    </form>
 @endsection
 
 @push('scripts')

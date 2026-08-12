@@ -50,6 +50,37 @@
         });
     }
 
+    function bindDeleteConfirmation() {
+        $(document).on('click', '.js-delete-confirm', function () {
+            var action = $(this).data('action');
+            var $deleteForm = $('#global-delete-form');
+
+            if (!action || !$deleteForm.length) {
+                return;
+            }
+
+            if (typeof Swal === 'undefined') {
+                $deleteForm.attr('action', action).trigger('submit');
+                return;
+            }
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    $deleteForm.attr('action', action);
+                    $deleteForm.trigger('submit');
+                }
+            });
+        });
+    }
+
     window.showSuccessToast = showSuccessToast;
 
     $(function () {
@@ -63,6 +94,7 @@
         });
 
         $(window).on('resize', cleanDesktopState);
+        bindDeleteConfirmation();
         cleanDesktopState();
         showSuccessToast();
     });
