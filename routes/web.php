@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BookingServiceController;
 use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
@@ -10,6 +11,7 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/booking-service/create', [BookingServiceController::class, 'create'])->name('booking-service.create');
 
 
 

@@ -1,14 +1,16 @@
 <header class="dashboard-header">
-    <div class="header-left">
-        <button type="button" class="sidebar-toggle" aria-label="Toggle sidebar">
-            <i class="fas fa-bars" aria-hidden="true"></i>
-        </button>
-
-        <div class="header-greeting">
-            <h1>Good Evening, <span>{{ auth()->check() ? auth()->user()->name : 'MD. JAHEDUL DINER' }}</span> &#128075;</h1>
-            <p>Here's what's happening with your account today.</p>
-        </div>
-    </div>
+	    <div class="header-left">
+	        <button type="button" class="sidebar-toggle" aria-label="Toggle sidebar">
+	            <i class="fas fa-bars" aria-hidden="true"></i>
+	        </button>
+	
+	        <div class="header-greeting">
+	            @if (request()->is('dashboard'))
+	                <h1>Good Evening, <span>{{ auth()->check() ? auth()->user()->name : 'MD. JAHEDUL DINER' }}</span> &#128075;</h1>
+	                <p>Here's what's happening with your account today.</p>
+	            @endif
+	        </div>
+	    </div>
 
     <div class="header-actions">
         <button type="button" class="notification-btn" aria-label="Notifications">

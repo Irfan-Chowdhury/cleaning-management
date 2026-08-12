@@ -3,7 +3,7 @@
 @section('title', 'Dashboard')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/assets/css/dashboard.css') }}">
 @endpush
 
 @section('content')
@@ -282,5 +282,5 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('assets/js/dashboard.js') }}"></script>
+    <script src="{{ asset('public/assets/js/dashboard.js') }}"></script>
 @endpush
