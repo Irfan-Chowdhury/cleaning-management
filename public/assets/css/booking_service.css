@@ -38,24 +38,51 @@
    Progress
 ========================================= */
 .booking-progress {
-    display: grid;
+    display: flex;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 12px;
     margin-bottom: 20px;
     padding: 16px;
 }
 
 .booking-step {
+    position: relative;
     display: flex;
+    flex: 1 1 0;
     min-width: 0;
     align-items: center;
     gap: 10px;
     color: #667085;
     font-size: 13px;
     font-weight: 600;
+    text-decoration: none;
+}
+
+.booking-step::after {
+    position: absolute;
+    top: 17px;
+    right: 10px;
+    left: 44px;
+    height: 2px;
+    content: "";
+    background: #e8edf5;
+}
+
+.booking-step:last-child::after {
+    display: none;
+}
+
+.booking-step.completed::after {
+    background: #0866e8;
+}
+
+.booking-step:hover {
+    color: #0866e8;
+    text-decoration: none;
 }
 
 .booking-step-circle {
+    position: relative;
+    z-index: 1;
     display: inline-flex;
     width: 34px;
     height: 34px;
@@ -73,9 +100,14 @@
     color: #111c3a;
 }
 
+.booking-step.completed .booking-step-circle,
 .booking-step.active .booking-step-circle {
     color: #ffffff;
     background: #0866e8;
+}
+
+.booking-step.completed {
+    color: #0866e8;
 }
 
 .booking-step-label {
@@ -200,7 +232,9 @@
 }
 
 .booking-continue-btn,
-.booking-promo-row .btn {
+.booking-promo-row .btn,
+.booking-step-actions .btn-primary,
+.confirm-pay-btn {
     background-color: #0866e8;
     border-color: #0866e8;
 }
@@ -214,10 +248,27 @@
 .booking-continue-btn:hover,
 .booking-continue-btn:focus,
 .booking-promo-row .btn:hover,
-.booking-promo-row .btn:focus {
+.booking-promo-row .btn:focus,
+.booking-step-actions .btn-primary:hover,
+.booking-step-actions .btn-primary:focus,
+.confirm-pay-btn:hover,
+.confirm-pay-btn:focus {
     color: #ffffff;
     background-color: #006ce5;
     border-color: #006ce5;
+}
+
+.booking-step-actions .btn-outline-primary {
+    color: #0866e8;
+    background-color: #ffffff;
+    border-color: #0866e8;
+}
+
+.booking-step-actions .btn-outline-primary:hover,
+.booking-step-actions .btn-outline-primary:focus {
+    color: #ffffff;
+    background-color: #0866e8;
+    border-color: #0866e8;
 }
 
 .booking-continue-btn i {
@@ -398,6 +449,617 @@
 }
 
 /* =========================================
+   Step 2 / Date And Time
+========================================= */
+.date-time-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 1fr);
+    gap: 22px;
+}
+
+.booking-section-label {
+    display: block;
+    margin-bottom: 10px;
+    color: #111c3a;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.booking-calendar {
+    padding: 14px;
+    border: 1px solid #e8edf5;
+    border-radius: 10px;
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.calendar-header strong {
+    color: #111c3a;
+    font-size: 15px;
+}
+
+.calendar-nav {
+    display: inline-flex;
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    color: #667085;
+    background: #f7f9fc;
+    border: 1px solid #e8edf5;
+    border-radius: 8px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 7px;
+}
+
+.calendar-weekdays {
+    margin-bottom: 8px;
+}
+
+.calendar-weekdays span {
+    color: #667085;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.calendar-days button {
+    display: inline-flex;
+    width: 100%;
+    aspect-ratio: 1;
+    align-items: center;
+    justify-content: center;
+    color: #111c3a;
+    font-size: 13px;
+    font-weight: 600;
+    background: #ffffff;
+    border: 0;
+    border-radius: 50%;
+}
+
+.calendar-days button:hover {
+    color: #0866e8;
+    background: #eef5ff;
+}
+
+.calendar-days button.outside-month {
+    color: #b6c0ce;
+}
+
+.calendar-days button.selected,
+.time-slot.selected {
+    color: #ffffff;
+    background: #0866e8;
+}
+
+.booking-info-strip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 10px 12px;
+    color: #0866e8;
+    font-size: 13px;
+    font-weight: 600;
+    background: #eef5ff;
+    border-radius: 8px;
+}
+
+.time-slot-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.time-slot {
+    min-height: 42px;
+    color: #111c3a;
+    font-size: 13px;
+    font-weight: 700;
+    background: #ffffff;
+    border: 1px solid #e1e7f0;
+    border-radius: 8px;
+}
+
+.time-slot:hover {
+    color: #0866e8;
+    border-color: #0866e8;
+}
+
+.booking-step-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.booking-step-actions .btn {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding-right: 16px;
+    padding-left: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+}
+
+.filled-summary-card {
+    text-align: left;
+}
+
+.summary-image,
+.review-image {
+    width: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.summary-image {
+    height: 150px;
+    margin: 14px 0;
+}
+
+.filled-summary-card h3,
+.review-service-grid h4 {
+    margin: 0 0 7px;
+    color: #111c3a;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.booking-badge {
+    display: inline-flex;
+    padding: 4px 9px;
+    color: #16803c;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    background: #e9f8ef;
+    border-radius: 999px;
+}
+
+.summary-list {
+    padding: 0;
+    margin: 14px 0;
+    list-style: none;
+}
+
+.summary-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin-bottom: 8px;
+    color: #667085;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.summary-list i {
+    width: 15px;
+    margin-top: 3px;
+    color: #0866e8;
+    text-align: center;
+}
+
+.summary-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 14px;
+    color: #667085;
+    font-size: 13px;
+    border-top: 1px solid #e8edf5;
+}
+
+.summary-total strong {
+    color: #111c3a;
+    font-size: 20px;
+}
+
+/* =========================================
+   Step 3 / Your Details
+========================================= */
+.detail-mode-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.detail-mode-card {
+    position: relative;
+    display: block;
+    min-height: 92px;
+    padding: 15px 15px 15px 46px;
+    cursor: pointer;
+    background: #ffffff;
+    border: 1px solid #e8edf5;
+    border-radius: 10px;
+}
+
+.detail-mode-card.active {
+    background: #f3f8ff;
+    border-color: #0866e8;
+}
+
+.detail-mode-card input {
+    position: absolute;
+    opacity: 0;
+}
+
+.detail-radio {
+    position: absolute;
+    top: 17px;
+    left: 16px;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #cfd8e5;
+    border-radius: 50%;
+}
+
+.detail-mode-card.active .detail-radio {
+    border-color: #0866e8;
+    box-shadow: inset 0 0 0 4px #ffffff;
+    background: #0866e8;
+}
+
+.detail-mode-card strong {
+    display: block;
+    color: #111c3a;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.detail-mode-card small {
+    display: block;
+    margin-top: 5px;
+    color: #667085;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.saved-details-panel {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+    padding: 16px;
+    background: #f3f8ff;
+    border: 1px solid #dbeafe;
+    border-radius: 10px;
+}
+
+.saved-details-panel strong {
+    display: block;
+    margin-bottom: 6px;
+    color: #111c3a;
+}
+
+.saved-details-panel p {
+    margin: 2px 0;
+    color: #667085;
+    font-size: 13px;
+}
+
+.saved-details-panel a {
+    color: #0866e8;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.details-form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.booking-detail-input {
+    min-height: 46px;
+    color: #111c3a;
+    font-size: 14px;
+    border-color: #e1e7f0;
+    border-radius: 8px;
+}
+
+.account-mode .booking-detail-input[readonly] {
+    background: #f7f9fc;
+}
+
+.phone-input-wrap {
+    position: relative;
+}
+
+.phone-country {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    z-index: 2;
+    color: #111c3a;
+    font-size: 12px;
+    font-weight: 700;
+    transform: translateY(-50%);
+}
+
+.phone-input-wrap .form-control {
+    padding-left: 46px;
+}
+
+.address-field {
+    position: relative;
+}
+
+.address-field .form-control {
+    padding-right: 42px;
+}
+
+.address-check {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    color: #16803c;
+}
+
+.address-extra-grid {
+    grid-template-columns: 2fr 1fr 1fr;
+}
+
+#special-instructions {
+    min-height: 98px;
+    padding-bottom: 28px;
+    resize: vertical;
+}
+
+/* =========================================
+   Step 4 / Review Confirm
+========================================= */
+.review-section {
+    padding: 16px 0;
+    border-top: 1px solid #e8edf5;
+}
+
+.review-section:first-of-type {
+    padding-top: 0;
+    border-top: 0;
+}
+
+.review-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.review-section-header h3 {
+    margin: 0;
+    color: #111c3a;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.review-section-header h3 i {
+    margin-right: 8px;
+    color: #0866e8;
+}
+
+.review-section-header a {
+    color: #0866e8;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.review-section-header div {
+    display: flex;
+    gap: 10px;
+}
+
+.review-service-grid {
+    display: grid;
+    grid-template-columns: 145px minmax(0, 1fr) 170px;
+    gap: 16px;
+    align-items: center;
+}
+
+.review-image {
+    height: 112px;
+}
+
+.estimated-price-box {
+    padding-left: 18px;
+    border-left: 1px solid #e8edf5;
+}
+
+.estimated-price-box span {
+    display: block;
+    color: #667085;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.estimated-price-box strong {
+    display: block;
+    margin-top: 5px;
+    color: #111c3a;
+    font-size: 24px;
+}
+
+.review-details-grid,
+.payment-review-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 1fr);
+    gap: 18px;
+}
+
+.review-contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: #667085;
+    font-size: 13px;
+}
+
+.review-contact-list strong {
+    color: #111c3a;
+}
+
+.review-detail-table {
+    margin: 0;
+}
+
+.review-detail-table div,
+.payment-total-panel div,
+.price-breakdown div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 9px;
+    color: #667085;
+    font-size: 13px;
+}
+
+.review-detail-table dt {
+    font-weight: 600;
+}
+
+.review-detail-table dd {
+    margin: 0;
+    color: #111c3a;
+    font-weight: 700;
+}
+
+.applied-promo-panel {
+    padding: 14px;
+    background: #e9f8ef;
+    border-radius: 10px;
+}
+
+.applied-promo-panel span {
+    color: #667085;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.applied-promo-panel strong {
+    display: block;
+    margin-top: 5px;
+    color: #111c3a;
+    font-size: 15px;
+}
+
+.applied-promo-panel em {
+    margin-left: 8px;
+    padding: 3px 8px;
+    color: #16803c;
+    font-size: 11px;
+    font-style: normal;
+    background: #ffffff;
+    border-radius: 999px;
+}
+
+.applied-promo-panel p {
+    margin: 7px 0 0;
+    color: #16803c;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.payment-total-panel {
+    padding: 14px;
+    background: #f7f9fc;
+    border: 1px solid #e8edf5;
+    border-radius: 10px;
+}
+
+.payment-total-panel hr {
+    margin: 12px 0;
+}
+
+.payment-total-panel strong,
+.price-breakdown strong {
+    color: #111c3a;
+}
+
+.payment-total-panel .grand-total strong {
+    font-size: 22px;
+}
+
+.confirm-pay-btn {
+    flex: 1 1 auto;
+}
+
+.secure-checkout {
+    margin: 12px 0 0;
+    color: #667085;
+    font-size: 12px;
+    text-align: right;
+}
+
+.secure-checkout i {
+    color: #16803c;
+}
+
+.summary-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.summary-title-row a {
+    color: #0866e8;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.price-breakdown {
+    margin-top: 15px;
+    padding-top: 14px;
+    border-top: 1px solid #e8edf5;
+}
+
+.discount-value {
+    color: #16803c !important;
+}
+
+.referral-success-card {
+    background: #e9f8ef;
+}
+
+.referral-success-card h2 i,
+.why-book-card li i {
+    color: #16803c;
+}
+
+.why-book-card ul {
+    padding: 0;
+    margin: 14px 0 0;
+    list-style: none;
+}
+
+.why-book-card li {
+    display: flex;
+    gap: 9px;
+    margin-bottom: 9px;
+    color: #111c3a;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* =========================================
    Tablet
 ========================================= */
 @media (max-width: 1199.98px) {
@@ -412,7 +1074,7 @@
     }
 
     .booking-progress {
-        gap: 10px;
+        padding: 14px;
     }
 }
 
@@ -425,8 +1087,13 @@
     }
 
     .booking-progress {
+        display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         padding: 14px;
+    }
+
+    .booking-step::after {
+        display: none;
     }
 
     .booking-step {
@@ -449,6 +1116,35 @@
 
     .booking-promo-row .btn {
         min-height: 42px;
+    }
+
+    .date-time-grid,
+    .detail-mode-grid,
+    .details-form-grid,
+    .address-extra-grid,
+    .review-service-grid,
+    .review-details-grid,
+    .payment-review-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .booking-step-actions {
+        flex-direction: column;
+    }
+
+    .booking-step-actions .btn {
+        width: 100%;
+    }
+
+    .estimated-price-box {
+        padding-top: 12px;
+        padding-left: 0;
+        border-top: 1px solid #e8edf5;
+        border-left: 0;
+    }
+
+    .secure-checkout {
+        text-align: left;
     }
 }
 

@@ -12,6 +12,9 @@ Route::get('/', function () {
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/booking-service/create', [BookingServiceController::class, 'create'])->name('booking-service.create');
+Route::get('/booking-service/date-time', [BookingServiceController::class, 'dateTime'])->name('booking-service.date-time');
+Route::get('/booking-service/your-details', [BookingServiceController::class, 'yourDetails'])->name('booking-service.your-details');
+Route::get('/booking-service/review-confirm', [BookingServiceController::class, 'reviewConfirm'])->name('booking-service.review-confirm');
 
 
 
