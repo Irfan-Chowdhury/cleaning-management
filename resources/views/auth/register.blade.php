@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login | Dust2Glow</title>
+    <title>Register | Dust2Glow</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,7 +26,7 @@
 
         .auth-card {
             width: 100%;
-            max-width: 460px;
+            max-width: 620px;
             overflow: hidden;
             background: #ffffff;
             border: 1px solid #e8edf5;
@@ -123,52 +123,85 @@
             color: #006ce5;
             text-decoration: none;
         }
+
+        @media (max-width: 575.98px) {
+            .auth-brand,
+            .auth-body {
+                padding-right: 20px;
+                padding-left: 20px;
+            }
+        }
     </style>
 </head>
 <body>
     <main class="auth-page d-flex align-items-center justify-content-center">
         <section class="auth-card">
             <div class="auth-brand">
-                <span class="auth-logo"><i class="fas fa-broom" aria-hidden="true"></i></span>
-                <h1>Welcome back</h1>
-                <p>Login to manage your Dust2Glow cleaning bookings.</p>
+                <span class="auth-logo"><i class="fas fa-spray-can" aria-hidden="true"></i></span>
+                <h1>Create your account</h1>
+                <p>Book trusted cleaners and manage every visit from one place.</p>
             </div>
 
             <div class="auth-body">
-                <form method="POST" action="{{ route('login') }}">
+                <form method="POST" action="#">
                     @csrf
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="name">Full Name</label>
+                            <div class="input-icon">
+                                <i class="far fa-user" aria-hidden="true"></i>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter full name">
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="phone">Phone Number</label>
+                            <div class="input-icon">
+                                <i class="fas fa-phone-alt" aria-hidden="true"></i>
+                                <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter phone number">
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="form-group">
                         <label for="email">Email Address</label>
                         <div class="input-icon">
                             <i class="far fa-envelope" aria-hidden="true"></i>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter email address">
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <div class="d-flex align-items-center justify-content-between">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
                             <label for="password">Password</label>
-                            <a href="#" class="auth-link small">Forgot password?</a>
+                            <div class="input-icon">
+                                <i class="fas fa-lock" aria-hidden="true"></i>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Create password">
+                            </div>
                         </div>
-                        <div class="input-icon">
-                            <i class="fas fa-lock" aria-hidden="true"></i>
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password">
+
+                        <div class="form-group col-md-6">
+                            <label for="password_confirmation">Confirm Password</label>
+                            <div class="input-icon">
+                                <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Confirm password">
+                            </div>
                         </div>
                     </div>
 
-                    <div class="form-group d-flex align-items-center justify-content-between">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="remember" name="remember">
-                            <label class="custom-control-label text-muted" for="remember">Remember me</label>
-                        </div>
+                    <div class="custom-control custom-checkbox mb-4">
+                        <input type="checkbox" class="custom-control-input" id="terms" name="terms">
+                        <label class="custom-control-label text-muted" for="terms">
+                            I agree to the terms and privacy policy.
+                        </label>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-block auth-btn">Login</button>
+                    <button type="submit" class="btn btn-primary btn-block auth-btn">Create Account</button>
 
                     <p class="mt-4 mb-0 text-center text-muted">
-                        New to Dust2Glow?
-                        <a href="#" class="auth-link">Create an account</a>
+                        Already have an account?
+                        <a href="#" class="auth-link">Login</a>
                     </p>
                 </form>
             </div>
