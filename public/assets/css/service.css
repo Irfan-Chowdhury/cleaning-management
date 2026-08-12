@@ -1,0 +1,264 @@
+/* =========================================
+   Services Page
+========================================= */
+.services-page {
+    color: #17233c;
+}
+
+.services-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.services-header h1 {
+    margin: 0;
+    color: #13213c;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.services-header p {
+    margin: 6px 0 0;
+    color: #667085;
+    font-size: 14px;
+}
+
+.services-primary-btn,
+.services-primary-btn:hover,
+.services-page .btn-primary:hover,
+.services-page .btn-primary:focus {
+    color: #ffffff;
+    background-color: #0866e8;
+    border-color: #0866e8;
+}
+
+.services-primary-btn:hover,
+.services-page .btn-primary:hover,
+.services-page .btn-primary:focus {
+    background-color: #006ce5;
+    border-color: #006ce5;
+}
+
+/* =========================================
+   Services Table
+========================================= */
+.services-table-card,
+.service-form-card {
+    background: #ffffff;
+    border: 1px solid #e8edf5;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(19, 33, 60, 0.035);
+}
+
+.services-table-card {
+    padding: 18px;
+}
+
+.services-table-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.services-table-card-header h2 {
+    margin: 0;
+    color: #13213c;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.services-table-card-header p {
+    margin: 5px 0 0;
+    color: #667085;
+    font-size: 13px;
+}
+
+.services-table {
+    margin-bottom: 0 !important;
+    color: #17233c;
+    font-size: 13px;
+}
+
+.services-table th {
+    color: #13213c;
+    font-weight: 700;
+    white-space: nowrap;
+    background: #f7f9fc;
+    border-color: #e8edf5 !important;
+}
+
+.services-table td {
+    vertical-align: middle;
+    border-color: #edf1f7 !important;
+}
+
+.services-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+.service-status-badge {
+    min-width: 68px;
+    padding: 6px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 999px;
+}
+
+.service-action-column {
+    width: 96px;
+}
+
+.service-actions {
+    display: flex;
+    gap: 7px;
+}
+
+.service-action-btn {
+    display: inline-flex;
+    width: 34px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 7px;
+}
+
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+    border: 1px solid #dfe7f1;
+    border-radius: 7px;
+}
+
+.page-item.active .page-link {
+    background-color: #0866e8;
+    border-color: #0866e8;
+}
+
+.page-link {
+    color: #0866e8;
+}
+
+/* =========================================
+   Service Form
+========================================= */
+.service-form-card {
+    padding: 28px;
+}
+
+.service-form-card label {
+    color: #13213c;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.service-form-card .form-control {
+    min-height: 46px;
+    color: #17233c;
+    font-size: 14px;
+    border-color: #e1e7f0;
+    border-radius: 8px;
+}
+
+.service-form-card textarea.form-control {
+    min-height: 110px;
+}
+
+.service-form-card .form-control:focus {
+    border-color: #0866e8;
+    box-shadow: 0 0 0 0.2rem rgba(8, 102, 232, 0.14);
+}
+
+.service-form-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.service-form-actions .btn {
+    display: inline-flex;
+    min-height: 42px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 600;
+    border-radius: 8px;
+}
+
+.service-form-actions .btn-outline-primary {
+    color: #0866e8;
+    border-color: #0866e8;
+}
+
+.service-form-actions .btn-outline-primary:hover,
+.service-form-actions .btn-outline-primary:focus {
+    color: #ffffff;
+    background: #0866e8;
+    border-color: #0866e8;
+}
+
+/* =========================================
+   Delete Modal
+========================================= */
+.service-delete-modal {
+    border: 0;
+    border-radius: 12px;
+}
+
+.service-delete-modal .modal-title {
+    color: #13213c;
+    font-weight: 700;
+}
+
+.service-delete-modal .modal-body p {
+    margin-bottom: 8px;
+    color: #667085;
+    font-size: 14px;
+}
+
+#delete-service-name {
+    display: block;
+    color: #13213c;
+}
+
+/* =========================================
+   Responsive
+========================================= */
+@media (max-width: 767.98px) {
+    .services-header {
+        flex-direction: column;
+    }
+
+    .services-header h1 {
+        font-size: 24px;
+    }
+
+    .services-header .btn {
+        width: 100%;
+    }
+
+    .services-table-card,
+    .service-form-card {
+        padding: 16px;
+        border-radius: 10px;
+    }
+
+    .service-form-actions {
+        flex-direction: column;
+    }
+
+    .service-form-actions .btn {
+        width: 100%;
+    }
+
+    .dataTables_wrapper .row {
+        margin-right: 0;
+        margin-left: 0;
+    }
+}
