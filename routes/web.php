@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookingServiceController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ServiceController;
 
 Route::get('/', function () {
     // return view('welcome');
@@ -15,6 +16,7 @@ Route::get('/booking-service/create', [BookingServiceController::class, 'create'
 Route::get('/booking-service/date-time', [BookingServiceController::class, 'dateTime'])->name('booking-service.date-time');
 Route::get('/booking-service/your-details', [BookingServiceController::class, 'yourDetails'])->name('booking-service.your-details');
 Route::get('/booking-service/review-confirm', [BookingServiceController::class, 'reviewConfirm'])->name('booking-service.review-confirm');
+Route::resource('services', ServiceController::class)->except(['show']);
 
 
 
