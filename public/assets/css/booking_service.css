@@ -111,9 +111,15 @@
 }
 
 .booking-step-label {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    max-width: calc(100% - 44px);
+    padding-right: 8px;
+    color: inherit;
+    line-height: 1.35;
+    white-space: normal;
+    background: #ffffff;
 }
 
 /* =========================================

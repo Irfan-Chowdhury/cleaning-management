@@ -8,8 +8,8 @@
 
 @section('content')
     <div class="booking-page">
-        @include('booking-service.partials.page-header')
-        @include('booking-service.partials.progress', ['currentStep' => 4])
+        @include('pages.booking-service.partials.page-header')
+        @include('pages.booking-service.partials.progress', ['currentStep' => 4])
 
         <div class="booking-main-grid">
             <div class="booking-left-column">
@@ -129,7 +129,7 @@
                     </ul>
                 </div>
 
-                @include('booking-service.partials.support-card')
+                @include('pages.booking-service.partials.support-card')
             </aside>
         </div>
     </div>

@@ -8,8 +8,8 @@
 
 @section('content')
     <div class="booking-page">
-        @include('booking-service.partials.page-header')
-        @include('booking-service.partials.progress', ['currentStep' => 2])
+        @include('pages.booking-service.partials.page-header')
+        @include('pages.booking-service.partials.progress', ['currentStep' => 2])
 
         <div class="booking-main-grid">
             <div class="booking-left-column">
@@ -98,13 +98,13 @@
                     </div>
                 </div>
 
-                @include('booking-service.partials.trust-strip')
+                @include('pages.booking-service.partials.trust-strip')
             </div>
 
             <aside class="booking-right-column">
-                @include('booking-service.partials.booking-summary')
-                @include('booking-service.partials.promo-card')
-                @include('booking-service.partials.support-card')
+                @include('pages.booking-service.partials.booking-summary')
+                @include('pages.booking-service.partials.promo-card')
+                @include('pages.booking-service.partials.support-card')
             </aside>
         </div>
     </div>

@@ -423,7 +423,7 @@ This makes customer support, invoicing and reports much easier than referring on
 
 ---
 
-# 9. Employees / Cleaners
+# 9. Employees / Cleaners (not now)
 
 The SRS requires cleaner/staff management. 
 
@@ -1058,7 +1058,7 @@ If you want to keep Version 1 very manageable, I would initially create only the
 
 ```text
 1. users
-2. services
+2. services (name,description,base_price,duration_minutes,status)
 3. bookings
 4. employees
 5. booking_employees
