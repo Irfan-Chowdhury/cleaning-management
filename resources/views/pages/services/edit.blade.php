@@ -20,7 +20,7 @@
                 @csrf
                 @method('PUT')
 
-                @include('services._form', ['service' => $service])
+                @include('pages.services._form', ['service' => $service])
 
                 <div class="service-form-actions">
                     <a href="{{ route('services.index') }}" class="btn btn-outline-primary">

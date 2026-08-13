@@ -10,9 +10,14 @@
     </div>
 
     <nav class="sidebar-nav">
-        <a href="#" class="sidebar-link active">
+        <a href="{{ url('/dashboard') }}" class="sidebar-link {{ request()->is('dashboard') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-home" aria-hidden="true"></i></span>
             <span>Dashboard</span>
+        </a>
+
+        <a href="{{ route('services.index') }}" class="sidebar-link {{ request()->is('services*') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="fas fa-broom" aria-hidden="true"></i></span>
+            <span>Services</span>
         </a>
 
         <a href="#" class="sidebar-link">

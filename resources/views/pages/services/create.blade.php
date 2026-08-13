@@ -19,7 +19,7 @@
             <form method="POST" action="{{ route('services.store') }}">
                 @csrf
 
-                @include('services._form')
+                @include('pages.services._form')
 
                 <div class="service-form-actions">
                     <a href="{{ route('services.index') }}" class="btn btn-outline-primary">
