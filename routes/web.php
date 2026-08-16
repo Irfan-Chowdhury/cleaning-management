@@ -28,3 +28,26 @@ Route::get('/clear-cache', function () {
     //Artisan::call('optimize:clear');
     return "Cache cleared successfully!";
 });
+
+Route::get('/run-migrate', function () {
+    Artisan::call('migrate', [
+        '--force' => true,
+    ]);
+
+    return nl2br(Artisan::output());
+});
+
+Route::get('/run-seeder/{class}', function (string $class) {
+    $seederClass = str_contains($class, '\\') ? $class : 'Database\\Seeders\\' . $class;
+
+    if (! class_exists($seederClass)) {
+        abort(404, 'Seeder class not found.');
+    }
+
+    Artisan::call('db:seed', [
+        '--class' => $seederClass,
+        '--force' => true,
+    ]);
+
+    return nl2br(Artisan::output());
+})->where('class', '[A-Za-z0-9_\\\\]+');
