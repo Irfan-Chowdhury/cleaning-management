@@ -19,6 +19,13 @@ class ServiceController extends Controller
         return view('pages.services.create');
     }
 
+    public function show(Service $service)
+    {
+        $service->load('serviceQuestions.questionOptions');
+
+        return view('pages.services.show', compact('service'));
+    }
+
     public function store(Request $request)
     {
         Service::create($this->validatedData($request));

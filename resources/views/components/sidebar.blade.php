@@ -20,7 +20,7 @@
             <span>Services</span>
         </a>
 
-        <a href="#" class="sidebar-link">
+        <a href="{{ route('booking-service.create') }}" class="sidebar-link">
             <span class="sidebar-link-icon"><i class="far fa-calendar-alt" aria-hidden="true"></i></span>
             <span>My Bookings</span>
         </a>

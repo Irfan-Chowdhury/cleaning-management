@@ -60,6 +60,9 @@
                                 <td>{{ $service->created_at ? $service->created_at->format('d M Y') : '-' }}</td>
                                 <td>
                                     <div class="service-actions">
+                                        <a href="{{ route('services.show', $service) }}" class="btn btn-sm btn-outline-primary service-action-btn" title="View">
+                                            <i class="fas fa-eye" aria-hidden="true"></i>
+                                        </a>
                                         <a href="{{ route('services.edit', $service) }}" class="btn btn-sm btn-outline-primary service-action-btn" title="Edit">
                                             <i class="fas fa-edit" aria-hidden="true"></i>
                                         </a>

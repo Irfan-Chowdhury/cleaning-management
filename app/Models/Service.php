@@ -16,4 +16,9 @@ class Service extends Model
         'duration_minutes',
         'status',
     ];
+
+    public function serviceQuestions()
+    {
+        return $this->hasMany(ServiceQuestion::class)->orderBy('sort_order');
+    }
 }

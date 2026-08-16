@@ -18,7 +18,7 @@ Route::prefix('booking-service')->group(function () {
     Route::get('/your-details', [BookingServiceController::class, 'yourDetails'])->name('booking-service.your-details');
     Route::get('/review-confirm', [BookingServiceController::class, 'reviewConfirm'])->name('booking-service.review-confirm');
 });
-Route::resource('services', ServiceController::class)->except(['show']);
+Route::resource('services', ServiceController::class);
 
 
 Route::get('/clear-cache', function () {
