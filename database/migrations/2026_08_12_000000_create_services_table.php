@@ -12,8 +12,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->decimal('base_price', 10, 2);
-            $table->unsignedInteger('duration_minutes')->nullable();
+            // $table->decimal('base_price', 10, 2);
+            // $table->unsignedInteger('duration_minutes')->nullable();
             $table->string('status')->default('active');
             $table->timestamps();
         });
