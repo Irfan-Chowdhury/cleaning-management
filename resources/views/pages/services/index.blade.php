@@ -15,9 +15,9 @@
                 <h1>Services</h1>
                 <p>Manage cleaning services, pricing, duration and availability status.</p>
             </div>
-            <a href="{{ route('services.create') }}" class="btn btn-primary services-primary-btn">
+            <button type="button" class="btn btn-primary services-primary-btn js-service-add" data-toggle="modal" data-target="#service-form-modal" data-action="{{ route('services.store') }}">
                 <i class="fas fa-plus" aria-hidden="true"></i> Add Service
-            </a>
+            </button>
         </div>
 
         <div class="services-table-card">
@@ -63,9 +63,9 @@
                                         <a href="{{ route('services.show', $service) }}" class="btn btn-sm btn-outline-primary service-action-btn" title="View">
                                             <i class="fas fa-eye" aria-hidden="true"></i>
                                         </a>
-                                        <a href="{{ route('services.edit', $service) }}" class="btn btn-sm btn-outline-primary service-action-btn" title="Edit">
+                                        <button type="button" class="btn btn-sm btn-outline-primary service-action-btn js-service-edit" title="Edit" data-toggle="modal" data-target="#service-form-modal" data-action="{{ route('services.update', $service) }}" data-name="{{ $service->name }}" data-description="{{ $service->description }}" data-status="{{ $service->status }}">
                                             <i class="fas fa-edit" aria-hidden="true"></i>
-                                        </a>
+                                        </button>
                                         <button type="button" class="btn btn-sm btn-outline-danger service-action-btn js-delete-confirm" title="Delete" data-action="{{ route('services.destroy', $service) }}" data-name="{{ $service->name }}">
                                             <i class="fas fa-trash" aria-hidden="true"></i>
                                         </button>
@@ -83,6 +83,35 @@
         @csrf
         @method('DELETE')
     </form>
+
+    <div class="modal fade" id="service-form-modal" tabindex="-1" role="dialog" aria-labelledby="service-form-modal-title" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content service-modal-content">
+                <form id="service-modal-form" method="POST" action="{{ route('services.store') }}">
+                    @csrf
+                    <input type="hidden" name="_method" id="service-form-method" value="PUT" disabled>
+
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="service-form-modal-title">Add Service</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        @include('pages.services._form', ['service' => null])
+                    </div>
+
+                    <div class="modal-footer service-modal-actions">
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary services-primary-btn" id="service-modal-submit">
+                            <i class="fas fa-save" aria-hidden="true"></i> Save Service
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')

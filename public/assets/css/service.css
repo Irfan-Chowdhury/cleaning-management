@@ -111,7 +111,7 @@
 }
 
 .service-action-column {
-    width: 96px;
+    width: 132px;
 }
 
 .service-actions {
@@ -209,6 +209,53 @@
 .service-delete-modal {
     border: 0;
     border-radius: 12px;
+}
+
+.service-modal-content {
+    border: 0;
+    border-radius: 12px;
+}
+
+.service-modal-content .modal-title {
+    color: #13213c;
+    font-weight: 700;
+}
+
+.service-modal-content .modal-body {
+    padding: 22px 24px 8px;
+}
+
+.service-modal-content label {
+    color: #13213c;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.service-modal-content .form-control {
+    min-height: 46px;
+    color: #17233c;
+    font-size: 14px;
+    border-color: #e1e7f0;
+    border-radius: 8px;
+}
+
+.service-modal-content textarea.form-control {
+    min-height: 110px;
+}
+
+.service-modal-content .form-control:focus {
+    border-color: #0866e8;
+    box-shadow: 0 0 0 0.2rem rgba(8, 102, 232, 0.14);
+}
+
+.service-modal-actions .btn {
+    display: inline-flex;
+    min-height: 40px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 600;
+    border-radius: 8px;
 }
 
 .service-delete-modal .modal-title {
