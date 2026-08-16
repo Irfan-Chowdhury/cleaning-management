@@ -57,8 +57,8 @@ class ServiceController extends Controller
         return $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'base_price' => ['required', 'numeric', 'min:0'],
-            'duration_minutes' => ['nullable', 'integer', 'min:1'],
+            // 'base_price' => ['required', 'numeric', 'min:0'],
+            // 'duration_minutes' => ['nullable', 'integer', 'min:1'],
             'status' => ['required', 'in:active,inactive'],
         ]);
     }

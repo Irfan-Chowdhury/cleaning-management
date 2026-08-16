@@ -24,28 +24,19 @@
                             <label for="booking-service">Choose Your Dust2Glow Service <span>*</span></label>
                             <div class="booking-input-icon">
                                 <i class="fas fa-broom" aria-hidden="true"></i>
-                                <select class="form-control" id="booking-service">
+                                <select class="form-control" id="booking-service" name="service_id" data-questionnaire-url="{{ url('/booking-service/questionnaire') }}">
                                     <option value="">Select</option>
-                                    <option>Regular Home Cleaning</option>
-                                    <option>Deep Cleaning</option>
-                                    <option>End of Lease Cleaning</option>
-                                    <option>Office Cleaning</option>
-                                    <option>Window Cleaning</option>
+                                    @foreach ($services as $service)
+                                        <option value="{{ $service->id }}">{{ $service->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
 
-                        <div class="form-group booking-field">
-                            <label for="service-frequency">Service Frequency <span>*</span></label>
-                            <div class="booking-input-icon">
-                                <i class="far fa-calendar-alt" aria-hidden="true"></i>
-                                <select class="form-control" id="service-frequency">
-                                    <option value="">Please Choose...</option>
-                                    <option>One Time</option>
-                                    <option>Weekly</option>
-                                    <option>Fortnightly</option>
-                                    <option>Monthly</option>
-                                </select>
+                        <div id="booking-questionnaire" class="booking-questionnaire" data-empty-text="Select a service to load related questions.">
+                            <div class="booking-questionnaire-empty">
+                                <i class="far fa-list-alt" aria-hidden="true"></i>
+                                <span>Select a service to load related questions.</span>
                             </div>
                         </div>
 

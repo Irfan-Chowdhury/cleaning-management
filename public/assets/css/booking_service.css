@@ -237,6 +237,110 @@
     font-weight: 600;
 }
 
+.booking-questionnaire {
+    margin-bottom: 18px;
+}
+
+.booking-questionnaire-empty {
+    display: flex;
+    min-height: 64px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px;
+    color: #667085;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    background: #f8fbff;
+    border: 1px dashed #dfe7f1;
+    border-radius: 8px;
+}
+
+.booking-questionnaire-empty i {
+    color: #0866e8;
+}
+
+.booking-questionnaire-error i {
+    color: #dc3545;
+}
+
+.booking-questionnaire-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #edf1f7;
+}
+
+.booking-questionnaire-header h3 {
+    margin: 0;
+    color: #111c3a;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.booking-questionnaire-header span {
+    color: #667085;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.booking-question-item {
+    margin-bottom: 16px;
+}
+
+.booking-question-item:last-child {
+    margin-bottom: 0;
+}
+
+.booking-question-item label {
+    display: block;
+    margin-bottom: 8px;
+    color: #111c3a;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.booking-question-number {
+    display: inline-flex;
+    min-width: 26px;
+    height: 24px;
+    align-items: center;
+    justify-content: center;
+    margin-right: 6px;
+    color: #0866e8;
+    font-size: 12px;
+    font-weight: 700;
+    background: #eef5ff;
+    border-radius: 6px;
+}
+
+.booking-question-item .form-control {
+    min-height: 46px;
+    color: #111c3a;
+    font-size: 14px;
+    border-color: #e1e7f0;
+    border-radius: 8px;
+}
+
+.booking-checkbox-grid {
+    margin-top: 2px;
+}
+
+.booking-checkbox-grid .custom-control {
+    margin-bottom: 9px;
+}
+
+.booking-checkbox-grid .custom-control-label {
+    margin-bottom: 0;
+    color: #344054;
+    font-size: 13px;
+    font-weight: 500;
+}
+
 .booking-continue-btn,
 .booking-promo-row .btn,
 .booking-step-actions .btn-primary,
