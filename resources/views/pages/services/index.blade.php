@@ -35,8 +35,6 @@
                             <th>#</th>
                             <th>Service Name</th>
                             <th>Description</th>
-                            <th>Base Price</th>
-                            <th>Duration</th>
                             <th>Status</th>
                             <th>Created At</th>
                             <th class="service-action-column">Action</th>
@@ -50,8 +48,6 @@
                                     <strong>{{ $service->name }}</strong>
                                 </td>
                                 <td>{{ \Illuminate\Support\Str::limit($service->description, 80) ?: '-' }}</td>
-                                <td>${{ number_format($service->base_price, 2) }}</td>
-                                <td>{{ $service->duration_minutes ? $service->duration_minutes . ' mins' : '-' }}</td>
                                 <td>
                                     <span class="badge service-status-badge {{ $service->status === 'active' ? 'badge-success' : 'badge-secondary' }}">
                                         {{ ucfirst($service->status) }}
@@ -60,7 +56,7 @@
                                 <td>{{ $service->created_at ? $service->created_at->format('d M Y') : '-' }}</td>
                                 <td>
                                     <div class="service-actions">
-                                        <a href="{{ route('services.show', $service) }}" class="btn btn-sm btn-outline-primary service-action-btn" title="View">
+                                        <a href="{{ route('services.show', $service) }}" class="btn btn-sm btn-outline-success service-action-btn" title="View">
                                             <i class="fas fa-eye" aria-hidden="true"></i>
                                         </a>
                                         <button type="button" class="btn btn-sm btn-outline-primary service-action-btn js-service-edit" title="Edit" data-toggle="modal" data-target="#service-form-modal" data-action="{{ route('services.update', $service) }}" data-name="{{ $service->name }}" data-description="{{ $service->description }}" data-status="{{ $service->status }}">
