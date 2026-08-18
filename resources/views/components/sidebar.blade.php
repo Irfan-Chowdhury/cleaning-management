@@ -20,14 +20,38 @@
             <span>Services</span>
         </a>
 
-        <a href="{{ route('booking-service.create') }}" class="sidebar-link">
+        <a href="#" class="sidebar-link">
+            <span class="sidebar-link-icon"><i class="fas fa-users" aria-hidden="true"></i></span>
+            <span>Customers</span>
+        </a>
+
+        <!-- Timesheets with collapse -->
+        <a href="#timesheets-submenu" data-toggle="collapse" aria-expanded="false" class="sidebar-link d-flex align-items-center justify-content-between">
+            <span class="d-flex align-items-center">
+                <span class="sidebar-link-icon"><i class="far fa-clock" aria-hidden="true"></i></span>
+                <span>Timesheets</span>
+            </span>
+            <i class="fas fa-chevron-down ml-auto" style="font-size: 10px;" aria-hidden="true"></i>
+        </a>
+        <div class="collapse" id="timesheets-submenu" style="padding-left: 20px;">
+            <a href="#" class="sidebar-link" style="margin-left: 18px; min-height: 38px; padding: 6px 14px;">
+                <span class="sidebar-link-icon" style="width: 20px; flex: 0 0 20px;"><i class="fas fa-calendar-check" aria-hidden="true"></i></span>
+                <span>Working Shifts</span>
+            </a>
+            <a href="#" class="sidebar-link" style="margin-left: 18px; min-height: 38px; padding: 6px 14px;">
+                <span class="sidebar-link-icon" style="width: 20px; flex: 0 0 20px;"><i class="fas fa-umbrella-beach" aria-hidden="true"></i></span>
+                <span>Manage Holiday</span>
+            </a>
+        </div>
+
+        <a href="#" class="sidebar-link">
             <span class="sidebar-link-icon"><i class="far fa-calendar-alt" aria-hidden="true"></i></span>
-            <span>My Bookings</span>
+            <span>Bookings</span>
         </a>
 
         <a href="#" class="sidebar-link">
             <span class="sidebar-link-icon"><i class="fas fa-user-friends" aria-hidden="true"></i></span>
-            <span>Referral Program</span>
+            <span>Referrals</span>
         </a>
 
         <a href="#" class="sidebar-link">
@@ -47,7 +71,7 @@
 
         <a href="#" class="sidebar-link">
             <span class="sidebar-link-icon"><i class="fas fa-cog" aria-hidden="true"></i></span>
-            <span>Account Settings</span>
+            <span>Settings</span>
         </a>
 
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
