@@ -509,7 +509,9 @@ wallet_transactions
 id
 user_id
 booking_id nullable
-type
+# type
+credit
+debit
 source
 amount
 description
@@ -760,64 +762,6 @@ can go into `settings`.
 
 ---
 
-# 15. Promo codes
-
-Because your booking UI already includes:
-
-```text
-Referral or Promo Code
-```
-
-I recommend adding:
-
-```text
-promo_codes
---------------------------------
-id
-code
-discount_type
-discount_value
-minimum_amount
-starts_at
-expires_at
-usage_limit
-status
-created_at
-updated_at
-```
-
-`discount_type`:
-
-```text
-fixed
-percentage
-```
-
-Example:
-
-```text
-WELCOME10
-percentage
-10
-```
-
-Keep **promo codes and referral codes separate** internally even though the UI can use one input box.
-
-Backend logic:
-
-```text
-Input code
-   ↓
-Is Promo Code?
-   ├── Yes → Apply promo rules
-   └── No
-       ↓
-   Is Referral Code?
-       ├── Yes → Apply referral rules
-       └── Invalid
-```
-
----
 
 # 16. Payments
 

@@ -9,6 +9,8 @@
 - role [1=admin, 2=customer]
 - photo
 - password
+- created_by (user_id) nullable
+- referral_code unique (FIRSTNAME.id)
 
 
 ## services
@@ -17,15 +19,21 @@
 - description
 - status
 
-## wallet_transactions
+
+# service_questions
+- id 
+- service_id 
+- title varchar (255)
+- field_type varchar (191)
+- required boolean
+- sort_order nullable
+
+# questions_options
+
 - id
-- user_id
-- booking_id nullable
-- type [credit, debit]
-- source [welcome_bonus, referral_bonus, review_bonus, admin_adjustment, booking_usage]
-- amount
-- description
-- reference_id nullable
+- service_question_id
+- label varchar (255)
+
 
 
 ## office_shifts
@@ -42,30 +50,59 @@
 - start_date
 - end_date 
 
-## referral_codes
-- id
-- code
-- discount_type [fixed, percentage]
-- discount_value 
-- expires_at date
-- usage_limit  int
-- status boolean [0=inactive, 1=active]
 
-# payments
+## wallet_transactions
+- id
+- user_id
+- booking_id nullable
+- type [credit, debit]
+- source [welcome_bonus, referral_bonus, review_bonus, admin_adjustment, booking_usage]
+- amount
+- description
+<!-- - reference_id nullable -->
+
+
+## referrals
+- id
+- referrer_user_id : 25     ← John
+- referred_user_id : 46     ← Mary
+<!-- - referral_code nullable -->
+- booking_id nullable
+- status [registered,pending,approved,rewarded,rejected]
+- reward_amount decimal
+- created_at nullable
+
+
+## payments
 - id
 - booking_id
 - user_id
 - amount
 - payment_method
 - payment_status
-- transaction_reference nullable
-- paid_at nullable
+<!-- - transaction_reference nullable -->
 - created_at
-- updated_at
+
 
 ## settings
 - company_name
 - company_logo
-- minimum_booking_notice
-- maximum_advance_booking_days
+- welcome_credit  int               
+- referral_reward  int               
+- google_review_reward  int         
+- referral_program_enabled  boolean      
+- minimum_booking_notice_hours  int
+- maximum_advance_booking_days  int
+- cancellation_notice_hours   int
+
+
+
+
+
+
+Your Referral Link
+https://domain.com/register?ref=JOHN25
+
+
+
 
