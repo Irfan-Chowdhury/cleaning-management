@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\WeeklyScheduleController;
+use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\AuthController;
 
@@ -30,6 +31,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
 Route::get('/weekly-schedule', [WeeklyScheduleController::class, 'index'])->name('weekly-schedule.index');
 Route::get('/week/{day}', [WeeklyScheduleController::class, 'edit'])->name('weekly-schedule.edit');
+Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays.index');
 Route::prefix('booking-service')->group(function () {
     Route::get('/create', [BookingServiceController::class, 'create'])->name('booking-service.create');
     Route::get('/questionnaire/{service}', [BookingServiceController::class, 'questionnaire'])->name('booking-service.questionnaire');

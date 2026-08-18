@@ -1,0 +1,184 @@
+/* =========================================
+   Holiday Page  (mirrors service.css conventions)
+   ========================================= */
+.holiday-page {
+    color: #17233c;
+}
+
+.holiday-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.holiday-header h1 {
+    margin: 0;
+    color: #13213c;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.holiday-header p {
+    margin: 6px 0 0;
+    color: #667085;
+    font-size: 14px;
+}
+
+.holiday-primary-btn,
+.holiday-primary-btn:hover,
+.holiday-page .btn-primary:hover,
+.holiday-page .btn-primary:focus {
+    color: #ffffff;
+    background-color: #0866e8;
+    border-color: #0866e8;
+}
+
+.holiday-primary-btn:hover,
+.holiday-page .btn-primary:hover,
+.holiday-page .btn-primary:focus {
+    background-color: #006ce5;
+    border-color: #006ce5;
+}
+
+/* =========================================
+   Table card
+   ========================================= */
+.holiday-table-card {
+    background: #ffffff;
+    border: 1px solid #e8edf5;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(19, 33, 60, 0.035);
+    padding: 18px;
+}
+
+.holiday-table-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.holiday-table-card-header h2 {
+    margin: 0;
+    color: #13213c;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.holiday-table-card-header p {
+    margin: 5px 0 0;
+    color: #667085;
+    font-size: 13px;
+}
+
+.holiday-table {
+    margin-bottom: 0 !important;
+    color: #17233c;
+    font-size: 13px;
+}
+
+.holiday-table th {
+    color: #13213c;
+    font-weight: 700;
+    white-space: nowrap;
+    background: #f7f9fc;
+    border-color: #e8edf5 !important;
+}
+
+.holiday-table td {
+    vertical-align: middle;
+    border-color: #edf1f7 !important;
+}
+
+.holiday-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+.holiday-action-column {
+    width: 100px;
+}
+
+.holiday-actions {
+    display: flex;
+    gap: 7px;
+}
+
+.holiday-action-btn {
+    display: inline-flex;
+    width: 34px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 7px;
+}
+
+/* =========================================
+   Modal
+   ========================================= */
+.holiday-modal-content {
+    border: 0;
+    border-radius: 12px;
+}
+
+.holiday-modal-content .modal-title {
+    color: #13213c;
+    font-weight: 700;
+}
+
+.holiday-modal-content .modal-body {
+    padding: 22px 24px 8px;
+}
+
+.holiday-modal-content label {
+    color: #13213c;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.holiday-modal-content .form-control {
+    min-height: 46px;
+    color: #17233c;
+    font-size: 14px;
+    border-color: #e1e7f0;
+    border-radius: 8px;
+}
+
+.holiday-modal-content .form-control:focus {
+    border-color: #0866e8;
+    box-shadow: 0 0 0 0.2rem rgba(8, 102, 232, 0.14);
+}
+
+.holiday-modal-actions .btn {
+    display: inline-flex;
+    min-height: 40px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 600;
+    border-radius: 8px;
+}
+
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+    border: 1px solid #dfe7f1;
+    border-radius: 7px;
+}
+
+.page-item.active .page-link { background-color: #0866e8; border-color: #0866e8; }
+.page-link { color: #0866e8; }
+
+/* =========================================
+   Responsive
+   ========================================= */
+@media (max-width: 767.98px) {
+    .holiday-header { flex-direction: column; }
+    .holiday-header h1 { font-size: 24px; }
+    .holiday-header .btn { width: 100%; }
+    .holiday-table-card { padding: 16px; border-radius: 10px; }
+    .dataTables_wrapper .row { margin-right: 0; margin-left: 0; }
+}
