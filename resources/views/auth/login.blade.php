@@ -142,7 +142,10 @@
                         <label for="email">Email Address</label>
                         <div class="input-icon">
                             <i class="far fa-envelope" aria-hidden="true"></i>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email">
+                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="Enter your email">
+                            @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
 
@@ -153,7 +156,10 @@
                         </div>
                         <div class="input-icon">
                             <i class="fas fa-lock" aria-hidden="true"></i>
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password">
+                            <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Enter your password">
+                            @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
 

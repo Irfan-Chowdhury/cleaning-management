@@ -50,7 +50,10 @@
             <span>Account Settings</span>
         </a>
 
-        <a href="#" class="sidebar-link sidebar-link-logout">
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+            @csrf
+        </form>
+        <a href="#" class="sidebar-link sidebar-link-logout" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
             <span class="sidebar-link-icon"><i class="fas fa-sign-out-alt" aria-hidden="true"></i></span>
             <span>Logout</span>
         </a>
