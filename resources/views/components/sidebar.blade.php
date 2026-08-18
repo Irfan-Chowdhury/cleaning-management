@@ -20,7 +20,7 @@
             <span>Services</span>
         </a>
 
-        <a href="#" class="sidebar-link">
+        <a href="{{ route('customers.index') }}" class="sidebar-link {{ request()->routeIs('customers.index') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-users" aria-hidden="true"></i></span>
             <span>Customers</span>
         </a>
