@@ -25,22 +25,22 @@
             <span>Customers</span>
         </a>
 
-        <!-- Timesheets with collapse -->
-        <a href="#timesheets-submenu" data-toggle="collapse" aria-expanded="false" class="sidebar-link d-flex align-items-center justify-content-between">
+        <!-- Availability with collapse -->
+        <a href="#timesheets-submenu" data-toggle="collapse" aria-expanded="{{ request()->routeIs('weekly-schedule.index') ? 'true' : 'false' }}" class="sidebar-link d-flex align-items-center justify-content-between">
             <span class="d-flex align-items-center">
                 <span class="sidebar-link-icon"><i class="far fa-clock" aria-hidden="true"></i></span>
-                <span>Timesheets</span>
+                <span>Availability</span>
             </span>
             <i class="fas fa-chevron-down ml-auto" style="font-size: 10px;" aria-hidden="true"></i>
         </a>
-        <div class="collapse" id="timesheets-submenu" style="padding-left: 20px;">
-            <a href="#" class="sidebar-link" style="margin-left: 18px; min-height: 38px; padding: 6px 14px;">
+        <div class="collapse {{ request()->routeIs('weekly-schedule.index') ? 'show' : '' }}" id="timesheets-submenu" style="padding-left: 20px;">
+            <a href="{{ route('weekly-schedule.index') }}" class="sidebar-link {{ request()->routeIs('weekly-schedule.index') ? 'active' : '' }}" style="margin-left: 18px; min-height: 38px; padding: 6px 14px;">
                 <span class="sidebar-link-icon" style="width: 20px; flex: 0 0 20px;"><i class="fas fa-calendar-check" aria-hidden="true"></i></span>
-                <span>Working Shifts</span>
+                <span>Weekly Schedule</span>
             </a>
             <a href="#" class="sidebar-link" style="margin-left: 18px; min-height: 38px; padding: 6px 14px;">
                 <span class="sidebar-link-icon" style="width: 20px; flex: 0 0 20px;"><i class="fas fa-umbrella-beach" aria-hidden="true"></i></span>
-                <span>Manage Holiday</span>
+                <span>Holidays</span>
             </a>
         </div>
 
