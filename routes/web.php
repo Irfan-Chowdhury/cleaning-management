@@ -29,6 +29,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
 Route::get('/weekly-schedule', [WeeklyScheduleController::class, 'index'])->name('weekly-schedule.index');
+Route::get('/week/{day}', [WeeklyScheduleController::class, 'edit'])->name('weekly-schedule.edit');
 Route::prefix('booking-service')->group(function () {
     Route::get('/create', [BookingServiceController::class, 'create'])->name('booking-service.create');
     Route::get('/questionnaire/{service}', [BookingServiceController::class, 'questionnaire'])->name('booking-service.questionnaire');

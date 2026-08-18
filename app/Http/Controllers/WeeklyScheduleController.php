@@ -23,4 +23,38 @@ class WeeklyScheduleController extends Controller
 
         return view('pages.weekly-schedule.index', compact('schedule'));
     }
+
+    /**
+     * Show the edit form for a specific day's schedule.
+     */
+    public function edit(string $day)
+    {
+        $day = ucfirst(strtolower($day));
+
+        $validDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        if (!in_array($day, $validDays)) {
+            abort(404);
+        }
+
+        // Static slot data per day (UI prototype only)
+        $staticSlots = [
+            'Monday'    => ['07:00 AM', '09:00 AM', '02:00 PM'],
+            'Tuesday'   => ['08:00 AM', '10:00 AM', '03:00 PM'],
+            'Wednesday' => [],
+            'Thursday'  => ['07:00 AM', '11:00 AM', '01:00 PM'],
+            'Friday'    => ['08:00 AM', '10:00 AM', '04:00 PM'],
+            'Saturday'  => ['09:00 AM', '12:00 PM'],
+            'Sunday'    => [],
+        ];
+
+        $staticStatus = [
+            'Monday' => true, 'Tuesday' => true, 'Wednesday' => false,
+            'Thursday' => true, 'Friday' => true, 'Saturday' => true, 'Sunday' => false,
+        ];
+
+        $slots    = $staticSlots[$day] ?? [];
+        $isActive = $staticStatus[$day] ?? false;
+
+        return view('pages.weekly-schedule.edit', compact('day', 'slots', 'isActive'));
+    }
 }

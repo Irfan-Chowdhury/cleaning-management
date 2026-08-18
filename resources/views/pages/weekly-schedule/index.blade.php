@@ -42,7 +42,8 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="#" class="schedule-action-btn" title="Edit">
+                                    <a href="{{ route('weekly-schedule.edit', strtolower($row['day'])) }}"
+                                       class="schedule-action-btn" title="Edit {{ $row['day'] }}">
                                         <i class="fas fa-edit" aria-hidden="true"></i>
                                     </a>
                                 </td>

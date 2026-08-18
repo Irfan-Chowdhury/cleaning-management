@@ -102,3 +102,158 @@
         border-radius: 10px;
     }
 }
+
+/* =========================================
+   Weekly Schedule Edit Page
+   ========================================= */
+.schedule-form-card {
+    background: #ffffff;
+    border: 1px solid #e8edf5;
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 560px;
+}
+
+.schedule-form-card label {
+    color: #13213c;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.schedule-form-card .form-control {
+    height: 42px;
+    color: #17233c;
+    font-size: 14px;
+    border-color: #e1e7f0;
+    border-radius: 8px;
+    background: #f7f9fc;
+}
+
+.schedule-form-card .form-control[readonly] {
+    cursor: default;
+    opacity: 1;
+}
+
+.schedule-form-card .form-control:focus {
+    border-color: #0866e8;
+    box-shadow: 0 0 0 0.18rem rgba(8, 102, 232, 0.13);
+    background: #fff;
+}
+
+/* Slot rows */
+.slot-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.slot-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.slot-label {
+    flex: 0 0 58px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #13213c;
+    white-space: nowrap;
+}
+
+.slot-time-input {
+    flex: 1;
+    height: 40px;
+    padding: 0 12px;
+    font-size: 14px;
+    color: #17233c;
+    background: #fff;
+    border: 1px solid #e1e7f0;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.slot-time-input:focus {
+    border-color: #0866e8;
+    box-shadow: 0 0 0 0.18rem rgba(8, 102, 232, 0.13);
+}
+
+.slot-remove-btn {
+    display: inline-flex;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 7px;
+    border: 1px solid #e8edf5;
+    background: #fff;
+    color: #667085;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    font-size: 13px;
+}
+
+.slot-remove-btn:hover {
+    border-color: #dc3545;
+    color: #dc3545;
+    background: #fff5f5;
+}
+
+/* Add More button */
+.schedule-add-more-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #0866e8;
+    background: #eef5ff;
+    border: 1px solid #c7ddfc;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    text-decoration: none;
+}
+
+.schedule-add-more-btn:hover {
+    background: #ddeeff;
+    border-color: #0866e8;
+    color: #0866e8;
+    text-decoration: none;
+}
+
+/* Update button */
+.schedule-update-btn {
+    display: block;
+    width: 100%;
+    height: 44px;
+    margin-top: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    background: #0866e8;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.18s ease;
+}
+
+.schedule-update-btn:hover {
+    background: #006ce5;
+}
+
+@media (max-width: 575.98px) {
+    .schedule-form-card {
+        padding: 18px;
+    }
+    .slot-label {
+        flex: 0 0 48px;
+        font-size: 12px;
+    }
+}
