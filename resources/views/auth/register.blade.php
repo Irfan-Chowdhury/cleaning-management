@@ -143,23 +143,58 @@
             </div>
 
             <div class="auth-body">
-                <form method="POST" action="#">
+                <form method="POST" action="{{ route('register') }}">
                     @csrf
 
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="name">Full Name</label>
+                            <label for="first_name">First Name</label>
                             <div class="input-icon">
                                 <i class="far fa-user" aria-hidden="true"></i>
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter full name">
+                                <input type="text" class="form-control @error('first_name') is-invalid @enderror" id="first_name" name="first_name" value="{{ old('first_name') }}" placeholder="Enter first name">
+                                @error('first_name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
                         <div class="form-group col-md-6">
+                            <label for="last_name">Last Name</label>
+                            <div class="input-icon">
+                                <i class="far fa-user" aria-hidden="true"></i>
+                                <input type="text" class="form-control @error('last_name') is-invalid @enderror" id="last_name" name="last_name" value="{{ old('last_name') }}" placeholder="Enter last name">
+                                @error('last_name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
                             <label for="phone">Phone Number</label>
                             <div class="input-icon">
                                 <i class="fas fa-phone-alt" aria-hidden="true"></i>
-                                <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter phone number">
+                                <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone') }}" placeholder="Enter phone number">
+                                @error('phone')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="gender">Gender</label>
+                            <div class="input-icon">
+                                <i class="fas fa-venus-mars" aria-hidden="true"></i>
+                                <select class="form-control @error('gender') is-invalid @enderror" id="gender" name="gender">
+                                    <option value="">Select gender</option>
+                                    <option value="male" {{ old('gender') === 'male' ? 'selected' : '' }}>Male</option>
+                                    <option value="female" {{ old('gender') === 'female' ? 'selected' : '' }}>Female</option>
+                                    <option value="other" {{ old('gender') === 'other' ? 'selected' : '' }}>Other</option>
+                                </select>
+                                @error('gender')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                     </div>
@@ -168,7 +203,10 @@
                         <label for="email">Email Address</label>
                         <div class="input-icon">
                             <i class="far fa-envelope" aria-hidden="true"></i>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter email address">
+                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="Enter email address">
+                            @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
 
@@ -177,7 +215,10 @@
                             <label for="password">Password</label>
                             <div class="input-icon">
                                 <i class="fas fa-lock" aria-hidden="true"></i>
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Create password">
+                                <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Create password">
+                                @error('password')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
@@ -185,23 +226,29 @@
                             <label for="password_confirmation">Confirm Password</label>
                             <div class="input-icon">
                                 <i class="fas fa-shield-alt" aria-hidden="true"></i>
-                                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Confirm password">
+                                <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" id="password_confirmation" name="password_confirmation" placeholder="Confirm password">
+                                @error('password_confirmation')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                     </div>
 
                     <div class="custom-control custom-checkbox mb-4">
-                        <input type="checkbox" class="custom-control-input" id="terms" name="terms">
+                        <input type="checkbox" class="custom-control-input @error('terms') is-invalid @enderror" id="terms" name="terms" {{ old('terms') ? 'checked' : '' }}>
                         <label class="custom-control-label text-muted" for="terms">
                             I agree to the terms and privacy policy.
                         </label>
+                        @error('terms')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-block auth-btn">Create Account</button>
 
                     <p class="mt-4 mb-0 text-center text-muted">
                         Already have an account?
-                        <a href="#" class="auth-link">Login</a>
+                        <a href="{{ route('login') }}" class="auth-link">Login</a>
                     </p>
                 </form>
             </div>

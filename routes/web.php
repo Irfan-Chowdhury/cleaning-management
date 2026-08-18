@@ -5,10 +5,16 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookingServiceController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\Auth\RegisterController;
 
 Route::get('/', function () {
     // return view('welcome');
     return view('layouts.app');
+});
+
+Route::middleware('guest')->group(function () {
+    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register']);
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

@@ -2,7 +2,8 @@
 ## users
 
 - id
-- name
+- first_name
+- last_name
 - email
 - phone
 - gender
@@ -10,7 +11,7 @@
 - photo
 - password
 - created_by (user_id) nullable
-- referral_code unique (FIRSTNAME.id)
+- referral_code unique (it wil be strtoupper(first_name+id) ex: IRFAN25)
 
 
 ## services

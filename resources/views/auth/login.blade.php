@@ -168,7 +168,7 @@
 
                     <p class="mt-4 mb-0 text-center text-muted">
                         New to Dust2Glow?
-                        <a href="#" class="auth-link">Create an account</a>
+                        <a href="{{ route('register') }}" class="auth-link">Create an account</a>
                     </p>
                 </form>
             </div>
