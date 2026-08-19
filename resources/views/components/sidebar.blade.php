@@ -25,6 +25,11 @@
             <span>Customers</span>
         </a>
 
+        <a href="{{ route('wallets.index') }}" class="sidebar-link {{ request()->routeIs('wallets.*') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="fas fa-wallet" aria-hidden="true"></i></span>
+            <span>Wallets</span>
+        </a>
+
         <!-- Availability with collapse -->
         @php $availabilityOpen = request()->routeIs('weekly-schedule.index') || request()->routeIs('weekly-schedule.edit') || request()->routeIs('holidays.index'); @endphp
         <a href="#timesheets-submenu" data-toggle="collapse"

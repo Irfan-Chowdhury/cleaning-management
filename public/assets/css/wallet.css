@@ -1,0 +1,262 @@
+/* =========================================
+   Wallets Page
+========================================= */
+.wallets-page {
+    color: #17233c;
+}
+
+.wallets-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.wallets-header h1 {
+    margin: 0;
+    color: #13213c;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.wallets-header p {
+    margin: 6px 0 0;
+    color: #667085;
+    font-size: 14px;
+}
+
+/* =========================================
+   Wallets Table Card
+========================================= */
+.wallets-table-card {
+    background: #ffffff;
+    border: 1px solid #e8edf5;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(19, 33, 60, 0.035);
+    padding: 18px;
+}
+
+.wallets-table-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.wallets-table-card-header h2 {
+    margin: 0;
+    color: #13213c;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.wallets-table-card-header p {
+    margin: 5px 0 0;
+    color: #667085;
+    font-size: 13px;
+}
+
+.wallets-table {
+    margin-bottom: 0 !important;
+    color: #17233c;
+    font-size: 13px;
+}
+
+.wallets-table th {
+    color: #13213c;
+    font-weight: 700;
+    white-space: nowrap;
+    background: #f7f9fc;
+    border-color: #e8edf5 !important;
+}
+
+.wallets-table td {
+    vertical-align: middle;
+    border-color: #edf1f7 !important;
+}
+
+.wallets-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+/* =========================================
+   Balance Badges
+========================================= */
+.wallet-credit-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #15803d;
+    background: #dcfce7;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.wallet-debit-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #b91c1c;
+    background: #fee2e2;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.wallet-balance-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #1d4ed8;
+    background: #dbeafe;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.wallet-balance-badge.negative {
+    color: #b91c1c;
+    background: #fee2e2;
+}
+
+/* =========================================
+   Action Column
+========================================= */
+.wallet-action-column {
+    width: 70px;
+    text-align: center;
+}
+
+.wallet-actions {
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+}
+
+.wallet-action-btn {
+    display: inline-flex;
+    width: 34px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 7px;
+}
+
+/* =========================================
+   DataTables overrides
+========================================= */
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+    border: 1px solid #dfe7f1;
+    border-radius: 7px;
+}
+
+.page-item.active .page-link {
+    background-color: #0866e8;
+    border-color: #0866e8;
+}
+
+.page-link {
+    color: #0866e8;
+}
+
+/* =========================================
+   Wallet User Card (Horizontal)
+========================================= */
+.wallet-user-card {
+    background: #ffffff;
+    border: 1px solid #e8edf5;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(19, 33, 60, 0.035);
+    padding: 20px 24px;
+}
+
+.wallet-user-avatar {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border: 3px solid #e8edf5;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.wallet-user-details-grid {
+    gap: 16px 24px;
+}
+
+.user-detail-item {
+    min-width: 140px;
+}
+
+.user-details-rows .detail-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #667085;
+    font-weight: 600;
+}
+
+.user-details-rows .detail-value {
+    font-size: 14px;
+    color: #13213c;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+.user-info-table td {
+    border: none;
+    font-size: 13px;
+}
+
+.wallet-summary-table th {
+    background: #f7f9fc;
+    font-size: 13px;
+}
+
+.wallet-summary-table td {
+    vertical-align: middle;
+    font-size: 13px;
+}
+
+/* Footer summary styling */
+.wallets-table tfoot th {
+    background: #f7f9fc;
+    border-top: 2px solid #e8edf5 !important;
+    font-weight: 700;
+    color: #13213c;
+    font-size: 13px;
+}
+
+/* =========================================
+   Responsive
+========================================= */
+@media (max-width: 767.98px) {
+    .wallets-header {
+        flex-direction: column;
+    }
+
+    .wallets-header h1 {
+        font-size: 24px;
+    }
+
+    .wallets-table-card {
+        padding: 16px;
+        border-radius: 10px;
+    }
+
+    .wallet-user-card {
+        padding: 16px;
+    }
+
+    .dataTables_wrapper .row {
+        margin-right: 0;
+        margin-left: 0;
+    }
+}
+
+
+

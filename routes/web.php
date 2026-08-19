@@ -9,6 +9,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\WeeklyScheduleController;
 use App\Http\Controllers\HolidayController;
+use App\Http\Controllers\WalletController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\AuthController;
 
@@ -40,6 +41,9 @@ Route::prefix('booking-service')->group(function () {
     Route::get('/review-confirm', [BookingServiceController::class, 'reviewConfirm'])->name('booking-service.review-confirm');
 });
 Route::resource('services', ServiceController::class);
+
+Route::get('/wallets', [WalletController::class, 'index'])->name('wallets.index');
+Route::get('/wallets/{user}', [WalletController::class, 'show'])->name('wallets.show');
 
 
 Route::get('/clear-cache', function () {
