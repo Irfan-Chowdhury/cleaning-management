@@ -10,6 +10,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\WeeklyScheduleController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\WalletController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\AuthController;
 
@@ -44,6 +45,10 @@ Route::resource('services', ServiceController::class);
 
 Route::get('/wallets', [WalletController::class, 'index'])->name('wallets.index');
 Route::get('/wallets/{user}', [WalletController::class, 'show'])->name('wallets.show');
+Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
+Route::get('/bookings/{id}', [BookingController::class, 'show'])->name('bookings.show');
+Route::get('/bookings/{id}/edit', [BookingController::class, 'edit'])->name('bookings.edit');
+Route::put('/bookings/{id}', [BookingController::class, 'update'])->name('bookings.update');
 
 
 Route::get('/clear-cache', function () {

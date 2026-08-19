@@ -56,7 +56,7 @@
             </a>
         </div>
 
-        <a href="#" class="sidebar-link">
+        <a href="{{ route('bookings.index') }}" class="sidebar-link {{ request()->routeIs('bookings.*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="far fa-calendar-alt" aria-hidden="true"></i></span>
             <span>Bookings</span>
         </a>
