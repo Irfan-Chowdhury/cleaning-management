@@ -11,6 +11,8 @@ use App\Http\Controllers\WeeklyScheduleController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\ReferralController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\AuthController;
 
@@ -49,6 +51,9 @@ Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.ind
 Route::get('/bookings/{id}', [BookingController::class, 'show'])->name('bookings.show');
 Route::get('/bookings/{id}/edit', [BookingController::class, 'edit'])->name('bookings.edit');
 Route::put('/bookings/{id}', [BookingController::class, 'update'])->name('bookings.update');
+Route::get('/referrals', [ReferralController::class, 'index'])->name('referrals.index');
+Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
 
 
 Route::get('/clear-cache', function () {

@@ -61,7 +61,7 @@
             <span>Bookings</span>
         </a>
 
-        <a href="#" class="sidebar-link">
+        <a href="{{ route('referrals.index') }}" class="sidebar-link {{ request()->routeIs('referrals.*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-user-friends" aria-hidden="true"></i></span>
             <span>Referrals</span>
         </a>
@@ -81,7 +81,7 @@
             <span>Payments &amp; Invoices</span>
         </a>
 
-        <a href="#" class="sidebar-link">
+        <a href="{{ route('settings.index') }}" class="sidebar-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-cog" aria-hidden="true"></i></span>
             <span>Settings</span>
         </a>
