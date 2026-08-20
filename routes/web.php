@@ -55,6 +55,8 @@ Route::get('/referrals', [ReferralController::class, 'index'])->name('referrals.
 Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
 Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
 
+require __DIR__.'/customer.php';
+
 
 Route::get('/clear-cache', function () {
     Artisan::call('view:clear');

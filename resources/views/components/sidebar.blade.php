@@ -10,16 +10,18 @@
     </div>
 
     <nav class="sidebar-nav">
+        
+
+        @if(auth()->user()->role === 1)
         <a href="{{ url('/dashboard') }}" class="sidebar-link {{ request()->is('dashboard') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-home" aria-hidden="true"></i></span>
             <span>Dashboard</span>
         </a>
-
         <a href="{{ route('services.index') }}" class="sidebar-link {{ request()->is('services*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-broom" aria-hidden="true"></i></span>
-            <span>Services</span>
+            <span>Services </span>
         </a>
-
+       
         <a href="{{ route('customers.index') }}" class="sidebar-link {{ request()->routeIs('customers.index') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-users" aria-hidden="true"></i></span>
             <span>Customers</span>
@@ -65,27 +67,56 @@
             <span class="sidebar-link-icon"><i class="fas fa-user-friends" aria-hidden="true"></i></span>
             <span>Referrals</span>
         </a>
-
-        <a href="#" class="sidebar-link">
-            <span class="sidebar-link-icon"><i class="far fa-star" aria-hidden="true"></i></span>
-            <span>Credits &amp; Rewards</span>
-        </a>
-
-        <a href="#" class="sidebar-link">
+        
+        <!-- <a href="#" class="sidebar-link">
             <span class="sidebar-link-icon"><i class="fas fa-star" aria-hidden="true"></i></span>
             <span>Reviews</span>
-        </a>
+        </a> -->
 
+        <!--  
         <a href="#" class="sidebar-link">
             <span class="sidebar-link-icon"><i class="far fa-file-alt" aria-hidden="true"></i></span>
             <span>Payments &amp; Invoices</span>
         </a>
-
+        -->
         <a href="{{ route('settings.index') }}" class="sidebar-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-cog" aria-hidden="true"></i></span>
             <span>Settings</span>
         </a>
+        @endif
 
+        @if(auth()->user()->role === 2)
+        <a href="#" class="sidebar-link">
+            <span class="sidebar-link-icon"><i class="fas fa-th-large" aria-hidden="true"></i></span>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="#" class="sidebar-link">
+            <span class="sidebar-link-icon"><i class="fas fa-plus-square" aria-hidden="true"></i></span>
+            <span>Book a Service</span>
+        </a>
+
+        <a href="{{ route('customer.bookings.index') }}" class="sidebar-link {{ request()->routeIs('customer.bookings.*') || request()->is('my-bookings*') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="far fa-calendar-alt" aria-hidden="true"></i></span>
+            <span>My Bookings</span>
+        </a>
+
+        <a href="#" class="sidebar-link">
+            <span class="sidebar-link-icon"><i class="fas fa-wallet" aria-hidden="true"></i></span>
+            <span>Wallet</span>
+        </a>
+
+        <a href="#" class="sidebar-link">
+            <span class="sidebar-link-icon"><i class="fas fa-users" aria-hidden="true"></i></span>
+            <span>Referrals</span>
+        </a>
+
+        <a href="#" class="sidebar-link">
+            <span class="sidebar-link-icon"><i class="fas fa-cog" aria-hidden="true"></i></span>
+            <span>Profile</span>
+        </a>
+        @endif
+        
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
             @csrf
         </form>
