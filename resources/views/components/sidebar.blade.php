@@ -14,7 +14,7 @@
 
 
         @if(auth()->user()->role === 1)
-        <a href="{{ url('/dashboard') }}" class="sidebar-link {{ request()->is('dashboard') ? 'active' : '' }}">
+        <a href="{{ route('admin.dashboard') }}" class="sidebar-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-home" aria-hidden="true"></i></span>
             <span>Dashboard</span>
         </a>

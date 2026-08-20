@@ -15,6 +15,7 @@ use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 
 Route::get('/', function () {
     // return view('welcome');
@@ -32,6 +33,7 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/admin-dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
 Route::get('/weekly-schedule', [WeeklyScheduleController::class, 'index'])->name('weekly-schedule.index');
 Route::get('/week/{day}', [WeeklyScheduleController::class, 'edit'])->name('weekly-schedule.edit');
