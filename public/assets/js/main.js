@@ -81,6 +81,17 @@
         });
     }
 
+    function bindNotificationDropdown() {
+        $(document).on('click', '.notification-read-link', function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            var $dropdown = $(this).closest('.notification-dropdown');
+            $dropdown.find('.notification-item').removeClass('unread');
+            $dropdown.find('.notification-badge').text('0').hide();
+        });
+    }
+
     window.showSuccessToast = showSuccessToast;
 
     $(function () {
@@ -95,6 +106,7 @@
 
         $(window).on('resize', cleanDesktopState);
         bindDeleteConfirmation();
+        bindNotificationDropdown();
         cleanDesktopState();
         showSuccessToast();
     });
