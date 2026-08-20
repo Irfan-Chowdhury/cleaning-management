@@ -111,7 +111,7 @@
             <span>Referrals</span>
         </a>
 
-        <a href="#" class="sidebar-link">
+        <a href="{{ route('customer.profile.index') }}" class="sidebar-link {{ request()->routeIs('customer.profile.*') || request()->is('customer-profile*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-cog" aria-hidden="true"></i></span>
             <span>Profile</span>
         </a>
