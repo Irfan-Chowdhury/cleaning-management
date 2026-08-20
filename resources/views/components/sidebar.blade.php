@@ -101,7 +101,7 @@
             <span>My Bookings</span>
         </a>
 
-        <a href="#" class="sidebar-link">
+        <a href="{{ route('customer.wallet.index') }}" class="sidebar-link {{ request()->routeIs('customer.wallet.*') || request()->is('my-wallet*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-wallet" aria-hidden="true"></i></span>
             <span>Wallet</span>
         </a>
