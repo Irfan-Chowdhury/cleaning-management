@@ -12,7 +12,7 @@
     --light-border: #e8edf5;
     --danger: #dc3545;
     --sidebar-width: 248px;
-    --header-height: 98px;
+    --header-height: 76px;
 }
 
 * {
@@ -98,7 +98,7 @@ body.sidebar-open .sidebar-overlay {
 ========================================= */
 .sidebar-logo {
     display: flex;
-    min-height: 98px;
+    min-height: var(--header-height);
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
@@ -644,7 +644,7 @@ body.sidebar-open .sidebar-overlay {
     }
 
     .dashboard-header {
-        min-height: 88px;
+        min-height: 76px;
         padding: 0 20px;
     }
 
@@ -658,7 +658,7 @@ body.sidebar-open .sidebar-overlay {
     }
 
     .dashboard-content {
-        min-height: calc(100vh - 88px);
+        min-height: calc(100vh - 76px);
         padding: 22px 20px 28px;
     }
 }
@@ -672,8 +672,8 @@ body.sidebar-open .sidebar-overlay {
     }
 
     .dashboard-header {
-        min-height: 78px;
-        padding: 12px 16px;
+        min-height: 72px;
+        padding: 8px 16px;
     }
 
     .sidebar-toggle {
@@ -721,7 +721,7 @@ body.sidebar-open .sidebar-overlay {
     }
 
     .dashboard-content {
-        min-height: calc(100vh - 78px);
+        min-height: calc(100vh - 72px);
         padding: 20px 16px 24px;
     }
 }

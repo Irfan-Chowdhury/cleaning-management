@@ -1,7 +1,8 @@
 <aside class="dashboard-sidebar" aria-label="Dashboard navigation">
     <div class="sidebar-logo">
         <a href="#" class="sidebar-logo-link" aria-label="Cleaning Management">
-            <img src="https://placehold.co/340x96/ffffff/0866e8?text=Clean+Manage" alt="Cleaning Management logo">
+            {{-- <img src="https://placehold.co/340x96/0f766e/ffffff?text=Sparkle+Care" alt="Cleaning Management logo"> --}}
+            <img src="{{ asset('public/assets/images/company_logo/brand_logo.png') }}" alt="Cleaning Management logo">
         </a>
 
         <button type="button" class="sidebar-close" aria-label="Close sidebar">
@@ -10,7 +11,7 @@
     </div>
 
     <nav class="sidebar-nav">
-        
+
 
         @if(auth()->user()->role === 1)
         <a href="{{ url('/dashboard') }}" class="sidebar-link {{ request()->is('dashboard') ? 'active' : '' }}">
@@ -21,7 +22,7 @@
             <span class="sidebar-link-icon"><i class="fas fa-broom" aria-hidden="true"></i></span>
             <span>Services </span>
         </a>
-       
+
         <a href="{{ route('customers.index') }}" class="sidebar-link {{ request()->routeIs('customers.index') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-users" aria-hidden="true"></i></span>
             <span>Customers</span>
@@ -67,13 +68,13 @@
             <span class="sidebar-link-icon"><i class="fas fa-user-friends" aria-hidden="true"></i></span>
             <span>Referrals</span>
         </a>
-        
+
         <!-- <a href="#" class="sidebar-link">
             <span class="sidebar-link-icon"><i class="fas fa-star" aria-hidden="true"></i></span>
             <span>Reviews</span>
         </a> -->
 
-        <!--  
+        <!--
         <a href="#" class="sidebar-link">
             <span class="sidebar-link-icon"><i class="far fa-file-alt" aria-hidden="true"></i></span>
             <span>Payments &amp; Invoices</span>
@@ -116,7 +117,7 @@
             <span>Profile</span>
         </a>
         @endif
-        
+
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
             @csrf
         </form>
