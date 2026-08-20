@@ -18,7 +18,7 @@ class SettingController extends Controller
             'cancellation_notice_hours' => 24,
         ];
 
-        return view('pages.settings.index', compact('settings'));
+        return view('pages.admin.settings.index', compact('settings'));
     }
 
     public function update(Request $request)

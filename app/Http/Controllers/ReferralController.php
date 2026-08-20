@@ -76,6 +76,6 @@ class ReferralController extends Controller
             ],
         ]);
 
-        return view('pages.referrals.index', compact('referrals'));
+        return view('pages.admin.referrals.index', compact('referrals'));
     }
 }

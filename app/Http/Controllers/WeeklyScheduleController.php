@@ -21,7 +21,7 @@ class WeeklyScheduleController extends Controller
             ['day' => 'Sunday', 'total_slots' => 0, 'status' => 'inactive'],
         ]);
 
-        return view('pages.weekly-schedule.index', compact('schedule'));
+        return view('pages.admin.weekly-schedule.index', compact('schedule'));
     }
 
     /**
@@ -55,6 +55,6 @@ class WeeklyScheduleController extends Controller
         $slots    = $staticSlots[$day] ?? [];
         $isActive = $staticStatus[$day] ?? false;
 
-        return view('pages.weekly-schedule.edit', compact('day', 'slots', 'isActive'));
+        return view('pages.admin.weekly-schedule.edit', compact('day', 'slots', 'isActive'));
     }
 }

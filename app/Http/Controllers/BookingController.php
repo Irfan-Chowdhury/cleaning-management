@@ -77,7 +77,7 @@ class BookingController extends Controller
             ],
         ]);
 
-        return view('pages.bookings.index', compact('bookings'));
+        return view('pages.admin.bookings.index', compact('bookings'));
     }
 
     public function show(int $id)
@@ -97,7 +97,7 @@ class BookingController extends Controller
             'payment_status'   => 'paid',
         ];
 
-        return view('pages.bookings.show', compact('booking'));
+        return view('pages.admin.bookings.show', compact('booking'));
     }
 
     public function edit(int $id)
@@ -130,7 +130,7 @@ class BookingController extends Controller
             'payment_status' => 'paid',
         ];
 
-        return view('pages.bookings.edit', compact('booking', 'services'));
+        return view('pages.admin.bookings.edit', compact('booking', 'services'));
     }
 
     public function update(Request $request, int $id)

@@ -26,6 +26,6 @@ class HolidayController extends Controller
     public function index()
     {
         $holidays = collect($this->mockHolidays());
-        return view('pages.holidays.index', compact('holidays'));
+        return view('pages.admin.holidays.index', compact('holidays'));
     }
 }

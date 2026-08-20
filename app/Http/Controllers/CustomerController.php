@@ -12,7 +12,7 @@ class CustomerController extends Controller
     public function index()
     {
         $customers = $this->mockData();
-        return view('pages.customer.index', compact('customers'));
+        return view('pages.admin.customers.index', compact('customers'));
     }
 
     public function mockData()

@@ -11,19 +11,19 @@ class ServiceController extends Controller
     {
         $services = Service::latest()->get();
 
-        return view('pages.services.index', compact('services'));
+        return view('pages.admin.services.index', compact('services'));
     }
 
     public function create()
     {
-        return view('pages.services.create');
+        return view('pages.admin.services.create');
     }
 
     public function show(Service $service)
     {
         $service->load('serviceQuestions.questionOptions');
 
-        return view('pages.services.show', compact('service'));
+        return view('pages.admin.services.show', compact('service'));
     }
 
     public function store(Request $request)
@@ -35,7 +35,7 @@ class ServiceController extends Controller
 
     public function edit(Service $service)
     {
-        return view('pages.services.edit', compact('service'));
+        return view('pages.admin.services.edit', compact('service'));
     }
 
     public function update(Request $request, Service $service)

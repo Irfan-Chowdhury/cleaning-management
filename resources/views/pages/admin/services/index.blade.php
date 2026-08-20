@@ -95,7 +95,7 @@
                     </div>
 
                     <div class="modal-body">
-                        @include('pages.services._form', ['service' => null])
+                        @include('pages.admin.services._form', ['service' => null])
                     </div>
 
                     <div class="modal-footer service-modal-actions">

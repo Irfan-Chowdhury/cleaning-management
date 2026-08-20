@@ -29,7 +29,7 @@ class WalletController extends Controller
             (object)['id' => 6, 'name' => 'Frank Lee',     'email' => 'frank@example.com',   'total_credit' => 500.00,  'total_debit' => 80.00,   'remaining_balance' => 420.00],
         ]);
 
-        return view('pages.wallet.index', compact('wallets'));
+        return view('pages.admin.wallet.index', compact('wallets'));
     }
 
     public function show(int $id)
@@ -55,6 +55,6 @@ class WalletController extends Controller
             (object)['id' => 4, 'credit' => 0.00,   'debit' => 200.00, 'source' => 'Office Sanitation Service',  'created_at' => '2026-08-18 16:45:00'],
         ]);
 
-        return view('pages.wallet.show', compact('user', 'transactions'));
+        return view('pages.admin.wallet.show', compact('user', 'transactions'));
     }
 }

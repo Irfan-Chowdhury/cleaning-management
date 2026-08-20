@@ -81,8 +81,8 @@
                                 <td>{{ $customer['referred_count'] }}</td>
                                 <td>
                                     <div class="customer-actions">
-                                        <a href="#" class="btn btn-sm btn-outline-success customer-action-btn" title="View">
-                                            <i class="fas fa-eye" aria-hidden="true"></i>
+                                        <a href="{{ route('booking-service.create') }}" class="btn btn-sm btn-outline-success customer-action-btn" title="Booking">
+                                            <i class="fas fa-calendar-check" aria-hidden="true"></i>
                                         </a>
                                         <button type="button" class="btn btn-sm btn-outline-primary customer-action-btn js-customer-edit" title="Edit"
                                                 data-toggle="modal"
