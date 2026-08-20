@@ -13,6 +13,14 @@
 	    </div>
 
     <div class="header-actions">
+        <button type="button"
+                class="fullscreen-btn"
+                id="fullscreenToggle"
+                title="Fullscreen"
+                aria-label="Fullscreen">
+            <i class="fas fa-expand" aria-hidden="true"></i>
+        </button>
+
         <div class="dropdown notification-dropdown">
             <button type="button"
                     class="notification-btn"

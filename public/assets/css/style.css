@@ -325,8 +325,9 @@ body.sidebar-open .sidebar-overlay {
 }
 
 /* =========================================
-   Header Notification
+   Header Actions
 ========================================= */
+.fullscreen-btn,
 .notification-btn {
     position: relative;
     display: inline-flex;
@@ -338,17 +339,25 @@ body.sidebar-open .sidebar-overlay {
     background: var(--white);
     border: 1px solid #e7ebf1;
     border-radius: 50%;
+    cursor: pointer;
 }
 
+.fullscreen-btn:focus,
 .notification-btn:focus {
     color: var(--primary-blue);
     border-color: rgba(8, 102, 232, 0.35);
 }
 
+.fullscreen-btn:hover,
 .notification-btn:hover {
     color: var(--primary-blue);
     border-color: rgba(8, 102, 232, 0.28);
     background: #f8f9fa;
+}
+
+.fullscreen-btn i {
+    font-size: 15px;
+    line-height: 1;
 }
 
 .notification-badge {
@@ -699,6 +708,7 @@ body.sidebar-open .sidebar-overlay {
         font-size: 12px;
     }
 
+    .fullscreen-btn,
     .notification-btn {
         width: 40px;
         height: 40px;

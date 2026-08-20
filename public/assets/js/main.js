@@ -92,6 +92,82 @@
         });
     }
 
+    function getFullscreenElement() {
+        return document.fullscreenElement ||
+            document.webkitFullscreenElement ||
+            document.mozFullScreenElement ||
+            document.msFullscreenElement;
+    }
+
+    function requestPageFullscreen() {
+        var element = document.documentElement;
+
+        if (element.requestFullscreen) {
+            return element.requestFullscreen();
+        }
+
+        if (element.webkitRequestFullscreen) {
+            return element.webkitRequestFullscreen();
+        }
+
+        if (element.mozRequestFullScreen) {
+            return element.mozRequestFullScreen();
+        }
+
+        if (element.msRequestFullscreen) {
+            return element.msRequestFullscreen();
+        }
+    }
+
+    function exitPageFullscreen() {
+        if (document.exitFullscreen) {
+            return document.exitFullscreen();
+        }
+
+        if (document.webkitExitFullscreen) {
+            return document.webkitExitFullscreen();
+        }
+
+        if (document.mozCancelFullScreen) {
+            return document.mozCancelFullScreen();
+        }
+
+        if (document.msExitFullscreen) {
+            return document.msExitFullscreen();
+        }
+    }
+
+    function updateFullscreenButton() {
+        var isFullscreen = !!getFullscreenElement();
+        var $button = $('#fullscreenToggle');
+
+        if (!$button.length) {
+            return;
+        }
+
+        $button
+            .attr('title', isFullscreen ? 'Exit Fullscreen' : 'Fullscreen')
+            .attr('aria-label', isFullscreen ? 'Exit Fullscreen' : 'Fullscreen');
+
+        $button.find('i')
+            .toggleClass('fa-expand', !isFullscreen)
+            .toggleClass('fa-compress', isFullscreen);
+    }
+
+    function bindFullscreenToggle() {
+        $(document).on('click', '#fullscreenToggle', function () {
+            if (getFullscreenElement()) {
+                exitPageFullscreen();
+                return;
+            }
+
+            requestPageFullscreen();
+        });
+
+        $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', updateFullscreenButton);
+        updateFullscreenButton();
+    }
+
     window.showSuccessToast = showSuccessToast;
 
     $(function () {
@@ -107,6 +183,7 @@
         $(window).on('resize', cleanDesktopState);
         bindDeleteConfirmation();
         bindNotificationDropdown();
+        bindFullscreenToggle();
         cleanDesktopState();
         showSuccessToast();
     });
