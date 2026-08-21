@@ -18,8 +18,13 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 
 Route::get('/', function () {
-    // return view('welcome');
-    return view('layouts.app');
+    if (! Auth::check()) {
+        return redirect()->route('login');
+    }
+
+    return Auth::user()->role === 1
+        ? redirect()->route('admin.dashboard')
+        : redirect()->route('dashboard');
 });
 
 Route::middleware('guest')->group(function () {
@@ -32,30 +37,32 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-Route::get('/admin-dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
-Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
-Route::get('/weekly-schedule', [WeeklyScheduleController::class, 'index'])->name('weekly-schedule.index');
-Route::get('/week/{day}', [WeeklyScheduleController::class, 'edit'])->name('weekly-schedule.edit');
-Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays.index');
-Route::prefix('booking-service')->group(function () {
-    Route::get('/create', [BookingServiceController::class, 'create'])->name('booking-service.create');
-    Route::get('/questionnaire/{service}', [BookingServiceController::class, 'questionnaire'])->name('booking-service.questionnaire');
-    Route::get('/date-time', [BookingServiceController::class, 'dateTime'])->name('booking-service.date-time');
-    Route::get('/your-details', [BookingServiceController::class, 'yourDetails'])->name('booking-service.your-details');
-    Route::get('/review-confirm', [BookingServiceController::class, 'reviewConfirm'])->name('booking-service.review-confirm');
-});
-Route::resource('services', ServiceController::class);
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/admin-dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
+    Route::get('/weekly-schedule', [WeeklyScheduleController::class, 'index'])->name('weekly-schedule.index');
+    Route::get('/week/{day}', [WeeklyScheduleController::class, 'edit'])->name('weekly-schedule.edit');
+    Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays.index');
+    Route::prefix('booking-service')->group(function () {
+        Route::get('/create', [BookingServiceController::class, 'create'])->name('booking-service.create');
+        Route::get('/questionnaire/{service}', [BookingServiceController::class, 'questionnaire'])->name('booking-service.questionnaire');
+        Route::get('/date-time', [BookingServiceController::class, 'dateTime'])->name('booking-service.date-time');
+        Route::get('/your-details', [BookingServiceController::class, 'yourDetails'])->name('booking-service.your-details');
+        Route::get('/review-confirm', [BookingServiceController::class, 'reviewConfirm'])->name('booking-service.review-confirm');
+    });
+    Route::resource('services', ServiceController::class);
 
-Route::get('/wallets', [WalletController::class, 'index'])->name('wallets.index');
-Route::get('/wallets/{user}', [WalletController::class, 'show'])->name('wallets.show');
-Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
-Route::get('/bookings/{id}', [BookingController::class, 'show'])->name('bookings.show');
-Route::get('/bookings/{id}/edit', [BookingController::class, 'edit'])->name('bookings.edit');
-Route::put('/bookings/{id}', [BookingController::class, 'update'])->name('bookings.update');
-Route::get('/referrals', [ReferralController::class, 'index'])->name('referrals.index');
-Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
-Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+    Route::get('/wallets', [WalletController::class, 'index'])->name('wallets.index');
+    Route::get('/wallets/{user}', [WalletController::class, 'show'])->name('wallets.show');
+    Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
+    Route::get('/bookings/{id}', [BookingController::class, 'show'])->name('bookings.show');
+    Route::get('/bookings/{id}/edit', [BookingController::class, 'edit'])->name('bookings.edit');
+    Route::put('/bookings/{id}', [BookingController::class, 'update'])->name('bookings.update');
+    Route::get('/referrals', [ReferralController::class, 'index'])->name('referrals.index');
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+});
 
 require __DIR__.'/customer.php';
 

@@ -152,7 +152,6 @@
                     <div class="form-group">
                         <div class="d-flex align-items-center justify-content-between">
                             <label for="password">Password</label>
-                            <a href="#" class="auth-link small">Forgot password?</a>
                         </div>
                         <div class="input-icon">
                             <i class="fas fa-lock" aria-hidden="true"></i>
@@ -167,6 +166,9 @@
                         <div class="custom-control custom-checkbox">
                             <input type="checkbox" class="custom-control-input" id="remember" name="remember">
                             <label class="custom-control-label text-muted" for="remember">Remember me</label>
+                        </div>
+                        <div>
+                            <a href="#" class="auth-link small">Forgot password?</a>
                         </div>
                     </div>
 

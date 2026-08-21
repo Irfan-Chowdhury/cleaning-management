@@ -90,10 +90,10 @@ Admin-only management features such as customer management, services management,
 │ My Referral Program                   │ Quick Actions                        │
 │                                       │                                      │
 │ Referral Code                         │ [ Book a Service ]                   │
-│ IRFAN.25                              │ [ View My Bookings ]                 │
+│ IRFAN25                               │ [ View My Bookings ]                 │
 │                                       │ [ View Wallet ]                      │
 │ Referral Link                         │ [ Invite a Friend ]                  │
-│ domain.com/register?ref=IRFAN.25      │                                      │
+│ domain.com/register?ref=IRFAN25      │                                      │
 │                                       │                                      │
 │ [ Copy Code ] [ Copy Link ]           │                                      │
 ├───────────────────────────────────────┴──────────────────────────────────────┤
@@ -342,7 +342,7 @@ Available dates and slots should respect:
 │ My Bookings                                                                  │
 ├──────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
-│ Search [________________]   Status [ All ▼ ]   Date [________]   [ Filter ] │
+│ Status [ All ▼ ]   Date [________]   [ Filter ] │ Search [________________] 
 │                                                                              │
 ├──────────────────────────────────────────────────────────────────────────────┤
 │ # │ Booking ID │ Service │ Date │ Time │ Amount │ Status │ Payment │ Action │
@@ -408,20 +408,25 @@ The customer should only see their own wallet activity.
 ├──────────────────────────────────────────────────────────────────────────┤
 │                                                                          │
 │ ┌────────────────────────────┐                                           │
-│ │ Available Balance          │                                           │
 │ │                            │                                           │
-│ │ ৳ 500.00                   │                                           │
-│ └────────────────────────────┘                                           │
+│ │ Total Credit    $ 1700.00  │
+│ │                            │                                                             
+│ │ Total Debit     $ 500.00   │                                           │     
+│ │                            │
+│ │ Available Balance  $1200.00│                                           │               
+│ │                            │
+│ │                            │
+│ └────────────────────────────┘
 │                                                                          │
 ├──────────────────────────────────────────────────────────────────────────┤
 │ Wallet Transactions                                                      │
 │                                                                          │
-│ Search [____________]   Type [All ▼]   Source [All ▼]   [Filter]        │
+│Type [All ▼]   Source [All ▼]   [Filter]     Search [____________]        │
 │                                                                          │
 ├──────────────────────────────────────────────────────────────────────────┤
-│ Date │ Type │ Source │ Description │ Booking │ Credit │ Debit │ Balance │
+│ Date │ Type │ Source │ Description │ Booking ID │ Credit │ Debit │ 
 ├──────────────────────────────────────────────────────────────────────────┤
-│ ...  │ ...  │ ...    │ ...         │ ...     │ ...    │ ...   │ ...     │
+│ ...  │ ...  │ ...    │ ...         │ ...     │ ...    │ ...   │ 
 └──────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -453,8 +458,8 @@ Customers should not be able to directly create/edit wallet transactions.
 │ [ domain.com/register?ref=IRFAN.25      ] [ Copy ] [ Share ]            │
 │                                                                          │
 ├──────────────────┬───────────────────┬──────────────────┬─────────────────┤
-│ Total Referrals  │ Pending Referrals │ Rewarded        │ Total Rewards   │
-│ 8                │ 2                 │ 5               │ ৳ 500           │
+│ Total Referrals  │ Pending Referrals │ Total Rewards   │
+│ 8                │ 2                 │ $ 500           │
 ├──────────────────┴───────────────────┴──────────────────┴─────────────────┤
 │                                                                          │
 │ Referral History                                                         │

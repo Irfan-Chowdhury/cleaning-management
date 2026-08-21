@@ -37,13 +37,17 @@
 
 
 
-## office_shifts
+## weekly_schedule
 - id
-- day_of_week
+- day_of_week (Monday to Saterday fixed for 7 days every week)
 - is_active boolean [0=inactive, 1=active]
-- opening_time
-- closing_time
-- slot_duration
+<!-- - opening_time -->
+<!-- - closing_time -->
+<!-- - slot_duration -->
+
+## slots
+- id
+- working_shift_id 
 
 ## holidays
 - id
@@ -57,8 +61,8 @@
 - user_id
 - booking_id nullable
 - type [credit, debit]
-- source [welcome_bonus, referral_bonus, review_bonus, admin_adjustment, booking_usage]
 - amount
+- source [welcome_bonus, referral_bonus, review_bonus, admin_adjustment, booking_usage]
 - description
 <!-- - reference_id nullable -->
 
