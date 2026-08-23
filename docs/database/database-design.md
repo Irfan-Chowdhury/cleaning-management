@@ -65,6 +65,23 @@ Constraints:
 
 - `service_question_id` cascades on delete.
 
+### `settings`
+
+Stores company and system settings used by the admin settings page and sidebar branding.
+
+Important columns:
+
+- `id`
+- `company_name`
+- `company_logo`, nullable
+- `welcome_credit`, nullable decimal
+- `referral_reward`, nullable decimal
+- `google_review_reward`, nullable decimal
+- `maximum_advance_booking_days`, nullable integer
+- `cancellation_notice_hours`, nullable integer
+- `created_at`
+- `updated_at`
+
 ### Laravel Framework Tables
 
 The project includes standard Laravel tables for:
@@ -103,7 +120,6 @@ QuestionOption
 - `holidays`
 - `referral_codes`
 - `payments`
-- `settings`
 
 The SRS also implies future booking, customer/admin role, referral, review, cleaner assignment, invoice, and notification data structures. These are not currently implemented in migrations.
 
@@ -112,4 +128,4 @@ The SRS also implies future booking, customer/admin role, referral, review, clea
 - The `users` table does not yet include `phone`, `gender`, `role`, `photo`, or `status`, although planning notes mention some of these fields.
 - The `services` migration does not include price or duration, although the model fillable list includes `base_price` and `duration_minutes`.
 - There is no `bookings` table yet.
-- There are no implemented payment, referral, wallet, availability, review, or settings migrations yet.
+- There are no implemented payment, referral, wallet, availability, or review migrations yet.

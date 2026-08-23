@@ -36,6 +36,10 @@ Only the service selection questionnaire is currently backed by database data. L
 
 Laravel Fortify and Sanctum are installed. The `users`, `password_reset_tokens`, `sessions`, two-factor authentication columns, passkeys, and personal access token tables exist. Application-specific role and customer/admin authorization rules are not yet implemented in the current code.
 
+### Settings Management
+
+The admin settings page stores company branding, reward amounts, and booking rule values in the `settings` table. Updates are submitted with jQuery and return JSON so the page can display SweetAlert2 feedback without a full reload. The sidebar reads the latest settings row through a view composer and falls back to the default logo when no uploaded logo exists.
+
 ## Current Route Surface
 
 - `/`
@@ -47,6 +51,7 @@ Laravel Fortify and Sanctum are installed. The `users`, `password_reset_tokens`,
 - `/booking-service/review-confirm`
 - `/services`
 - `/services/{service}` and other resource routes
+- `/settings`
 - `/api/user`, protected by `auth:sanctum`
 
 ## Operational Routes
@@ -61,4 +66,4 @@ These are useful during development but should be restricted or removed before p
 
 ## Planned Architecture From SRS
 
-The SRS describes a broader system with customer/admin roles, bookings, wallet credits, referrals, reviews, payments, notifications, availability, reports, and settings. Those modules are not yet fully represented in the current migrations and controllers.
+The SRS describes a broader system with customer/admin roles, bookings, wallet credits, referrals, reviews, payments, notifications, availability, reports, and settings. Settings now has a basic persistence and admin update flow, while several other modules are not yet fully represented in the current migrations and controllers.

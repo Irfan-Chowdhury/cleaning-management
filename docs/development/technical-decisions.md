@@ -26,7 +26,11 @@ The service management UI uses one Bootstrap modal for both create and edit oper
 
 ## Database Seeders for Initial Catalog Data
 
-`ServiceSeeder` and `ServiceQuestionSeeder` currently create service records, questionnaire questions, and options. This is useful while no admin UI exists for managing questionnaire structure.
+`ServiceSeeder` and `ServiceQuestionSeeder` currently create service records, questionnaire questions, and options. `SettingSeeder` creates demo company settings and reward values. This is useful while no complete admin UI exists for all seed-managed data.
+
+## Settings Business Logic Service
+
+Settings updates use `SettingService` instead of keeping all update behavior in `SettingController`. The service owns the latest-row update behavior and logo upload handling, while `SettingRequest` owns validation and the controller returns the AJAX JSON response.
 
 ## Fortify and Sanctum Foundation
 
