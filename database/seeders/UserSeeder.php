@@ -19,6 +19,7 @@ class UserSeeder extends Seeder
             'phone' => '+8801700000001',
             'gender' => 'male',
             'role' => 1,
+            'is_active' => true,
             'password' => Hash::make('admin'),
         ]);
 
@@ -29,6 +30,7 @@ class UserSeeder extends Seeder
             'phone' => '+8801700000002',
             'gender' => 'male',
             'role' => 2,
+            'is_active' => true,
             'password' => Hash::make('customer'),
             'created_by' => $admin->id,
         ]);

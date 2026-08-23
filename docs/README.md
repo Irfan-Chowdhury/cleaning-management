@@ -15,6 +15,7 @@ This documentation describes the current implementation of the Cleaning Manageme
 
 - [Service Catalog Management](modules/service-catalog.md)
 - [Booking Service Flow](modules/booking-service.md)
+- [Customer Management](modules/customer-management.md)
 - [Settings Management](modules/settings.md)
 
 ## Reference Documents
@@ -38,7 +39,6 @@ The following details should be confirmed before documenting later modules:
 - Payment provider and checkout behavior.
 - Availability rules, office shifts, holidays, and time-slot generation.
 - Wallet, referral, review reward, and notification business rules.
-
 
 
 

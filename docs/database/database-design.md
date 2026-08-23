@@ -11,9 +11,17 @@ Stores application users for Laravel authentication.
 Important columns:
 
 - `id`
-- `name`
+- `first_name`
+- `last_name`, nullable
 - `email`, unique
+- `phone`, nullable
+- `gender`, nullable
+- `role`, default `2`
+- `photo`, nullable
+- `is_active`, default `true`
 - `email_verified_at`
+- `created_by`, nullable foreign key to `users.id`
+- `referral_code`, nullable unique
 - `password`
 - `remember_token`
 - `created_at`
@@ -125,7 +133,7 @@ The SRS also implies future booking, customer/admin role, referral, review, clea
 
 ## Known Schema Gaps
 
-- The `users` table does not yet include `phone`, `gender`, `role`, `photo`, or `status`, although planning notes mention some of these fields.
+- The `users` table stores both admin and customer accounts; there is no separate customer profile table yet.
 - The `services` migration does not include price or duration, although the model fillable list includes `base_price` and `duration_minutes`.
 - There is no `bookings` table yet.
 - There are no implemented payment, referral, wallet, availability, or review migrations yet.

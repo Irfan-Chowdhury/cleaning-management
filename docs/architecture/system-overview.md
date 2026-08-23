@@ -40,6 +40,10 @@ Laravel Fortify and Sanctum are installed. The `users`, `password_reset_tokens`,
 
 The admin settings page stores company branding, reward amounts, and booking rule values in the `settings` table. Updates are submitted with jQuery and return JSON so the page can display SweetAlert2 feedback without a full reload. The sidebar reads the latest settings row through a view composer and falls back to the default logo when no uploaded logo exists.
 
+### Customer Management
+
+The admin customer page manages `users` records with `role = 2`. The table uses Yajra DataTables for server-side row data, while create, update, and delete actions are submitted with jQuery AJAX and display SweetAlert2 feedback without reloading the page.
+
 ## Current Route Surface
 
 - `/`
@@ -49,6 +53,7 @@ The admin settings page stores company branding, reward amounts, and booking rul
 - `/booking-service/date-time`
 - `/booking-service/your-details`
 - `/booking-service/review-confirm`
+- `/customers`
 - `/services`
 - `/services/{service}` and other resource routes
 - `/settings`

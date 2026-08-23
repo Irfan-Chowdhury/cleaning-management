@@ -32,6 +32,10 @@ The service management UI uses one Bootstrap modal for both create and edit oper
 
 Settings updates use `SettingService` instead of keeping all update behavior in `SettingController`. The service owns the latest-row update behavior and logo upload handling, while `SettingRequest` owns validation and the controller returns the AJAX JSON response.
 
+## Customer AJAX CRUD and Server-Side Tables
+
+Customer management uses separate form request classes for create and update validation. `CustomerService` owns role scoping, customer creation, data normalization, referral code generation, update, and delete behavior. The customer list uses Yajra DataTables server-side JSON instead of rendering all rows directly in Blade.
+
 ## Fortify and Sanctum Foundation
 
 Laravel Fortify and Sanctum are installed, and related authentication tables exist. Role-based authorization and production-ready route protection still need to be added for admin/customer separation.

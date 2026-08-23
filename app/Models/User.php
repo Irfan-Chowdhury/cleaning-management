@@ -25,6 +25,7 @@ class User extends Authenticatable
         'gender',
         'role',
         'photo',
+        'is_active',
         'password',
         'created_by',
         'referral_code',
@@ -49,6 +50,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'is_active' => 'boolean',
             'password' => 'hashed',
         ];
     }
