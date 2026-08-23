@@ -41,13 +41,11 @@
 - id
 - day_of_week (Monday to Saterday fixed for 7 days every week)
 - is_active boolean [0=inactive, 1=active]
-<!-- - opening_time -->
-<!-- - closing_time -->
-<!-- - slot_duration -->
+
 
 ## slots
 - id
-- working_shift_id 
+- weekly_schedule_id 
 
 ## holidays
 - id
@@ -64,14 +62,12 @@
 - amount
 - source [welcome_bonus, referral_bonus, review_bonus, admin_adjustment, booking_usage]
 - description
-<!-- - reference_id nullable -->
 
 
 ## referrals
 - id
 - referrer_user_id : 25     ← John
 - referred_user_id : 46     ← Mary
-<!-- - referral_code nullable -->
 - booking_id nullable
 - status [registered,pending,approved,rewarded,rejected]
 - reward_amount decimal
@@ -85,18 +81,15 @@
 - amount
 - payment_method
 - payment_status
-<!-- - transaction_reference nullable -->
 - created_at
 
 
 ## settings
-- company_name
-- company_logo
-- welcome_credit  int               
-- referral_reward  int               
-- google_review_reward  int         
-- referral_program_enabled  boolean      
-- minimum_booking_notice_hours  int
+- company_name string
+- company_logo string
+- welcome_credit  decimal               
+- referral_reward  decimal               
+- google_review_reward  decimal         
 - maximum_advance_booking_days  int
 - cancellation_notice_hours   int
 

@@ -2,7 +2,7 @@
     <div class="sidebar-logo">
         <a href="#" class="sidebar-logo-link" aria-label="Cleaning Management">
             {{-- <img src="https://placehold.co/340x96/0f766e/ffffff?text=Sparkle+Care" alt="Cleaning Management logo"> --}}
-            <img src="{{ asset('public/assets/images/company_logo/brand_logo.png') }}" alt="Cleaning Management logo">
+            <img id="sidebar-company-logo" src="{{ $sidebarSettings?->company_logo_url ?? asset('public/assets/images/company_logo/brand_logo.png') }}" alt="Cleaning Management logo">
         </a>
 
         <button type="button" class="sidebar-close" aria-label="Close sidebar">
@@ -87,12 +87,12 @@
         @endif
 
         @if(auth()->user()->role === 2)
-        <a href="#" class="sidebar-link">
+        <a href="{{ route('dashboard') }}" class="sidebar-link">
             <span class="sidebar-link-icon"><i class="fas fa-th-large" aria-hidden="true"></i></span>
             <span>Dashboard</span>
         </a>
 
-        <a href="#" class="sidebar-link">
+        <a href="{{ route('booking-service.create') }}" class="sidebar-link">
             <span class="sidebar-link-icon"><i class="fas fa-plus-square" aria-hidden="true"></i></span>
             <span>Book a Service</span>
         </a>

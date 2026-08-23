@@ -1,0 +1,69 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\Setting;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+
+class SettingService
+{
+    public function latest(): ?Setting
+    {
+        return Setting::latest()->first();
+    }
+
+    public function update(array $data): Setting
+    {
+        $setting = $this->latest() ?? new Setting();
+
+        if (isset($data['company_logo']) && $data['company_logo'] instanceof UploadedFile) {
+            $data['company_logo'] = $this->uploadLogo($data['company_logo'], $setting->company_logo);
+        }
+
+        $setting->fill(Arr::only($data, [
+            'company_name',
+            'company_logo',
+            'welcome_credit',
+            'referral_reward',
+            'google_review_reward',
+            'maximum_advance_booking_days',
+            'cancellation_notice_hours',
+        ]));
+
+        $setting->save();
+
+        return $setting->refresh();
+    }
+
+    private function uploadLogo(UploadedFile $file, ?string $oldLogo): string
+    {
+        $destination = public_path('assets/images/company_logo');
+
+        if (! File::isDirectory($destination)) {
+            File::makeDirectory($destination, 0755, true);
+        }
+
+        $filename = 'company-logo-' . now()->format('YmdHis') . '-' . Str::random(8) . '.' . $file->getClientOriginalExtension();
+        $file->move($destination, $filename);
+
+        $this->deleteOldLogo($oldLogo);
+
+        return 'public/assets/images/company_logo/' . $filename;
+    }
+
+    private function deleteOldLogo(?string $oldLogo): void
+    {
+        if (empty($oldLogo) || $oldLogo === 'public/assets/images/company_logo/brand_logo.png' || filter_var($oldLogo, FILTER_VALIDATE_URL)) {
+            return;
+        }
+
+        $path = public_path(Str::after($oldLogo, 'public/'));
+
+        if (File::exists($path)) {
+            File::delete($path);
+        }
+    }
+}

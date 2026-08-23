@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Setting;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +22,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        View::composer('components.sidebar', function ($view) {
+            try {
+                $sidebarSettings = Setting::latest()->first();
+            } catch (QueryException) {
+                $sidebarSettings = null;
+            }
+
+            $view->with('sidebarSettings', $sidebarSettings);
+        });
     }
 }
