@@ -17,6 +17,7 @@ This documentation describes the current implementation of the Cleaning Manageme
 - [Booking Service Flow](modules/booking-service.md)
 - [Customer Management](modules/customer-management.md)
 - [Settings Management](modules/settings.md)
+- [Holiday Management](modules/holidays.md)
 
 ## Reference Documents
 

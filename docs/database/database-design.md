@@ -90,6 +90,21 @@ Important columns:
 - `created_at`
 - `updated_at`
 
+### `holidays`
+
+Stores public holidays and business closures managed by admins.
+
+Important columns:
+
+- `id`
+- `title`, varchar(255)
+- `description`, text, nullable
+- `start_date`, date
+- `end_date`, date
+- `is_active`, boolean, default `true`
+- `created_at`
+- `updated_at`
+
 ### Laravel Framework Tables
 
 The project includes standard Laravel tables for:
@@ -125,7 +140,6 @@ QuestionOption
 
 - `wallet_transactions`
 - `office_shifts`
-- `holidays`
 - `referral_codes`
 - `payments`
 

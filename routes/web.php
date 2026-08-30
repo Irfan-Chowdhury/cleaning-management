@@ -45,7 +45,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
     Route::get('/weekly-schedule', [WeeklyScheduleController::class, 'index'])->name('weekly-schedule.index');
     Route::get('/week/{day}', [WeeklyScheduleController::class, 'edit'])->name('weekly-schedule.edit');
-    Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays.index');
+    Route::get('/holidays',              [HolidayController::class, 'index'])->name('holidays.index');
+    Route::post('/holidays',             [HolidayController::class, 'store'])->name('holidays.store');
+    Route::put('/holidays/{holiday}',    [HolidayController::class, 'update'])->name('holidays.update');
+    Route::delete('/holidays/{holiday}', [HolidayController::class, 'destroy'])->name('holidays.destroy');
     Route::prefix('booking-service')->group(function () {
         Route::get('/create', [BookingServiceController::class, 'create'])->name('booking-service.create');
         Route::get('/questionnaire/{service}', [BookingServiceController::class, 'questionnaire'])->name('booking-service.questionnaire');

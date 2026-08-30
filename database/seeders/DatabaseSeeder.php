@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             ServiceSeeder::class,
             ServiceQuestionSeeder::class,
             SettingSeeder::class,
+            HolidaySeeder::class,
         ]);
     }
 }

@@ -49,9 +49,13 @@
 
 ## holidays
 - id
-- description nullable
-- start_date
-- end_date 
+- title varchar (255)
+- description text nullable
+- start_date date
+- end_date date 
+- is_active boolean default 1
+- created_at datetime default current_timestamp
+
 
 
 ## wallet_transactions

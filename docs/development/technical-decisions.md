@@ -36,6 +36,16 @@ Settings updates use `SettingService` instead of keeping all update behavior in 
 
 Customer management uses separate form request classes for create and update validation. `CustomerService` owns role scoping, customer creation, data normalization, referral code generation, update, and delete behavior. The customer list uses Yajra DataTables server-side JSON instead of rendering all rows directly in Blade.
 
+## Holiday AJAX CRUD and DataTables Truncation
+
+Holiday management follows the same AJAX CRUD pattern as Customer management but uses a dedicated `holidays` table and `App\Models\Holiday` model rather than sharing the `users` table.
+
+Two conventions introduced here:
+
+1. **Description truncation in DataTables** — Long text columns that would push action buttons off-screen are truncated server-side inside the controller's DataTables builder (max 80 characters). The truncated text is returned as safe HTML (`…` suffix) with a `title` tooltip containing the full text. The column is registered in `rawColumns` so DataTables renders it as HTML. This avoids client-side width calculations.
+
+2. **Default DESC ordering** — The DataTables query calls `->orderBy('id', 'desc')` so the newest record appears first. This is applied in the controller before handing the builder to Yajra, not via DataTables JavaScript `order`, so it also works as the server-side default when no explicit column sort is active.
+
 ## Fortify and Sanctum Foundation
 
 Laravel Fortify and Sanctum are installed, and related authentication tables exist. Role-based authorization and production-ready route protection still need to be added for admin/customer separation.

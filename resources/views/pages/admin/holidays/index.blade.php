@@ -28,7 +28,7 @@
         <div class="holiday-table-card-header">
             <div>
                 <h2>Holiday List</h2>
-                <p>{{ $holidays->count() }} records found</p>
+                <p><span id="holiday-record-count">0</span> records found</p>
             </div>
         </div>
 
@@ -40,56 +40,19 @@
                     <tr>
                         <th>#</th>
                         <th>Title</th>
+                        <th>Description</th>
                         <th>Start Date</th>
                         <th>End Date</th>
+                        <th>Status</th>
                         <th class="holiday-action-column">Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach ($holidays as $holiday)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td><strong>{{ $holiday['title'] }}</strong></td>
-                        <td>{{ \Carbon\Carbon::parse($holiday['start_date'])->format('d M Y') }}</td>
-                        <td>{{ \Carbon\Carbon::parse($holiday['end_date'])->format('d M Y') }}</td>
-                        <td>
-                            <div class="holiday-actions">
-                                {{-- Edit --}}
-                                <button type="button"
-                                        class="btn btn-sm btn-outline-primary holiday-action-btn js-holiday-edit"
-                                        title="Edit"
-                                        data-toggle="modal"
-                                        data-target="#holiday-form-modal"
-                                        data-id="{{ $holiday['id'] }}"
-                                        data-title="{{ $holiday['title'] }}"
-                                        data-start="{{ $holiday['start_date'] }}"
-                                        data-end="{{ $holiday['end_date'] }}">
-                                    <i class="fas fa-edit" aria-hidden="true"></i>
-                                </button>
-                                {{-- Delete --}}
-                                <button type="button"
-                                        class="btn btn-sm btn-outline-danger holiday-action-btn js-holiday-delete"
-                                        title="Delete"
-                                        data-id="{{ $holiday['id'] }}"
-                                        data-title="{{ $holiday['title'] }}">
-                                    <i class="fas fa-trash" aria-hidden="true"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
+                <tbody></tbody>
             </table>
         </div>
     </div>
 
 </div>{{-- /.holiday-page --}}
-
-{{-- Global delete form (UI prototype) --}}
-<form id="global-delete-form" method="POST" action="#" class="d-none">
-    @csrf
-    @method('DELETE')
-</form>
 
 {{-- =========================================================
      Holiday Add / Edit Modal
@@ -98,8 +61,9 @@
      role="dialog" aria-labelledby="holiday-modal-title" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content holiday-modal-content">
-            <form id="holiday-modal-form" method="POST" action="#">
+            <form id="holiday-modal-form" method="POST" action="{{ route('holidays.store') }}">
                 @csrf
+                <input type="hidden" name="_method" id="holiday-form-method" value="POST">
                 <input type="hidden" name="id" id="holiday-id">
 
                 <div class="modal-header">
@@ -112,23 +76,41 @@
                 <div class="modal-body">
                     {{-- Title --}}
                     <div class="form-group">
-                        <label for="holiday-title">Title</label>
+                        <label for="holiday-title">Title <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="holiday-title"
-                               name="title" placeholder="e.g. Christmas Day" required>
+                               name="title" placeholder="e.g. Eid-ul-Fitr">
+                    </div>
+
+                    {{-- Description --}}
+                    <div class="form-group">
+                        <label for="holiday-description">Description</label>
+                        <textarea class="form-control" id="holiday-description"
+                                  name="description" rows="3"
+                                  placeholder="Optional description about this holiday"></textarea>
                     </div>
 
                     {{-- Start Date --}}
                     <div class="form-group">
-                        <label for="holiday-start">Start Date</label>
+                        <label for="holiday-start">Start Date <span class="text-danger">*</span></label>
                         <input type="date" class="form-control" id="holiday-start"
-                               name="start_date" required>
+                               name="start_date">
                     </div>
 
                     {{-- End Date --}}
-                    <div class="form-group mb-0">
-                        <label for="holiday-end">End Date</label>
+                    <div class="form-group">
+                        <label for="holiday-end">End Date <span class="text-danger">*</span></label>
                         <input type="date" class="form-control" id="holiday-end"
-                               name="end_date" required>
+                               name="end_date">
+                    </div>
+
+                    {{-- Active --}}
+                    <div class="form-group mb-0">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input"
+                                   id="holiday-is-active" name="is_active" value="1" checked>
+                            <label class="custom-control-label" for="holiday-is-active"
+                                   style="font-weight:normal;cursor:pointer;">Active</label>
+                        </div>
                     </div>
                 </div>
 
@@ -156,102 +138,189 @@
     (function ($) {
         'use strict';
 
-        /* ── DataTable ── */
-        var $table = $('#holidays-table');
-        if ($table.length && $.fn.DataTable && !$.fn.DataTable.isDataTable($table)) {
-            $table.DataTable({
-                pageLength: 10,
-                lengthChange: true,
-                searching: true,
-                ordering: true,
-                responsive: true,
-                autoWidth: false,
-                columnDefs: [{ orderable: false, targets: -1 }],
-                language: { search: '', searchPlaceholder: 'Search holidays...' }
+        var holidaysIndexUrl = @json(route('holidays.index'));
+        var holidaysBaseUrl  = @json(url('/holidays'));
+        var csrfToken        = $('meta[name="csrf-token"]').attr('content');
+
+        /* ── Ajax setup ── */
+        $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': csrfToken } });
+
+        /* ── Helper: Toast / Alert ── */
+        function showToast(icon, title) {
+            if (typeof Swal === 'undefined') { alert(title); return; }
+            Swal.fire({
+                toast: true, position: 'top-end', icon: icon, title: title,
+                showConfirmButton: false, timer: 2500, timerProgressBar: true
             });
         }
 
-        /* ── Modal helpers ── */
+        /* ── DataTable ── */
+        var holidaysTable = $('#holidays-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: holidaysIndexUrl,
+            pageLength: 10,
+            lengthChange: true,
+            searching: true,
+            ordering: true,
+            responsive: true,
+            autoWidth: false,
+            columns: [
+                { data: 'DT_RowIndex',        name: 'id',                  searchable: false },
+                { data: 'title',              name: 'title' },
+                { data: 'description_short',  name: 'description',         orderable: false },
+                { data: 'start_date_formatted', name: 'start_date' },
+                { data: 'end_date_formatted',   name: 'end_date' },
+                { data: 'status_badge',       name: 'is_active',           searchable: false },
+                { data: 'action',             name: 'action',              searchable: false, orderable: false }
+            ],
+            language: { search: '', searchPlaceholder: 'Search holidays...' }
+        });
+
+        /* ── Reload table and update count ── */
+        function reloadTable() {
+            holidaysTable.ajax.reload(function (json) {
+                $('#holiday-record-count').text(json.recordsTotal || 0);
+            }, false);
+        }
+
+        /* ── Modal references ── */
         var $modal  = $('#holiday-form-modal');
         var $form   = $('#holiday-modal-form');
         var $submit = $('#holiday-modal-submit');
 
         function resetForm() {
             $form[0].reset();
+            $form.find('.is-invalid').removeClass('is-invalid');
+            $form.find('.holiday-field-error').remove();
             $('#holiday-id').val('');
+            $('#holiday-form-method').val('POST');
+            $('#holiday-is-active').prop('checked', true);
+            $form.attr('action', holidaysBaseUrl);
         }
 
-        /* Add Holiday */
+        /* ── Add Holiday ── */
         $('.js-holiday-add').on('click', function () {
             resetForm();
             $('#holiday-modal-title').text('Add Holiday');
             $submit.html('<i class="fas fa-save" aria-hidden="true"></i> Save Holiday');
         });
 
-        /* Edit Holiday – populate from data attributes */
+        /* ── Edit Holiday ── */
         $(document).on('click', '.js-holiday-edit', function () {
             var $btn = $(this);
             resetForm();
+
             $('#holiday-modal-title').text('Edit Holiday');
             $submit.html('<i class="fas fa-save" aria-hidden="true"></i> Update Holiday');
 
-            $('#holiday-id').val($btn.data('id'));
+            var id = $btn.data('id');
+            $('#holiday-id').val(id);
             $('#holiday-title').val($btn.data('title'));
+            $('#holiday-description').val($btn.data('description'));
             $('#holiday-start').val($btn.data('start'));
             $('#holiday-end').val($btn.data('end'));
+            $('#holiday-is-active').prop('checked', Number($btn.data('is_active')) === 1);
+
+            $('#holiday-form-method').val('PUT');
+            $form.attr('action', holidaysBaseUrl + '/' + id);
+
+            $modal.modal('show');
         });
 
-        /* Form submit simulation */
+        /* ── Form Submit (store / update via Ajax) ── */
         $form.on('submit', function (e) {
             e.preventDefault();
-            var action = $('#holiday-modal-title').text();
-            $modal.modal('hide');
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    toast: true, position: 'top-end', icon: 'success',
-                    title: action + ' saved (simulation)',
-                    showConfirmButton: false, timer: 2500, timerProgressBar: true
-                });
-            } else {
-                alert(action + ' saved (simulation).');
+
+            var isEdit    = $('#holiday-form-method').val() === 'PUT';
+            var formData  = new FormData(this);
+            // Ensure is_active sends 0 when unchecked
+            if (!$('#holiday-is-active').is(':checked')) {
+                formData.set('is_active', '0');
             }
+
+            $form.find('.is-invalid').removeClass('is-invalid');
+            $form.find('.holiday-field-error').remove();
+            $submit.prop('disabled', true)
+                   .html('<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Saving...');
+
+            $.ajax({
+                url: $form.attr('action'),
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    $modal.modal('hide');
+                    showToast('success', response.message || 'Holiday saved successfully!');
+                    reloadTable();
+                },
+                error: function (xhr) {
+                    if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
+                        $.each(xhr.responseJSON.errors, function (field, messages) {
+                            var $input = $('[name="' + field + '"]');
+                            $input.addClass('is-invalid');
+                            $input.closest('.form-group').append(
+                                '<span class="holiday-field-error text-danger small d-block mt-1">' + messages[0] + '</span>'
+                            );
+                        });
+                        Swal.fire({ icon: 'error', title: 'Validation failed', text: 'Please check the highlighted fields.' });
+                        return;
+                    }
+                    showToast('error', 'Holiday could not be saved.');
+                },
+                complete: function () {
+                    $submit.prop('disabled', false)
+                           .html('<i class="fas fa-save" aria-hidden="true"></i> ' + (isEdit ? 'Update Holiday' : 'Save Holiday'));
+                }
+            });
         });
 
-        /* Delete with SweetAlert2 confirmation */
+        /* ── Delete Holiday ── */
         $(document).on('click', '.js-holiday-delete', function () {
-            var name = $(this).data('title');
-            var $row = $(this).closest('tr');
+            var id   = $(this).data('id');
+            var name = $(this).data('title') || 'this holiday';
 
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    title: 'Delete Holiday?',
-                    html: 'Are you sure you want to delete <strong>' + name + '</strong>?<br><small class="text-muted">This action cannot be undone.</small>',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'Yes, delete it!',
-                    cancelButtonText: 'Cancel'
-                }).then(function (result) {
-                    if (result.isConfirmed) {
-                        /* Remove row from DataTable (UI prototype) */
-                        if ($.fn.DataTable.isDataTable($table)) {
-                            $table.DataTable().row($row).remove().draw();
-                        } else {
-                            $row.remove();
-                        }
-                        Swal.fire({
-                            toast: true, position: 'top-end', icon: 'success',
-                            title: name + ' deleted (simulation)',
-                            showConfirmButton: false, timer: 2000, timerProgressBar: true
-                        });
-                    }
-                });
-            } else {
-                if (confirm('Delete ' + name + '?')) {
-                    $row.remove();
-                }
+            if (typeof Swal === 'undefined') {
+                if (!confirm('Delete ' + name + '?')) { return; }
+                doDelete(id, name);
+                return;
             }
+
+            Swal.fire({
+                title: 'Delete Holiday?',
+                html: 'Are you sure you want to delete <strong>' + name + '</strong>?'
+                    + '<br><small class="text-muted">This action cannot be undone.</small>',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then(function (result) {
+                if (result.isConfirmed) { doDelete(id, name); }
+            });
+        });
+
+        function doDelete(id, name) {
+            $.ajax({
+                url: holidaysBaseUrl + '/' + id,
+                method: 'POST',
+                data: { _method: 'DELETE' },
+                success: function (response) {
+                    showToast('success', response.message || name + ' deleted successfully!');
+                    reloadTable();
+                },
+                error: function () {
+                    showToast('error', 'Holiday could not be deleted.');
+                }
+            });
+        }
+
+        /* ── Initial count load ── */
+        holidaysTable.on('draw', function () {
+            var info = holidaysTable.page.info();
+            $('#holiday-record-count').text(info.recordsTotal || 0);
         });
 
     })(jQuery);
