@@ -50,11 +50,6 @@ start_time
 end_time  (nullable)
 sort_order (nullable)
 
-
-## slots
-- id
-- weekly_schedule_id 
-
 ## holidays
 - id
 - title varchar (255)
@@ -97,14 +92,34 @@ sort_order (nullable)
 
 
 ## settings
-- company_name string
-- company_logo string
-- welcome_credit  decimal               
-- referral_reward  decimal               
-- google_review_reward  decimal         
-- maximum_advance_booking_days  int
-- cancellation_notice_hours   int
+id
 
+-- Company Information
+company_name
+company_logo
+phone
+email
+address
+timezone
+currency
+
+-- Booking Configuration
+minimum_booking_amount
+maximum_booking_amount
+maximum_advance_booking_days
+cancellation_notice_hours
+
+-- Customer & Reward Configuration
+welcome_credit
+welcome_credit_enabled
+referral_reward
+referral_reward_enabled
+google_review_reward
+google_review_enabled
+
+-- Promotion Configuration
+promotion_max_uses
+promotion_max_uses_per_customer
 
 
 
