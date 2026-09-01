@@ -1,0 +1,213 @@
+/* =========================================
+   Promotion Page
+   ========================================= */
+.promotion-page {
+    color: #17233c;
+}
+
+.promotion-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.promotion-header h1 {
+    margin: 0;
+    color: #13213c;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.promotion-header p {
+    margin: 6px 0 0;
+    color: #667085;
+    font-size: 14px;
+}
+
+.promotion-primary-btn,
+.promotion-primary-btn:hover,
+.promotion-page .btn-primary:hover,
+.promotion-page .btn-primary:focus {
+    color: #ffffff;
+    background-color: #0866e8;
+    border-color: #0866e8;
+}
+
+.promotion-primary-btn:hover,
+.promotion-page .btn-primary:hover,
+.promotion-page .btn-primary:focus {
+    background-color: #006ce5;
+    border-color: #006ce5;
+}
+
+.promotion-table-card {
+    background: #ffffff;
+    border: 1px solid #e8edf5;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(19, 33, 60, 0.035);
+    padding: 18px;
+}
+
+.promotion-table-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.promotion-table-card-header h2 {
+    margin: 0;
+    color: #13213c;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.promotion-table-card-header p {
+    margin: 5px 0 0;
+    color: #667085;
+    font-size: 13px;
+}
+
+.promotion-table {
+    margin-bottom: 0 !important;
+    color: #17233c;
+    font-size: 13px;
+}
+
+.promotion-table th {
+    color: #13213c;
+    font-weight: 700;
+    white-space: nowrap;
+    background: #f7f9fc;
+    border-color: #e8edf5 !important;
+}
+
+.promotion-table td {
+    vertical-align: middle;
+    border-color: #edf1f7 !important;
+}
+
+.promotion-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+.promotion-action-column {
+    width: 100px;
+}
+
+.promotion-actions {
+    display: flex;
+    gap: 7px;
+}
+
+.promotion-action-btn {
+    display: inline-flex;
+    width: 34px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 7px;
+}
+
+.promotion-modal-content {
+    border: 0;
+    border-radius: 12px;
+}
+
+.promotion-modal-content .modal-title {
+    color: #13213c;
+    font-weight: 700;
+}
+
+.promotion-modal-content .modal-body {
+    padding: 22px 24px 8px;
+}
+
+.promotion-modal-content label {
+    color: #13213c;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.promotion-modal-content .form-control {
+    min-height: 46px;
+    color: #17233c;
+    font-size: 14px;
+    border-color: #e1e7f0;
+    border-radius: 8px;
+}
+
+.promotion-modal-content .form-control:focus {
+    border-color: #0866e8;
+    box-shadow: 0 0 0 0.2rem rgba(8, 102, 232, 0.14);
+}
+
+.promotion-eligibility-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    background: #f8fafc;
+    border: 1px solid #e8edf5;
+    border-radius: 8px;
+}
+
+.promotion-eligibility-row .custom-control-label {
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.promotion-modal-actions .btn {
+    display: inline-flex;
+    min-height: 40px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 600;
+    border-radius: 8px;
+}
+
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+    border: 1px solid #dfe7f1;
+    border-radius: 7px;
+}
+
+.page-item.active .page-link {
+    background-color: #0866e8;
+    border-color: #0866e8;
+}
+
+.page-link {
+    color: #0866e8;
+}
+
+@media (max-width: 767.98px) {
+    .promotion-header {
+        flex-direction: column;
+    }
+
+    .promotion-header h1 {
+        font-size: 24px;
+    }
+
+    .promotion-header .btn {
+        width: 100%;
+    }
+
+    .promotion-table-card {
+        padding: 16px;
+        border-radius: 10px;
+    }
+
+    .dataTables_wrapper .row {
+        margin-right: 0;
+        margin-left: 0;
+    }
+}

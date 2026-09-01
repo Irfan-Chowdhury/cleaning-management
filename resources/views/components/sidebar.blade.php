@@ -69,6 +69,11 @@
             <span>Referrals</span>
         </a>
 
+        <a href="{{ route('promotions.index') }}" class="sidebar-link {{ request()->routeIs('promotions.*') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="fas fa-tags" aria-hidden="true"></i></span>
+            <span>Promotional Offers</span>
+        </a>
+
         <!-- <a href="#" class="sidebar-link">
             <span class="sidebar-link-icon"><i class="fas fa-star" aria-hidden="true"></i></span>
             <span>Reviews</span>

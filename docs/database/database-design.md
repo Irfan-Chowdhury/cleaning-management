@@ -148,6 +148,31 @@ Constraints:
 - `weekly_schedule_id` cascades on delete.
 - `weekly_schedule_id` and `start_time` are unique together.
 
+### `promotions`
+
+Stores promotional offers and discount campaigns managed by admins.
+
+Important columns:
+
+- `id`
+- `name`
+- `code`, unique
+- `description`, nullable text
+- `discount_type`, enum: `fixed`, `percentage`
+- `discount_value`, decimal
+- `status`, enum: `active`, `paused`, `expired`
+- `start_at`, datetime
+- `expires_at`, datetime
+- `new_customers_only`, boolean, default `false`
+- `existing_customers_only`, boolean, default `false`
+- `created_by`, nullable foreign key to `users.id`
+- `created_at`
+- `updated_at`
+
+Constraints:
+
+- `created_by` is set null when the creating user is deleted.
+
 ### Laravel Framework Tables
 
 The project includes standard Laravel tables for:

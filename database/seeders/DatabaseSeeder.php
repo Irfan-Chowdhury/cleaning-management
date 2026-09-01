@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             SettingSeeder::class,
             HolidaySeeder::class,
             WeeklyScheduleSeeder::class,
+            PromotionSeeder::class,
         ]);
     }
 }

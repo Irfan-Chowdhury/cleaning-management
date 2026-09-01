@@ -12,6 +12,7 @@ use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ReferralController;
+use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\AuthController;
@@ -70,6 +71,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/bookings/{id}/edit', [BookingController::class, 'edit'])->name('bookings.edit');
     Route::put('/bookings/{id}', [BookingController::class, 'update'])->name('bookings.update');
     Route::get('/referrals', [ReferralController::class, 'index'])->name('referrals.index');
+    Route::get('/promotions', [PromotionController::class, 'index'])->name('promotions.index');
+    Route::post('/promotions', [PromotionController::class, 'store'])->name('promotions.store');
+    Route::put('/promotions/{promotion}', [PromotionController::class, 'update'])->name('promotions.update');
+    Route::delete('/promotions/{promotion}', [PromotionController::class, 'destroy'])->name('promotions.destroy');
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
 });

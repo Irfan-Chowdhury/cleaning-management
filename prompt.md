@@ -77,3 +77,22 @@ Relationship:
 
 
 
+# Promotions
+
+### requirements: 
+* Make the migration file according to the Database Design
+* Create Seeder and input 5 dami data.
+* in PromotionController:
+* index function will show data list use YazraDatatable to fetch data in table.
+* pages.admin.promotion.index, the form have to add a description field for add and edit modal.modal will be large.
+* store function will store data. Have to use Validation using Form Request. For business logic separate the logic into a ServiceClass
+* update function will update data by following almost store()  
+* destroy function will delete data.
+* During save, update, delete no reload, Use jquery Ajax for submit the form and also call YazraDatatable reload function to update the table. 
+* for success or error aleart message use, sweetAlert for success and error message display. follow other previous feature's functionality. 
+* For table pagination, search, sorting, ordering use YazraDatatable's functionality.
+* Write Unite Testing for PEST format.
+* There will be Promotions or Promotional Offer name tab which is relavant in left sidebar.
+* after implementation, review the feature and codes properly.
+* You can follow the `Holiday` feature as reference for implmentation.
+

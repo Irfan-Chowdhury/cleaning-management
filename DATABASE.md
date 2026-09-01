@@ -123,6 +123,23 @@ promotion_max_uses_per_customer
 
 
 
+## promotions
+
+id                              BIGINT UNSIGNED
+name                            VARCHAR(255)
+code                            VARCHAR(50) UNIQUE
+description                     TEXT NULL
+discount_type                   ENUM('fixed', 'percentage')
+discount_value                  DECIMAL(10,2)
+status                          ENUM('active', 'paused', 'expired')
+start_at                        DATETIME
+expires_at                      DATETIME
+new_customers_only              BOOLEAN DEFAULT FALSE
+existing_customers_only         BOOLEAN DEFAULT FALSE
+created_by                      BIGINT UNSIGNED NULL
+created_at                      TIMESTAMP
+updated_at                      TIMESTAMP
+
 
 
 Your Referral Link
