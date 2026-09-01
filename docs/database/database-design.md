@@ -105,6 +105,37 @@ Important columns:
 - `created_at`
 - `updated_at`
 
+### `weekly_schedule`
+
+Stores fixed weekly availability days for admin schedule management.
+
+Important columns:
+
+- `id`
+- `day_of_week`, unique
+- `is_active`, boolean, default `true`
+- `created_at`
+- `updated_at`
+
+### `schedule_slots`
+
+Stores time slots for each weekly schedule day.
+
+Important columns:
+
+- `id`
+- `weekly_schedule_id`, foreign key to `weekly_schedule.id`
+- `start_time`
+- `end_time`, nullable
+- `sort_order`, nullable
+- `created_at`
+- `updated_at`
+
+Constraints:
+
+- `weekly_schedule_id` cascades on delete.
+- `weekly_schedule_id` and `start_time` are unique together.
+
 ### Laravel Framework Tables
 
 The project includes standard Laravel tables for:
@@ -132,6 +163,12 @@ ServiceQuestion
 
 QuestionOption
   belongs to ServiceQuestion
+
+WeeklySchedule
+  has many ScheduleSlot
+
+ScheduleSlot
+  belongs to WeeklySchedule
 ```
 
 ## Planned Tables From Project Notes
@@ -150,4 +187,4 @@ The SRS also implies future booking, customer/admin role, referral, review, clea
 - The `users` table stores both admin and customer accounts; there is no separate customer profile table yet.
 - The `services` migration does not include price or duration, although the model fillable list includes `base_price` and `duration_minutes`.
 - There is no `bookings` table yet.
-- There are no implemented payment, referral, wallet, availability, or review migrations yet.
+- There are no implemented payment, referral, wallet, or review migrations yet.

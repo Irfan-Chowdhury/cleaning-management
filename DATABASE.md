@@ -40,7 +40,15 @@
 ## weekly_schedule
 - id
 - day_of_week (Monday to Saterday fixed for 7 days every week)
-- is_active boolean [0=inactive, 1=active]
+- is_active boolean 
+
+
+## schedule_slots
+id
+weekly_schedule_id
+start_time 
+end_time  (nullable)
+sort_order (nullable)
 
 
 ## slots
