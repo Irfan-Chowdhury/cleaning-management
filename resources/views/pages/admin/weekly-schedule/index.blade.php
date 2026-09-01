@@ -21,7 +21,7 @@
             <div class="table-responsive">
                 <table class="table table-hover table-bordered schedule-table" style="width: 100%">
                     <thead>
-                        <tr>
+                        <tr class="text-center">
                             <th>Day</th>
                             <th>Total Slot</th>
                             <th>Status</th>
@@ -30,20 +30,21 @@
                     </thead>
                     <tbody>
                         @foreach ($schedule as $row)
-                            <tr>
-                                <td><strong>{{ $row['day'] }}</strong></td>
-                                <td>{{ $row['total_slots'] }}</td>
+                            <tr class="text-center">
+                                <td><strong>{{ $row->day_of_week }}</strong></td>
+                                <td>{{ $row->slots_count }}</td>
                                 <td>
                                     @php
-                                        $badgeClass = $row['status'] === 'active' ? 'badge-success' : 'badge-secondary';
+                                        $badgeClass = $row->is_active ? 'badge-success' : 'badge-secondary';
+                                        $status = $row->is_active ? 'active' : 'inactive';
                                     @endphp
                                     <span class="badge {{ $badgeClass }}" style="padding: 6px 8px; font-weight: 700; border-radius: 999px; min-width: 68px;">
-                                        {{ ucfirst($row['status']) }}
+                                        {{ ucfirst($status) }}
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="{{ route('weekly-schedule.edit', strtolower($row['day'])) }}"
-                                       class="schedule-action-btn" title="Edit {{ $row['day'] }}">
+                                    <a href="{{ route('weekly-schedule.edit', strtolower($row->day_of_week)) }}"
+                                       class="schedule-action-btn" title="Edit {{ $row->day_of_week }}">
                                         <i class="fas fa-edit" aria-hidden="true"></i>
                                     </a>
                                 </td>

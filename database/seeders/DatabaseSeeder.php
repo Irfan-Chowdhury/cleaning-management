@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             ServiceQuestionSeeder::class,
             SettingSeeder::class,
             HolidaySeeder::class,
+            WeeklyScheduleSeeder::class,
         ]);
     }
 }

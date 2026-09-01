@@ -9,21 +9,40 @@ class Setting extends Model
     protected $fillable = [
         'company_name',
         'company_logo',
-        'welcome_credit',
-        'referral_reward',
-        'google_review_reward',
+        'phone',
+        'email',
+        'address',
+        'timezone',
+        'currency',
+        'minimum_booking_amount',
+        'maximum_booking_amount',
         'maximum_advance_booking_days',
         'cancellation_notice_hours',
+        'welcome_credit',
+        'welcome_credit_enabled',
+        'referral_reward',
+        'referral_reward_enabled',
+        'google_review_reward',
+        'google_review_enabled',
+        'promotion_max_uses',
+        'promotion_max_uses_per_customer',
     ];
 
     protected function casts(): array
     {
         return [
-            'welcome_credit' => 'decimal:2',
-            'referral_reward' => 'decimal:2',
-            'google_review_reward' => 'decimal:2',
+            'minimum_booking_amount' => 'decimal:2',
+            'maximum_booking_amount' => 'decimal:2',
             'maximum_advance_booking_days' => 'integer',
             'cancellation_notice_hours' => 'integer',
+            'welcome_credit' => 'decimal:2',
+            'welcome_credit_enabled' => 'boolean',
+            'referral_reward' => 'decimal:2',
+            'referral_reward_enabled' => 'boolean',
+            'google_review_reward' => 'decimal:2',
+            'google_review_enabled' => 'boolean',
+            'promotion_max_uses' => 'integer',
+            'promotion_max_uses_per_customer' => 'integer',
         ];
     }
 

@@ -111,7 +111,9 @@
     border: 1px solid #e8edf5;
     border-radius: 12px;
     padding: 24px;
-    max-width: 560px;
+    width: 100%;
+    max-width: 860px;
+    margin: 0 auto;
 }
 
 .schedule-form-card label {
@@ -179,6 +181,15 @@
 .slot-time-input:focus {
     border-color: #0866e8;
     box-shadow: 0 0 0 0.18rem rgba(8, 102, 232, 0.13);
+}
+
+.slot-time-input.is-invalid {
+    border-color: #dc3545;
+}
+
+.slot-row .schedule-field-error {
+    flex-basis: 100%;
+    margin-left: 68px;
 }
 
 .slot-remove-btn {
@@ -252,8 +263,17 @@
     .schedule-form-card {
         padding: 18px;
     }
+    .slot-row {
+        flex-wrap: wrap;
+    }
     .slot-label {
         flex: 0 0 48px;
         font-size: 12px;
+    }
+    .slot-time-input {
+        min-width: calc(50% - 56px);
+    }
+    .slot-row .schedule-field-error {
+        margin-left: 0;
     }
 }

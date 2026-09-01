@@ -3,78 +3,7 @@
 @section('title', 'Company Settings')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('public/assets/css/customer.css') }}">
-    <style>
-        .settings-card {
-            background: #ffffff;
-            border: 1px solid #e8edf5;
-            border-radius: 12px;
-            box-shadow: 0 6px 18px rgba(19, 33, 60, 0.035);
-            padding: 28px 32px;
-            width: 100%;
-        }
-
-        .settings-card .card-title {
-            color: #13213c;
-            font-size: 20px;
-            font-weight: 700;
-        }
-
-        .settings-card label {
-            color: #13213c;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .settings-input-icon {
-            position: relative;
-        }
-
-        .settings-input-icon i {
-            position: absolute;
-            top: 50%;
-            left: 15px;
-            transform: translateY(-50%);
-            color: #98a2b3;
-            font-size: 15px;
-            z-index: 4;
-        }
-
-        .settings-input-icon .form-control {
-            padding-left: 44px;
-            min-height: 48px;
-            border-radius: 8px;
-            border-color: #e1e7f0;
-            font-size: 14px;
-            color: #17233c;
-        }
-
-        .settings-input-icon .form-control:focus {
-            border-color: #0866e8;
-            box-shadow: 0 0 0 0.2rem rgba(8, 102, 232, 0.14);
-        }
-
-        .logo-preview-box {
-            background: #f8fafc;
-            border: 1px dashed #cbd5e1;
-            border-radius: 8px;
-            padding: 12px;
-            display: inline-block;
-        }
-
-        .logo-preview-img {
-            max-height: 50px;
-            object-fit: contain;
-        }
-
-        .settings-field-error {
-            color: #dc3545;
-            display: block;
-            font-size: 12px;
-            margin-top: 6px;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('public/assets/css/settings.css') }}">
 @endpush
 
 @section('content')
@@ -82,145 +11,213 @@
         $settings = $settings ?? new \App\Models\Setting();
     @endphp
 
-    <div class="customers-page">
-        <!-- Page Header -->
-        <div class="customers-header mb-4">
+    <div class="settings-page">
+        <div class="settings-header">
             <div>
                 <h1>Settings</h1>
-                <p>Manage system parameters, rewards, and booking rules.</p>
+                <p>Manage company details, booking limits, rewards, and promotion rules.</p>
             </div>
         </div>
 
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle mr-1"></i> {{ session('success') }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+        <form action="{{ route('settings.update') }}" method="POST" enctype="multipart/form-data" id="settings-form" class="settings-shell">
+            @csrf
+
+            <div class="settings-toolbar">
+                <div>
+                    <h2>Company and System Configuration</h2>
+                    <p>These values control booking and customer reward behavior across the app.</p>
+                </div>
+                <button type="submit" class="btn btn-primary settings-submit-btn" id="settings-submit-btn">
+                    <i class="fas fa-save" aria-hidden="true"></i> Update
                 </button>
             </div>
-        @endif
 
-        <!-- Settings Card Container -->
-        <div class="settings-card mb-4">
-            <div class="d-flex align-items-center justify-content-between pb-3 mb-4 border-bottom">
-                <h2 class="card-title mb-0">
-                    <i class="fas fa-sliders-h text-primary mr-2"></i> Company &amp; System Configuration
-                </h2>
-            </div>
+            <section class="settings-section">
+                <div class="settings-section-heading">
+                    <span class="settings-section-icon"><i class="fas fa-building" aria-hidden="true"></i></span>
+                    <div>
+                        <h3>Company Information</h3>
+                        <p>Public business identity and default regional settings.</p>
+                    </div>
+                </div>
 
-            <form action="{{ route('settings.update') }}" method="POST" enctype="multipart/form-data" id="settings-form">
-                @csrf
-
-                <!-- Section 1: General Info -->
-                <h5 class="text-dark font-weight-bold mb-3 pb-2 border-bottom" style="font-size: 16px;">
-                    <i class="fas fa-building text-primary mr-2"></i> General Information
-                </h5>
-
-                <div class="row">
-                    <!-- Company Name -->
-                    <div class="col-md-6 form-group mb-4">
+                <div class="settings-grid">
+                    <div class="form-group">
                         <label for="company_name">Company Name <span class="text-danger">*</span></label>
-                        <div class="settings-input-icon">
-                            <i class="fas fa-building" aria-hidden="true"></i>
-                            <input type="text" class="form-control" id="company_name" name="company_name" value="{{ old('company_name', $settings->company_name) }}" placeholder="Enter Company Name" required>
-                        </div>
+                        <input type="text" class="form-control" id="company_name" name="company_name"
+                               value="{{ old('company_name', $settings->company_name) }}" placeholder="Clean Manage Pro">
                     </div>
 
-                    <!-- Company Logo -->
-                    <div class="col-md-6 form-group mb-4">
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="text" class="form-control" id="phone" name="phone"
+                               value="{{ old('phone', $settings->phone) }}" placeholder="+1 555 014 8821">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email"
+                               value="{{ old('email', $settings->email) }}" placeholder="support@example.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="timezone">Timezone</label>
+                        <input type="text" class="form-control" id="timezone" name="timezone"
+                               value="{{ old('timezone', $settings->timezone) }}" placeholder="America/New_York">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="currency">Currency</label>
+                        <input type="text" class="form-control text-uppercase" id="currency" name="currency"
+                               value="{{ old('currency', $settings->currency) }}" placeholder="USD" maxlength="3">
+                    </div>
+
+                    <div class="form-group settings-logo-field">
                         <label for="company_logo">Company Logo</label>
                         <div class="custom-file">
                             <input type="file" class="custom-file-input" id="company_logo" name="company_logo" accept="image/*">
-                            <label class="custom-file-label" for="company_logo" style="min-height: 48px; padding-top: 12px; border-radius: 8px; border-color: #e1e7f0;">Choose logo file...</label>
+                            <label class="custom-file-label" for="company_logo">Choose logo file...</label>
                         </div>
-                        <div class="mt-2" id="company-logo-preview-wrap" @if(empty($settings->company_logo)) style="display: none;" @endif>
-                            <span class="text-muted small d-block mb-1">Current Logo Preview:</span>
-                            <div class="logo-preview-box">
-                                <img src="{{ $settings->company_logo_url }}" alt="Current Logo" class="logo-preview-img" id="company-logo-preview">
-                            </div>
+                        <div class="settings-logo-preview" id="company-logo-preview-wrap" @if(empty($settings->company_logo)) style="display: none;" @endif>
+                            <img src="{{ $settings->company_logo_url }}" alt="Current Logo" id="company-logo-preview">
                         </div>
+                    </div>
+
+                    <div class="form-group settings-grid-full">
+                        <label for="address">Address</label>
+                        <textarea class="form-control" id="address" name="address" rows="3"
+                                  placeholder="Business address">{{ old('address', $settings->address) }}</textarea>
+                    </div>
+                </div>
+            </section>
+
+            <section class="settings-section">
+                <div class="settings-section-heading">
+                    <span class="settings-section-icon"><i class="far fa-calendar-check" aria-hidden="true"></i></span>
+                    <div>
+                        <h3>Booking Configuration</h3>
+                        <p>Control booking amount limits and customer scheduling rules.</p>
                     </div>
                 </div>
 
-                <!-- Section 2: Credits & Rewards Configuration -->
-                <h5 class="text-dark font-weight-bold mb-3 mt-2 pb-2 border-bottom" style="font-size: 16px;">
-                    <i class="fas fa-gift text-primary mr-2"></i> Credits &amp; Rewards Configuration
-                </h5>
-
-                <div class="row">
-                    <!-- Welcome Credit -->
-                    <div class="col-md-4 form-group mb-4">
-                        <label for="welcome_credit">Welcome Credit ($)</label>
-                        <div class="settings-input-icon">
-                            <i class="fas fa-dollar-sign" aria-hidden="true"></i>
-                            <input type="number" step="0.01" class="form-control" id="welcome_credit" name="welcome_credit" value="{{ old('welcome_credit', $settings->welcome_credit) }}" placeholder="0.00">
-                        </div>
+                <div class="settings-grid">
+                    <div class="form-group">
+                        <label for="minimum_booking_amount">Minimum Booking Amount</label>
+                        <input type="number" step="0.01" min="0" class="form-control" id="minimum_booking_amount"
+                               name="minimum_booking_amount" value="{{ old('minimum_booking_amount', $settings->minimum_booking_amount) }}" placeholder="0.00">
                     </div>
 
-                    <!-- Referral Reward -->
-                    <div class="col-md-4 form-group mb-4">
-                        <label for="referral_reward">Referral Reward ($)</label>
-                        <div class="settings-input-icon">
-                            <i class="fas fa-user-friends" aria-hidden="true"></i>
-                            <input type="number" step="0.01" class="form-control" id="referral_reward" name="referral_reward" value="{{ old('referral_reward', $settings->referral_reward) }}" placeholder="0.00">
-                        </div>
+                    <div class="form-group">
+                        <label for="maximum_booking_amount">Maximum Booking Amount</label>
+                        <input type="number" step="0.01" min="0" class="form-control" id="maximum_booking_amount"
+                               name="maximum_booking_amount" value="{{ old('maximum_booking_amount', $settings->maximum_booking_amount) }}" placeholder="0.00">
                     </div>
 
-                    <!-- Google Review Reward -->
-                    <div class="col-md-4 form-group mb-4">
-                        <label for="google_review_reward">Google Review Reward ($)</label>
-                        <div class="settings-input-icon">
-                            <i class="fab fa-google" aria-hidden="true"></i>
-                            <input type="number" step="0.01" class="form-control" id="google_review_reward" name="google_review_reward" value="{{ old('google_review_reward', $settings->google_review_reward) }}" placeholder="0.00">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Section 3: Booking Rules -->
-                <h5 class="text-dark font-weight-bold mb-3 mt-2 pb-2 border-bottom" style="font-size: 16px;">
-                    <i class="far fa-calendar-check text-primary mr-2"></i> Booking Rules &amp; Limits
-                </h5>
-
-                <div class="row">
-                    <!-- Maximum Advance Booking Days -->
-                    <div class="col-md-6 form-group mb-4">
+                    <div class="form-group">
                         <label for="maximum_advance_booking_days">Maximum Advance Booking Days</label>
-                        <div class="settings-input-icon">
-                            <i class="far fa-calendar-alt" aria-hidden="true"></i>
-                            <input type="number" step="1" min="1" class="form-control" id="maximum_advance_booking_days" name="maximum_advance_booking_days" value="{{ old('maximum_advance_booking_days', $settings->maximum_advance_booking_days) }}" placeholder="e.g. 30">
-                        </div>
-                        <small class="form-text text-muted">How many days in advance customers are allowed to schedule services.</small>
+                        <input type="number" step="1" min="1" class="form-control" id="maximum_advance_booking_days"
+                               name="maximum_advance_booking_days" value="{{ old('maximum_advance_booking_days', $settings->maximum_advance_booking_days) }}" placeholder="30">
                     </div>
 
-                    <!-- Cancellation Notice Hours -->
-                    <div class="col-md-6 form-group mb-4">
+                    <div class="form-group">
                         <label for="cancellation_notice_hours">Cancellation Notice Hours</label>
-                        <div class="settings-input-icon">
-                            <i class="far fa-clock" aria-hidden="true"></i>
-                            <input type="number" step="1" min="0" class="form-control" id="cancellation_notice_hours" name="cancellation_notice_hours" value="{{ old('cancellation_notice_hours', $settings->cancellation_notice_hours) }}" placeholder="e.g. 24">
-                        </div>
-                        <small class="form-text text-muted">Minimum hours notice required before canceling a booking.</small>
+                        <input type="number" step="1" min="0" class="form-control" id="cancellation_notice_hours"
+                               name="cancellation_notice_hours" value="{{ old('cancellation_notice_hours', $settings->cancellation_notice_hours) }}" placeholder="24">
+                    </div>
+                </div>
+            </section>
+
+            <section class="settings-section">
+                <div class="settings-section-heading">
+                    <span class="settings-section-icon"><i class="fas fa-gift" aria-hidden="true"></i></span>
+                    <div>
+                        <h3>Customer and Reward Configuration</h3>
+                        <p>Set credit and reward amounts, then enable or disable each reward type.</p>
                     </div>
                 </div>
 
-                <!-- Submit Button Bar -->
-                <div class="pt-3 border-top d-flex align-items-center justify-content-end">
-                    <button type="submit" class="btn btn-primary customers-primary-btn px-4 py-2" id="settings-submit-btn">
-                        <i class="fas fa-save mr-1" aria-hidden="true"></i> Update
-                    </button>
+                <div class="settings-grid settings-reward-grid">
+                    <div class="settings-toggle-group">
+                        <div class="form-group mb-0">
+                            <label for="welcome_credit">Welcome Credit</label>
+                            <input type="number" step="0.01" min="0" class="form-control" id="welcome_credit"
+                                   name="welcome_credit" value="{{ old('welcome_credit', $settings->welcome_credit) }}" placeholder="0.00">
+                        </div>
+                        <div class="custom-control custom-switch">
+                            <input type="hidden" name="welcome_credit_enabled" value="0">
+                            <input type="checkbox" class="custom-control-input" id="welcome_credit_enabled"
+                                   name="welcome_credit_enabled" value="1" {{ old('welcome_credit_enabled', $settings->welcome_credit_enabled) ? 'checked' : '' }}>
+                            <label class="custom-control-label" for="welcome_credit_enabled">Enabled</label>
+                        </div>
+                    </div>
+
+                    <div class="settings-toggle-group">
+                        <div class="form-group mb-0">
+                            <label for="referral_reward">Referral Reward</label>
+                            <input type="number" step="0.01" min="0" class="form-control" id="referral_reward"
+                                   name="referral_reward" value="{{ old('referral_reward', $settings->referral_reward) }}" placeholder="0.00">
+                        </div>
+                        <div class="custom-control custom-switch">
+                            <input type="hidden" name="referral_reward_enabled" value="0">
+                            <input type="checkbox" class="custom-control-input" id="referral_reward_enabled"
+                                   name="referral_reward_enabled" value="1" {{ old('referral_reward_enabled', $settings->referral_reward_enabled) ? 'checked' : '' }}>
+                            <label class="custom-control-label" for="referral_reward_enabled">Enabled</label>
+                        </div>
+                    </div>
+
+                    <div class="settings-toggle-group">
+                        <div class="form-group mb-0">
+                            <label for="google_review_reward">Google Review Reward</label>
+                            <input type="number" step="0.01" min="0" class="form-control" id="google_review_reward"
+                                   name="google_review_reward" value="{{ old('google_review_reward', $settings->google_review_reward) }}" placeholder="0.00">
+                        </div>
+                        <div class="custom-control custom-switch">
+                            <input type="hidden" name="google_review_enabled" value="0">
+                            <input type="checkbox" class="custom-control-input" id="google_review_enabled"
+                                   name="google_review_enabled" value="1" {{ old('google_review_enabled', $settings->google_review_enabled) ? 'checked' : '' }}>
+                            <label class="custom-control-label" for="google_review_enabled">Enabled</label>
+                        </div>
+                    </div>
                 </div>
-            </form>
-        </div>
+            </section>
+
+            <section class="settings-section">
+                <div class="settings-section-heading">
+                    <span class="settings-section-icon"><i class="fas fa-tags" aria-hidden="true"></i></span>
+                    <div>
+                        <h3>Promotion Configuration</h3>
+                        <p>Limit how often promotions can be used globally and per customer.</p>
+                    </div>
+                </div>
+
+                <div class="settings-grid">
+                    <div class="form-group">
+                        <label for="promotion_max_uses">Promotion Max Uses</label>
+                        <input type="number" step="1" min="0" class="form-control" id="promotion_max_uses"
+                               name="promotion_max_uses" value="{{ old('promotion_max_uses', $settings->promotion_max_uses) }}" placeholder="500">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="promotion_max_uses_per_customer">Promotion Max Uses Per Customer</label>
+                        <input type="number" step="1" min="0" class="form-control" id="promotion_max_uses_per_customer"
+                               name="promotion_max_uses_per_customer" value="{{ old('promotion_max_uses_per_customer', $settings->promotion_max_uses_per_customer) }}" placeholder="1">
+                    </div>
+                </div>
+            </section>
+        </form>
     </div>
 @endsection
 
 @push('scripts')
     <script>
         $(document).ready(function() {
-            // Display filename in file input label on selection
             $('.custom-file-input').on('change', function() {
                 var fileName = $(this).val().split('\\').pop();
-                $(this).next('.custom-file-label').addClass("selected").html(fileName || 'Choose logo file...');
+                $(this).next('.custom-file-label').addClass('selected').html(fileName || 'Choose logo file...');
+            });
+
+            $('#currency').on('input', function() {
+                $(this).val($(this).val().toUpperCase());
             });
 
             $('#settings-form').on('submit', function(event) {
@@ -233,7 +230,7 @@
 
                 $('.settings-field-error').remove();
                 $('.is-invalid').removeClass('is-invalid');
-                $submit.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1" aria-hidden="true"></i> Updating...');
+                $submit.prop('disabled', true).html('<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Updating...');
 
                 $.ajax({
                     url: $form.attr('action'),
@@ -264,9 +261,9 @@
                     error: function(xhr) {
                         if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
                             $.each(xhr.responseJSON.errors, function(field, messages) {
-                                var $input = $('[name="' + field + '"]');
+                                var $input = $('[name="' + field + '"]').last();
                                 $input.addClass('is-invalid');
-                                $input.closest('.form-group').append('<span class="settings-field-error">' + messages[0] + '</span>');
+                                $input.closest('.form-group, .settings-toggle-group').append('<span class="settings-field-error">' + messages[0] + '</span>');
                             });
 
                             Swal.fire({
@@ -284,7 +281,7 @@
                         });
                     },
                     complete: function() {
-                        $submit.prop('disabled', false).html('<i class="fas fa-save mr-1" aria-hidden="true"></i> Update');
+                        $submit.prop('disabled', false).html('<i class="fas fa-save" aria-hidden="true"></i> Update');
                     }
                 });
             });

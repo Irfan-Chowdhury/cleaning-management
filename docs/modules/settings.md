@@ -47,7 +47,7 @@ Route::post('/settings', [SettingController::class, 'update'])->name('settings.u
 
 ### Controller
 
-`App\Http\Controllers\SettingController`
+`App\Http\Controllers\Admin\SettingController`
 
 Important methods:
 
@@ -62,11 +62,23 @@ Validation rules:
 
 - `company_name`: required string, max 255 characters
 - `company_logo`: optional image, `jpg`, `jpeg`, `png`, `webp`, `gif`, or `svg`, max 2 MB
-- `welcome_credit`: optional numeric value, minimum 0
-- `referral_reward`: optional numeric value, minimum 0
-- `google_review_reward`: optional numeric value, minimum 0
+- `phone`: optional string, max 30 characters
+- `email`: optional valid email address, max 255 characters
+- `address`: optional string
+- `timezone`: optional valid PHP timezone
+- `currency`: optional uppercase 3-letter ISO code
+- `minimum_booking_amount`: optional numeric amount, minimum 0
+- `maximum_booking_amount`: optional numeric amount, minimum 0 and greater than or equal to minimum booking amount
 - `maximum_advance_booking_days`: optional integer, minimum 1
 - `cancellation_notice_hours`: optional integer, minimum 0
+- `welcome_credit`: optional numeric value, minimum 0
+- `welcome_credit_enabled`: optional boolean
+- `referral_reward`: optional numeric value, minimum 0
+- `referral_reward_enabled`: optional boolean
+- `google_review_reward`: optional numeric value, minimum 0
+- `google_review_enabled`: optional boolean
+- `promotion_max_uses`: optional integer, minimum 0
+- `promotion_max_uses_per_customer`: optional integer, minimum 0
 
 ### Service Class
 
@@ -107,11 +119,23 @@ Important columns:
 - `id`
 - `company_name`
 - `company_logo`, nullable
-- `welcome_credit`, nullable decimal
-- `referral_reward`, nullable decimal
-- `google_review_reward`, nullable decimal
+- `phone`, nullable
+- `email`, nullable
+- `address`, nullable text
+- `timezone`, nullable
+- `currency`, nullable
+- `minimum_booking_amount`, nullable decimal
+- `maximum_booking_amount`, nullable decimal
 - `maximum_advance_booking_days`, nullable integer
 - `cancellation_notice_hours`, nullable integer
+- `welcome_credit`, nullable decimal
+- `welcome_credit_enabled`, nullable boolean
+- `referral_reward`, nullable decimal
+- `referral_reward_enabled`, nullable boolean
+- `google_review_reward`, nullable decimal
+- `google_review_enabled`, nullable boolean
+- `promotion_max_uses`, nullable integer
+- `promotion_max_uses_per_customer`, nullable integer
 - `created_at`
 - `updated_at`
 
@@ -120,12 +144,23 @@ Important columns:
 `Database\Seeders\SettingSeeder` creates or updates the default settings row with demo data:
 
 - Company name: `Clean Manage Pro`
+- Phone: `+1 555 014 8821`
+- Email: `support@cleanmanagepro.test`
+- Timezone: `America/New_York`
+- Currency: `USD`
+- Minimum booking amount: `50.00`
+- Maximum booking amount: `1500.00`
 - Default logo: `public/assets/images/company_logo/brand_logo.png`
 - Welcome credit: `20.00`
+- Welcome credit enabled: `true`
 - Referral reward: `25.00`
+- Referral reward enabled: `true`
 - Google review reward: `15.00`
+- Google review enabled: `true`
 - Maximum advance booking days: `30`
 - Cancellation notice hours: `24`
+- Promotion max uses: `500`
+- Promotion max uses per customer: `1`
 
 The seeder is registered in `DatabaseSeeder`.
 

@@ -40,12 +40,15 @@
 ## weekly_schedule
 - id
 - day_of_week (Monday to Saterday fixed for 7 days every week)
-- is_active boolean [0=inactive, 1=active]
+- is_active boolean 
 
 
-## slots
-- id
-- weekly_schedule_id 
+## schedule_slots
+id
+weekly_schedule_id
+start_time 
+end_time  (nullable)
+sort_order (nullable)
 
 ## holidays
 - id
@@ -89,14 +92,34 @@
 
 
 ## settings
-- company_name string
-- company_logo string
-- welcome_credit  decimal               
-- referral_reward  decimal               
-- google_review_reward  decimal         
-- maximum_advance_booking_days  int
-- cancellation_notice_hours   int
+id
 
+-- Company Information
+company_name
+company_logo
+phone
+email
+address
+timezone
+currency
+
+-- Booking Configuration
+minimum_booking_amount
+maximum_booking_amount
+maximum_advance_booking_days
+cancellation_notice_hours
+
+-- Customer & Reward Configuration
+welcome_credit
+welcome_credit_enabled
+referral_reward
+referral_reward_enabled
+google_review_reward
+google_review_enabled
+
+-- Promotion Configuration
+promotion_max_uses
+promotion_max_uses_per_customer
 
 
 

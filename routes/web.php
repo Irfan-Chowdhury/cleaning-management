@@ -44,7 +44,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/customers/{customer}', [CustomerController::class, 'update'])->name('customers.update');
     Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
     Route::get('/weekly-schedule', [WeeklyScheduleController::class, 'index'])->name('weekly-schedule.index');
-    Route::get('/week/{day}', [WeeklyScheduleController::class, 'edit'])->name('weekly-schedule.edit');
+    Route::get('/weekly-schedule/{day}/edit', [WeeklyScheduleController::class, 'edit'])
+        ->name('weekly-schedule.edit')
+        ->where('day', 'monday|tuesday|wednesday|thursday|friday|saturday|sunday');
+    Route::put('/weekly-schedule/{day}', [WeeklyScheduleController::class, 'update'])
+        ->name('weekly-schedule.update')
+        ->where('day', 'monday|tuesday|wednesday|thursday|friday|saturday|sunday');
     Route::get('/holidays',              [HolidayController::class, 'index'])->name('holidays.index');
     Route::post('/holidays',             [HolidayController::class, 'store'])->name('holidays.store');
     Route::put('/holidays/{holiday}',    [HolidayController::class, 'update'])->name('holidays.update');
