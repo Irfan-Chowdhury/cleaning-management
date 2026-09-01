@@ -51,10 +51,12 @@ it('loads the settings page with current settings', function () {
         ->get(route('settings.index'))
         ->assertOk()
         ->assertViewIs('pages.admin.settings.index')
+        ->assertViewHas('timezoneOptions', fn (array $options) => collect($options)->contains('zone', 'America/New_York'))
         ->assertSee('Clean Manage Pro')
         ->assertSee('Company Information')
         ->assertSee('Booking Configuration')
-        ->assertSee('Promotion Configuration');
+        ->assertSee('Promotion Configuration')
+        ->assertSee('UTC/GMT', false);
 });
 
 it('creates settings with the full settings structure', function () {

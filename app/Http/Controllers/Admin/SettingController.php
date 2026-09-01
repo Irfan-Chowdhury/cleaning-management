@@ -15,7 +15,9 @@ class SettingController extends Controller
     public function index()
     {
         $settings = $this->settingService->latest();
-        return view('pages.admin.settings.index', compact('settings'));
+        $timezoneOptions = $this->settingService->timezoneOptions();
+
+        return view('pages.admin.settings.index', compact('settings', 'timezoneOptions'));
     }
 
     public function update(SettingRequest $request)

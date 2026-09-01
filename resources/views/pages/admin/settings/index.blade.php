@@ -3,6 +3,8 @@
 @section('title', 'Company Settings')
 
 @push('styles')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap4-theme@1.0.0/dist/select2-bootstrap4.min.css">
     <link rel="stylesheet" href="{{ asset('public/assets/css/settings.css') }}">
 @endpush
 
@@ -62,8 +64,15 @@
 
                     <div class="form-group">
                         <label for="timezone">Timezone</label>
-                        <input type="text" class="form-control" id="timezone" name="timezone"
-                               value="{{ old('timezone', $settings->timezone) }}" placeholder="America/New_York">
+                        <select class="form-control" id="timezone" name="timezone">
+                            <option value="">Select timezone...</option>
+                            @foreach ($timezoneOptions as $timezoneOption)
+                                <option value="{{ $timezoneOption['zone'] }}"
+                                    {{ old('timezone', $settings->timezone) === $timezoneOption['zone'] ? 'selected' : '' }}>
+                                    {{ $timezoneOption['diff_from_GMT'] . ' - ' . $timezoneOption['zone'] }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="form-group">
@@ -209,8 +218,16 @@
 @endsection
 
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         $(document).ready(function() {
+            $('#timezone').select2({
+                theme: 'bootstrap4',
+                width: '100%',
+                placeholder: 'Select timezone...',
+                allowClear: false
+            });
+
             $('.custom-file-input').on('change', function() {
                 var fileName = $(this).val().split('\\').pop();
                 $(this).next('.custom-file-label').addClass('selected').html(fileName || 'Choose logo file...');

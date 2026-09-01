@@ -15,6 +15,26 @@ class SettingService
         return Setting::latest()->first();
     }
 
+    public function timezoneOptions(): array
+    {
+        $timestamp = time();
+
+        return collect(timezone_identifiers_list())
+            ->map(function (string $zone) use ($timestamp): array {
+                $timezone = new \DateTimeZone($zone);
+                $offset = $timezone->getOffset((new \DateTimeImmutable())->setTimestamp($timestamp));
+                $hours = intdiv(abs($offset), 3600);
+                $minutes = intdiv(abs($offset) % 3600, 60);
+                $sign = $offset >= 0 ? '+' : '-';
+
+                return [
+                    'zone' => $zone,
+                    'diff_from_GMT' => sprintf('UTC/GMT %s%02d:%02d', $sign, $hours, $minutes),
+                ];
+            })
+            ->all();
+    }
+
     public function update(array $data): Setting
     {
         $setting = $this->latest() ?? new Setting();
