@@ -26,7 +26,7 @@
 * For table pagination, search, sorting, ordering use YazraDatatable's functionality.
 
 
-=========================== XXXXXXXXXXXXXXXXXXXXXXXXX ==========================
+============ XXXXXXXXXXXXXXXXXXXXXXXXX ===================
 
 # Weekly Schedule Prompt
 
@@ -95,4 +95,25 @@ Relationship:
 * There will be Promotions or Promotional Offer name tab which is relavant in left sidebar.
 * after implementation, review the feature and codes properly.
 * You can follow the `Holiday` feature as reference for implmentation.
+
+
+
+
+# Sub Admin
+
+### requirements: 
+* Implment Sub Admin CRUD feature based on existing users table data.
+* in SubAdminController:
+* index function will show data list use YazraDatatable to fetch data in table.
+* pages.admin.sub-admin.index, sub admin table will have columns: Image, Name, Phone, Email and Action.
+* store function will store data. Have to use Validation using Form Request. For business logic separate the logic into a ServiceClass
+* update function will update data by following almost store()  
+* destroy function will delete data.
+* During save, update, delete no reload, Use jquery Ajax for submit the form and also call YazraDatatable reload function to update the table. 
+* for success or error aleart message use, sweetAlert for success and error message display. follow other previous feature's functionality. 
+* For table pagination, search, sorting, ordering use YazraDatatable's functionality.
+* Write Unite Testing for PEST format.
+* Add name "Sub Admin" and its relevant menu in admin sidebar.
+* after implementation, review the feature and codes properly.
+* You can follow the `Customers` feature as reference for implmentation.
 

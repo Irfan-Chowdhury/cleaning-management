@@ -23,6 +23,11 @@
             <span>Services </span>
         </a>
 
+        <a href="{{ route('sub-admin.index') }}" class="sidebar-link {{ request()->routeIs('sub-admin.*') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="fas fa-user-shield" aria-hidden="true"></i></span>
+            <span>Sub Admin</span>
+        </a>
+
         <a href="{{ route('customers.index') }}" class="sidebar-link {{ request()->routeIs('customers.index') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-users" aria-hidden="true"></i></span>
             <span>Customers</span>

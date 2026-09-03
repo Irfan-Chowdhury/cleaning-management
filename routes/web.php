@@ -7,6 +7,7 @@ use App\Http\Controllers\BookingServiceController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\SubAdminController;
 use App\Http\Controllers\WeeklyScheduleController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\WalletController;
@@ -40,6 +41,10 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
     Route::get('/admin-dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/sub-admins', [SubAdminController::class, 'index'])->name('sub-admin.index');
+    Route::post('/sub-admins', [SubAdminController::class, 'store'])->name('sub-admin.store');
+    Route::put('/sub-admins/{sub_admin}', [SubAdminController::class, 'update'])->name('sub-admin.update');
+    Route::delete('/sub-admins/{sub_admin}', [SubAdminController::class, 'destroy'])->name('sub-admin.destroy');
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
     Route::post('/customers', [CustomerController::class, 'store'])->name('customers.store');
     Route::put('/customers/{customer}', [CustomerController::class, 'update'])->name('customers.update');
