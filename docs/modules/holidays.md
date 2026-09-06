@@ -115,7 +115,8 @@ Responsibilities:
 ### Model
 
 `App\Models\Holiday`  
-Table: `holidays`
+Table: `holidays`  
+Traits: `App\Traits\Auditable` (creation, updates, and deletion trigger automatic audit log entries in `audit_logs`).
 
 | Column | Type | Notes |
 |---|---|---|

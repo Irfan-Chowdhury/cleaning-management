@@ -112,7 +112,11 @@ The sidebar receives the latest settings record through a view composer in `App\
 
 ## 4. Database Design
 
-### `settings`
+### `Setting` Model & Audit Trail
+
+Model: `App\Models\Setting`  
+Table: `settings`  
+Traits: `App\Traits\Auditable` (all configuration changes trigger automatic audit logging recorded in `audit_logs`).
 
 Important columns:
 

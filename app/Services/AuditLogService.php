@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\AuditLog;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -33,7 +34,7 @@ class AuditLogService
      */
     public function getDatatableData(): JsonResponse
     {
-        return DataTables::eloquent(AuditLog::with('user')->orderBy('id', 'desc'))
+        return DataTables::eloquent(AuditLog::with(['user', 'auditable'])->orderBy('id', 'desc'))
             ->addColumn('created_at_formatted', fn (AuditLog $log) => $log->created_at?->format('d M Y, h:i A') ?? '-')
             ->addColumn('user_name', function (AuditLog $log) {
                 if ($log->user) {
@@ -42,7 +43,7 @@ class AuditLogService
                 return '<span class="text-muted">System</span>';
             })
             ->addColumn('event_badge', fn (AuditLog $log) => $this->eventBadge($log->action))
-            ->addColumn('module_name', fn (AuditLog $log) => class_basename($log->auditable_type))
+            ->addColumn('module_name', fn (AuditLog $log) => $this->resolveModuleName($log))
             ->addColumn('ip_address_display', fn (AuditLog $log) => e($log->ip_address ?? '—'))
             ->addColumn('action', fn (AuditLog $log) => $this->actionButton($log))
             ->filterColumn('created_at_formatted', function ($query, $keyword) {
@@ -70,7 +71,35 @@ class AuditLogService
                 $query->where('action', 'like', "%{$keyword}%");
             })
             ->filterColumn('module_name', function ($query, $keyword) {
-                $query->where('auditable_type', 'like', "%{$keyword}%");
+                $query->where(function ($q) use ($keyword) {
+                    $q->where('auditable_type', 'like', "%{$keyword}%");
+
+                    if (stripos('subadmin', $keyword) !== false || stripos('sub admin', $keyword) !== false) {
+                        $q->orWhere(function ($uq) {
+                            $uq->where('auditable_type', User::class)
+                               ->where(function ($rq) {
+                                   $rq->whereHasMorph('auditable', [User::class], function ($uq2) {
+                                       $uq2->where('role', 1);
+                                   })
+                                   ->orWhere('new_values->role', 1)
+                                   ->orWhere('old_values->role', 1);
+                               });
+                        });
+                    }
+
+                    if (stripos('customer', $keyword) !== false) {
+                        $q->orWhere(function ($uq) {
+                            $uq->where('auditable_type', User::class)
+                               ->where(function ($rq) {
+                                   $rq->whereHasMorph('auditable', [User::class], function ($uq2) {
+                                       $uq2->where('role', 2);
+                                   })
+                                   ->orWhere('new_values->role', 2)
+                                   ->orWhere('old_values->role', 2);
+                               });
+                        });
+                    }
+                });
             })
             ->filterColumn('ip_address_display', function ($query, $keyword) {
                 $query->where('ip_address', 'like', "%{$keyword}%");
@@ -84,14 +113,14 @@ class AuditLogService
      */
     public function formatLogDetails(AuditLog $auditLog): array
     {
-        $auditLog->load('user');
+        $auditLog->load(['user', 'auditable']);
 
         return [
             'id'          => $auditLog->id,
             'user'        => $auditLog->user ? ($auditLog->user->first_name . ' ' . $auditLog->user->last_name . ' (' . $auditLog->user->email . ')') : 'System/Guest',
             'event'       => ucfirst($auditLog->action),
             'event_badge' => $this->eventBadge($auditLog->action),
-            'module'      => class_basename($auditLog->auditable_type),
+            'module'      => $this->resolveModuleName($auditLog),
             'record_id'   => $auditLog->auditable_id,
             'ip_address'  => $auditLog->ip_address ?? 'N/A',
             'user_agent'  => $auditLog->user_agent ?? 'N/A',
@@ -99,6 +128,40 @@ class AuditLogService
             'new_values'  => $auditLog->new_values ?? [],
             'date_time'   => $auditLog->created_at?->format('d M Y, h:i A') ?? 'N/A',
         ];
+    }
+
+    /**
+     * Resolve the user-friendly Module display name.
+     */
+    public function resolveModuleName(AuditLog $log): string
+    {
+        $baseName = class_basename($log->auditable_type);
+
+        if ($baseName === 'User') {
+            $role = null;
+
+            if ($log->auditable && isset($log->auditable->role)) {
+                $role = (int) $log->auditable->role;
+            }
+
+            if ($role === null && is_array($log->new_values) && isset($log->new_values['role'])) {
+                $role = (int) $log->new_values['role'];
+            }
+
+            if ($role === null && is_array($log->old_values) && isset($log->old_values['role'])) {
+                $role = (int) $log->old_values['role'];
+            }
+
+            if ($role === 1) {
+                return 'Subadmin';
+            }
+
+            if ($role === 2) {
+                return 'Customer';
+            }
+        }
+
+        return $baseName;
     }
 
     /**

@@ -201,9 +201,27 @@ Server-side searching (`filterColumn` in `AuditLogService`) ensures global searc
 
 ---
 
-## 5. How to Enable Auditing for Another Model
+## 5. Integrated Audited Modules
 
-To enable audit logging for any Eloquent model in the application:
+The `Auditable` trait is actively integrated with the following project models across 6 core feature areas:
+
+| Module / Feature | Model Class(es) | Display Module Name | Audited Actions | Excluded Attributes |
+|---|---|---|---|---|
+| **Holiday Management** | `App\Models\Holiday` | `Holiday` | Created, Updated, Deleted | `created_at`, `updated_at` |
+| **Weekly Schedule** | `App\Models\WeeklySchedule`, `App\Models\ScheduleSlot` | `WeeklySchedule`, `ScheduleSlot` | Created, Updated, Deleted | `created_at`, `updated_at` |
+| **Service Catalog** | `App\Models\Service`, `App\Models\ServiceQuestion`, `App\Models\QuestionOption` | `Service`, `ServiceQuestion`, `QuestionOption` | Created, Updated, Deleted | `created_at`, `updated_at` |
+| **Subadmin Management** | `App\Models\User` (`role = 1`) | **`Subadmin`** | Created, Updated, Deleted | `password`, `remember_token`, `created_at`, `updated_at` |
+| **Customer Management** | `App\Models\User` (`role = 2`) | **`Customer`** | Created, Updated, Deleted | `password`, `remember_token`, `created_at`, `updated_at` |
+| **Promotional Offers** | `App\Models\Promotion` | `Promotion` | Created, Updated, Deleted | `created_at`, `updated_at` |
+| **Settings Management** | `App\Models\Setting` | `Setting` | Created, Updated, Deleted | `created_at`, `updated_at` |
+
+*Note: For `User` model records, `AuditLogService::resolveModuleName()` inspects the target user's role integer (`role = 1` -> `Subadmin`, `role = 2` -> `Customer`) for both DataTables list rows and View Details modals.*
+
+---
+
+## 6. How to Enable Auditing for Another Model
+
+To enable audit logging for any new Eloquent model in the application:
 
 1. Add `use App\Traits\Auditable;` and `use Auditable;` to the model:
 
@@ -213,7 +231,7 @@ namespace App\Models;
 use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Model;
 
-class Customer extends Model
+class Booking extends Model
 {
     use Auditable;
 

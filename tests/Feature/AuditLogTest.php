@@ -186,3 +186,40 @@ it('loads audit logs index page and detail json', function () {
             'record_id' => $holiday->id,
         ]);
 });
+
+it('resolves module name as Subadmin for role 1 and Customer for role 2 users', function () {
+    $admin = auditAdmin();
+
+    $subAdmin = User::create([
+        'first_name' => 'Jane',
+        'last_name' => 'Sub',
+        'email' => 'subadmin@example.com',
+        'role' => 1,
+        'password' => Hash::make('password'),
+    ]);
+
+    $customer = User::create([
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'email' => 'customer@example.com',
+        'role' => 2,
+        'password' => Hash::make('password'),
+    ]);
+
+    $subAdminAudit = AuditLog::where('auditable_id', $subAdmin->id)->first();
+    $customerAudit = AuditLog::where('auditable_id', $customer->id)->first();
+
+    $this->actingAs($admin)
+        ->getJson(route('audit-logs.show', $subAdminAudit))
+        ->assertOk()
+        ->assertJson([
+            'module' => 'Subadmin',
+        ]);
+
+    $this->actingAs($admin)
+        ->getJson(route('audit-logs.show', $customerAudit))
+        ->assertOk()
+        ->assertJson([
+            'module' => 'Customer',
+        ]);
+});
