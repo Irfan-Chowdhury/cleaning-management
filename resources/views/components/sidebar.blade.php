@@ -94,6 +94,10 @@
             <span class="sidebar-link-icon"><i class="fas fa-cog" aria-hidden="true"></i></span>
             <span>Settings</span>
         </a>
+        <a href="{{ route('audit-logs.index') }}" class="sidebar-link {{ request()->routeIs('audit-logs.*') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="fas fa-history" aria-hidden="true"></i></span>
+            <span>Audit Logs</span>
+        </a>
         @endif
 
         @if(auth()->user()->role === 2)

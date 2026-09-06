@@ -15,6 +15,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
@@ -82,6 +83,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/promotions/{promotion}', [PromotionController::class, 'destroy'])->name('promotions.destroy');
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+    Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
+    Route::get('/audit-logs/{auditLog}', [AuditLogController::class, 'show'])->name('audit-logs.show');
 });
 
 require __DIR__.'/customer.php';

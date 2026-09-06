@@ -18,6 +18,7 @@ This documentation describes the current implementation of the Cleaning Manageme
 - [Customer Management](modules/customer-management.md)
 - [Settings Management](modules/settings.md)
 - [Holiday Management](modules/holidays.md)
+- [Audit Logs System](modules/audit-logs.md)
 
 ## Reference Documents
 

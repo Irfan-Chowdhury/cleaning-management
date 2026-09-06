@@ -117,3 +117,45 @@ Relationship:
 * after implementation, review the feature and codes properly.
 * You can follow the `Customers` feature as reference for implmentation.
 
+
+
+
+## Audit Logs
+Implement a reusable Audit Log system in the existing Laravel project.
+
+First inspect the existing project structure and especially the **Holiday feature** (model, controller, routes, validation, views, etc.) and follow the project's existing architecture and conventions.
+
+### Requirements
+
+* Create `audit_logs` migration and `AuditLog` model.
+* Create a reusable `AuditLogService`.
+* Create an `Auditable` trait that automatically handles:
+
+  * `created`
+  * `updated`
+  * `deleted`
+* Use a polymorphic relationship (`auditable_type`, `auditable_id`).
+* Record authenticated user, action, old values, new values, IP and user agent.
+* For updates, record **only the fields that actually changed**. Ignore irrelevant fields such as `updated_at`.
+* Exclude sensitive fields such as passwords and tokens.
+* Keep audit logs effectively append-only; don't add edit/delete functionality.
+* Integrate the trait **ONLY with the existing Holiday model for now**.
+* Add a simple Admin Audit Log listing/detail view if the existing project structure supports it.
+* Follow existing authentication/authorization and UI conventions.
+
+### Testing
+
+Verify:
+
+1. Holiday creation → `created` audit.
+2. Holiday update of one field → only that field is logged.
+3. Holiday update of multiple fields → only changed fields are logged.
+4. Holiday update with no actual changes → no unnecessary audit log.
+5. Holiday deletion → previous values are logged.
+6. Correct user/IP information is recorded.
+
+Do not modify or integrate auditing with other modules yet.
+
+After implementation, show me the files changed and briefly explain how I can later enable auditing for another model.
+
+
