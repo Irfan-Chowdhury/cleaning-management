@@ -6,6 +6,7 @@ use App\Models\AuditLog;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class AuditLogService
@@ -44,6 +45,36 @@ class AuditLogService
             ->addColumn('module_name', fn (AuditLog $log) => class_basename($log->auditable_type))
             ->addColumn('ip_address_display', fn (AuditLog $log) => e($log->ip_address ?? '—'))
             ->addColumn('action', fn (AuditLog $log) => $this->actionButton($log))
+            ->filterColumn('created_at_formatted', function ($query, $keyword) {
+                if (config('database.default') === 'sqlite') {
+                    $query->where('created_at', 'like', "%{$keyword}%");
+                } else {
+                    $query->where(DB::raw("DATE_FORMAT(created_at, '%d %b %Y, %h:%i %p')"), 'like', "%{$keyword}%")
+                          ->orWhere('created_at', 'like', "%{$keyword}%");
+                }
+            })
+            ->filterColumn('user_name', function ($query, $keyword) {
+                $query->where(function ($q) use ($keyword) {
+                    $q->whereHas('user', function ($uq) use ($keyword) {
+                        $uq->where(DB::raw("CONCAT(first_name, ' ', last_name)"), 'like', "%{$keyword}%")
+                           ->orWhere('first_name', 'like', "%{$keyword}%")
+                           ->orWhere('last_name', 'like', "%{$keyword}%")
+                           ->orWhere('email', 'like', "%{$keyword}%");
+                    });
+                    if (stripos('system', $keyword) !== false) {
+                        $q->orWhereNull('user_id');
+                    }
+                });
+            })
+            ->filterColumn('event_badge', function ($query, $keyword) {
+                $query->where('action', 'like', "%{$keyword}%");
+            })
+            ->filterColumn('module_name', function ($query, $keyword) {
+                $query->where('auditable_type', 'like', "%{$keyword}%");
+            })
+            ->filterColumn('ip_address_display', function ($query, $keyword) {
+                $query->where('ip_address', 'like', "%{$keyword}%");
+            })
             ->rawColumns(['user_name', 'event_badge', 'action'])
             ->toJson();
     }

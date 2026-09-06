@@ -202,11 +202,11 @@
             responsive: true,
             autoWidth: false,
             columns: [
-                { data: 'created_at_formatted',  name: 'created_at' },
-                { data: 'user_name',             name: 'user.first_name' },
-                { data: 'event_badge',          name: 'action', searchable: false },
-                { data: 'module_name',           name: 'auditable_type' },
-                { data: 'ip_address_display',    name: 'ip_address' },
+                { data: 'created_at_formatted',  name: 'created_at_formatted' },
+                { data: 'user_name',             name: 'user_name' },
+                { data: 'event_badge',          name: 'event_badge' },
+                { data: 'module_name',           name: 'module_name' },
+                { data: 'ip_address_display',    name: 'ip_address_display' },
                 { data: 'action',                name: 'action', searchable: false, orderable: false }
             ],
             language: { search: '', searchPlaceholder: 'Search audit logs...' }

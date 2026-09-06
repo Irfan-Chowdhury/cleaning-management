@@ -186,16 +186,18 @@ Includes:
 
 The DataTables listing uses server-side processing with columns ordered as follows:
 
-| Column Title | Data Key | Source Field | Formatting |
-|---|---|---|---|
-| **Date & Time** | `created_at_formatted` | `created_at` | `d M Y, h:i A` |
-| **User** | `user_name` | `user.first_name + last_name` | User name or `<span class="text-muted">System</span>` |
-| **Event** | `event_badge` | `action` | Styled badge (`Created`, `Updated`, `Deleted`) |
-| **Module** | `module_name` | `auditable_type` | Class basename (e.g. `Holiday`) |
-| **IP Address** | `ip_address_display` | `ip_address` | String or `—` |
-| **Action** | `action` | N/A | View details modal button |
+| Column Title | Data Key | Source Field | Searchable | Formatting |
+|---|---|---|---|---|
+| **Date & Time** | `created_at_formatted` | `created_at` | Yes (`filterColumn`) | `d M Y, h:i A` |
+| **User** | `user_name` | `user.first_name + last_name` | Yes (`filterColumn` on name/email/System) | User name or `<span class="text-muted">System</span>` |
+| **Event** | `event_badge` | `action` | Yes (`filterColumn`) | Styled badge (`Created`, `Updated`, `Deleted`) |
+| **Module** | `module_name` | `auditable_type` | Yes (`filterColumn`) | Class basename (e.g. `Holiday`) |
+| **IP Address** | `ip_address_display` | `ip_address` | Yes (`filterColumn`) | String or `—` |
+| **Action** | `action` | N/A | No | View details modal button |
 
 Default ordering: `created_at DESC` (newest activity first).
+
+Server-side searching (`filterColumn` in `AuditLogService`) ensures global search queries match keywords across Date & Time, User, Event, Module, and IP Address simultaneously.
 
 ---
 
