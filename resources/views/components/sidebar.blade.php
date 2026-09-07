@@ -2,7 +2,7 @@
     <div class="sidebar-logo">
         <a href="#" class="sidebar-logo-link" aria-label="Cleaning Management">
             {{-- <img src="https://placehold.co/340x96/0f766e/ffffff?text=Sparkle+Care" alt="Cleaning Management logo"> --}}
-            <img id="sidebar-company-logo" src="{{ $sidebarSettings?->company_logo_url ?? asset('public/assets/images/company_logo/brand_logo.png') }}" alt="Cleaning Management logo">
+            <img id="sidebar-company-logo" src="{{ $sidebarSettings?->company_logo_url ?? asset('assets/images/company_logo/brand_logo.png') }}" alt="Cleaning Management logo">
         </a>
 
         <button type="button" class="sidebar-close" aria-label="Close sidebar">
@@ -13,7 +13,7 @@
     <nav class="sidebar-nav">
 
 
-        @if(auth()->user()->role === 1)
+        @can('admin')
         <a href="{{ route('admin.dashboard') }}" class="sidebar-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-home" aria-hidden="true"></i></span>
             <span>Dashboard</span>
@@ -79,28 +79,20 @@
             <span>Promotional Offers</span>
         </a>
 
-        <!-- <a href="#" class="sidebar-link">
-            <span class="sidebar-link-icon"><i class="fas fa-star" aria-hidden="true"></i></span>
-            <span>Reviews</span>
-        </a> -->
-
-        <!--
-        <a href="#" class="sidebar-link">
-            <span class="sidebar-link-icon"><i class="far fa-file-alt" aria-hidden="true"></i></span>
-            <span>Payments &amp; Invoices</span>
-        </a>
-        -->
         <a href="{{ route('settings.index') }}" class="sidebar-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-cog" aria-hidden="true"></i></span>
             <span>Settings</span>
         </a>
+
+        @can('view-audit-logs')
         <a href="{{ route('audit-logs.index') }}" class="sidebar-link {{ request()->routeIs('audit-logs.*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-history" aria-hidden="true"></i></span>
             <span>Audit Logs</span>
         </a>
-        @endif
+        @endcan
+        @endcan
 
-        @if(auth()->user()->role === 2)
+        @can('customer')
         <a href="{{ route('dashboard') }}" class="sidebar-link">
             <span class="sidebar-link-icon"><i class="fas fa-th-large" aria-hidden="true"></i></span>
             <span>Dashboard</span>
@@ -130,7 +122,7 @@
             <span class="sidebar-link-icon"><i class="fas fa-cog" aria-hidden="true"></i></span>
             <span>Profile</span>
         </a>
-        @endif
+        @endcan
 
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
             @csrf

@@ -8,32 +8,19 @@ use Illuminate\Support\Facades\Hash;
 
 uses(RefreshDatabase::class);
 
-function auditAdmin(): User
-{
-    return User::create([
-        'first_name' => 'Audit',
-        'last_name' => 'Admin',
-        'email' => 'audit-admin@example.com',
-        'role' => 1,
-        'is_active' => true,
-        'password' => Hash::make('password'),
-    ]);
-}
-
 it('logs audit entry on holiday creation with new values and user/IP details', function () {
-    $admin = auditAdmin();
+    $admin = User::factory()->create(['role' => 1, 'is_active' => true]);
 
-    $this->actingAs($admin, 'web')
-        ->withServerVariables(['REMOTE_ADDR' => '192.168.1.50']);
+    $this->actingAs($admin)->withServerVariables(['REMOTE_ADDR' => '192.168.1.50'])
+        ->post(route('holidays.store'), [
+            'title'       => 'New Year Holiday',
+            'description' => 'Office closed for New Year',
+            'start_date'  => '2026-01-01',
+            'end_date'    => '2026-01-01',
+            'is_active'   => true,
+        ]);
 
-    $holiday = Holiday::create([
-        'title' => 'New Year Holiday',
-        'description' => 'Office closed for New Year',
-        'start_date' => '2026-01-01',
-        'end_date' => '2026-01-01',
-        'is_active' => true,
-    ]);
-
+    $holiday  = Holiday::where('title', 'New Year Holiday')->firstOrFail();
     $auditLog = AuditLog::where('auditable_type', Holiday::class)
         ->where('auditable_id', $holiday->id)
         ->where('action', 'created')
@@ -77,20 +64,20 @@ it('logs only the changed field when updating one field and formats dates cleanl
 });
 
 it('logs only changed fields when updating multiple fields', function () {
-    $admin = auditAdmin();
+    $admin = User::factory()->create(['role' => 1, 'is_active' => true]);
     $holiday = Holiday::create([
-        'title' => 'Labor Day',
+        'title'       => 'Labor Day',
         'description' => 'May Day',
-        'start_date' => '2026-05-01',
-        'end_date' => '2026-05-01',
-        'is_active' => true,
+        'start_date'  => '2026-05-01',
+        'end_date'    => '2026-05-01',
+        'is_active'   => true,
     ]);
 
     AuditLog::query()->delete();
 
     $this->actingAs($admin);
     $holiday->update([
-        'title' => 'International Workers Day',
+        'title'       => 'International Workers Day',
         'description' => 'Updated description',
     ]);
 
@@ -98,24 +85,24 @@ it('logs only changed fields when updating multiple fields', function () {
 
     expect($auditLog)->not->toBeNull()
         ->and($auditLog->old_values)->toBe([
-            'title' => 'Labor Day',
+            'title'       => 'Labor Day',
             'description' => 'May Day',
         ])
         ->and($auditLog->new_values)->toBe([
-            'title' => 'International Workers Day',
+            'title'       => 'International Workers Day',
             'description' => 'Updated description',
         ])
         ->and(array_key_exists('start_date', $auditLog->old_values))->toBeFalse();
 });
 
 it('does not create an audit log when updating with no actual changes', function () {
-    $admin = auditAdmin();
+    $admin = User::factory()->create(['role' => 1, 'is_active' => true]);
     $holiday = Holiday::create([
-        'title' => 'No Change Holiday',
+        'title'       => 'No Change Holiday',
         'description' => 'Same description',
-        'start_date' => '2026-07-04',
-        'end_date' => '2026-07-04',
-        'is_active' => true,
+        'start_date'  => '2026-07-04',
+        'end_date'    => '2026-07-04',
+        'is_active'   => true,
     ]);
 
     AuditLog::query()->delete();
@@ -124,11 +111,11 @@ it('does not create an audit log when updating with no actual changes', function
 
     // Save with identical values
     $holiday->update([
-        'title' => 'No Change Holiday',
+        'title'       => 'No Change Holiday',
         'description' => 'Same description',
-        'start_date' => '2026-07-04',
-        'end_date' => '2026-07-04',
-        'is_active' => true,
+        'start_date'  => '2026-07-04',
+        'end_date'    => '2026-07-04',
+        'is_active'   => true,
     ]);
 
     $count = AuditLog::where('action', 'updated')->count();
@@ -136,13 +123,13 @@ it('does not create an audit log when updating with no actual changes', function
 });
 
 it('logs previous values on holiday deletion', function () {
-    $admin = auditAdmin();
+    $admin = User::factory()->create(['role' => 1, 'is_active' => true]);
     $holiday = Holiday::create([
-        'title' => 'To Be Deleted',
+        'title'       => 'To Be Deleted',
         'description' => 'Temporary holiday',
-        'start_date' => '2026-12-25',
-        'end_date' => '2026-12-25',
-        'is_active' => true,
+        'start_date'  => '2026-12-25',
+        'end_date'    => '2026-12-25',
+        'is_active'   => true,
     ]);
 
     AuditLog::query()->delete();

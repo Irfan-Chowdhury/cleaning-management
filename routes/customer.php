@@ -7,7 +7,7 @@ use App\Http\Controllers\Customer\ReferralController;
 use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\DashboardController;
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'can:customer'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/my-bookings', [BookingController::class, 'index'])->name('customer.bookings.index');
     Route::get('/my-wallet', [WalletController::class, 'index'])->name('customer.wallet.index');

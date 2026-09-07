@@ -30,6 +30,14 @@ trait Auditable
             /** @var Auditable $model */
             $model->auditDeleted();
         });
+
+        // Also audit force-deletions on soft-delete models
+        if (method_exists(static::class, 'forceDeleted')) {
+            static::forceDeleted(function (Model $model) {
+                /** @var Auditable $model */
+                $model->auditDeleted();
+            });
+        }
     }
 
     /**
@@ -62,8 +70,11 @@ trait Auditable
     protected function auditUpdated(): void
     {
         $changes = $this->getChanges();
+
+        // If getChanges() is empty the model was saved but nothing actually changed in the DB.
+        // getDirty() fallback is intentionally avoided — it can return pre-save values.
         if (empty($changes)) {
-            $changes = $this->getDirty();
+            return;
         }
 
         $oldValues = [];
