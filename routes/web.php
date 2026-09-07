@@ -25,7 +25,7 @@ Route::get('/', function () {
         return redirect()->route('login');
     }
 
-    return Auth::user()->role === 1
+    return (int) Auth::user()->role === 1
         ? redirect()->route('admin.dashboard')
         : redirect()->route('dashboard');
 });
@@ -40,16 +40,29 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::middleware('auth')->group(function () {
+// Booking Wizard Routes (Accessible by both Admin & Customer)
+Route::middleware('auth')->prefix('booking-service')->group(function () {
+    Route::get('/create', [BookingServiceController::class, 'create'])->name('booking-service.create');
+    Route::get('/questionnaire/{service}', [BookingServiceController::class, 'questionnaire'])->name('booking-service.questionnaire');
+    Route::get('/date-time', [BookingServiceController::class, 'dateTime'])->name('booking-service.date-time');
+    Route::get('/your-details', [BookingServiceController::class, 'yourDetails'])->name('booking-service.your-details');
+    Route::get('/review-confirm', [BookingServiceController::class, 'reviewConfirm'])->name('booking-service.review-confirm');
+});
+
+// Admin Protected Routes
+Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::get('/admin-dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+
     Route::get('/sub-admins', [SubAdminController::class, 'index'])->name('sub-admin.index');
     Route::post('/sub-admins', [SubAdminController::class, 'store'])->name('sub-admin.store');
     Route::put('/sub-admins/{sub_admin}', [SubAdminController::class, 'update'])->name('sub-admin.update');
     Route::delete('/sub-admins/{sub_admin}', [SubAdminController::class, 'destroy'])->name('sub-admin.destroy');
+
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
     Route::post('/customers', [CustomerController::class, 'store'])->name('customers.store');
     Route::put('/customers/{customer}', [CustomerController::class, 'update'])->name('customers.update');
     Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
+
     Route::get('/weekly-schedule', [WeeklyScheduleController::class, 'index'])->name('weekly-schedule.index');
     Route::get('/weekly-schedule/{day}/edit', [WeeklyScheduleController::class, 'edit'])
         ->name('weekly-schedule.edit')
@@ -57,65 +70,69 @@ Route::middleware('auth')->group(function () {
     Route::put('/weekly-schedule/{day}', [WeeklyScheduleController::class, 'update'])
         ->name('weekly-schedule.update')
         ->where('day', 'monday|tuesday|wednesday|thursday|friday|saturday|sunday');
+
     Route::get('/holidays',              [HolidayController::class, 'index'])->name('holidays.index');
     Route::post('/holidays',             [HolidayController::class, 'store'])->name('holidays.store');
     Route::put('/holidays/{holiday}',    [HolidayController::class, 'update'])->name('holidays.update');
     Route::delete('/holidays/{holiday}', [HolidayController::class, 'destroy'])->name('holidays.destroy');
-    Route::prefix('booking-service')->group(function () {
-        Route::get('/create', [BookingServiceController::class, 'create'])->name('booking-service.create');
-        Route::get('/questionnaire/{service}', [BookingServiceController::class, 'questionnaire'])->name('booking-service.questionnaire');
-        Route::get('/date-time', [BookingServiceController::class, 'dateTime'])->name('booking-service.date-time');
-        Route::get('/your-details', [BookingServiceController::class, 'yourDetails'])->name('booking-service.your-details');
-        Route::get('/review-confirm', [BookingServiceController::class, 'reviewConfirm'])->name('booking-service.review-confirm');
-    });
+
     Route::resource('services', ServiceController::class);
 
     Route::get('/wallets', [WalletController::class, 'index'])->name('wallets.index');
     Route::get('/wallets/{user}', [WalletController::class, 'show'])->name('wallets.show');
+
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
     Route::get('/bookings/{id}', [BookingController::class, 'show'])->name('bookings.show');
     Route::get('/bookings/{id}/edit', [BookingController::class, 'edit'])->name('bookings.edit');
     Route::put('/bookings/{id}', [BookingController::class, 'update'])->name('bookings.update');
+
     Route::get('/referrals', [ReferralController::class, 'index'])->name('referrals.index');
+
     Route::get('/promotions', [PromotionController::class, 'index'])->name('promotions.index');
     Route::post('/promotions', [PromotionController::class, 'store'])->name('promotions.store');
     Route::put('/promotions/{promotion}', [PromotionController::class, 'update'])->name('promotions.update');
     Route::delete('/promotions/{promotion}', [PromotionController::class, 'destroy'])->name('promotions.destroy');
+
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
-    Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
-    Route::get('/audit-logs/{auditLog}', [AuditLogController::class, 'show'])->name('audit-logs.show');
+
+    // Audit Logs (with explicit view-audit-logs Gate)
+    Route::get('/audit-logs', [AuditLogController::class, 'index'])
+        ->middleware('can:view-audit-logs')
+        ->name('audit-logs.index');
+    Route::get('/audit-logs/{auditLog}', [AuditLogController::class, 'show'])
+        ->middleware('can:view-audit-logs')
+        ->name('audit-logs.show');
 });
 
 require __DIR__.'/customer.php';
 
+// Utility routes — restricted to authenticated admins only
+Route::middleware(['auth', 'can:admin'])->group(function () {
+    Route::get('/clear-cache', function () {
+        Artisan::call('view:clear');
+        Artisan::call('cache:clear');
+        return 'Cache cleared successfully!';
+    });
 
-Route::get('/clear-cache', function () {
-    Artisan::call('view:clear');
-    Artisan::call('cache:clear');
-    //Artisan::call('optimize:clear');
-    return "Cache cleared successfully!";
+    Route::get('/run-migrate', function () {
+        Artisan::call('migrate', ['--force' => true]);
+        return nl2br(Artisan::output());
+    });
+
+    Route::get('/run-seeder/{class}', function (string $class) {
+        // Only allow simple class names (no namespace injection via backslash)
+        $seederClass = 'Database\\Seeders\\' . $class;
+
+        if (! class_exists($seederClass)) {
+            abort(404, 'Seeder class not found.');
+        }
+
+        Artisan::call('db:seed', [
+            '--class' => $seederClass,
+            '--force' => true,
+        ]);
+
+        return nl2br(Artisan::output());
+    })->where('class', '[A-Za-z0-9_]+');
 });
-
-Route::get('/run-migrate', function () {
-    Artisan::call('migrate', [
-        '--force' => true,
-    ]);
-
-    return nl2br(Artisan::output());
-});
-
-Route::get('/run-seeder/{class}', function (string $class) {
-    $seederClass = str_contains($class, '\\') ? $class : 'Database\\Seeders\\' . $class;
-
-    if (! class_exists($seederClass)) {
-        abort(404, 'Seeder class not found.');
-    }
-
-    Artisan::call('db:seed', [
-        '--class' => $seederClass,
-        '--force' => true,
-    ]);
-
-    return nl2br(Artisan::output());
-})->where('class', '[A-Za-z0-9_\\\\]+');
