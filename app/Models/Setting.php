@@ -51,11 +51,18 @@ class Setting extends Model
     public function getCompanyLogoUrlAttribute(): string
     {
         if (! empty($this->company_logo)) {
-            return filter_var($this->company_logo, FILTER_VALIDATE_URL)
-                ? $this->company_logo
-                : asset($this->company_logo);
+            if (filter_var($this->company_logo, FILTER_VALIDATE_URL)) {
+                return $this->company_logo;
+            }
+
+            $path = ltrim($this->company_logo, '/');
+            if (str_starts_with($path, 'public/')) {
+                $path = substr($path, 7);
+            }
+
+            return asset($path);
         }
 
-        return asset('public/assets/images/company_logo/brand_logo.png');
+        return asset('assets/images/company_logo/brand_logo.png');
     }
 }

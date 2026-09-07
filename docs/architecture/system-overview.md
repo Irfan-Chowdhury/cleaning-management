@@ -32,11 +32,18 @@ The booking flow is currently implemented as a four-step Blade UI:
 
 Only the service selection questionnaire is currently backed by database data. Later booking steps are primarily static UI and front-end interactions at this stage.
 
+### Authentication, Registration & Verification
+
+- **`RegistrationService`**: Encapsulates user registration logic, referral code assignment, email verification dispatching, and post-verification credit allocation.
+- **`MustVerifyEmail`**: `User` model implements `MustVerifyEmail`. Registration dispatches standard email notifications.
+- **`verified` Middleware**: Protects customer routes (`/dashboard`, `/my-bookings`, `/my-wallet`, `/customer-referrals`, `/customer-profile`) for users with `role = 2` until their email address is verified.
+- **`WalletTransaction` Module**: Automatically credits `welcome_bonus` wallet transactions to users upon email verification based on `settings.welcome_credit_enabled` and `settings.welcome_credit`.
+
 ### Authentication & Authorization Foundation
 
 Laravel Fortify, Sanctum, and Gate-based Authorization are active. Application authorization is managed by `App\Providers\AuthServiceProvider`:
 - **`can:admin` Middleware**: Protects admin routes (`/admin-dashboard`, `/sub-admins`, `/customers`, `/weekly-schedule`, `/holidays`, `/services`, `/wallets`, `/bookings`, `/referrals`, `/promotions`, `/settings`, `/audit-logs`) for users with `role = 1`.
-- **`can:customer` Middleware**: Protects customer-specific routes (`/dashboard`, `/my-bookings`, `/my-wallet`, `/customer-referrals`, `/customer-profile`) for users with `role = 2`.
+- **`can:customer` & `verified` Middleware**: Protects customer-specific routes (`/dashboard`, `/my-bookings`, `/my-wallet`, `/customer-referrals`, `/customer-profile`) for users with `role = 2`.
 - **`booking-service/*` Routes**: Protected by `auth` middleware (accessible by both Admin & Customer roles).
 - **`can:view-audit-logs` Middleware**: Protects audit log inspection routes.
 - **Blade `@can` Directives**: Controls UI element rendering in `sidebar.blade.php` and views.

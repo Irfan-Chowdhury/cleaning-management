@@ -200,6 +200,17 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="address">Address</label>
+                        <div class="input-icon">
+                            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                            <input type="text" class="form-control @error('address') is-invalid @enderror" id="address" name="address" value="{{ old('address') }}" placeholder="Enter street address, city, zip">
+                            @error('address')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <label for="email">Email Address</label>
                         <div class="input-icon">
                             <i class="far fa-envelope" aria-hidden="true"></i>
@@ -244,7 +255,7 @@
                         @enderror
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-block auth-btn">Create Account</button>
+                    <button type="submit" id="create-account-btn" class="btn btn-primary btn-block auth-btn" {{ old('terms') ? '' : 'disabled' }}>Create Account</button>
 
                     <p class="mt-4 mb-0 text-center text-muted">
                         Already have an account?
@@ -254,5 +265,18 @@
             </div>
         </section>
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const termsCheckbox = document.getElementById('terms');
+            const submitBtn = document.getElementById('create-account-btn');
+
+            if (termsCheckbox && submitBtn) {
+                termsCheckbox.addEventListener('change', function () {
+                    submitBtn.disabled = !this.checked;
+                });
+            }
+        });
+    </script>
 </body>
 </html>

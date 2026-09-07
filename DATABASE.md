@@ -66,9 +66,11 @@ sort_order (nullable)
 - user_id
 - booking_id nullable
 - type [credit, debit]
-- amount
-- source [welcome_bonus, referral_bonus, review_bonus, admin_adjustment, booking_usage]
-- description
+- amount decimal
+- source varchar 
+- description nullable
+
+source will be like welcome_bonus, referral_bonus, review_bonus, admin_adjustment, booking_usage etc. new register will be welcome_bonus.
 
 
 ## referrals

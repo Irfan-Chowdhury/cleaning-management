@@ -27,6 +27,7 @@ class RegisterRequest extends FormRequest
             'last_name' => ['nullable', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:255'],
             'gender' => ['nullable', 'string', 'in:male,female,other'],
+            'address' => ['nullable', 'string', 'max:500'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'confirmed', Password::defaults()],
             'terms' => ['required', 'accepted'],

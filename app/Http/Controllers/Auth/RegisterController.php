@@ -4,18 +4,20 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
-use App\Models\User;
+use App\Services\RegistrationService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class RegisterController extends Controller
 {
+    public function __construct(private readonly RegistrationService $registrationService)
+    {
+    }
+
     /**
      * Show the registration form.
      */
     public function showRegistrationForm()
     {
-        // If the user is already logged in, redirect them to the dashboard
         if (Auth::check()) {
             return redirect()->route('dashboard');
         }
@@ -28,22 +30,11 @@ class RegisterController extends Controller
      */
     public function register(RegisterRequest $request)
     {
-        $customer = User::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'gender' => $request->gender,
-            'role' => 2, // 1 = admin, 2 = customer
-            'password' => Hash::make($request->password),
-        ]);
-
-        $customer->update([
-            'referral_code' => strtoupper($customer->first_name . $customer->id),
-        ]);
+        $customer = $this->registrationService->register($request->validated());
 
         Auth::login($customer);
 
-        return redirect()->route('dashboard')->with('success', 'Registration successful. Welcome to Dust2Glow!');
+        return redirect()->route('verification.notice')
+            ->with('success', 'Registration successful! A verification email has been sent to your email address.');
     }
 }

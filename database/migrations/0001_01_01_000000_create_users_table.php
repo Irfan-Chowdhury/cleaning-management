@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('phone')->nullable();
             $table->string('gender')->nullable();
+            $table->text('address')->nullable();
             $table->unsignedTinyInteger('role')->default(2)->comment('1=admin, 2=customer');
             $table->string('photo')->nullable();
             $table->boolean('is_active')->default(true);
