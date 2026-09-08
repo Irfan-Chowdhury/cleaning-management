@@ -31,7 +31,7 @@ class NewCustomerRegisteredNotification extends Notification
             'type'        => 'new_customer',
             'title'       => 'New customer registered',
             'message'     => "{$customerName} created a new account and requested service details.",
-            'link'        => route('customers.index'),
+            'link'        => route('customers.show', $this->customer->id),
             'icon'        => 'fas fa-user-plus',
             'customer_id' => $this->customer->id,
         ];

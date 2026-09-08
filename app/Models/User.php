@@ -67,6 +67,14 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get the user who created this user record.
+     */
+    public function creator(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
      * Send the email verification notification using the custom professional template.
      */
     public function sendEmailVerificationNotification(): void
