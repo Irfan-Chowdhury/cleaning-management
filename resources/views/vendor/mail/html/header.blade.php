@@ -2,7 +2,7 @@
 @php
     $setting = \App\Models\Setting::first();
     $companyName = $setting?->company_name ?? config('app.name', 'Dust2Glow');
-    $logoUrl = $setting?->company_logo_url ?? asset('assets/images/company_logo/brand_logo.png');
+    $logoUrl = $setting?->company_logo_url ?? asset('public/assets/images/company_logo/brand_logo.png');
 @endphp
 <tr>
 <td class="header">

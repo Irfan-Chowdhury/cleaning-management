@@ -56,13 +56,13 @@ class Setting extends Model
             }
 
             $path = ltrim($this->company_logo, '/');
-            if (str_starts_with($path, 'public/')) {
-                $path = substr($path, 7);
+            if (! str_starts_with($path, 'public/')) {
+                $path = 'public/' . $path;
             }
 
             return asset($path);
         }
 
-        return asset('assets/images/company_logo/brand_logo.png');
+        return asset('public/assets/images/company_logo/brand_logo.png');
     }
 }

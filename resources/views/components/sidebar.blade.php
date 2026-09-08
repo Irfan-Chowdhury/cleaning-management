@@ -2,7 +2,7 @@
     <div class="sidebar-logo">
         <a href="#" class="sidebar-logo-link" aria-label="Cleaning Management">
             {{-- <img src="https://placehold.co/340x96/0f766e/ffffff?text=Sparkle+Care" alt="Cleaning Management logo"> --}}
-            <img id="sidebar-company-logo" src="{{ $sidebarSettings?->company_logo_url ?? asset('assets/images/company_logo/brand_logo.png') }}" alt="Cleaning Management logo">
+            <img id="sidebar-company-logo" src="{{ $sidebarSettings?->company_logo_url ?? asset('public/assets/images/company_logo/brand_logo.png') }}" alt="Cleaning Management logo">
         </a>
 
         <button type="button" class="sidebar-close" aria-label="Close sidebar">
