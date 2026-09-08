@@ -67,3 +67,24 @@ The Authentication module manages Customer Registration, Email Verification, Ter
 | `source` | `VARCHAR` | No | `welcome_bonus`, `referral_bonus`, `review_bonus`, `admin_adjustment`, `booking_usage` |
 | `description` | `TEXT` | Yes | Human-readable explanation |
 | `timestamps` | `TIMESTAMP` | No | `created_at` and `updated_at` |
+
+---
+
+## 4. System & Topbar Notifications
+
+### Topbar Notification Dropdown (`header.blade.php`)
+- Displays real-time unread notification badge count (`unreadNotifications->count()`).
+- Shows latest 6 notifications dynamically for the authenticated user.
+- **Customer Notifications**: Displays welcome message with bonus credit details. Clicking the notification automatically marks it as read and redirects the user to `/my-wallet`.
+- **Admin Notifications**: Displays new customer registration alerts (`"New customer registered: {Name}"`). Clicking the notification automatically marks it as read and redirects the admin to `/customers`.
+- **Mark All as Read**: Quick action form in topbar header.
+- **See All Notifications Link**: Links to `/notifications`.
+
+### Facebook-Style Notifications Page (`/notifications`)
+- Route: `GET /notifications` (`NotificationController@index`).
+- Features a clean Facebook-style notification feed:
+  - Filter tabs: **All** vs. **Unread**.
+  - Visual unread indicators (blue dot, highlighted row background).
+  - Role-wise isolation: Admins only see admin notifications, customers only see customer notifications.
+  - Action buttons to open target links, mark as read, or delete notifications.
+

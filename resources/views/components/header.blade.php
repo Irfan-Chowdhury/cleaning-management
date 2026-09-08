@@ -21,6 +21,12 @@
             <i class="fas fa-expand" aria-hidden="true"></i>
         </button>
 
+        @php
+            $authUser = auth()->user();
+            $unreadNotificationsCount = $authUser ? $authUser->unreadNotifications()->count() : 0;
+            $headerNotifications = $authUser ? $authUser->notifications()->take(6)->get() : collect();
+        @endphp
+
         <div class="dropdown notification-dropdown">
             <button type="button"
                     class="notification-btn"
@@ -30,74 +36,51 @@
                     aria-expanded="false"
                     aria-label="Notifications">
                 <i class="far fa-bell" aria-hidden="true"></i>
-                <span class="notification-badge">3</span>
+                @if ($unreadNotificationsCount > 0)
+                    <span class="notification-badge">{{ $unreadNotificationsCount > 99 ? '99+' : $unreadNotificationsCount }}</span>
+                @endif
             </button>
 
             <div class="dropdown-menu dropdown-menu-right notification-menu" aria-labelledby="notificationDropdown">
                 <div class="notification-menu-header d-flex align-items-center justify-content-between">
                     <h6 class="mb-0">Notifications</h6>
-                    <a class="notification-read-link" href="#">Mark all as read</a>
+                    @if ($unreadNotificationsCount > 0)
+                        <form action="{{ route('notifications.markAllRead') }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-link p-0 notification-read-link" style="font-size: 13px; text-decoration: none;">Mark all as read</button>
+                        </form>
+                    @endif
                 </div>
 
                 <div class="notification-list">
-                    <a class="dropdown-item notification-item unread d-flex align-items-start" href="#">
-                        <span class="notification-icon">
-                            <i class="fas fa-calendar-check" aria-hidden="true"></i>
-                        </span>
-                        <span class="notification-content">
-                            <span class="notification-title">New booking confirmed</span>
-                            <span class="notification-message">A home cleaning service has been scheduled for tomorrow morning.</span>
-                            <span class="notification-time">1 month ago</span>
-                        </span>
-                    </a>
-
-                    <a class="dropdown-item notification-item unread d-flex align-items-start" href="#">
-                        <span class="notification-icon">
-                            <i class="fas fa-exclamation" aria-hidden="true"></i>
-                        </span>
-                        <span class="notification-content">
-                            <span class="notification-title">Cleaner arrival updated</span>
-                            <span class="notification-message">Team B changed the estimated arrival time for booking #CL-2048.</span>
-                            <span class="notification-time">1 month ago</span>
-                        </span>
-                    </a>
-
-                    <a class="dropdown-item notification-item d-flex align-items-start" href="#">
-                        <span class="notification-icon">
-                            <i class="fas fa-wallet" aria-hidden="true"></i>
-                        </span>
-                        <span class="notification-content">
-                            <span class="notification-title">Payment received</span>
-                            <span class="notification-message">BDT 2,500 was added to the customer wallet successfully.</span>
-                            <span class="notification-time">1 month ago</span>
-                        </span>
-                    </a>
-
-                    <a class="dropdown-item notification-item d-flex align-items-start" href="#">
-                        <span class="notification-icon">
-                            <i class="fas fa-user-plus" aria-hidden="true"></i>
-                        </span>
-                        <span class="notification-content">
-                            <span class="notification-title">New customer registered</span>
-                            <span class="notification-message">Sarah Ahmed created an account and requested service details.</span>
-                            <span class="notification-time">2 months ago</span>
-                        </span>
-                    </a>
-
-                    <a class="dropdown-item notification-item d-flex align-items-start" href="#">
-                        <span class="notification-icon">
-                            <i class="fas fa-star" aria-hidden="true"></i>
-                        </span>
-                        <span class="notification-content">
-                            <span class="notification-title">New service review</span>
-                            <span class="notification-message">A customer left a 5-star rating for deep cleaning service.</span>
-                            <span class="notification-time">2 months ago</span>
-                        </span>
-                    </a>
+                    @forelse ($headerNotifications as $notification)
+                        @php
+                            $nData = $notification->data;
+                            $nTitle = $nData['title'] ?? 'Notification';
+                            $nMessage = $nData['message'] ?? '';
+                            $nIcon = $nData['icon'] ?? 'fas fa-bell';
+                            $isUnread = is_null($notification->read_at);
+                        @endphp
+                        <a class="dropdown-item notification-item {{ $isUnread ? 'unread' : '' }} d-flex align-items-start" href="{{ route('notifications.read', $notification->id) }}">
+                            <span class="notification-icon">
+                                <i class="{{ $nIcon }}" aria-hidden="true"></i>
+                            </span>
+                            <span class="notification-content">
+                                <span class="notification-title">{{ $nTitle }}</span>
+                                <span class="notification-message">{{ $nMessage }}</span>
+                                <span class="notification-time">{{ $notification->created_at->diffForHumans() }}</span>
+                            </span>
+                        </a>
+                    @empty
+                        <div class="p-3 text-center text-muted" style="font-size: 14px;">
+                            <i class="far fa-bell-slash d-block mb-2" style="font-size: 24px; opacity: 0.5;"></i>
+                            No notifications yet.
+                        </div>
+                    @endforelse
                 </div>
 
                 <div class="notification-menu-footer">
-                    <a href="#">View All Notifications</a>
+                    <a href="{{ route('notifications.index') }}">See All Notifications</a>
                 </div>
             </div>
         </div>

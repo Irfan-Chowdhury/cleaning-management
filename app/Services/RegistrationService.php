@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Setting;
 use App\Models\User;
 use App\Models\WalletTransaction;
+use App\Notifications\NewCustomerRegisteredNotification;
 use App\Notifications\WelcomeBonusNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
@@ -31,6 +32,12 @@ class RegistrationService
         $user->update([
             'referral_code' => strtoupper($user->first_name . $user->id),
         ]);
+
+        // Notify admins about new customer registration
+        $admins = User::where('role', 1)->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new NewCustomerRegisteredNotification($user));
+        }
 
         // Fire Registered event — automatically triggers sendEmailVerificationNotification()
         // for users implementing MustVerifyEmail. Do NOT call it manually here.
@@ -73,7 +80,7 @@ class RegistrationService
             }
         }
 
-        // Send professional welcome email with bonus details
+        // Send professional welcome email + DB notification with bonus details
         $user->notify(new WelcomeBonusNotification($bonusAmount));
 
         return true;

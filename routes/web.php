@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\VerificationController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 
 Route::get('/', function () {
@@ -50,6 +51,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/email/verification-notification', [VerificationController::class, 'resend'])
         ->middleware('throttle:6,1')
         ->name('verification.send');
+});
+
+// System Notification Routes (Accessible by all authenticated users)
+Route::middleware('auth')->group(function () {
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/{id}/read', [NotificationController::class, 'read'])->name('notifications.read');
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
 });
 
 // Booking Wizard Routes (Accessible by both Admin & Customer)

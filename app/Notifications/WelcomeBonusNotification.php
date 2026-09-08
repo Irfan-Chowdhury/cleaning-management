@@ -19,7 +19,7 @@ class WelcomeBonusNotification extends Notification
 
     public function via($notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail($notifiable): MailMessage
@@ -45,5 +45,32 @@ class WelcomeBonusNotification extends Notification
         return $mail
             ->action('Go to My Dashboard', url('/dashboard'))
             ->salutation(new \Illuminate\Support\HtmlString("Regards,<br>" . e($companyName)));
+    }
+
+    public function toDatabase($notifiable): array
+    {
+        $setting = Setting::first();
+        $currencySymbol = $setting?->currency ?: $this->currency;
+
+        if ($this->bonusAmount > 0) {
+            $formattedAmount = $currencySymbol . number_format($this->bonusAmount, 2);
+            $title = 'Welcome Bonus Credited! 🎉';
+            $message = "Congratulations! A welcome bonus credit of {$formattedAmount} has been added to your wallet.";
+            $link = route('customer.wallet.index');
+            $icon = 'fas fa-wallet';
+        } else {
+            $title = 'Welcome to Dust2Glow! 🎉';
+            $message = 'Your email address has been verified and your account is fully active.';
+            $link = route('dashboard');
+            $icon = 'fas fa-check-circle';
+        }
+
+        return [
+            'type'    => 'welcome_bonus',
+            'title'   => $title,
+            'message' => $message,
+            'link'    => $link,
+            'icon'    => $icon,
+        ];
     }
 }
