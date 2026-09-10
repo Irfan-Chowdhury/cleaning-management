@@ -29,27 +29,37 @@
             return 'questions[' + question.id + ']';
         }
 
-        function renderSelect(question) {
+        function getSavedValue(questionId, savedQuestions) {
+            if (!savedQuestions || typeof savedQuestions !== 'object') {
+                return null;
+            }
+            return savedQuestions[questionId] !== undefined ? savedQuestions[questionId] : null;
+        }
+
+        function renderSelect(question, savedValue) {
             var html = '<select class="form-control" name="' + fieldName(question) + '"' + (question.required ? ' required' : '') + '>';
 
             html += '<option value="">Please Choose...</option>';
             $.each(question.options, function (index, option) {
-                html += '<option value="' + escapeHtml(option.label) + '">' + escapeHtml(option.label) + '</option>';
+                var selected = (savedValue == option.label) ? ' selected' : '';
+                html += '<option value="' + escapeHtml(option.label) + '"' + selected + '>' + escapeHtml(option.label) + '</option>';
             });
 
             return html + '</select>';
         }
 
-        function renderCheckboxes(question) {
+        function renderCheckboxes(question, savedValue) {
             var html = '<div class="row booking-checkbox-grid">';
+            var savedArray = Array.isArray(savedValue) ? savedValue : (savedValue ? [savedValue] : []);
 
             $.each(question.options, function (index, option) {
                 var id = 'question_' + question.id + '_option_' + option.id;
+                var checked = $.inArray(option.label, savedArray) !== -1 ? ' checked' : '';
 
                 html += '' +
                     '<div class="col-sm-6 col-lg-4">' +
                         '<div class="custom-control custom-checkbox">' +
-                            '<input type="checkbox" class="custom-control-input" id="' + id + '" name="' + fieldName(question) + '[]" value="' + escapeHtml(option.label) + '">' +
+                            '<input type="checkbox" class="custom-control-input" id="' + id + '" name="' + fieldName(question) + '[]" value="' + escapeHtml(option.label) + '"' + checked + '>' +
                             '<label class="custom-control-label" for="' + id + '">' + escapeHtml(option.label) + '</label>' +
                         '</div>' +
                     '</div>';
@@ -58,16 +68,17 @@
             return html + '</div>';
         }
 
-        function renderRadios(question) {
+        function renderRadios(question, savedValue) {
             var html = '<div class="row booking-checkbox-grid">';
 
             $.each(question.options, function (index, option) {
                 var id = 'question_' + question.id + '_option_' + option.id;
+                var checked = (savedValue == option.label) ? ' checked' : '';
 
                 html += '' +
                     '<div class="col-sm-6 col-lg-4">' +
                         '<div class="custom-control custom-radio">' +
-                            '<input type="radio" class="custom-control-input" id="' + id + '" name="' + fieldName(question) + '" value="' + escapeHtml(option.label) + '"' + (question.required ? ' required' : '') + '>' +
+                            '<input type="radio" class="custom-control-input" id="' + id + '" name="' + fieldName(question) + '" value="' + escapeHtml(option.label) + '"' + (question.required ? ' required' : '') + checked + '>' +
                             '<label class="custom-control-label" for="' + id + '">' + escapeHtml(option.label) + '</label>' +
                         '</div>' +
                     '</div>';
@@ -76,38 +87,40 @@
             return html + '</div>';
         }
 
-        function renderQuestionField(question) {
+        function renderQuestionField(question, savedValue) {
             var fieldType = (question.field_type || '').toLowerCase();
+            var valStr = savedValue ? escapeHtml(savedValue) : '';
 
             if (fieldType === 'select' || fieldType === 'dropdown') {
-                return renderSelect(question);
+                return renderSelect(question, savedValue);
             }
 
             if (fieldType === 'checkbox') {
-                return renderCheckboxes(question);
+                return renderCheckboxes(question, savedValue);
             }
 
             if (fieldType === 'radio') {
-                return renderRadios(question);
+                return renderRadios(question, savedValue);
             }
 
             if (fieldType === 'textarea') {
-                return '<textarea class="form-control" name="' + fieldName(question) + '" rows="3"' + (question.required ? ' required' : '') + '></textarea>';
+                return '<textarea class="form-control" name="' + fieldName(question) + '" rows="3"' + (question.required ? ' required' : '') + '>' + valStr + '</textarea>';
             }
 
             if (fieldType === 'number') {
-                return '<input type="number" class="form-control" name="' + fieldName(question) + '"' + (question.required ? ' required' : '') + '>';
+                return '<input type="number" class="form-control" name="' + fieldName(question) + '" value="' + valStr + '"' + (question.required ? ' required' : '') + '>';
             }
 
             if (fieldType === 'date') {
-                return '<input type="date" class="form-control" name="' + fieldName(question) + '"' + (question.required ? ' required' : '') + '>';
+                return '<input type="date" class="form-control" name="' + fieldName(question) + '" value="' + valStr + '"' + (question.required ? ' required' : '') + '>';
             }
 
-            return '<input type="text" class="form-control" name="' + fieldName(question) + '"' + (question.required ? ' required' : '') + '>';
+            return '<input type="text" class="form-control" name="' + fieldName(question) + '" value="' + valStr + '"' + (question.required ? ' required' : '') + '>';
         }
 
         function renderQuestionnaire(response) {
             var $container = $('#booking-questionnaire');
+            var savedQuestions = $container.data('saved-questions') || {};
             var questions = response.questions || [];
             var html = '';
 
@@ -128,6 +141,7 @@
                 '</div>';
 
             $.each(questions, function (index, question) {
+                var savedValue = getSavedValue(question.id, savedQuestions);
                 html += '' +
                     '<div class="booking-question-item">' +
                         '<label>' +
@@ -135,7 +149,7 @@
                             escapeHtml(question.title) +
                             (question.required ? ' <span>*</span>' : '') +
                         '</label>' +
-                        renderQuestionField(question) +
+                        renderQuestionField(question, savedValue) +
                     '</div>';
             });
 
@@ -177,6 +191,11 @@
                 );
             });
         });
+
+        // Trigger on load if a service is already pre-selected
+        if ($('#booking-service').val()) {
+            $('#booking-service').trigger('change');
+        }
 
         $('.calendar-days button:not(.outside-month)').on('click', function () {
             $('.calendar-days button').removeClass('selected');

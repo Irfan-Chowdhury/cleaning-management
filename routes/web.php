@@ -64,6 +64,7 @@ Route::middleware('auth')->group(function () {
 // Booking Wizard Routes (Accessible by both Admin & Customer)
 Route::middleware('auth')->prefix('booking-service')->group(function () {
     Route::get('/create', [BookingServiceController::class, 'create'])->name('booking-service.create');
+    Route::post('/step-1', [BookingServiceController::class, 'storeStep1'])->name('booking-service.store-step-1');
     Route::get('/questionnaire/{service}', [BookingServiceController::class, 'questionnaire'])->name('booking-service.questionnaire');
     Route::get('/date-time', [BookingServiceController::class, 'dateTime'])->name('booking-service.date-time');
     Route::get('/your-details', [BookingServiceController::class, 'yourDetails'])->name('booking-service.your-details');

@@ -2,15 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BookingStep1Request;
 use App\Models\Service;
+use App\Services\BookingSessionService;
+use Illuminate\Http\RedirectResponse;
 
 class BookingServiceController extends Controller
 {
+    protected BookingSessionService $bookingSessionService;
+
+    public function __construct(BookingSessionService $bookingSessionService)
+    {
+        $this->bookingSessionService = $bookingSessionService;
+    }
+
     public function create()
     {
         $services = Service::where('status', 'active')->orderBy('name')->get();
+        $step1Data = $this->bookingSessionService->getStep1Data();
 
-        return view('pages.booking-service.create', compact('services'));
+        return view('pages.booking-service.create', compact('services', 'step1Data'));
+    }
+
+    public function storeStep1(BookingStep1Request $request): RedirectResponse
+    {
+        $this->bookingSessionService->saveStep1($request->validated());
+
+        return redirect()->route('booking-service.date-time');
     }
 
     public function questionnaire(Service $service)

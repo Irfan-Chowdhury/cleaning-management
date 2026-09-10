@@ -59,6 +59,7 @@ Customer clicks Continue to Review & Confirm
 ```php
 Route::prefix('booking-service')->group(function () {
     Route::get('/create', [BookingServiceController::class, 'create'])->name('booking-service.create');
+    Route::post('/step-1', [BookingServiceController::class, 'storeStep1'])->name('booking-service.store-step-1');
     Route::get('/questionnaire/{service}', [BookingServiceController::class, 'questionnaire'])->name('booking-service.questionnaire');
     Route::get('/date-time', [BookingServiceController::class, 'dateTime'])->name('booking-service.date-time');
     Route::get('/your-details', [BookingServiceController::class, 'yourDetails'])->name('booking-service.your-details');
@@ -66,17 +67,17 @@ Route::prefix('booking-service')->group(function () {
 });
 ```
 
-### Controller
+### Controller & Business Logic
 
-`App\Http\Controllers\BookingServiceController`
-
-Important methods:
-
-- `create()` loads active services for Step 1.
-- `questionnaire(Service $service)` returns service questions and options as JSON.
-- `dateTime()` renders Step 2.
-- `yourDetails()` renders Step 3.
-- `reviewConfirm()` renders Step 4.
+- **Controller**: `App\Http\Controllers\BookingServiceController`
+  - `create()` loads active services and retrieves Step 1 session data to pre-fill the form if returning.
+  - `storeStep1(BookingStep1Request $request)` validates Step 1 inputs, calls `BookingSessionService::saveStep1()`, and redirects to Step 2 (`route('booking-service.date-time')`).
+  - `questionnaire(Service $service)` returns service questions and options as JSON.
+  - `dateTime()` renders Step 2.
+  - `yourDetails()` renders Step 3.
+  - `reviewConfirm()` renders Step 4.
+- **Form Request**: `App\Http\Requests\BookingStep1Request` handles server-side validation for `service_id`, `questions`, and `service_notes`.
+- **Service Class**: `App\Services\BookingSessionService` manages session storage under `booking_wizard` key.
 
 ### Frontend
 
@@ -86,6 +87,7 @@ Important behavior:
 
 - Counts characters for notes and special instructions.
 - Loads questionnaire data through AJAX when the selected service changes.
+- Automatically loads questionnaire and restores saved question choices when returning to Step 1.
 - Renders input types from `field_type`.
 - Supports select, dropdown, checkbox, radio, textarea, number, date, and text fallback.
 - Toggles selected date and time buttons.
@@ -101,13 +103,42 @@ Important behavior:
 
 ## 4. Database Design
 
-The implemented booking flow currently reads from the service catalog tables:
+The booking service module reads from service catalog tables and writes to the `bookings` table:
 
 - `services`
 - `service_questions`
 - `question_options`
+- `bookings`
 
-No `bookings` table is currently implemented in migrations.
+### `bookings` Table Data Model
+
+`bookings` columns:
+
+- `id`
+- `user_id` (nullable foreign key to `users.id`)
+- `service_id` (foreign key to `services.id`)
+- `frequency` (default `one_time`)
+- `booking_date` (nullable)
+- `start_time` (nullable)
+- `end_time` (nullable)
+- `customer_name` (nullable)
+- `customer_email` (nullable)
+- `customer_phone` (nullable)
+- `customer_address` (nullable)
+- `unit_suite_floor` (nullable)
+- `suburb` (nullable)
+- `postcode` (nullable)
+- `special_instructions` (nullable)
+- `service_notes` (nullable)
+- `status` (default `pending`)
+- `subtotal` (default `0.00`)
+- `discount_amount` (default `0.00`)
+- `credit_used` (default `0.00`)
+- `total_amount` (default `0.00`)
+- `referal_code` (nullable)
+- `promo_code` (nullable)
+- `created_at`
+- `updated_at`
 
 ### Questionnaire Data Model
 
