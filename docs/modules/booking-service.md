@@ -27,9 +27,16 @@ Customer opens /booking-service/create
 ```text
 Customer clicks Continue to Date & Time
   -> /booking-service/date-time
-  -> BookingServiceController@dateTime
-  -> Static Blade date and time selection UI
-  -> JavaScript toggles selected date and time button states
+  -> BookingServiceController@dateTime (loads active holidays & session data)
+  -> Dynamic Blade date and time selection UI
+  -> JavaScript initializes current month calendar (prev month disabled)
+  -> JavaScript disables past dates & active holiday dates (with hover title tooltip)
+  -> Selecting date fires AJAX GET /booking-service/slots-for-date?date=YYYY-MM-DD
+  -> Server returns day availability, active schedule slots & booked slot states
+  -> Already booked slots are styled red and disabled
+  -> Form submits POST /booking-service/step-2 -> BookingStep2Request validation
+  -> BookingSessionService stores step 2 data in session
+  -> Redirects to /booking-service/your-details
 ```
 
 ### Step 3: Your Details
@@ -62,6 +69,8 @@ Route::prefix('booking-service')->group(function () {
     Route::post('/step-1', [BookingServiceController::class, 'storeStep1'])->name('booking-service.store-step-1');
     Route::get('/questionnaire/{service}', [BookingServiceController::class, 'questionnaire'])->name('booking-service.questionnaire');
     Route::get('/date-time', [BookingServiceController::class, 'dateTime'])->name('booking-service.date-time');
+    Route::post('/step-2', [BookingServiceController::class, 'storeStep2'])->name('booking-service.store-step-2');
+    Route::get('/slots-for-date', [BookingServiceController::class, 'slotsForDate'])->name('booking-service.slots-for-date');
     Route::get('/your-details', [BookingServiceController::class, 'yourDetails'])->name('booking-service.your-details');
     Route::get('/review-confirm', [BookingServiceController::class, 'reviewConfirm'])->name('booking-service.review-confirm');
 });
@@ -73,11 +82,21 @@ Route::prefix('booking-service')->group(function () {
   - `create()` loads active services and retrieves Step 1 session data to pre-fill the form if returning.
   - `storeStep1(BookingStep1Request $request)` validates Step 1 inputs, calls `BookingSessionService::saveStep1()`, and redirects to Step 2 (`route('booking-service.date-time')`).
   - `questionnaire(Service $service)` returns service questions and options as JSON.
-  - `dateTime()` renders Step 2.
+  - `dateTime()` loads active holidays and Step 2 session data, rendering Step 2 view.
+  - `slotsForDate(Request $request)` returns slot availability, active schedule status, holiday details, and booked slot states for a date as JSON.
+  - `storeStep2(BookingStep2Request $request)` validates Step 2 date & start time, stores in session via `BookingSessionService::saveStep2()`, and redirects to Step 3 (`route('booking-service.your-details')`).
   - `yourDetails()` renders Step 3.
   - `reviewConfirm()` renders Step 4.
-- **Form Request**: `App\Http\Requests\BookingStep1Request` handles server-side validation for `service_id`, `questions`, and `service_notes`.
-- **Service Class**: `App\Services\BookingSessionService` manages session storage under `booking_wizard` key.
+- **Form Requests**:
+  - `App\Http\Requests\BookingStep1Request` handles Step 1 validation (`service_id`, `questions`, `service_notes`).
+  - `App\Http\Requests\BookingStep2Request` handles Step 2 validation (`booking_date`, `start_time`, `end_time`), enforcing past date prevention, holiday checks, active day of week rules, and booked slot conflict prevention.
+- **Service Class**: `App\Services\BookingSessionService` manages session storage under `booking_wizard` key for both Step 1 and Step 2.
+- **Tests**:
+  - **Strategy**: Tests run without refreshing the database (`RefreshDatabase` trait is omitted to preserve seed state) and authenticate using customer credentials from `UserSeeder` (`customer@gmail.com`).
+  - **Unit Suite**: `tests/Unit/BookingSessionServiceTest.php` verifies `BookingSessionService` methods (`saveStep1`, `getStep1Data`, `saveStep2`, `getStep2Data`, `clearSession`).
+  - **Feature Suites**:
+    - `tests/Feature/BookingStep1FeatureTest.php` covers Step 1 rendering, questionnaire JSON API, POST session storage, and validation.
+    - `tests/Feature/BookingStep2Test.php` covers Step 2 rendering, slots API, holiday detection, booked slot disabling, session persistence, and validation rules.
 
 ### Frontend
 

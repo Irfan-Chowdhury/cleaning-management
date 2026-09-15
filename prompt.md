@@ -159,3 +159,48 @@ Do not modify or integrate auditing with other modules yet.
 After implementation, show me the files changed and briefly explain how I can later enable auditing for another model.
 
 
+
+
+# Booking
+Now come to the point step-2:
+
+Here this step-2 can be critical and logical.
+
+
+### Select a Date (Calender)
+
+* in `Select Date Option` I mean calendar, 
+
+- when curent month running, can not select previous month, only select forward month and can go by clicking the right arrow to next month.
+
+- when go ste-2  page, primarily page current date select by default.
+
+- when currecnt date, can not select the previous date, will be disable. only forward date allow.
+
+- Get data from Holiday Model, then match holiday date. if date match then in calender the date will be disable and set a different color in that, and when hover the title of holiday will display like tooltip in calender.
+
+ 
+
+### Select a Time
+
+- Fetch data and load data 'Select a Time" section. data will take from weeklySchedule, ScheduleSlots. Just Display Start Date date Day wise.
+
+- if Any slot booking then the start time slot will be red color with disable.
+
+- booking data should be unique, I mean date and Time slot booking unique per customerer.
+
+- Use Proper logic, validation and etc.
+
+
+### Testing and othrer
+
+- Write the Unit/feature test case for PEST
+- Update the documentation.
+- if miss anything in logic or feature you can suggest me
+
+
+
+
+
+
+

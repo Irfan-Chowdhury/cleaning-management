@@ -41,6 +41,31 @@ class BookingSessionService
     }
 
     /**
+     * Save Step 2 data into the session.
+     */
+    public function saveStep2(array $data): void
+    {
+        $sessionData = $this->getBookingSession();
+        $sessionData['step2'] = [
+            'booking_date' => $data['booking_date'] ?? null,
+            'start_time' => $data['start_time'] ?? null,
+            'end_time' => $data['end_time'] ?? null,
+            'frequency' => $data['frequency'] ?? 'one_time',
+        ];
+
+        Session::put($this->sessionKey, $sessionData);
+    }
+
+    /**
+     * Get Step 2 data from session.
+     */
+    public function getStep2Data(): array
+    {
+        $sessionData = $this->getBookingSession();
+        return $sessionData['step2'] ?? [];
+    }
+
+    /**
      * Clear all booking wizard session data.
      */
     public function clearSession(): void
