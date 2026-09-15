@@ -176,7 +176,21 @@ class BookingServiceController extends Controller
 
     public function yourDetails()
     {
-        return view('pages.booking-service.your-details');
+        $user = auth()->user();
+
+        $accountData = [
+            'name'     => $user ? trim($user->first_name . ' ' . ($user->last_name ?? '')) : '',
+            'email'    => $user->email ?? '',
+            'phone'    => $user->phone ?? '',
+            'address'  => $user->address ?? '',
+            'unit'     => '',
+            'suburb'   => '',
+            'postcode' => '',
+        ];
+
+        $step3Data = $this->bookingSessionService->getStep3Data();
+
+        return view('pages.booking-service.your-details', compact('accountData', 'step3Data'));
     }
 
     public function reviewConfirm()

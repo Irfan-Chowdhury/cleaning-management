@@ -4,7 +4,7 @@
         1 => ['label' => 'Service Details', 'route' => 'booking-service.create'],
         2 => ['label' => 'Date & Time', 'route' => 'booking-service.date-time'],
         3 => ['label' => 'Your Details', 'route' => 'booking-service.your-details'],
-        4 => ['label' => 'Review & Confirm', 'route' => 'booking-service.review-confirm'],
+        // 4 => ['label' => 'Review & Confirm', 'route' => 'booking-service.review-confirm'],
     ];
 @endphp
 

@@ -412,11 +412,37 @@
         $('input[name="detail_mode"]').on('change', function () {
             var mode = $(this).val();
             var isAccountMode = mode === 'account';
+            var $form = $('.your-details-form');
 
             $('.detail-mode-card').removeClass('active');
             $(this).closest('.detail-mode-card').addClass('active');
-            $('.your-details-form').toggleClass('account-mode', isAccountMode);
-            $('.booking-detail-input').prop('readonly', isAccountMode);
+            $form.toggleClass('account-mode', isAccountMode);
+
+            if (isAccountMode) {
+                // Populate inputs with current logged-in user data
+                $('#full-name').val($form.attr('data-user-name') || '');
+                $('#email-address').val($form.attr('data-user-email') || '');
+                $('#phone-number').val($form.attr('data-user-phone') || '');
+                $('#service-address').val($form.attr('data-user-address') || '');
+                $('#unit-suite').val($form.attr('data-user-unit') || '');
+                $('#suburb').val($form.attr('data-user-suburb') || '');
+                $('#postcode').val($form.attr('data-user-postcode') || '');
+                $('.booking-detail-input').prop('readonly', true);
+                $('.saved-details-panel').slideDown(200);
+            } else {
+                // Clear all input fields to blank state for new details insertion
+                $('#full-name').val('');
+                $('#email-address').val('');
+                $('#phone-number').val('');
+                $('#service-address').val('');
+                $('#unit-suite').val('');
+                $('#suburb').val('');
+                $('#postcode').val('');
+                $('#special-instructions').val('');
+                $('#special-instructions-count').text('0');
+                $('.booking-detail-input').prop('readonly', false);
+                $('.saved-details-panel').slideUp(200);
+            }
         });
     });
 })(jQuery);

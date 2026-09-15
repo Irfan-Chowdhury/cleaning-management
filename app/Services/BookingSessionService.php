@@ -66,6 +66,36 @@ class BookingSessionService
     }
 
     /**
+     * Save Step 3 data into the session.
+     */
+    public function saveStep3(array $data): void
+    {
+        $sessionData = $this->getBookingSession();
+        $sessionData['step3'] = [
+            'detail_mode'          => $data['detail_mode'] ?? 'account',
+            'customer_name'        => $data['customer_name'] ?? null,
+            'customer_email'       => $data['customer_email'] ?? null,
+            'customer_phone'       => $data['customer_phone'] ?? null,
+            'customer_address'     => $data['customer_address'] ?? null,
+            'unit_suite_floor'     => $data['unit_suite_floor'] ?? null,
+            'suburb'               => $data['suburb'] ?? null,
+            'postcode'             => $data['postcode'] ?? null,
+            'special_instructions' => $data['special_instructions'] ?? null,
+        ];
+
+        Session::put($this->sessionKey, $sessionData);
+    }
+
+    /**
+     * Get Step 3 data from session.
+     */
+    public function getStep3Data(): array
+    {
+        $sessionData = $this->getBookingSession();
+        return $sessionData['step3'] ?? [];
+    }
+
+    /**
      * Clear all booking wizard session data.
      */
     public function clearSession(): void

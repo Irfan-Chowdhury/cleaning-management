@@ -36,51 +36,56 @@
 
                     <div class="saved-details-panel">
                         <div>
-                            <strong>MD. JAHEDUL DINER</strong>
-                            <p>md.jahedulalam99@gmail.com</p>
-                            <p>+61 412 345 678</p>
-                            <p>25 King St, Sydney NSW 2000, Australia</p>
+                            <strong>{{ $accountData['name'] ?: 'MD. JAHEDUL DINER' }}</strong>
+                            <p>{{ $accountData['email'] ?: 'md.jahedulalam99@gmail.com' }}</p>
+                            <p>{{ $accountData['phone'] ?: '+61 412 345 678' }}</p>
+                            <p>{{ $accountData['address'] ?: '25 King St, Sydney NSW 2000, Australia' }}</p>
                         </div>
                         <a href="#">Edit</a>
                     </div>
 
-                    <form class="your-details-form account-mode">
+                    <form class="your-details-form account-mode"
+                          id="your-details-form"
+                          data-user-name="{{ $accountData['name'] ?: 'MD. JAHEDUL DINER' }}"
+                          data-user-email="{{ $accountData['email'] ?: 'md.jahedulalam99@gmail.com' }}"
+                          data-user-phone="{{ $accountData['phone'] ?: '+61 412 345 678' }}"
+                          data-user-address="{{ $accountData['address'] ?: '25 King St, Sydney NSW 2000, Australia' }}"
+                          data-user-unit="{{ $accountData['unit'] ?? '' }}"
+                          data-user-suburb="{{ $accountData['suburb'] ?: 'Sydney' }}"
+                          data-user-postcode="{{ $accountData['postcode'] ?: '2000' }}">
                         <div class="details-form-grid">
                             <div class="form-group booking-field">
                                 <label for="full-name">Full Name <span>*</span></label>
-                                <input type="text" class="form-control booking-detail-input" id="full-name" value="MD. JAHEDUL DINER" readonly>
+                                <input type="text" class="form-control booking-detail-input" id="full-name" value="{{ $accountData['name'] ?: 'MD. JAHEDUL DINER' }}" readonly>
                             </div>
                             <div class="form-group booking-field">
                                 <label for="email-address">Email Address <span>*</span></label>
-                                <input type="email" class="form-control booking-detail-input" id="email-address" value="md.jahedulalam99@gmail.com" readonly>
+                                <input type="email" class="form-control booking-detail-input" id="email-address" value="{{ $accountData['email'] ?: 'md.jahedulalam99@gmail.com' }}" readonly>
                             </div>
                             <div class="form-group booking-field">
                                 <label for="phone-number">Phone Number <span>*</span></label>
-                                <div class="phone-input-wrap">
-                                    <span class="phone-country">AU</span>
-                                    <input type="text" class="form-control booking-detail-input" id="phone-number" value="+61 412 345 678" readonly>
-                                </div>
+                                <input type="text" class="form-control booking-detail-input" id="phone-number" value="{{ $accountData['phone'] ?: '+61 412 345 678' }}" readonly>
                             </div>
                         </div>
 
                         <div class="form-group booking-field address-field">
                             <label for="service-address">Service Address <span>*</span></label>
-                            <input type="text" class="form-control booking-detail-input" id="service-address" value="25 King St, Sydney NSW 2000, Australia" readonly>
+                            <input type="text" class="form-control booking-detail-input" id="service-address" value="{{ $accountData['address'] ?: '25 King St, Sydney NSW 2000, Australia' }}" readonly>
                             <i class="fas fa-check-circle address-check" aria-hidden="true"></i>
                         </div>
 
                         <div class="details-form-grid address-extra-grid">
                             <div class="form-group booking-field">
                                 <label for="unit-suite">Unit / Suite / Floor (Optional)</label>
-                                <input type="text" class="form-control booking-detail-input" id="unit-suite" placeholder="e.g. Unit 5, Floor 2" readonly>
+                                <input type="text" class="form-control booking-detail-input" id="unit-suite" value="{{ $accountData['unit'] ?? '' }}" placeholder="e.g. Unit 5, Floor 2" readonly>
                             </div>
                             <div class="form-group booking-field">
                                 <label for="suburb">Suburb <span>*</span></label>
-                                <input type="text" class="form-control booking-detail-input" id="suburb" value="Sydney" readonly>
+                                <input type="text" class="form-control booking-detail-input" id="suburb" value="{{ $accountData['suburb'] ?: 'Sydney' }}" readonly>
                             </div>
                             <div class="form-group booking-field">
                                 <label for="postcode">Postcode <span>*</span></label>
-                                <input type="text" class="form-control booking-detail-input" id="postcode" value="2000" readonly>
+                                <input type="text" class="form-control booking-detail-input" id="postcode" value="{{ $accountData['postcode'] ?: '2000' }}" readonly>
                             </div>
                         </div>
 
