@@ -249,3 +249,8 @@ Need to payment status. create migration file. Then integrate this payments with
 * Set a validation/condition: /bookings/{id}/edit when booking status change to approved and if amount will be 0 then only this time display a confirm alert message by sweatAlert. 
 * Correction-8: from /my-bookings and /bookings in datatable remove serial number from 1st coulm. from /bookings add booking Id and order by DESC the booking id both table.
 * correction-9: redesign the /bookings/{id} page with full details
+
+
+# Booking Step-3
+data should retrive from actual Data from Db and display the data in view. After submitting, booking status will be change into approved to confirmed and then Admin can get a notification.
+Use validation, business logic separate.

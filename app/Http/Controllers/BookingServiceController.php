@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BookingConfirmRequest;
 use App\Http\Requests\BookingStep1Request;
 use App\Http\Requests\BookingStep2Request;
 use App\Http\Requests\BookingStep3Request;
@@ -373,5 +374,18 @@ class BookingServiceController extends Controller
         $latestBooking = $booking;
 
         return view('pages.booking-service.review-confirm', compact('step1Data', 'step2Data', 'step3Data', 'offerData', 'latestBooking'));
+    }
+
+    public function confirmBooking(BookingConfirmRequest $request): RedirectResponse
+    {
+        $bookingId = (int) $request->validated('booking_id');
+        $booking = Booking::findOrFail($bookingId);
+
+        $this->bookingService->confirmBookingByCustomer($booking, auth()->user());
+
+        $targetRoute = (int) auth()->user()->role === 1 ? 'bookings.index' : 'customer.bookings.index';
+
+        return redirect()->route($targetRoute)
+            ->with('success', "Booking #{$booking->id} has been confirmed!");
     }
 }

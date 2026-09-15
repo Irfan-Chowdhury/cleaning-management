@@ -35,6 +35,7 @@
                             <th>Date</th>
                             <th>Slot</th>
                             <th>Amount</th>
+                            <th>Booking Status</th>
                             <th>Payment Status</th>
                             <th class="text-center">Action</th>
                         </tr>
@@ -74,6 +75,14 @@
                                 </td>
                                 <td>
                                     @php
+                                        $bookingStatusEnum = \App\Enums\BookingStatus::tryFrom($booking->status) ?? \App\Enums\BookingStatus::PENDING;
+                                    @endphp
+                                    <span class="badge {{ $bookingStatusEnum->badgeClass() }}" style="padding: 6px 10px; font-weight: 700; border-radius: 999px;">
+                                        {{ $bookingStatusEnum->label() }}
+                                    </span>
+                                </td>
+                                <td>
+                                    @php
                                         $statusClass = 'badge-success';
                                         if ($booking->payment_status === 'pending') {
                                             $statusClass = 'badge-warning text-dark';
@@ -103,7 +112,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center py-4 text-muted">
+                                <td colspan="9" class="text-center py-4 text-muted">
                                     <i class="far fa-calendar-times fa-2x mb-2 d-block" aria-hidden="true"></i>
                                     No bookings found.
                                 </td>
@@ -127,7 +136,7 @@
                 responsive: true,
                 order: [[0, 'desc']],
                 columnDefs: [
-                    { orderable: false, targets: [7] }
+                    { orderable: false, targets: [8] }
                 ],
                 language: {
                     search: 'Search bookings:',

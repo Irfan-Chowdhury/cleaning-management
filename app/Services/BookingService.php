@@ -6,6 +6,7 @@ use App\Enums\BookingStatus;
 use App\Models\Booking;
 use App\Models\User;
 use App\Notifications\BookingApprovedNotification;
+use App\Notifications\BookingConfirmedNotification;
 use App\Notifications\NewBookingPendingNotification;
 use Illuminate\Support\Facades\Log;
 
@@ -186,6 +187,57 @@ class BookingService
                     Log::error('Failed to send customer approval notification: ' . $e->getMessage());
                 }
             }
+        }
+
+        return $booking;
+    }
+
+    /**
+     * Confirm an approved booking by Customer, update status to confirmed, and notify admins.
+     */
+    public function confirmBookingByCustomer(Booking $booking, User $user): Booking
+    {
+        $statusValue = $booking->status instanceof BookingStatus
+            ? $booking->status->value
+            : strtolower((string) $booking->status);
+
+        if ($statusValue !== BookingStatus::APPROVED->value) {
+            throw new \InvalidArgumentException('Only approved bookings can be confirmed.');
+        }
+
+        // Check ownership unless admin
+        if ((int) $user->role !== 1 && $booking->user_id != $user->id) {
+            throw new \UnauthorizedException('You are not authorized to confirm this booking.');
+        }
+
+        $booking->update([
+            'status' => BookingStatus::CONFIRMED,
+        ]);
+
+        // Sync or update payment record status if present
+        try {
+            $payment = \App\Models\Payment::firstOrNew(['booking_id' => $booking->id]);
+            $payment->user_id = $booking->user_id;
+            $payment->amount = (float) $booking->total_amount;
+            if (empty($payment->payment_status)) {
+                $payment->payment_status = 'pending';
+            }
+            if (empty($payment->payment_method)) {
+                $payment->payment_method = 'pending';
+            }
+            $payment->save();
+        } catch (\Throwable $e) {
+            Log::error('Failed to sync payment record on confirmation: ' . $e->getMessage());
+        }
+
+        // Notify all admins of booking confirmation
+        try {
+            $admins = User::where('role', 1)->get();
+            foreach ($admins as $admin) {
+                $admin->notify(new BookingConfirmedNotification($booking));
+            }
+        } catch (\Throwable $e) {
+            Log::error('Failed to send admin confirmation notification: ' . $e->getMessage());
         }
 
         return $booking;
