@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('service_id')->constrained('services')->cascadeOnDelete();
-
+            $table->json('answers')->nullable();
             $table->string('frequency')->default('one_time');
 
             $table->date('booking_date')->nullable();

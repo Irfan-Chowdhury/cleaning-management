@@ -88,8 +88,8 @@ source will be like welcome_bonus, referral_bonus, review_bonus, admin_adjustmen
 - booking_id
 - user_id
 - amount
-- payment_method
-- payment_status
+- payment_method nullable
+- payment_status nullable
 - created_at
 
 

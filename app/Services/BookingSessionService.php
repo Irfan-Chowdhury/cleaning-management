@@ -96,6 +96,35 @@ class BookingSessionService
     }
 
     /**
+     * Save offer (promo/referral/wallet) data into session.
+     */
+    public function saveOffer(array $data): void
+    {
+        $sessionData = $this->getBookingSession();
+        $sessionData['offer'] = $data;
+        Session::put($this->sessionKey, $sessionData);
+    }
+
+    /**
+     * Get offer data from session.
+     */
+    public function getOfferData(): array
+    {
+        $sessionData = $this->getBookingSession();
+        return $sessionData['offer'] ?? [];
+    }
+
+    /**
+     * Remove offer data from session.
+     */
+    public function removeOffer(): void
+    {
+        $sessionData = $this->getBookingSession();
+        unset($sessionData['offer']);
+        Session::put($this->sessionKey, $sessionData);
+    }
+
+    /**
      * Clear all booking wizard session data.
      */
     public function clearSession(): void

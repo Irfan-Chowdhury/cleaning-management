@@ -69,3 +69,25 @@ it('clears booking session data completely', function () {
         ->and($service->getStep1Data())->toBeEmpty()
         ->and($service->getStep2Data())->toBeEmpty();
 });
+
+it('stores, retrieves, and removes offer booking session data', function () {
+    Session::forget('booking_wizard');
+    $service = new BookingSessionService();
+
+    expect($service->getOfferData())->toBeArray()->toBeEmpty();
+
+    $offerData = [
+        'type' => 'promo',
+        'code' => 'SAVE10',
+        'discount_amount' => 10.00,
+    ];
+
+    $service->saveOffer($offerData);
+
+    expect($service->getOfferData())->toBeArray()
+        ->and($service->getOfferData()['code'])->toBe('SAVE10');
+
+    $service->removeOffer();
+
+    expect($service->getOfferData())->toBeArray()->toBeEmpty();
+});

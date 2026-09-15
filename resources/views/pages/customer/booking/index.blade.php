@@ -198,7 +198,6 @@
                 <table id="customer-bookings-table" class="table table-hover table-bordered nowrap customers-table" style="width: 100%">
                     <thead>
                         <tr>
-                            <th>#</th>
                             <th>Booking ID</th>
                             <th>Service</th>
                             <th>Date</th>
@@ -234,7 +233,6 @@
                                 }
                             @endphp
                             <tr data-status="{{ $statusLower }}" data-date="{{ $booking->date }}">
-                                <td>{{ $loop->iteration }}</td>
                                 <td>
                                     <span class="booking-id-tag">{{ $booking->booking_id }}</span>
                                 </td>
@@ -265,13 +263,21 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <div class="customer-actions justify-content-center">
+                                    <div class="customer-actions justify-content-center d-flex align-items-center">
                                         <button type="button" 
-                                                class="btn btn-sm btn-outline-primary customer-action-btn view-booking-btn" 
+                                                class="btn btn-sm btn-outline-primary customer-action-btn view-booking-btn mr-1" 
                                                 title="View Details"
                                                 data-booking="{{ json_encode($booking) }}">
                                             <i class="fas fa-eye" aria-hidden="true"></i>
                                         </button>
+                                        @if ($statusLower === 'approved' || ($booking->status_raw ?? '') === 'approved')
+                                            <a href="{{ route('booking-service.review-confirm', ['booking' => $booking->id]) }}"
+                                               class="btn btn-sm btn-success px-2 py-1"
+                                               title="Proceed to Step 4 (Review & Confirm)"
+                                               style="border-radius: 6px; font-weight: 600; font-size: 12px;">
+                                                <i class="fas fa-calendar-check mr-1" aria-hidden="true"></i> Step 4
+                                            </a>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -426,11 +432,11 @@
             // Initialize DataTable
             var table = $('#customer-bookings-table').DataTable({
                 responsive: true,
-                order: [[0, 'asc']],
+                order: [[0, 'desc']],
                 dom: "<'row'<'col-sm-12'tr>>" +
                      "<'row mt-3'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
                 columnDefs: [
-                    { orderable: false, targets: [8] }
+                    { orderable: false, targets: [7] }
                 ],
                 language: {
                     zeroRecords: 'No matching bookings found.',

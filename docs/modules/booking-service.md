@@ -44,19 +44,22 @@ Customer clicks Continue to Date & Time
 ```text
 Customer clicks Continue to Your Details
   -> /booking-service/your-details
-  -> BookingServiceController@yourDetails
-  -> Static Blade customer details UI
-  -> JavaScript toggles account details vs manual entry mode
+  -> BookingServiceController@yourDetails (validates Step 1 and Step 2 session presence)
+  -> Customer inputs or uses saved account details
+  -> Form submits POST /booking-service/step-3 -> BookingStep3Request validation
+  -> BookingService creates Pending Booking & sends Admin notifications
+  -> BookingSessionService clears wizard session data
+  -> Redirects to /my-bookings (Customer Bookings table)
 ```
 
-### Step 4: Review & Confirm
+### Step 4: Review & Confirm (Approved Bookings Only)
 
 ```text
-Customer clicks Continue to Review & Confirm
-  -> /booking-service/review-confirm
-  -> BookingServiceController@reviewConfirm
-  -> Static review/payment UI
-  -> Confirm Booking & Pay button is displayed
+Step 4 is hidden during initial booking creation.
+Customer accesses Step 4 from /my-bookings when status becomes Approved:
+  -> GET /booking-service/review-confirm?booking={id}
+  -> BookingServiceController@reviewConfirm validates booking ID & Approved status
+  -> Renders Review & Confirm UI for final confirmation/payment
 ```
 
 ## 3. Technical Implementation
@@ -81,16 +84,19 @@ Route::prefix('booking-service')->group(function () {
 - **Controller**: `App\Http\Controllers\BookingServiceController`
   - `create()` loads active services and retrieves Step 1 session data to pre-fill the form if returning.
   - `storeStep1(BookingStep1Request $request)` validates Step 1 inputs, calls `BookingSessionService::saveStep1()`, and redirects to Step 2 (`route('booking-service.date-time')`).
-  - `questionnaire(Service $service)` returns service questions and options as JSON.
-  - `dateTime()` loads active holidays and Step 2 session data, rendering Step 2 view.
-  - `slotsForDate(Request $request)` returns slot availability, active schedule status, holiday details, and booked slot states for a date as JSON.
   - `storeStep2(BookingStep2Request $request)` validates Step 2 date & start time, stores in session via `BookingSessionService::saveStep2()`, and redirects to Step 3 (`route('booking-service.your-details')`).
-  - `yourDetails()` renders Step 3.
-  - `reviewConfirm()` renders Step 4.
+  - `storeStep3(BookingStep3Request $request)` validates Step 3 contact/address details, saves step 3 session, creates a pending `Booking` in DB via `BookingService::createBookingFromWizard()`, sends `NewBookingPendingNotification` to Admins, and redirects to Step 4 (`route('booking-service.review-confirm')`).
+  - `yourDetails()` renders Step 3 with account data pre-fill.
+  - `reviewConfirm()` renders Step 4 with booking review details.
 - **Form Requests**:
   - `App\Http\Requests\BookingStep1Request` handles Step 1 validation (`service_id`, `questions`, `service_notes`).
-  - `App\Http\Requests\BookingStep2Request` handles Step 2 validation (`booking_date`, `start_time`, `end_time`), enforcing past date prevention, holiday checks, active day of week rules, and booked slot conflict prevention.
-- **Service Class**: `App\Services\BookingSessionService` manages session storage under `booking_wizard` key for both Step 1 and Step 2.
+  - `App\Http\Requests\BookingStep2Request` handles Step 2 validation (`booking_date`, `start_time`, `end_time`).
+  - `App\Http\Requests\BookingStep3Request` handles Step 3 validation (`detail_mode`, `customer_name`, `customer_email`, `customer_phone`, `customer_address`, `unit_suite_floor`, `suburb`, `postcode`, `special_instructions`).
+  - `App\Http\Requests\AdminBookingUpdateRequest` handles Admin booking updates (`status`, `service_id`, `amount`, `date`, `slot`, `payment_status`).
+- **Enums**:
+  - `App\Enums\BookingStatus` defines backed string enum values: `pending`, `approved`, `confirmed`, `processing`, `completed`, `cancelled`.
+- **Service Class**:
+  - `App\Services\BookingService` manages business logic for wizard booking creation and Admin status updates. Automatically triggers Audit Log entries via `Auditable` trait and sends `BookingApprovedNotification` to customers when status changes from Pending to Approved.
 - **Tests**:
   - **Strategy**: Tests run without refreshing the database (`RefreshDatabase` trait is omitted to preserve seed state) and authenticate using customer credentials from `UserSeeder` (`customer@gmail.com`).
   - **Unit Suite**: `tests/Unit/BookingSessionServiceTest.php` verifies `BookingSessionService` methods (`saveStep1`, `getStep1Data`, `saveStep2`, `getStep2Data`, `clearSession`).
@@ -136,6 +142,7 @@ The booking service module reads from service catalog tables and writes to the `
 - `id`
 - `user_id` (nullable foreign key to `users.id`)
 - `service_id` (foreign key to `services.id`)
+- `answers` (JSON array storing questionnaire questions and answers)
 - `frequency` (default `one_time`)
 - `booking_date` (nullable)
 - `start_time` (nullable)
@@ -150,12 +157,27 @@ The booking service module reads from service catalog tables and writes to the `
 - `special_instructions` (nullable)
 - `service_notes` (nullable)
 - `status` (default `pending`)
+- `payment_status` (default `pending`)
+- `payment_method` (default `pending`)
 - `subtotal` (default `0.00`)
 - `discount_amount` (default `0.00`)
 - `credit_used` (default `0.00`)
 - `total_amount` (default `0.00`)
 - `referal_code` (nullable)
 - `promo_code` (nullable)
+- `created_at`
+- `updated_at`
+
+### `payments` Table Data Model
+
+`payments` columns:
+
+- `id`
+- `booking_id` (foreign key to `bookings.id`, cascadeOnDelete)
+- `user_id` (nullable foreign key to `users.id`, nullOnDelete)
+- `amount` (decimal `10,2`, default `0.00`)
+- `payment_method` (nullable string, default `pending`)
+- `payment_status` (nullable string, default `pending`)
 - `created_at`
 - `updated_at`
 
@@ -241,7 +263,8 @@ GET /booking-service/questionnaire/1
 - The questionnaire is loaded asynchronously so Step 1 can respond to the selected service without reloading the page.
 - The backend returns a small, purpose-built JSON structure instead of exposing full Eloquent models.
 - Field rendering is centralized in JavaScript so new question types can be introduced through `field_type` values.
-- Current review and confirmation screens use static placeholder values while the booking persistence model is still pending.
+- Datatables on `/my-bookings` and `/bookings` display `Booking ID` in the 1st column (serial number column removed) and order records by `Booking ID DESC`.
+- Admin `/bookings/{id}` page features a full-width multi-card layout displaying customer profile, service address & instructions, booking schedule & frequency, payment breakdown, and Step 1 questionnaire Q&As.
 
 ## 9. Edge Cases and Limitations
 

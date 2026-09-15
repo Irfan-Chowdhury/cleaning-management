@@ -25,6 +25,7 @@ it('loads step 2 page for authenticated customer user', function () {
     $user = step2User();
 
     $this->actingAs($user)
+        ->withSession(['booking_wizard' => ['step1' => ['service_id' => 1]]])
         ->get(route('booking-service.date-time'))
         ->assertOk()
         ->assertViewIs('pages.booking-service.date-time')
@@ -151,6 +152,7 @@ it('successfully stores step 2 date and time into session and redirects to step 
         ->delete();
 
     $response = $this->actingAs($user)
+        ->withSession(['booking_wizard' => ['step1' => ['service_id' => 1]]])
         ->post(route('booking-service.store-step-2'), [
             'booking_date' => $today->format('Y-m-d'),
             'start_time'   => '09:00:00',
@@ -167,6 +169,7 @@ it('validates and rejects past booking dates', function () {
     $yesterday = Carbon::yesterday()->format('Y-m-d');
 
     $response = $this->actingAs($user)
+        ->withSession(['booking_wizard' => ['step1' => ['service_id' => 1]]])
         ->post(route('booking-service.store-step-2'), [
             'booking_date' => $yesterday,
             'start_time'   => '09:00:00',
@@ -185,6 +188,7 @@ it('validates and rejects booking dates on active holidays', function () {
     );
 
     $response = $this->actingAs($user)
+        ->withSession(['booking_wizard' => ['step1' => ['service_id' => 1]]])
         ->post(route('booking-service.store-step-2'), [
             'booking_date' => $holidayDate,
             'start_time'   => '09:00:00',
@@ -222,6 +226,7 @@ it('validates and rejects already booked time slots', function () {
     );
 
     $response = $this->actingAs($user)
+        ->withSession(['booking_wizard' => ['step1' => ['service_id' => 1]]])
         ->post(route('booking-service.store-step-2'), [
             'booking_date' => $futureDate,
             'start_time'   => '10:00:00',

@@ -29,7 +29,7 @@
                 <table id="bookings-table" class="table table-hover table-bordered nowrap customers-table" style="width: 100%">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th>Booking ID</th>
                             <th>Customer</th>
                             <th>Service</th>
                             <th>Date</th>
@@ -42,7 +42,11 @@
                     <tbody>
                         @forelse ($bookings as $booking)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                <td>
+                                    <span class="booking-id-tag" style="font-family: monospace; font-weight: 700; font-size: 13px; color: #0866e8; background: #f0f6fe; padding: 3px 8px; border-radius: 6px;">
+                                        {{ $booking->booking_id ?? ('BK-' . sprintf('%03d', $booking->id)) }}
+                                    </span>
+                                </td>
                                 <td>
                                     <div class="customer-avatar-cell">
                                         <img src="{{ $booking->customer_avatar }}" alt="{{ $booking->customer_name }} avatar" class="customer-avatar">
@@ -121,7 +125,7 @@
         $(document).ready(function () {
             $('#bookings-table').DataTable({
                 responsive: true,
-                order: [[3, 'asc']],
+                order: [[0, 'desc']],
                 columnDefs: [
                     { orderable: false, targets: [7] }
                 ],

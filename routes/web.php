@@ -70,6 +70,7 @@ Route::middleware('auth')->prefix('booking-service')->group(function () {
     Route::post('/step-2', [BookingServiceController::class, 'storeStep2'])->name('booking-service.store-step-2');
     Route::get('/slots-for-date', [BookingServiceController::class, 'slotsForDate'])->name('booking-service.slots-for-date');
     Route::get('/your-details', [BookingServiceController::class, 'yourDetails'])->name('booking-service.your-details');
+    Route::post('/step-3', [BookingServiceController::class, 'storeStep3'])->name('booking-service.store-step-3');
     Route::get('/review-confirm', [BookingServiceController::class, 'reviewConfirm'])->name('booking-service.review-confirm');
 });
 

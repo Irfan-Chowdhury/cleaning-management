@@ -202,8 +202,50 @@ Here this step-2 can be critical and logical.
 
 # Booking Step-3
 
+Customer submits Step 3
+- Booking is created with Pending
+- Admin receives notification and when he click the notification it redirect the booking edit page like : /bookings/2/edit
+- have to modify the design page. Add full info details in customer section. And then add other booking related information in Update Booking Details section.
+* There will be Booking Status[pending,approved,confirmed,processing,completed,cancelled] option in a dropdown. 
+* use the status using Enum
+* Admin reviews the booking
+* Admin changes Pending → Approved
+* After submitting through admin, it'll register in Audit Log.
+* Then customer get approval notification in bell icon. When click for details redirect to /my-bookings.
+* in the table, if status approved, the in Action column there will be visbile a Booking icon to click on this and can redirect to Step-4 page.
+* Customer can now access Step 4
+* Use form validation and separate the bussiness logic to a service class.
 
 
+## Correction
+Correction-1: Initially Step-4 will be hide in every new service booking. Only accesible when /booking-service/review-confirm?booking=1 like that.
+
+correction 2: If new session during service booking, have to complete step-1 then 2 and then step03.
+Without fillup can not access any step. If fillup and session check and data exist then can access any step.
+
+Correction-3: When step-3 and click to submit button, then redirect to /my-bookings page.
 
 
+Corrction-4: when customer/my-bookings when click on view icon, a popup modal open. ok. But there Service related details data missing. question_options,service_questions not saved in database. First tell me how can I insert data in database. Should I add any extra column or other process. No code just tell me.
 
+choosed Option 2: Single JSON Column on bookings Table (answers). Implement this. in /my-bookings Display the  questionnaire questions & answers in popup-modal . And also admin side /bookings/{id}/edit in Update Booking Details page.
+
+Correction-5: when customer submit, subtotal and total_amount set default 00.00
+
+### ------------ Payment Status ------------
+Need to payment status. create migration file. Then integrate this payments with booking.
+
+- id
+- booking_id
+- user_id
+- amount
+- payment_method nullable
+- payment_status nullable
+- created_at
+
+* Correction-6: customer:  in /my-bookings payment status coulmn update. Also view modal `Payment Information`.
+* Correction-7: Admin: /bookings/3/edit have to redesign payment related.
+* when submit from step-3 then initially payment status and payment method both will be pending.
+* Set a validation/condition: /bookings/{id}/edit when booking status change to approved and if amount will be 0 then only this time display a confirm alert message by sweatAlert. 
+* Correction-8: from /my-bookings and /bookings in datatable remove serial number from 1st coulm. from /bookings add booking Id and order by DESC the booking id both table.
+* correction-9: redesign the /bookings/{id} page with full details

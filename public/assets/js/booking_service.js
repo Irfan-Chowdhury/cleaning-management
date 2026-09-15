@@ -438,8 +438,6 @@
                 $('#unit-suite').val('');
                 $('#suburb').val('');
                 $('#postcode').val('');
-                $('#special-instructions').val('');
-                $('#special-instructions-count').text('0');
                 $('.booking-detail-input').prop('readonly', false);
                 $('.saved-details-panel').slideUp(200);
             }
