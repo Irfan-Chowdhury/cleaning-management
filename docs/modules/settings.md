@@ -68,7 +68,7 @@ Validation rules:
 - `timezone`: optional valid PHP timezone
 - `currency`: optional uppercase 3-letter ISO code
 - `minimum_booking_amount`: optional numeric amount, minimum 0
-- `maximum_booking_amount`: optional numeric amount, minimum 0 and greater than or equal to minimum booking amount
+- `max_wallet_usage`: optional numeric amount, minimum 0
 - `maximum_advance_booking_days`: optional integer, minimum 1
 - `cancellation_notice_hours`: optional integer, minimum 0
 - `welcome_credit`: optional numeric value, minimum 0
@@ -129,7 +129,7 @@ Important columns:
 - `timezone`, nullable
 - `currency`, nullable
 - `minimum_booking_amount`, nullable decimal
-- `maximum_booking_amount`, nullable decimal
+- `max_wallet_usage`, nullable decimal
 - `maximum_advance_booking_days`, nullable integer
 - `cancellation_notice_hours`, nullable integer
 - `welcome_credit`, nullable decimal
@@ -153,7 +153,7 @@ Important columns:
 - Timezone: `America/New_York`
 - Currency: `USD`
 - Minimum booking amount: `50.00`
-- Maximum booking amount: `1500.00`
+- Max wallet usage: `100.00`
 - Default logo: `public/assets/images/company_logo/brand_logo.png`
 - Welcome credit: `20.00`
 - Welcome credit enabled: `true`

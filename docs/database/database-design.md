@@ -88,7 +88,7 @@ Important columns:
 - `timezone`, nullable
 - `currency`, nullable 3-character code
 - `minimum_booking_amount`, nullable decimal
-- `maximum_booking_amount`, nullable decimal
+- `max_wallet_usage`, nullable decimal
 - `maximum_advance_booking_days`, nullable integer
 - `cancellation_notice_hours`, nullable integer
 - `welcome_credit`, nullable decimal

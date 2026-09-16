@@ -107,7 +107,7 @@ currency
 
 -- Booking Configuration
 minimum_booking_amount
-maximum_booking_amount
+max_wallet_usage
 maximum_advance_booking_days
 cancellation_notice_hours
 
