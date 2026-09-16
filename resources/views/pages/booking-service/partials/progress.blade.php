@@ -18,15 +18,32 @@
 
 <div class="booking-progress">
     @foreach ($steps as $stepNumber => $step)
-        <a href="{{ route($step['route'], $step['params'] ?? []) }}" class="booking-step {{ $stepNumber < $currentStep ? 'completed' : '' }} {{ $stepNumber === $currentStep ? 'active' : '' }}">
-            <span class="booking-step-circle">
-                @if ($stepNumber < $currentStep)
-                    <i class="fas fa-check" aria-hidden="true"></i>
-                @else
-                    {{ $stepNumber }}
-                @endif
+        @php
+            $isDisabled = ($currentStep === 4 && $stepNumber < 4);
+        @endphp
+
+        @if ($isDisabled)
+            <span class="booking-step {{ $stepNumber < $currentStep ? 'completed' : '' }} {{ $stepNumber === $currentStep ? 'active' : '' }} disabled">
+                <span class="booking-step-circle">
+                    @if ($stepNumber < $currentStep)
+                        <i class="fas fa-check" aria-hidden="true"></i>
+                    @else
+                        {{ $stepNumber }}
+                    @endif
+                </span>
+                <span class="booking-step-label">{{ $step['label'] }}</span>
             </span>
-            <span class="booking-step-label">{{ $step['label'] }}</span>
-        </a>
+        @else
+            <a href="{{ route($step['route'], $step['params'] ?? []) }}" class="booking-step {{ $stepNumber < $currentStep ? 'completed' : '' }} {{ $stepNumber === $currentStep ? 'active' : '' }}">
+                <span class="booking-step-circle">
+                    @if ($stepNumber < $currentStep)
+                        <i class="fas fa-check" aria-hidden="true"></i>
+                    @else
+                        {{ $stepNumber }}
+                    @endif
+                </span>
+                <span class="booking-step-label">{{ $step['label'] }}</span>
+            </a>
+        @endif
     @endforeach
 </div>

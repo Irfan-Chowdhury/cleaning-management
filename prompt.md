@@ -217,20 +217,20 @@ Customer submits Step 3
 * Use form validation and separate the bussiness logic to a service class.
 
 
-## Correction
-Correction-1: Initially Step-4 will be hide in every new service booking. Only accesible when /booking-service/review-confirm?booking=1 like that.
+## Senerio
+Senerio-1: Initially Step-4 will be hide in every new service booking. Only accesible when /booking-service/review-confirm?booking=1 like that.
 
-correction 2: If new session during service booking, have to complete step-1 then 2 and then step03.
+Senerio-2: If new session during service booking, have to complete step-1 then 2 and then step03.
 Without fillup can not access any step. If fillup and session check and data exist then can access any step.
 
-Correction-3: When step-3 and click to submit button, then redirect to /my-bookings page.
+Senerio-3: When step-3 and click to submit button, then redirect to /my-bookings page.
 
 
 Corrction-4: when customer/my-bookings when click on view icon, a popup modal open. ok. But there Service related details data missing. question_options,service_questions not saved in database. First tell me how can I insert data in database. Should I add any extra column or other process. No code just tell me.
 
 choosed Option 2: Single JSON Column on bookings Table (answers). Implement this. in /my-bookings Display the  questionnaire questions & answers in popup-modal . And also admin side /bookings/{id}/edit in Update Booking Details page.
 
-Correction-5: when customer submit, subtotal and total_amount set default 00.00
+Senerio-5: when customer submit, subtotal and total_amount set default 00.00
 
 ### ------------ Payment Status ------------
 Need to payment status. create migration file. Then integrate this payments with booking.
@@ -243,14 +243,14 @@ Need to payment status. create migration file. Then integrate this payments with
 - payment_status nullable
 - created_at
 
-* Correction-6: customer:  in /my-bookings payment status coulmn update. Also view modal `Payment Information`.
-* Correction-7: Admin: /bookings/3/edit have to redesign payment related.
+* Senerio-6: customer:  in /my-bookings payment status coulmn update. Also view modal `Payment Information`.
+* Senerio-7: Admin: /bookings/3/edit have to redesign payment related.
 * when submit from step-3 then initially payment status and payment method both will be pending.
 * Set a validation/condition: /bookings/{id}/edit when booking status change to approved and if amount will be 0 then only this time display a confirm alert message by sweatAlert. 
-* Correction-8: from /my-bookings and /bookings in datatable remove serial number from 1st coulm. from /bookings add booking Id and order by DESC the booking id both table.
-* correction-9: redesign the /bookings/{id} page with full details
+* Senerio-8: from /my-bookings and /bookings in datatable remove serial number from 1st coulm. from /bookings add booking Id and order by DESC the booking id both table.
+* Senerio-9: redesign the /bookings/{id} page with full details
+* Senerio-10: when customer get access step-4, like /review-confirm?booking=3 he can access previous 1-3 steps and data will be fetch from the booking history by the specific id because he may be change/update any previous data.
 
-
-# Booking Step-3
+# Booking Step-4
 data should retrive from actual Data from Db and display the data in view. After submitting, booking status will be change into approved to confirmed and then Admin can get a notification.
 Use validation, business logic separate.

@@ -110,6 +110,21 @@
     color: #0866e8;
 }
 
+.booking-step.disabled {
+    color: #98a2b3 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}
+
+.booking-step.disabled .booking-step-circle {
+    color: #98a2b3 !important;
+    background: #eaecf0 !important;
+}
+
+.booking-step.disabled::after {
+    background: #eaecf0 !important;
+}
+
 .booking-step-label {
     position: relative;
     z-index: 1;
