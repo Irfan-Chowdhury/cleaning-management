@@ -59,6 +59,28 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get the user's photo URL or fallback avatar.
+     */
+    public function getPhotoUrlAttribute(): string
+    {
+        if (! empty($this->photo)) {
+            if (filter_var($this->photo, FILTER_VALIDATE_URL)) {
+                return $this->photo;
+            }
+
+            $path = ltrim($this->photo, '/');
+            if (! str_starts_with($path, 'public/')) {
+                $path = 'public/' . $path;
+            }
+
+            return asset($path);
+        }
+
+        $name = urlencode(trim(($this->first_name ?? '') . ' ' . ($this->last_name ?? '')));
+        return "https://ui-avatars.com/api/?name={$name}&background=0866e8&color=fff&size=256";
+    }
+
+    /**
      * Get the wallet transactions for the user.
      */
     public function walletTransactions(): HasMany

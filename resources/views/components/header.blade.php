@@ -6,7 +6,7 @@
 
 	        <div class="header-greeting">
 	            @if (request()->is('dashboard'))
-	                <h1>Good Evening, <span>{{ auth()->check() ? auth()->user()->name : 'MD. JAHEDUL DINER' }}</span> &#128075;</h1>
+	                <h1>Good Evening, <span>{{ auth()->check() ? auth()->user()->first_name : 'Guest' }}</span> &#128075;</h1>
 	                <p>Here's what's happening with your account today.</p>
 	            @endif
 	        </div>
@@ -87,16 +87,22 @@
 
         <div class="dropdown user-profile">
             <a href="#" class="user-profile-toggle" id="userProfileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <img src="https://i.pravatar.cc/84?img=12" alt="User avatar" class="user-avatar">
-                <span class="user-name">{{ auth()->check() ? auth()->user()->name : 'MD. JAHEDUL' }}</span>
+                <img src="{{ auth()->check() ? auth()->user()->photo_url : 'https://i.pravatar.cc/84?img=12' }}" alt="User avatar" class="user-avatar">
+                <span class="user-name">{{ auth()->check() ? trim(auth()->user()->first_name . ' ' . (auth()->user()->last_name ?? '')) : 'Guest' }}</span>
                 <i class="fas fa-chevron-down user-chevron" aria-hidden="true"></i>
             </a>
 
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userProfileDropdown">
-                <a class="dropdown-item" href="#">Profile</a>
-                <a class="dropdown-item" href="#">Account Settings</a>
+                <a class="dropdown-item" href="{{ route('customer.profile.index') }}">
+                    <i class="fas fa-user-circle mr-2 text-primary"></i> Profile
+                </a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item text-danger" href="#">Logout</a>
+                <form id="header-logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                    @csrf
+                </form>
+                <a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); document.getElementById('header-logout-form').submit();">
+                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                </a>
             </div>
         </div>
     </div>

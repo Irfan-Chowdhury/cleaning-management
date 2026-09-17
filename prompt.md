@@ -159,3 +159,8 @@ Do not modify or integrate auditing with other modules yet.
 After implementation, show me the files changed and briefly explain how I can later enable auditing for another model.
 
 
+# Standing Rules Recorded for All Future Sessions:
+✅ Form Request Validation: Always isolate validation into a FormRequest class.
+✅ Service Class Isolation: Always separate business logic into a dedicated Service class.
+✅ Service Unit Testing: Always test Service Class methods directly in unit/feature tests.
+✅ Documentation: Always add/update detailed documentation in /docs.
