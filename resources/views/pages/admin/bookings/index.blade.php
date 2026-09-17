@@ -29,12 +29,13 @@
                 <table id="bookings-table" class="table table-hover table-bordered nowrap customers-table" style="width: 100%">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th>Booking ID</th>
                             <th>Customer</th>
                             <th>Service</th>
                             <th>Date</th>
                             <th>Slot</th>
                             <th>Amount</th>
+                            <th>Booking Status</th>
                             <th>Payment Status</th>
                             <th class="text-center">Action</th>
                         </tr>
@@ -42,7 +43,11 @@
                     <tbody>
                         @forelse ($bookings as $booking)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                <td>
+                                    <span class="booking-id-tag" style="font-family: monospace; font-weight: 700; font-size: 13px; color: #0866e8; background: #f0f6fe; padding: 3px 8px; border-radius: 6px;">
+                                        {{ $booking->booking_id ?? ('BK-' . sprintf('%03d', $booking->id)) }}
+                                    </span>
+                                </td>
                                 <td>
                                     <div class="customer-avatar-cell">
                                         <img src="{{ $booking->customer_avatar }}" alt="{{ $booking->customer_name }} avatar" class="customer-avatar">
@@ -67,6 +72,14 @@
                                 </td>
                                 <td>
                                     <strong>${{ number_format($booking->amount, 2) }}</strong>
+                                </td>
+                                <td>
+                                    @php
+                                        $bookingStatusEnum = \App\Enums\BookingStatus::tryFrom($booking->status) ?? \App\Enums\BookingStatus::PENDING;
+                                    @endphp
+                                    <span class="badge {{ $bookingStatusEnum->badgeClass() }}" style="padding: 6px 10px; font-weight: 700; border-radius: 999px;">
+                                        {{ $bookingStatusEnum->label() }}
+                                    </span>
                                 </td>
                                 <td>
                                     @php
@@ -99,7 +112,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center py-4 text-muted">
+                                <td colspan="9" class="text-center py-4 text-muted">
                                     <i class="far fa-calendar-times fa-2x mb-2 d-block" aria-hidden="true"></i>
                                     No bookings found.
                                 </td>
@@ -121,9 +134,9 @@
         $(document).ready(function () {
             $('#bookings-table').DataTable({
                 responsive: true,
-                order: [[3, 'asc']],
+                order: [[0, 'desc']],
                 columnDefs: [
-                    { orderable: false, targets: [7] }
+                    { orderable: false, targets: [8] }
                 ],
                 language: {
                     search: 'Search bookings:',

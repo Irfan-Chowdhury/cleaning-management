@@ -88,7 +88,7 @@ Important columns:
 - `timezone`, nullable
 - `currency`, nullable 3-character code
 - `minimum_booking_amount`, nullable decimal
-- `maximum_booking_amount`, nullable decimal
+- `max_wallet_usage`, nullable decimal
 - `maximum_advance_booking_days`, nullable integer
 - `cancellation_notice_hours`, nullable integer
 - `welcome_credit`, nullable decimal
@@ -173,6 +173,38 @@ Constraints:
 
 - `created_by` is set null when the creating user is deleted.
 
+### `bookings`
+
+Stores booking records for cleaning services.
+
+Important columns:
+
+- `id`
+- `user_id`, nullable foreign key to `users.id` (null on delete)
+- `service_id`, foreign key to `services.id` (cascades on delete)
+- `frequency`, default `one_time`
+- `booking_date`, nullable date
+- `start_time`, nullable time
+- `end_time`, nullable time
+- `customer_name`, nullable string
+- `customer_email`, nullable string
+- `customer_phone`, nullable string
+- `customer_address`, nullable text
+- `unit_suite_floor`, nullable string
+- `suburb`, nullable string
+- `postcode`, nullable string
+- `special_instructions`, nullable text
+- `service_notes`, nullable text
+- `status`, default `pending`
+- `subtotal`, default `0.00`
+- `discount_amount`, default `0.00`
+- `credit_used`, default `0.00`
+- `total_amount`, default `0.00`
+- `referal_code`, nullable string
+- `promo_code`, nullable string
+- `created_at`
+- `updated_at`
+
 ### Laravel Framework Tables
 
 The project includes standard Laravel tables for:
@@ -193,6 +225,7 @@ These support authentication, sessions, cache, queues, and API tokens.
 ```text
 Service
   has many ServiceQuestion
+  has many Booking
 
 ServiceQuestion
   belongs to Service
@@ -206,6 +239,10 @@ WeeklySchedule
 
 ScheduleSlot
   belongs to WeeklySchedule
+
+Booking
+  belongs to User
+  belongs to Service
 ```
 
 ## Planned Tables From Project Notes
@@ -217,11 +254,11 @@ ScheduleSlot
 - `referral_codes`
 - `payments`
 
-The SRS also implies future booking, customer/admin role, referral, review, cleaner assignment, invoice, and notification data structures. These are not currently implemented in migrations.
+The SRS also implies future customer/admin role, referral, review, cleaner assignment, invoice, and notification data structures.
 
 ## Known Schema Gaps
 
 - The `users` table stores both admin and customer accounts; there is no separate customer profile table yet.
 - The `services` migration does not include price or duration, although the model fillable list includes `base_price` and `duration_minutes`.
-- There is no `bookings` table yet.
 - There are no implemented payment, referral, wallet, or review migrations yet.
+

@@ -164,3 +164,98 @@ After implementation, show me the files changed and briefly explain how I can la
 ✅ Service Class Isolation: Always separate business logic into a dedicated Service class.
 ✅ Service Unit Testing: Always test Service Class methods directly in unit/feature tests.
 ✅ Documentation: Always add/update detailed documentation in /docs.
+
+
+# Booking Step-2
+Now come to the point step-2:
+
+Here this step-2 can be critical and logical.
+
+
+### Select a Date (Calender)
+
+* in `Select Date Option` I mean calendar, 
+
+- when curent month running, can not select previous month, only select forward month and can go by clicking the right arrow to next month.
+
+- when go ste-2  page, primarily page current date select by default.
+
+- when currecnt date, can not select the previous date, will be disable. only forward date allow.
+
+- Get data from Holiday Model, then match holiday date. if date match then in calender the date will be disable and set a different color in that, and when hover the title of holiday will display like tooltip in calender.
+
+ 
+
+### Select a Time
+
+- Fetch data and load data 'Select a Time" section. data will take from weeklySchedule, ScheduleSlots. Just Display Start Date date Day wise.
+
+- if Any slot booking then the start time slot will be red color with disable.
+
+- booking data should be unique, I mean date and Time slot booking unique per customerer.
+
+- Use Proper logic, validation and etc.
+
+
+### Testing and othrer
+
+- Write the Unit/feature test case for PEST
+- Update the documentation.
+- if miss anything in logic or feature you can suggest me
+
+
+
+# Booking Step-3
+
+Customer submits Step 3
+- Booking is created with Pending
+- Admin receives notification and when he click the notification it redirect the booking edit page like : /bookings/2/edit
+- have to modify the design page. Add full info details in customer section. And then add other booking related information in Update Booking Details section.
+* There will be Booking Status[pending,approved,confirmed,processing,completed,cancelled] option in a dropdown. 
+* use the status using Enum
+* Admin reviews the booking
+* Admin changes Pending → Approved
+* After submitting through admin, it'll register in Audit Log.
+* Then customer get approval notification in bell icon. When click for details redirect to /my-bookings.
+* in the table, if status approved, the in Action column there will be visbile a Booking icon to click on this and can redirect to Step-4 page.
+* Customer can now access Step 4
+* Use form validation and separate the bussiness logic to a service class.
+
+
+## Senerio
+Senerio-1: Initially Step-4 will be hide in every new service booking. Only accesible when /booking-service/review-confirm?booking=1 like that.
+
+Senerio-2: If new session during service booking, have to complete step-1 then 2 and then step03.
+Without fillup can not access any step. If fillup and session check and data exist then can access any step.
+
+Senerio-3: When step-3 and click to submit button, then redirect to /my-bookings page.
+
+
+Corrction-4: when customer/my-bookings when click on view icon, a popup modal open. ok. But there Service related details data missing. question_options,service_questions not saved in database. First tell me how can I insert data in database. Should I add any extra column or other process. No code just tell me.
+
+choosed Option 2: Single JSON Column on bookings Table (answers). Implement this. in /my-bookings Display the  questionnaire questions & answers in popup-modal . And also admin side /bookings/{id}/edit in Update Booking Details page.
+
+Senerio-5: when customer submit, subtotal and total_amount set default 00.00
+
+### ------------ Payment Status ------------
+Need to payment status. create migration file. Then integrate this payments with booking.
+
+- id
+- booking_id
+- user_id
+- amount
+- payment_method nullable
+- payment_status nullable
+- created_at
+
+* Senerio-6: customer:  in /my-bookings payment status coulmn update. Also view modal `Payment Information`.
+* Senerio-7: Admin: /bookings/3/edit have to redesign payment related.
+* when submit from step-3 then initially payment status and payment method both will be pending.
+* Set a validation/condition: /bookings/{id}/edit when booking status change to approved and if amount will be 0 then only this time display a confirm alert message by sweatAlert. 
+* Senerio-8: from /my-bookings and /bookings in datatable remove serial number from 1st coulm. from /bookings add booking Id and order by DESC the booking id both table.
+* Senerio-9: redesign the /bookings/{id} page with full details
+* Senerio-10: when customer get access step-4, like /review-confirm?booking=3 he can access previous 1-3 steps and data will be fetch from the booking history by the specific id because he may be change/update any previous data.
+
+# Booking Step-4
+data should retrive from actual Data from Db and display the data in view. After submitting, booking status will be change into approved to confirmed and then Admin can get a notification.
+Use validation, business logic separate.

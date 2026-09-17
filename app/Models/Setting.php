@@ -17,7 +17,7 @@ class Setting extends Model
         'timezone',
         'currency',
         'minimum_booking_amount',
-        'maximum_booking_amount',
+        'max_wallet_usage',
         'maximum_advance_booking_days',
         'cancellation_notice_hours',
         'welcome_credit',
@@ -34,7 +34,7 @@ class Setting extends Model
     {
         return [
             'minimum_booking_amount' => 'decimal:2',
-            'maximum_booking_amount' => 'decimal:2',
+            'max_wallet_usage' => 'decimal:2',
             'maximum_advance_booking_days' => 'integer',
             'cancellation_notice_hours' => 'integer',
             'welcome_credit' => 'decimal:2',
