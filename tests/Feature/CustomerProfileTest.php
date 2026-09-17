@@ -3,6 +3,7 @@
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -10,7 +11,7 @@ uses(RefreshDatabase::class);
 
 function profileCustomer(): User
 {
-    return User::create([
+    $user = User::create([
         'first_name' => 'John',
         'last_name' => 'Doe',
         'email' => 'john.profile@example.com',
@@ -19,10 +20,13 @@ function profileCustomer(): User
         'address' => '123 Main St, New York',
         'role' => 2,
         'is_active' => true,
-        'email_verified_at' => now(),
         'referral_code' => 'JOHN123',
         'password' => Hash::make('password123'),
     ]);
+    $user->email_verified_at = now();
+    $user->save();
+
+    return $user;
 }
 
 it('loads the customer profile page', function () {
