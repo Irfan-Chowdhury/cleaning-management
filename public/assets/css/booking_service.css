@@ -1493,13 +1493,102 @@
     line-height: 1.45;
 }
 
-/* Selected State Specifics */
-.service-guide-content-area {
+/* Selected State Specifics Redesign */
+.selected-service-header {
+    align-items: center;
+}
+
+.selected-service-icon {
+    width: 42px;
+    height: 42px;
+    background-color: #0866e8;
+    color: #ffffff;
+    font-size: 16px;
+    border-radius: 50%;
+}
+
+.selected-service-title {
+    margin: 0;
+    color: #111c3a;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.selected-service-description {
+    color: #475467;
+    font-size: 12.5px;
+    line-height: 1.6;
+    margin: 10px 0 16px 0;
+}
+
+.whats-included-wrapper {
     display: flex;
-    align-items: flex-start;
+    align-items: flex-end;
     justify-content: space-between;
     gap: 16px;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
+}
+
+.selected-service-illustration {
+    flex: 0 0 42%;
+    max-width: 160px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+.selected-service-illustration svg {
+    width: 100%;
+    max-width: 150px;
+    height: auto;
+    object-fit: contain;
+}
+
+.selected-whats-included-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.selected-whats-included-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    padding-left: 0;
+    margin-left: 0;
+}
+
+.whats-included-check-icon {
+    color: #10b981;
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.selected-whats-included-list .whats-included-text {
+    color: #344054;
+    font-size: 12.5px;
+    font-weight: 500;
+    line-height: 1.45;
+}
+
+.selected-service-info-box {
+    margin-top: 20px;
+    padding: 14px 16px;
+    background-color: #f3f8ff;
+    border: 1px solid #dbeafe;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #1d2939;
+    font-size: 12.5px;
+    font-weight: 500;
+    line-height: 1.45;
 }
 
 .whats-included-section {
@@ -1509,71 +1598,9 @@
 
 .whats-included-heading {
     color: #111c3a;
-    font-size: 14px;
+    font-size: 14.5px;
     font-weight: 700;
     margin: 0 0 12px 0;
-}
-
-.whats-included-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.whats-included-list li {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-}
-
-.check-icon-circle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px;
-    height: 20px;
-    background-color: #e9f8ef;
-    color: #16803c;
-    border-radius: 50%;
-    font-size: 10px;
-    flex-shrink: 0;
-    margin-top: 2px;
-}
-
-.whats-included-text {
-    color: #344054;
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 1.45;
-}
-
-.service-guide-illustration {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.service-guide-illustration svg {
-    max-width: 110px;
-    height: auto;
-}
-
-.service-guide-info-box {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 14px;
-    background-color: #f3f8ff;
-    border: 1px solid #dbeafe;
-    border-radius: 10px;
-    color: #1d2939;
-    font-size: 12.5px;
-    font-weight: 500;
-    line-height: 1.45;
 }
 
 .info-box-shield-icon {
@@ -1581,7 +1608,7 @@
     align-items: center;
     justify-content: center;
     color: #0866e8;
-    font-size: 15px;
+    font-size: 16px;
     flex-shrink: 0;
 }
 
@@ -1605,17 +1632,15 @@
         margin-top: 10px;
     }
 
-    .service-guide-content-area {
+    .whats-included-wrapper {
         flex-direction: column-reverse;
-        align-items: center;
+        align-items: flex-start;
     }
 
-    .whats-included-section {
-        width: 100%;
-    }
-
-    .service-guide-illustration {
-        margin-bottom: 12px;
+    .selected-service-illustration {
+        align-self: center;
+        margin-bottom: 16px;
+        max-width: 140px;
     }
 }
 
