@@ -34,6 +34,29 @@
                 <p>{{ $service->description ?: 'No description available.' }}</p>
             </div>
 
+            @php
+                $whatsIncluded = $service->whats_included;
+                if (is_string($whatsIncluded)) {
+                    $whatsIncluded = json_decode($whatsIncluded, true) ?: [];
+                }
+            @endphp
+
+            <div class="service-included-view">
+                <span class="service-view-label">What's Included</span>
+                @if (!empty($whatsIncluded) && is_array($whatsIncluded) && count($whatsIncluded) > 0)
+                    <div class="service-included-list">
+                        @foreach ($whatsIncluded as $item)
+                            <div class="service-included-item">
+                                <i class="fas fa-check-circle" aria-hidden="true"></i>
+                                <span>{{ $item }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-muted small mb-0 mt-2">No included features specified for this service.</p>
+                @endif
+            </div>
+
             <div class="service-questions-view">
                 <div class="services-table-card-header">
                     <div>

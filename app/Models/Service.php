@@ -13,10 +13,18 @@ class Service extends Model
     protected $fillable = [
         'name',
         'description',
+        'whats_included',
         'base_price',
         'duration_minutes',
         'status',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'whats_included' => 'array',
+        ];
+    }
 
     public function serviceQuestions()
     {
