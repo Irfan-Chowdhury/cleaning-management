@@ -81,16 +81,7 @@
             </div>
 
             <aside class="booking-right-column">
-                <div class="booking-summary-card">
-                    <h2><i class="fas fa-magic" aria-hidden="true"></i> Booking Summary</h2>
-                    <p>Your booking details will appear here.</p>
-                    <div class="booking-empty-state">
-                        <span><i class="far fa-clipboard" aria-hidden="true"></i></span>
-                        <i class="far fa-calendar-check" aria-hidden="true"></i>
-                    </div>
-                    <strong>Fill in the details to see your booking summary.</strong>
-                </div>
-
+                @include('pages.booking-service.partials.service-guide-card')
                 @include('pages.booking-service.partials.promo-card')
                 @include('pages.booking-service.partials.support-card')
             </aside>
@@ -98,6 +89,20 @@
     </div>
 @endsection
 
+@php
+    $servicesData = $services->map(function ($service) {
+        return [
+            'id' => $service->id,
+            'name' => $service->name,
+            'description' => $service->description,
+            'whats_included' => $service->whats_included ?? [],
+        ];
+    })->values();
+@endphp
+
 @push('scripts')
+    <script>
+        window.bookingServicesData = @json($servicesData);
+    </script>
     <script src="{{ asset('public/assets/js/booking_service.js') }}"></script>
 @endpush

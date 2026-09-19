@@ -1319,3 +1319,197 @@
         font-size: 19px;
     }
 }
+
+/* =========================================
+   Service Guide Card (Step 1)
+========================================= */
+.service-guide-card {
+    background: #ffffff;
+    border: 1px solid #eaecf0;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(16, 24, 40, 0.05);
+}
+
+.service-guide-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.service-guide-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.service-guide-icon-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: #f3f8ff;
+    color: #0866e8;
+    border-radius: 50%;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.service-guide-title {
+    margin: 0;
+    color: #111c3a;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.service-guide-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    background-color: #f3f8ff;
+    color: #0866e8;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 999px;
+    white-space: nowrap;
+    border: 1px solid #dbeafe;
+}
+
+.service-guide-description {
+    color: #475467;
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin: 0 0 14px 0;
+}
+
+.service-guide-default-intro h3 {
+    color: #111c3a;
+    font-size: 14.5px;
+    font-weight: 700;
+    margin: 0 0 6px 0;
+    line-height: 1.4;
+}
+
+.service-guide-default-intro p {
+    color: #667085;
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.service-guide-divider {
+    border: 0;
+    border-top: 1px solid #e8edf5;
+    margin: 16px 0;
+}
+
+.service-guide-content-area {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.whats-included-section {
+    flex: 1;
+    min-width: 0;
+}
+
+.whats-included-heading {
+    color: #111c3a;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+}
+
+.whats-included-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.whats-included-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.check-icon-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background-color: #e9f8ef;
+    color: #16803c;
+    border-radius: 50%;
+    font-size: 10px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.whats-included-text {
+    color: #344054;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.45;
+}
+
+.service-guide-illustration {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.service-guide-illustration svg {
+    max-width: 110px;
+    height: auto;
+}
+
+.service-guide-info-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background-color: #f3f8ff;
+    border: 1px solid #dbeafe;
+    border-radius: 10px;
+    color: #1d2939;
+    font-size: 12.5px;
+    font-weight: 500;
+    line-height: 1.45;
+}
+
+.info-box-shield-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #0866e8;
+    font-size: 15px;
+    flex-shrink: 0;
+}
+
+@media (max-width: 576px) {
+    .service-guide-content-area {
+        flex-direction: column-reverse;
+        align-items: center;
+    }
+
+    .whats-included-section {
+        width: 100%;
+    }
+
+    .service-guide-illustration {
+        margin-bottom: 12px;
+    }
+}
+
