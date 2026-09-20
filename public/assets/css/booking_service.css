@@ -1814,4 +1814,167 @@
     font-weight: 700;
 }
 
+/* =========================================
+   Step 3 Your Information Card Redesign
+========================================= */
+.your-information-card {
+    padding: 24px;
+    background: #ffffff;
+    border: 1px solid #e8edf5;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(17, 28, 58, 0.035);
+}
+
+.your-info-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.your-info-header-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    background-color: #0866e8;
+    color: #ffffff;
+    border-radius: 50%;
+    font-size: 18px;
+    margin-top: 2px;
+}
+
+.your-info-header-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.your-info-title {
+    margin: 0 0 3px 0;
+    color: #111c3a;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.your-info-subtitle {
+    margin: 0 0 4px 0;
+    color: #111c3a;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.your-info-desc {
+    margin: 0;
+    color: #475467;
+    font-size: 11.5px;
+    line-height: 1.5;
+}
+
+.your-info-divider {
+    border: 0;
+    border-top: 1px solid #e8edf5;
+    margin: 18px 0;
+}
+
+.your-info-section-heading {
+    margin: 0 0 16px 0;
+    color: #111c3a;
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.your-info-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.your-info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.your-info-row .info-icon-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    background-color: #f3f8ff;
+    color: #0866e8;
+    border-radius: 50%;
+    font-size: 15px;
+    margin-top: 2px;
+}
+
+.your-info-row .info-row-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.your-info-row .info-row-title {
+    margin: 0 0 2px 0;
+    color: #111c3a;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.your-info-row .info-row-desc {
+    margin: 0;
+    color: #667085;
+    font-size: 11.5px;
+    line-height: 1.45;
+}
+
+.almost-there-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background-color: #f3f8ff;
+    border: 1px solid #dbeafe;
+    border-radius: 10px;
+}
+
+.almost-there-box .almost-there-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: #0866e8;
+    font-size: 15px;
+    margin-top: 1px;
+}
+
+.almost-there-box .almost-there-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.almost-there-box .almost-there-title {
+    margin: 0 0 2px 0;
+    color: #111c3a;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.almost-there-box .almost-there-desc {
+    margin: 0;
+    color: #475467;
+    font-size: 11.5px;
+    line-height: 1.45;
+}
+
+
 
