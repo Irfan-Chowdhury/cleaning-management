@@ -536,13 +536,13 @@
                     );
                 }
 
-                // Cancel Booking Action
+                // Cancel Booking Action (Displayed ONLY when status is Approved)
                 var cancelContainer = $('#modal-cancel-action');
                 cancelContainer.empty();
-                if (booking.cancellation_eligible && statusLower !== 'cancelled' && statusLower !== 'completed') {
+                if (statusLower === 'approved') {
                     cancelContainer.html(
-                        '<button type="button" class="btn btn-outline-danger px-3 btn-cancel-booking" style="border-radius: 8px; font-weight: 600; font-size: 13px;">' +
-                            '<i class="fas fa-times-circle mr-1"></i> Cancel Booking' +
+                        '<button type="button" class="btn btn-outline-danger px-3 btn-cancel-booking" data-id="' + booking.id + '" style="border-radius: 8px; font-weight: 600; font-size: 13px;">' +
+                            '<i class="fas fa-times-circle mr-1"></i> Cancel Schedule' +
                         '</button>'
                     );
                 }
@@ -561,11 +561,98 @@
                 $('#bookingDetailModal').modal('show');
             });
 
-            // Action Handlers
+            // Action Handlers for Booking Cancellation
             $(document).on('click', '.btn-cancel-booking', function () {
-                if (confirm('Are you sure you want to cancel this booking?')) {
-                    alert('Booking cancellation request submitted successfully.');
-                    $('#bookingDetailModal').modal('hide');
+                var bookingId = $(this).attr('data-id');
+                if (!bookingId) return;
+
+                var bookingCode = 'BK-' + String(bookingId).padStart(3, '0');
+
+                function executeCancellation() {
+                    var $btn = $('.btn-cancel-booking');
+                    $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i> Cancelling...');
+
+                    $.ajax({
+                        url: '{{ url("/my-bookings") }}/' + bookingId + '/cancel',
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function (response) {
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Cancelled!',
+                                    text: response.message || 'Booking schedule has been cancelled successfully.',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            } else {
+                                alert(response.message || 'Booking schedule has been cancelled successfully.');
+                            }
+
+                            // Update modal status badge
+                            $('#modal-status-badge').html(
+                                '<span class="badge badge-status-cancelled" style="padding: 5px 11px; font-weight: 700; border-radius: 999px;">Cancelled</span>'
+                            );
+
+                            // Clear cancel action button from modal
+                            $('#modal-cancel-action').empty();
+
+                            // Update table row status badge
+                            var $row = $('tr[data-status]').filter(function () {
+                                var rowTag = $(this).find('.booking-id-tag').text().trim();
+                                return rowTag === bookingCode;
+                            });
+
+                            if ($row.length) {
+                                $row.attr('data-status', 'cancelled');
+                                $row.find('td:nth-child(6)').html(
+                                    '<span class="badge badge-status-cancelled" style="padding: 6px 12px; font-weight: 700; border-radius: 999px;">Cancelled</span>'
+                                );
+                                $row.find('.btn-success').remove();
+                            }
+
+                            setTimeout(function () {
+                                $('#bookingDetailModal').modal('hide');
+                            }, 1200);
+                        },
+                        error: function (xhr) {
+                            $btn.prop('disabled', false).html('<i class="fas fa-times-circle mr-1"></i> Cancel Schedule');
+                            var errorMsg = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : 'Failed to cancel booking.';
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Cancellation Failed',
+                                    text: errorMsg
+                                });
+                            } else {
+                                alert(errorMsg);
+                            }
+                        }
+                    });
+                }
+
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Cancel Booking Schedule?',
+                        html: 'Are you sure you want to cancel schedule for <strong>' + bookingCode + '</strong>?'
+                            + '<br><small class="text-muted">This action will change status to Cancelled and notify the admin team.</small>',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Yes, Cancel Schedule!',
+                        cancelButtonText: 'No, Keep It'
+                    }).then(function (result) {
+                        if (result.isConfirmed) {
+                            executeCancellation();
+                        }
+                    });
+                } else {
+                    if (confirm('Are you sure you want to cancel schedule for ' + bookingCode + '?')) {
+                        executeCancellation();
+                    }
                 }
             });
 

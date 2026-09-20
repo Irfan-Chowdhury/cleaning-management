@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers\Customer;
 
+use App\Enums\BookingStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\User;
+use App\Notifications\BookingCancelledNotification;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
 {
@@ -56,7 +61,7 @@ class BookingController extends Controller
                     'payment_method'       => $paymentMethod === 'pending' ? 'Pending Payment' : $paymentMethod,
                     'paid_amount'          => $paymentStatusRaw === 'paid' ? (float) $b->total_amount : 0.00,
                     'wallet_used'          => (float) $b->credit_used,
-                    'cancellation_eligible'=> ($statusVal === 'pending' || $statusVal === 'approved'),
+                    'cancellation_eligible'=> ($statusVal === 'approved'),
                     'questionnaires'       => $questionnaires,
                 ];
             });
@@ -82,5 +87,43 @@ class BookingController extends Controller
         }
 
         return view('pages.customer.booking.index', compact('bookings'));
+    }
+
+    /**
+     * Cancel an approved booking by customer and notify admin.
+     */
+    public function cancel(Booking $booking): JsonResponse
+    {
+        if ((int) $booking->user_id !== (int) Auth::id()) {
+            return response()->json(['error' => 'Unauthorized action.'], 403);
+        }
+
+        $statusVal = $booking->status instanceof BookingStatus ? $booking->status->value : (string) $booking->status;
+
+        if (strtolower($statusVal) !== 'approved') {
+            return response()->json([
+                'error' => 'Only approved bookings can be cancelled schedule.'
+            ], 422);
+        }
+
+        $booking->status = BookingStatus::CANCELLED;
+        $booking->save();
+
+        // Send app notification to all Admins
+        try {
+            $admins = User::where('role', 1)->get();
+            foreach ($admins as $admin) {
+                $admin->notify(new BookingCancelledNotification($booking));
+            }
+        } catch (\Throwable $e) {
+            Log::error('Failed to send admin booking cancellation notification: ' . $e->getMessage());
+        }
+
+        return response()->json([
+            'success'    => true,
+            'message'    => 'Booking schedule has been cancelled successfully.',
+            'status'     => 'Cancelled',
+            'status_raw' => 'cancelled',
+        ]);
     }
 }

@@ -10,6 +10,7 @@ use App\Http\Controllers\DashboardController;
 Route::middleware(['auth', 'can:customer', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/my-bookings', [BookingController::class, 'index'])->name('customer.bookings.index');
+    Route::post('/my-bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('customer.bookings.cancel');
     Route::get('/my-wallet', [WalletController::class, 'index'])->name('customer.wallet.index');
     Route::get('/customer-referrals', [ReferralController::class, 'index'])->name('customer.referrals.index');
     Route::get('/customer-profile', [ProfileController::class, 'index'])->name('customer.profile.index');

@@ -58,3 +58,8 @@ Before moving to the next step, the system will check that:
 ### Simple Flow
 
 **Choose Date → View Available Times → Select Time → Confirm Availability → Continue to Next Step**
+
+## Customer My Bookings (`/my-bookings`)
+
+### Scenario-1: Approved Booking Schedule Cancellation
+* When a booking status is **Approved**, opening the booking details modal displays the **Cancel Schedule** button option admin will Notify..

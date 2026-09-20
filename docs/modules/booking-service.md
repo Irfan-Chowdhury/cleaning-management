@@ -62,6 +62,22 @@ Customer accesses Step 4 from /my-bookings when status becomes Approved:
   -> Renders Review & Confirm UI for final confirmation/payment
 ```
 
+### My Bookings (`/my-bookings`) & Approved Schedule Cancellation
+
+```text
+Customer views /my-bookings
+  -> Customer\BookingController@index
+  -> Customer opens Booking Details Modal (#bookingDetailModal)
+  -> If Booking status is Approved:
+     -> Displays "Cancel Schedule" button in modal footer
+     -> Customer clicks "Cancel Schedule" & confirms action
+     -> AJAX POST /my-bookings/{booking}/cancel
+     -> Customer\BookingController@cancel validates customer ownership & Approved status
+     -> Updates booking status to Cancelled (BookingStatus::CANCELLED)
+     -> Sends in-app database notification (BookingCancelledNotification) to Admin users
+     -> Modal status badge and DataTable row status update dynamically to Cancelled
+```
+
 ## 3. Technical Implementation
 
 ### Routes
@@ -133,13 +149,26 @@ The Step 2 right-side card renders a static **Scheduling Guide** structure:
   - `Cancellation policy`
   - `Free cancellation with at least {X} hours' notice.` — `X` dynamically binds to `settings.cancellation_notice_hours` configured in Admin `/settings`.
 
+#### Step-3 Right-Side Your Information Card (`resources/views/pages/booking-service/partials/your-information.blade.php`)
+
+The Step 3 right-side card renders a static **Your Information** structure:
+
+- **Header Section**: 44px blue circular container (`#0866e8`) with white shield icon (`fas fa-shield-alt`), title `Your Information`, subtitle `Your details are secure.`, and description `We only use your information to arrange and communicate about your cleaning service.`
+- **Divider #1**: Light-grey horizontal divider.
+- **Section Heading**: `Why we need this information`
+- **3 Information Rows**: Rendered with 42px circular light-blue icon containers (`#f3f8ff` background, `#0866e8` blue icon):
+  - `Service address` (`fas fa-map-marker-alt`) — `So our cleaners know where to go.`
+  - `Contact details` (`fas fa-phone-alt`) — `So we can send booking updates and contact you if needed.`
+  - `Privacy & security` (`fas fa-lock`) — `Your information is securely handled and never sold.`
+- **Bottom Box**: Light blue rounded box (`#f3f8ff` background, `#dbeafe` border) with blue sparkle/magic icon (`fas fa-magic`), title `Almost there!`, and description `You'll review all your booking details and pricing before confirming.`
+
 ### Views
 
 - `resources/views/pages/booking-service/create.blade.php`
 - `resources/views/pages/booking-service/date-time.blade.php`
 - `resources/views/pages/booking-service/your-details.blade.php`
 - `resources/views/pages/booking-service/review-confirm.blade.php`
-- Shared partials under `resources/views/pages/booking-service/partials/` (`service-guide-card.blade.php`, `scheduling-guide.blade.php`, `trust-strip.blade.php`, `promo-card.blade.php`, `support-card.blade.php`, `page-header.blade.php`, `progress.blade.php`)
+- Shared partials under `resources/views/pages/booking-service/partials/` (`service-guide-card.blade.php`, `scheduling-guide.blade.php`, `your-information.blade.php`, `trust-strip.blade.php`, `promo-card.blade.php`, `support-card.blade.php`, `page-header.blade.php`, `progress.blade.php`)
 
 ## 4. Database Design
 
