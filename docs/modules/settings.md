@@ -43,6 +43,7 @@ The feature uses authenticated web routes:
 ```php
 Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
 Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+Route::get('/documentation', ...); // Serves client documentation with dynamic company logo
 ```
 
 ### Controller
