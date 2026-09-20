@@ -88,8 +88,19 @@ Responsibilities:
 
 - Fetch the latest settings row.
 - Create or update the latest settings row.
+- Flushes settings cache (`Cache::forget('app_settings')`) whenever settings are updated.
+- Dynamically sets PHP and Laravel runtime timezone (`config(['app.timezone' => $timezone])` & `date_default_timezone_set($timezone)`).
 - Upload a new company logo when provided.
 - Delete a previously uploaded logo after replacement, except for the default logo and external URLs.
+
+### Dynamic Application Timezone & Settings Caching
+
+`App\Providers\AppServiceProvider`
+
+- **Boot Integration**: Uses `Cache::rememberForever('app_settings', ...)` to load company settings into runtime memory with zero additional database query overhead on cached requests.
+- **Runtime Timezone**: Automatically configures `config(['app.timezone' => $setting->timezone])` and `date_default_timezone_set($setting->timezone)` on app boot so all Carbon date/time helpers across the application reflect the admin-configured timezone.
+- **Booking Step-2 Integration**: `cancellation_notice_hours` is dynamically read by the Step-2 Scheduling Guide card (`resources/views/pages/booking-service/partials/scheduling-guide.blade.php`) to display:
+  `Free cancellation with at least {cancellation_notice_hours} hours' notice.`
 
 ### Model
 
@@ -105,6 +116,7 @@ public/assets/images/company_logo/brand_logo.png
 
 - `resources/views/pages/admin/settings/index.blade.php`
 - `resources/views/components/sidebar.blade.php`
+- `resources/views/pages/booking-service/partials/scheduling-guide.blade.php` (consumes `cancellation_notice_hours`)
 
 The settings Blade form uses database field names for the `name` attributes. AJAX is handled directly in the Blade file with jQuery. SweetAlert2 is used for success and error feedback.
 

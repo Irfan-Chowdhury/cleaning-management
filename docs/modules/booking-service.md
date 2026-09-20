@@ -117,13 +117,29 @@ The Step 1 right-side card operates in two distinct states rendered initially vi
      - **Right Column**: Multi-storey commercial office building SVG illustration (~150px width).
    - **Bottom Info Box**: Light blue shield box (`Customised cleaning plans available to suit your business needs.`).
 
+#### Step-2 Right-Side Scheduling Guide Card (`resources/views/pages/booking-service/partials/scheduling-guide.blade.php`)
+
+The Step 2 right-side card renders a static **Scheduling Guide** structure:
+
+- **Header**: 44px blue circular icon (`#0866e8`) with white calendar icon (`far fa-calendar-alt`), title `Scheduling Guide`, and `Step 2 of 4` pill badge.
+- **Introduction Text**: Explains scheduling availability guidelines.
+- **Divider #1**: Light-grey horizontal divider.
+- **3 Feature Rows**: Rendered with 46px circular light-blue icon containers (`#f3f8ff` background, `#0866e8` blue icon):
+  - `Flexible scheduling` (`far fa-clock`) — `Choose a time that fits your routine.`
+  - `Real-time availability` (`fas fa-users`) — `Only available appointment times are shown.`
+  - `Need to reschedule?` (`fas fa-sync-alt`) — `You can reschedule your booking according to our policy.`
+- **Divider #2**: Light-grey horizontal divider.
+- **Cancellation Policy Box**: Light blue rounded box (`#f3f8ff` background, `#dbeafe` border) with blue shield icon (`fas fa-shield-alt`). Displays:
+  - `Cancellation policy`
+  - `Free cancellation with at least {X} hours' notice.` — `X` dynamically binds to `settings.cancellation_notice_hours` configured in Admin `/settings`.
+
 ### Views
 
 - `resources/views/pages/booking-service/create.blade.php`
 - `resources/views/pages/booking-service/date-time.blade.php`
 - `resources/views/pages/booking-service/your-details.blade.php`
 - `resources/views/pages/booking-service/review-confirm.blade.php`
-- Shared partials under `resources/views/pages/booking-service/partials/` (`service-guide-card.blade.php`, `trust-strip.blade.php`, `promo-card.blade.php`, `support-card.blade.php`, `page-header.blade.php`, `progress.blade.php`)
+- Shared partials under `resources/views/pages/booking-service/partials/` (`service-guide-card.blade.php`, `scheduling-guide.blade.php`, `trust-strip.blade.php`, `promo-card.blade.php`, `support-card.blade.php`, `page-header.blade.php`, `progress.blade.php`)
 
 ## 4. Database Design
 

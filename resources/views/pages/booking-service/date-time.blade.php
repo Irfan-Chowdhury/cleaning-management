@@ -107,7 +107,7 @@
             </div>
 
             <aside class="booking-right-column">
-                @include('pages.booking-service.partials.booking-summary')
+                @include('pages.booking-service.partials.scheduling-guide')
                 @include('pages.booking-service.partials.promo-card')
                 @include('pages.booking-service.partials.support-card')
             </aside>

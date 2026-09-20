@@ -43,6 +43,7 @@ This step allows the customer to choose a suitable cleaning date and available t
 * **No service available on a particular day:** No time option will be shown for that date.
 * **All times are already booked:** The customer will be asked to select another date.
 * **Two customers try to book the same time:** The first confirmed booking will be accepted, and the other customer will need to choose another available time.
+* The cancellation policy hours fetch from Admin Seetings.
 
 ### 4. Booking Protection
 
