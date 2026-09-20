@@ -4,10 +4,15 @@ namespace App\Services;
 
 use App\Enums\BookingStatus;
 use App\Models\Booking;
+use App\Models\Payment;
+use App\Models\QuestionOption;
+use App\Models\Setting;
 use App\Models\User;
+use App\Models\WalletTransaction;
 use App\Notifications\BookingApprovedNotification;
 use App\Notifications\BookingConfirmedNotification;
 use App\Notifications\NewBookingPendingNotification;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class BookingService
@@ -28,43 +33,39 @@ class BookingService
 
         // Process questionnaire questions & answers into JSON format
         $answers = [];
-        $rawQuestions = $step1['questions'] ?? [];
+        if (!empty($step1['answers']) && is_array($step1['answers'])) {
+            foreach ($step1['answers'] as $questionId => $val) {
+                if ($val === null || $val === '') {
+                    continue;
+                }
+                $questionTitle = $step1['question_titles'][$questionId] ?? "Question #{$questionId}";
+                $answerStr = '';
 
-        if (!empty($rawQuestions) && is_array($rawQuestions)) {
-            foreach ($rawQuestions as $key => $val) {
-                if (is_array($val) && isset($val['question']) && isset($val['answer'])) {
-                    $answers[] = [
-                        'question' => (string) $val['question'],
-                        'answer'   => (string) $val['answer'],
-                    ];
-                } else {
-                    $questionModel = \App\Models\ServiceQuestion::find($key);
-                    $questionTitle = $questionModel ? $questionModel->title : ("Question #" . $key);
-
-                    if (is_array($val)) {
-                        $optionLabels = [];
-                        foreach ($val as $subVal) {
-                            if (is_numeric($subVal)) {
-                                $opt = \App\Models\QuestionOption::find($subVal);
-                                $optionLabels[] = $opt ? $opt->label : $subVal;
-                            } else {
-                                $optionLabels[] = $subVal;
+                if (is_array($val)) {
+                    $optionLabels = [];
+                    foreach ($val as $subVal) {
+                        if (is_numeric($subVal)) {
+                            $opt = QuestionOption::find($subVal);
+                            if ($opt) {
+                                $optionLabels[] = $opt->label;
                             }
+                        } else {
+                            $optionLabels[] = $subVal;
                         }
-                        $answerStr = implode(', ', $optionLabels);
-                    } elseif (is_numeric($val)) {
-                        $opt = \App\Models\QuestionOption::find($val);
-                        $answerStr = $opt ? $opt->label : (string) $val;
-                    } else {
-                        $answerStr = (string) $val;
                     }
+                    $answerStr = implode(', ', $optionLabels);
+                } elseif (is_numeric($val)) {
+                    $opt = QuestionOption::find($val);
+                    $answerStr = $opt ? $opt->label : (string) $val;
+                } else {
+                    $answerStr = (string) $val;
+                }
 
-                    if (!empty($answerStr)) {
-                        $answers[] = [
-                            'question' => $questionTitle,
-                            'answer'   => $answerStr,
-                        ];
-                    }
+                if (!empty($answerStr)) {
+                    $answers[] = [
+                        'question' => $questionTitle,
+                        'answer'   => $answerStr,
+                    ];
                 }
             }
         }
@@ -99,7 +100,7 @@ class BookingService
 
         // Create initial Payment record with status 'pending'
         try {
-            \App\Models\Payment::create([
+            Payment::create([
                 'booking_id'     => $booking->id,
                 'user_id'        => $user->id,
                 'amount'         => $totalAmount,
@@ -166,7 +167,7 @@ class BookingService
 
         // Sync or create Payment model record
         try {
-            $payment = \App\Models\Payment::firstOrNew(['booking_id' => $booking->id]);
+            $payment = Payment::firstOrNew(['booking_id' => $booking->id]);
             $payment->user_id = $booking->user_id;
             $payment->amount = isset($data['amount']) ? (float) $data['amount'] : (float) $booking->total_amount;
             $payment->payment_status = $data['payment_status'] ?? ($booking->payment_status ?? 'pending');
@@ -195,7 +196,7 @@ class BookingService
     /**
      * Confirm an approved booking by Customer, update status to confirmed, and notify admins.
      */
-    public function confirmBookingByCustomer(Booking $booking, User $user): Booking
+    public function confirmBookingByCustomer(Booking $booking, User $user, float $walletAmount = 0.0): Booking
     {
         $statusValue = $booking->status instanceof BookingStatus
             ? $booking->status->value
@@ -210,13 +211,55 @@ class BookingService
             throw new \UnauthorizedException('You are not authorized to confirm this booking.');
         }
 
-        $booking->update([
-            'status' => BookingStatus::CONFIRMED,
-        ]);
+        $subtotal = (float) ($booking->subtotal > 0 ? $booking->subtotal : $booking->total_amount);
+
+        // Process wallet deduction if requested and customer has sufficient balance
+        if ($walletAmount > 0) {
+            $dbTx = WalletTransaction::where('user_id', $user->id)->get();
+            $availableBalance = max(0, (float) $dbTx->where('type', 'credit')->sum('amount') - (float) $dbTx->where('type', 'debit')->sum('amount'));
+
+            $settings = Cache::rememberForever('app_settings', function () {
+                return Setting::latest()->first();
+            });
+
+            $minBookingAmount = (float) ($settings?->minimum_booking_amount ?? 0);
+            $maxWalletUsage = (float) ($settings?->max_wallet_usage ?? 0);
+
+            if ($subtotal >= $minBookingAmount && $availableBalance >= $walletAmount) {
+                if ($maxWalletUsage > 0 && $walletAmount > $maxWalletUsage) {
+                    $walletAmount = $maxWalletUsage;
+                }
+
+                $walletAmount = min($walletAmount, $subtotal);
+                $newTotal = max(0, $subtotal - $walletAmount);
+
+                $booking->subtotal = $subtotal;
+                $booking->credit_used = $walletAmount;
+                $booking->discount_amount = $walletAmount;
+                $booking->total_amount = $newTotal;
+
+                // Create WalletTransaction debit entry
+                try {
+                    WalletTransaction::create([
+                        'user_id'     => $user->id,
+                        'booking_id'  => $booking->id,
+                        'type'        => 'debit',
+                        'amount'      => $walletAmount,
+                        'source'      => 'booking_payment',
+                        'description' => 'Wallet credit used for Booking #BK-' . sprintf('%03d', $booking->id),
+                    ]);
+                } catch (\Throwable $e) {
+                    Log::error('Failed to record wallet transaction debit: ' . $e->getMessage());
+                }
+            }
+        }
+
+        $booking->status = BookingStatus::CONFIRMED;
+        $booking->save();
 
         // Sync or update payment record status if present
         try {
-            $payment = \App\Models\Payment::firstOrNew(['booking_id' => $booking->id]);
+            $payment = Payment::firstOrNew(['booking_id' => $booking->id]);
             $payment->user_id = $booking->user_id;
             $payment->amount = (float) $booking->total_amount;
             if (empty($payment->payment_status)) {

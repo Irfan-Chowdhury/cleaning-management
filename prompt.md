@@ -202,6 +202,12 @@ Here this step-2 can be critical and logical.
 - Write the Unit/feature test case for PEST
 - Update the documentation.
 - if miss anything in logic or feature you can suggest me
+- "The Free cancellation with at least 24 hours' notice."  here the hours data should fetch from settings.cancellation_notice_hours which already implemented in /settings url. Just integrate with step-2.
+And write this case in `case-senerio.md` file in step-2 part.
+-  during new booking session,
+- if time can selecet, then deselect option sholud be set.
+- the  "All times are in AEST"  should be changed based on config/app timezone
+
 
 
 
@@ -237,6 +243,8 @@ choosed Option 2: Single JSON Column on bookings Table (answers). Implement this
 
 Senerio-5: when customer submit, subtotal and total_amount set default 00.00
 
+Senerio-6:url /my-bookings, When Booking status Approved, shedule cancel buton option display in modal only this time and then when click the cancel then booking status will cancel and admin get app notification. 
+
 ### ------------ Payment Status ------------
 Need to payment status. create migration file. Then integrate this payments with booking.
 
@@ -260,6 +268,56 @@ Need to payment status. create migration file. Then integrate this payments with
 data should retrive from actual Data from Db and display the data in view. After submitting, booking status will be change into approved to confirmed and then Admin can get a notification.
 Use validation, business logic separate.
 
+## Rules of Refer or Promo Code Or Wallet
+Now come to the point Referral or Promo Code Or Wallet Which is mainly a discount system. 
+For ste-p 1-3, In right side there a common field Referral or Promo Code. But before there should be changed. The promo-card.blade.php should display only in Step-4. Don't for Step-1-3. There will be Two radio button. Use a Appropritae Label Name Discount Type Offer.
+
+1. Use Wallet 
+2. Referal/Promo Code.
+
+* Let's work with first one. if Select option 1 wallet 
+i) then check bookings.total_amount > settings.minimum_booking_amount true or false. if false then display a message in bottom that The total amount is less than minimum booking amount that's why can not use wallet. 
+ii) If false, then display his remaing wallet balance, and then input field option to type his amount. when type the amount which he inputted for 
+  a)inputted amount < remaing wallet balance if true then proceed for next otherwise display insuffient balance otherwise .
+  b) then if inputted amount <= settings.max_wallet_usage is true then display the subtotal, total, discount in that page after amount typing using jquery. Then finally when submit for confirm store it database.
+
+* if Select option 2, the hidden "Have a Referral or Promo Code?" display. Just Display we will discuss with it later
+
+
 
 # Booking Ste-1
  # /booking-service/create when pagee load, initially service dropdown should set "select" deafult
+
+
+
+
+
+
+ # Not Implement Yet
+ Step-2:
+Schedule : 
+Senerio-1 : booking in current date possible or next working day ?? 
+if possible then how to time distance should booking the slot from current time ?
+
+
+url /my-bookings
+Senerio-1 : When Booking status Approved, shedule cancel buton option display in modal only this time and then when click the cancel then booking status will cancel and admin get app notification. 
+Write Test Case also.
+
+Senerio-2 : if Date Expire, then what is about the Booking ?
+
+
+Senerio-3: 
+Admin bookings/{id}/edit
+Time Slots display based on date wise -->Weekly Schedule by cascading dropdown list. Same Date functionality will be used in there as like Booking Service.
+
+Senerio-4:
+Booking Status Should be Expired option.
+
+Senerio-5: /bookings/{id} in view page
+Payment & Billing Breakdown section
+Discount Amount (Wallet or Referal Or Promo Code)
+
+if booking.credit_used data existis then = Wallet
+if booking.referal_code existis then = Referal
+if booking.promo_code existis then = Promo Code

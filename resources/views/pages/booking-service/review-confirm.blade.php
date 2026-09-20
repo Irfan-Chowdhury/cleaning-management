@@ -51,7 +51,7 @@
                             </div>
                             <div class="estimated-price-box">
                                 <span>Total Price</span>
-                                <strong>${{ number_format((float) $latestBooking->total_amount, 2) }}</strong>
+                                <strong id="main-estimated-total">${{ number_format((float) $latestBooking->total_amount, 2) }}</strong>
                             </div>
                         </div>
                     </div>
@@ -113,15 +113,13 @@
                                 </div>
                             @endif
                             <div class="payment-total-panel">
-                                <div><span>Subtotal</span><strong>${{ number_format((float) $latestBooking->subtotal, 2) }}</strong></div>
-                                @if ((float) $latestBooking->discount_amount > 0)
-                                    <div><span>Discount</span><strong>- ${{ number_format((float) $latestBooking->discount_amount, 2) }}</strong></div>
-                                @endif
-                                @if ((float) $latestBooking->credit_used > 0)
-                                    <div><span>Wallet Credit</span><strong>- ${{ number_format((float) $latestBooking->credit_used, 2) }}</strong></div>
-                                @endif
+                                <div><span>Subtotal</span><strong id="main-subtotal-val">${{ number_format((float) ($latestBooking->subtotal > 0 ? $latestBooking->subtotal : $latestBooking->total_amount), 2) }}</strong></div>
+                                <div id="main-discount-row" style="{{ (float) $latestBooking->discount_amount > 0 ? '' : 'display: none;' }}">
+                                    <span>Discount / Wallet</span>
+                                    <strong id="main-discount-val" class="text-success">- ${{ number_format((float) $latestBooking->discount_amount, 2) }}</strong>
+                                </div>
                                 <hr>
-                                <div class="grand-total"><span>Total</span><strong>${{ number_format((float) $latestBooking->total_amount, 2) }}</strong></div>
+                                <div class="grand-total"><span>Total</span><strong id="main-grand-total-val">${{ number_format((float) $latestBooking->total_amount, 2) }}</strong></div>
                             </div>
                         </div>
                     </div>
@@ -130,6 +128,7 @@
                     <form action="{{ route('booking-service.confirm') }}" method="POST" id="confirm-booking-form">
                         @csrf
                         <input type="hidden" name="booking_id" value="{{ $latestBooking->id }}">
+                        <input type="hidden" name="wallet_amount" id="applied-wallet-amount-hidden" value="0">
                         <div class="booking-step-actions review-actions">
                             <a href="{{ route('customer.bookings.index') }}" class="btn btn-outline-primary">
                                 <i class="fas fa-arrow-left" aria-hidden="true"></i> Back to My Bookings
@@ -143,35 +142,9 @@
                 </div>
             </div>
 
-            <!-- Sidebar Summary -->
+            <!-- Sidebar -->
             <aside class="booking-right-column">
-                <div class="booking-summary-card filled-summary-card final-summary-card">
-                    <div class="summary-title-row">
-                        <h2>Booking Summary</h2>
-                    </div>
-                    <img src="https://picsum.photos/seed/dust2glow-final/420/260" alt="{{ $serviceName }}" class="summary-image">
-                    <h3>{{ $serviceName }}</h3>
-                    <span class="booking-badge">{{ $frequencyLabel }}</span>
-                    <ul class="summary-list">
-                        <li><i class="far fa-calendar-alt" aria-hidden="true"></i> {{ $formattedDate }}</li>
-                        <li><i class="far fa-clock" aria-hidden="true"></i> {{ $formattedTime }}</li>
-                        <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> {{ $latestBooking->customer_address }}</li>
-                    </ul>
-                    <div class="price-breakdown">
-                        <div><span>Subtotal</span><strong>${{ number_format((float) $latestBooking->subtotal, 2) }}</strong></div>
-                        @if ((float) $latestBooking->discount_amount > 0)
-                            <div><span>Discount</span><strong class="discount-value">- ${{ number_format((float) $latestBooking->discount_amount, 2) }}</strong></div>
-                        @endif
-                        <div class="summary-total"><span>Total</span><strong>${{ number_format((float) $latestBooking->total_amount, 2) }}</strong></div>
-                    </div>
-                </div>
-
-                @if ($appliedCode)
-                    <div class="booking-side-card referral-success-card">
-                        <h2><i class="fas fa-check-circle" aria-hidden="true"></i> Code {{ $appliedCode }} Applied</h2>
-                        <p>Discount of ${{ number_format((float) $latestBooking->discount_amount, 2) }} applied to this booking.</p>
-                    </div>
-                @endif
+                @include('pages.booking-service.partials.promo-card')
 
                 <div class="booking-side-card why-book-card">
                     <h2>Why book with Dust2Glow?</h2>
@@ -191,4 +164,96 @@
 
 @push('scripts')
     <script src="{{ asset('public/assets/js/booking_service.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            // Radio button toggle logic
+            $('input[name="offer_type"]').on('change', function () {
+                var val = $(this).val();
+                $('.discount-radio-card').removeClass('active');
+                $(this).closest('.discount-radio-card').addClass('active');
+
+                if (val === 'wallet') {
+                    $('#wallet-offer-panel').slideDown(200);
+                    $('#promo-offer-panel').slideUp(200);
+                } else {
+                    $('#wallet-offer-panel').slideUp(200);
+                    $('#promo-offer-panel').slideDown(200);
+                    // Reset wallet deduction when switching to promo
+                    $('#wallet-amount-input').val('').trigger('input');
+                }
+            });
+
+            // Live Wallet Calculation
+            $('#wallet-amount-input').on('input keyup change', function () {
+                var $card = $('#discount-offer-card');
+                var subtotal = parseFloat($card.attr('data-subtotal')) || 0;
+                var minAmount = parseFloat($card.attr('data-min-amount')) || 0;
+                var maxWalletUsage = parseFloat($card.attr('data-max-wallet-usage')) || 0;
+                var walletBalance = parseFloat($card.attr('data-wallet-balance')) || 0;
+
+                var rawVal = $(this).val();
+                var inputVal = parseFloat(rawVal) || 0;
+                var $feedback = $('#wallet-feedback-msg');
+
+                if (!rawVal || inputVal <= 0) {
+                    $feedback.hide().html('');
+                    updateLivePricing(subtotal, 0);
+                    return;
+                }
+
+                if (subtotal < minAmount) {
+                    $feedback.show().html('<span class="text-danger"><i class="fas fa-times-circle"></i> The total amount ($' + subtotal.toFixed(2) + ') is less than minimum booking amount ($' + minAmount.toFixed(2) + '), wallet cannot be used.</span>');
+                    updateLivePricing(subtotal, 0);
+                    return;
+                }
+
+                if (inputVal > walletBalance) {
+                    $feedback.show().html('<span class="text-danger"><i class="fas fa-times-circle"></i> Insufficient balance. Remaining wallet balance is $' + walletBalance.toFixed(2) + '.</span>');
+                    updateLivePricing(subtotal, 0);
+                    return;
+                }
+
+                if (maxWalletUsage > 0 && inputVal > maxWalletUsage) {
+                    $feedback.show().html('<span class="text-danger"><i class="fas fa-times-circle"></i> Maximum wallet usage allowed per booking is $' + maxWalletUsage.toFixed(2) + '.</span>');
+                    updateLivePricing(subtotal, 0);
+                    return;
+                }
+
+                if (inputVal > subtotal) {
+                    $feedback.show().html('<span class="text-danger"><i class="fas fa-times-circle"></i> Wallet amount cannot exceed the booking subtotal ($' + subtotal.toFixed(2) + ').</span>');
+                    updateLivePricing(subtotal, 0);
+                    return;
+                }
+
+                // Valid amount!
+                $feedback.show().html('<span class="text-success"><i class="fas fa-check-circle"></i> Wallet credit of $' + inputVal.toFixed(2) + ' applied!</span>');
+                updateLivePricing(subtotal, inputVal);
+            });
+
+            function updateLivePricing(subtotal, discount) {
+                var finalTotal = Math.max(0, subtotal - discount);
+
+                $('#applied-wallet-amount-hidden').val(discount);
+
+                // Update main review panel price box & payment breakdown
+                $('#main-estimated-total').text('$' + finalTotal.toFixed(2));
+                if (discount > 0) {
+                    $('#main-discount-row').show();
+                    $('#main-discount-val').text('- $' + discount.toFixed(2));
+                } else {
+                    $('#main-discount-row').hide();
+                }
+                $('#main-grand-total-val').text('$' + finalTotal.toFixed(2));
+
+                // Update right sidebar summary card
+                if (discount > 0) {
+                    $('#summary-discount-row').show();
+                    $('#summary-discount-val').text('- $' + discount.toFixed(2));
+                } else {
+                    $('#summary-discount-row').hide();
+                }
+                $('#summary-total-val').text('$' + finalTotal.toFixed(2));
+            }
+        });
+    </script>
 @endpush

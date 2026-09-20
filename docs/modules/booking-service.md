@@ -52,14 +52,19 @@ Customer clicks Continue to Your Details
   -> Redirects to /my-bookings (Customer Bookings table)
 ```
 
-### Step 4: Review & Confirm (Approved Bookings Only)
+### Step 4: Review & Confirm (Approved Bookings & Discount Type Offer)
 
 ```text
 Step 4 is hidden during initial booking creation.
 Customer accesses Step 4 from /my-bookings when status becomes Approved:
   -> GET /booking-service/review-confirm?booking={id}
   -> BookingServiceController@reviewConfirm validates booking ID & Approved status
-  -> Renders Review & Confirm UI for final confirmation/payment
+  -> Renders Review & Confirm UI & Discount Offer Card (Wallet vs Promo/Referral Code)
+  -> Customer selects "Use Wallet" or "Referral/Promo Code"
+  -> Option 1 (Wallet): Checks subtotal >= minimum_booking_amount. Validates typed wallet credit against available balance & max_wallet_usage settings.
+  -> jQuery dynamically updates subtotal, discount/wallet deduction, and total amount live.
+  -> Customer submits form -> POST /booking-service/confirm
+  -> BookingService::confirmBookingByCustomer updates status to Confirmed, applies credit_used & discount_amount, creates WalletTransaction debit record, and notifies Admins.
 ```
 
 ### My Bookings (`/my-bookings`) & Approved Schedule Cancellation

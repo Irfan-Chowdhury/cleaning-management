@@ -1969,12 +1969,131 @@
     line-height: 1.35;
 }
 
-.almost-there-box .almost-there-desc {
-    margin: 0;
-    color: #475467;
-    font-size: 11.5px;
-    line-height: 1.45;
+
+/* =========================================
+   Discount Offer Card (Step-4 Redesign)
+========================================= */
+.booking-discount-offer-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
+
+.discount-offer-header {
+    margin-bottom: 16px;
+}
+
+.discount-offer-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.3;
+}
+
+.discount-offer-subtitle {
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.4;
+    margin-top: 2px;
+    padding-left: 25px;
+}
+
+.discount-type-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #334155;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 8px;
+}
+
+.discount-radio-card {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 14px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    background-color: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    margin-bottom: 0;
+}
+
+.discount-radio-card:hover {
+    border-color: #cbd5e1;
+    background-color: #f8fafc;
+}
+
+.discount-radio-card:has(input[type="radio"]:checked),
+.discount-radio-card.active {
+    border-color: #2563eb;
+    background-color: #eff6ff;
+    box-shadow: 0 1px 3px rgba(37, 99, 235, 0.08);
+}
+
+.discount-radio-input {
+    accent-color: #2563eb;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.discount-card-icon {
+    margin-left: 6px;
+    margin-right: 10px;
+    font-size: 15px;
+}
+
+.discount-card-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.3;
+}
+
+.discount-card-desc {
+    font-size: 11.5px;
+    color: #64748b;
+    line-height: 1.35;
+    margin-top: 2px;
+}
+
+.wallet-balance-summary {
+    background-color: #eff6ff;
+    border: 1px solid #dbeafe;
+    border-radius: 10px;
+    padding: 12px 14px;
+}
+
+.wallet-summary-label {
+    font-size: 12.5px;
+    color: #475569;
+    font-weight: 500;
+}
+
+.wallet-summary-value {
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.wallet-input-field {
+    font-size: 14px;
+    height: 44px;
+    border-color: #cbd5e1;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    color: #0f172a;
+    font-weight: 600;
+}
+
+.wallet-input-field:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
 
 
 

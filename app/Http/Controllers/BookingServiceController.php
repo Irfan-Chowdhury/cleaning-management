@@ -371,17 +371,30 @@ class BookingServiceController extends Controller
             'promo_code'      => $booking->promo_code,
         ];
 
+        $settings = \Illuminate\Support\Facades\Cache::rememberForever('app_settings', function () {
+            return \App\Models\Setting::latest()->first();
+        });
+
+        $user = auth()->user();
+        $dbTransactions = \App\Models\WalletTransaction::where('user_id', $user->id ?? 0)->get();
+        $totalCredit = (float) $dbTransactions->where('type', 'credit')->sum('amount');
+        $totalDebit = (float) $dbTransactions->where('type', 'debit')->sum('amount');
+        $userWalletBalance = max(0, $totalCredit - $totalDebit);
+
         $latestBooking = $booking;
 
-        return view('pages.booking-service.review-confirm', compact('step1Data', 'step2Data', 'step3Data', 'offerData', 'latestBooking'));
+        return view('pages.booking-service.review-confirm', compact('step1Data', 'step2Data', 'step3Data', 'offerData', 'latestBooking', 'settings', 'userWalletBalance'));
     }
 
     public function confirmBooking(BookingConfirmRequest $request): RedirectResponse
     {
-        $bookingId = (int) $request->validated('booking_id');
+        $validated = $request->validated();
+        $bookingId = (int) $validated['booking_id'];
+        $walletAmount = (float) ($request->input('wallet_amount') ?? 0);
+
         $booking = Booking::findOrFail($bookingId);
 
-        $this->bookingService->confirmBookingByCustomer($booking, auth()->user());
+        $this->bookingService->confirmBookingByCustomer($booking, auth()->user(), $walletAmount);
 
         $targetRoute = (int) auth()->user()->role === 1 ? 'bookings.index' : 'customer.bookings.index';
 

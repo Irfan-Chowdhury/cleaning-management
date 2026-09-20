@@ -230,18 +230,27 @@
                         <span><i class="fas fa-credit-card text-primary mr-2"></i> Payment &amp; Billing Breakdown</span>
                     </h3>
 
+                    @php
+                        $discountLabel = 'Discount Amount';
+                        $discountVal = (float) ($booking->discount_amount > 0 ? $booking->discount_amount : $booking->credit_used);
+
+                        if ((float) $booking->credit_used > 0) {
+                            $discountLabel = 'Discount Amount (Wallet)';
+                        } elseif (!empty($booking->referal_code)) {
+                            $discountLabel = 'Discount Amount (Referal)';
+                        } elseif (!empty($booking->promo_code)) {
+                            $discountLabel = 'Discount Amount (Promo Code)';
+                        }
+                    @endphp
+
                     <div class="price-summary-wrapper mb-3">
                         <div class="price-summary-row">
                             <span class="text-muted">Subtotal</span>
                             <span class="font-weight-semibold text-dark">${{ number_format($booking->subtotal, 2) }}</span>
                         </div>
                         <div class="price-summary-row">
-                            <span class="text-muted">Discount Amount</span>
-                            <span class="font-weight-semibold text-danger">-${{ number_format($booking->discount_amount, 2) }}</span>
-                        </div>
-                        <div class="price-summary-row">
-                            <span class="text-muted">Wallet Credit Used</span>
-                            <span class="font-weight-semibold text-warning">-${{ number_format($booking->credit_used, 2) }}</span>
+                            <span class="text-muted">{{ $discountLabel }}</span>
+                            <span class="font-weight-semibold text-danger">-${{ number_format($discountVal, 2) }}</span>
                         </div>
                         <div class="price-summary-row total-row">
                             <span>Total Amount</span>

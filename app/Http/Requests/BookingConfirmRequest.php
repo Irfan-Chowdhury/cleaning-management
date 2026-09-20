@@ -14,7 +14,8 @@ class BookingConfirmRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'booking_id' => ['required', 'integer', 'exists:bookings,id'],
+            'booking_id'    => ['required', 'integer', 'exists:bookings,id'],
+            'wallet_amount' => ['nullable', 'numeric', 'min:0'],
         ];
     }
 

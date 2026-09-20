@@ -1,6 +1,9 @@
 @php
-    $appSettings = \Illuminate\Support\Facades\Cache::rememberForever('app_settings', function () {
-        return \App\Models\Setting::latest()->first();
+    use App\Models\Setting;
+    use Illuminate\Support\Facades\Cache;
+
+    $appSettings = Cache::rememberForever('app_settings', function () {
+        return Setting::latest()->first();
     });
     $cancellationNoticeHours = $appSettings?->cancellation_notice_hours ?? 24;
 @endphp

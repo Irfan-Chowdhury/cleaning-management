@@ -173,7 +173,6 @@
 
             <aside class="booking-right-column">
                 @include('pages.booking-service.partials.your-information')
-                @include('pages.booking-service.partials.promo-card')
                 @include('pages.booking-service.partials.support-card')
             </aside>
         </div>
