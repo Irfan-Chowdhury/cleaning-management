@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ApplyPromoRequest extends FormRequest
+class RemoveReferralRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -15,7 +15,6 @@ class ApplyPromoRequest extends FormRequest
     {
         return [
             'booking_id' => ['required', 'integer', 'exists:bookings,id'],
-            'code'       => ['required', 'string', 'max:50'],
         ];
     }
 
@@ -24,7 +23,6 @@ class ApplyPromoRequest extends FormRequest
         return [
             'booking_id.required' => 'Booking ID is required.',
             'booking_id.exists'   => 'Booking does not exist.',
-            'code.required'       => 'Please enter a referral or promo code.',
         ];
     }
 }

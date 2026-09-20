@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ApplyPromoRequest;
+use App\Http\Requests\ApplyReferralRequest;
 use App\Http\Requests\BookingConfirmRequest;
 use App\Http\Requests\BookingStep1Request;
 use App\Http\Requests\BookingStep2Request;
 use App\Http\Requests\BookingStep3Request;
-use App\Http\Requests\RemovePromoRequest;
+use App\Http\Requests\RemoveReferralRequest;
 use App\Models\Booking;
 use App\Models\Holiday;
 use App\Models\Promotion;
@@ -408,7 +408,7 @@ class BookingServiceController extends Controller
             ->with('success', "Booking #{$booking->id} has been confirmed!");
     }
 
-    public function applyPromo(ApplyPromoRequest $request, ReferralService $referralService): JsonResponse
+    public function applyPromo(ApplyReferralRequest $request, ReferralService $referralService): JsonResponse
     {
         $validated = $request->validated();
         $booking = Booking::find((int) $validated['booking_id']);
@@ -429,7 +429,7 @@ class BookingServiceController extends Controller
         return response()->json($result);
     }
 
-    public function removePromo(RemovePromoRequest $request, ReferralService $referralService): JsonResponse
+    public function removePromo(RemoveReferralRequest $request, ReferralService $referralService): JsonResponse
     {
         $validated = $request->validated();
         $booking = Booking::find((int) $validated['booking_id']);
