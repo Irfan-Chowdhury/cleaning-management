@@ -27,7 +27,7 @@
                             <div class="booking-input-icon">
                                 <i class="fas fa-broom" aria-hidden="true"></i>
                                 @php
-                                    $selectedServiceId = old('service_id', '');
+                                    $selectedServiceId = old('service_id', $step1Data['service_id'] ?? '');
                                     $savedQuestions = old('questions', $step1Data['questions'] ?? []);
                                 @endphp
                                 <select class="form-control @error('service_id') is-invalid @enderror" id="booking-service" name="service_id" data-questionnaire-url="{{ url('/booking-service/questionnaire') }}">

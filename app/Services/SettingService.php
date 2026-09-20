@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Setting;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
@@ -66,6 +67,13 @@ class SettingService
         ]));
 
         $setting->save();
+
+        Cache::forget('app_settings');
+
+        if (! empty($setting->timezone)) {
+            config(['app.timezone' => $setting->timezone]);
+            date_default_timezone_set($setting->timezone);
+        }
 
         return $setting->refresh();
     }

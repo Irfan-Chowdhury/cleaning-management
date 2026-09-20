@@ -259,3 +259,7 @@ Need to payment status. create migration file. Then integrate this payments with
 # Booking Step-4
 data should retrive from actual Data from Db and display the data in view. After submitting, booking status will be change into approved to confirmed and then Admin can get a notification.
 Use validation, business logic separate.
+
+
+# Booking Ste-1
+ # /booking-service/create when pagee load, initially service dropdown should set "select" deafult

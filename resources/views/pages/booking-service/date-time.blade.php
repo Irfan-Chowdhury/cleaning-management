@@ -81,8 +81,13 @@
                                         <i class="fas fa-spinner fa-spin mr-1"></i> Loading available times...
                                     </div>
                                 </div>
+                                @php
+                                    $appTz = config('app.timezone', 'UTC');
+                                    $tzAbbr = \Carbon\Carbon::now($appTz)->format('T');
+                                    $displayTz = (preg_match('/^[A-Z]{3,4}$/', $tzAbbr)) ? $tzAbbr : $appTz;
+                                @endphp
                                 <div class="booking-info-strip">
-                                    <i class="far fa-clock" aria-hidden="true"></i> All times are in AEST
+                                    <i class="far fa-clock" aria-hidden="true"></i> All times are in {{ $displayTz }}
                                 </div>
                             </div>
                         </div>

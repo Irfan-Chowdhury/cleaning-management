@@ -580,16 +580,23 @@
                 fetchTimeSlots(selectedDateStr);
             });
 
-            // Time slot selection click handler
+            // Time slot selection click handler (supports select and deselect)
             $(document).on('click', '.time-slot:not(:disabled):not(.booked)', function () {
-                $('.time-slot').removeClass('selected');
-                $(this).addClass('selected');
+                var $this = $(this);
+                if ($this.hasClass('selected')) {
+                    $this.removeClass('selected');
+                    $('#selected-start-time').val('');
+                    $('#selected-end-time').val('');
+                } else {
+                    $('.time-slot').removeClass('selected');
+                    $this.addClass('selected');
 
-                var startTime = $(this).attr('data-start-time');
-                var endTime = $(this).attr('data-end-time');
+                    var startTime = $this.attr('data-start-time');
+                    var endTime = $this.attr('data-end-time');
 
-                $('#selected-start-time').val(startTime);
-                $('#selected-end-time').val(endTime);
+                    $('#selected-start-time').val(startTime);
+                    $('#selected-end-time').val(endTime);
+                }
             });
 
             // Initial render and fetch
