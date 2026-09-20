@@ -13,8 +13,6 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->json('whats_included')->nullable()->after('description');
-            // $table->decimal('base_price', 10, 2);
-            // $table->unsignedInteger('duration_minutes')->nullable();
             $table->string('status')->default('active');
             $table->timestamps();
         });

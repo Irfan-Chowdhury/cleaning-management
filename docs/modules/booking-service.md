@@ -14,12 +14,12 @@ The feature exists to convert customers from service selection into a completed 
 Customer opens /booking-service/create
   -> BookingServiceController@create
   -> Service::where('status', 'active')->orderBy('name')->get()
-  -> pages.booking-service.create Blade view
-  -> Customer selects a service
+  -> pages.booking-service.create Blade view (dropdown defaults to "Select")
+  -> Initial State: Renders Default Service Guide Card (Header, Helper Box, 3 Feature Rows)
+  -> Customer selects a service from dropdown
   -> jQuery calls /booking-service/questionnaire/{service}
-  -> BookingServiceController@questionnaire
   -> Service questions and options are returned as JSON
-  -> JavaScript renders fields based on each question field_type
+  -> JavaScript updates right-side card dynamically to Selected Service State (About {Service Name}, description, What's included checklist, building SVG illustration, bottom shield box)
 ```
 
 ### Step 2: Date & Time
@@ -82,41 +82,40 @@ Route::prefix('booking-service')->group(function () {
 ### Controller & Business Logic
 
 - **Controller**: `App\Http\Controllers\BookingServiceController`
-  - `create()` loads active services and retrieves Step 1 session data to pre-fill the form if returning.
+  - `create()` loads active services and retrieves Step 1 session data to pre-fill the form if returning. Exposes `$servicesData` as JSON to JavaScript (`window.bookingServicesData`).
   - `storeStep1(BookingStep1Request $request)` validates Step 1 inputs, calls `BookingSessionService::saveStep1()`, and redirects to Step 2 (`route('booking-service.date-time')`).
   - `storeStep2(BookingStep2Request $request)` validates Step 2 date & start time, stores in session via `BookingSessionService::saveStep2()`, and redirects to Step 3 (`route('booking-service.your-details')`).
   - `storeStep3(BookingStep3Request $request)` validates Step 3 contact/address details, saves step 3 session, creates a pending `Booking` in DB via `BookingService::createBookingFromWizard()`, sends `NewBookingPendingNotification` to Admins, and redirects to Step 4 (`route('booking-service.review-confirm')`).
   - `yourDetails()` renders Step 3 with account data pre-fill.
   - `reviewConfirm()` renders Step 4 with booking review details.
-- **Form Requests**:
-  - `App\Http\Requests\BookingStep1Request` handles Step 1 validation (`service_id`, `questions`, `service_notes`).
-  - `App\Http\Requests\BookingStep2Request` handles Step 2 validation (`booking_date`, `start_time`, `end_time`).
-  - `App\Http\Requests\BookingStep3Request` handles Step 3 validation (`detail_mode`, `customer_name`, `customer_email`, `customer_phone`, `customer_address`, `unit_suite_floor`, `suburb`, `postcode`, `special_instructions`).
-  - `App\Http\Requests\AdminBookingUpdateRequest` handles Admin booking updates (`status`, `service_id`, `amount`, `date`, `slot`, `payment_status`).
-- **Enums**:
-  - `App\Enums\BookingStatus` defines backed string enum values: `pending`, `approved`, `confirmed`, `processing`, `completed`, `cancelled`.
-- **Service Class**:
-  - `App\Services\BookingService` manages business logic for wizard booking creation and Admin status updates. Automatically triggers Audit Log entries via `Auditable` trait and sends `BookingApprovedNotification` to customers when status changes from Pending to Approved.
-- **Tests**:
-  - **Strategy**: Tests run without refreshing the database (`RefreshDatabase` trait is omitted to preserve seed state) and authenticate using customer credentials from `UserSeeder` (`customer@gmail.com`).
-  - **Unit Suite**: `tests/Unit/BookingSessionServiceTest.php` verifies `BookingSessionService` methods (`saveStep1`, `getStep1Data`, `saveStep2`, `getStep2Data`, `clearSession`).
-  - **Feature Suites**:
-    - `tests/Feature/BookingStep1FeatureTest.php` covers Step 1 rendering, questionnaire JSON API, POST session storage, and validation.
-    - `tests/Feature/BookingStep2Test.php` covers Step 2 rendering, slots API, holiday detection, booked slot disabling, session persistence, and validation rules.
 
-### Frontend
+### Frontend Component Architecture
 
-`public/assets/js/booking_service.js`
+#### Step-1 Right-Side Service Guide Card (`resources/views/pages/booking-service/partials/service-guide-card.blade.php`)
 
-Important behavior:
+The Step 1 right-side card operates in two distinct states rendered initially via Blade and dynamically swapped client-side via JavaScript (`updateServiceGuideCard(serviceId)` in `public/assets/js/booking_service.js`):
 
-- Counts characters for notes and special instructions.
-- Loads questionnaire data through AJAX when the selected service changes.
-- Automatically loads questionnaire and restores saved question choices when returning to Step 1.
-- Renders input types from `field_type`.
-- Supports select, dropdown, checkbox, radio, textarea, number, date, and text fallback.
-- Toggles selected date and time buttons.
-- Toggles readonly behavior for customer detail fields based on detail mode.
+1. **Default State (Initial Page Load / No Service Selected)**:
+   - **Dropdown Default**: Set to `"Select"` (`value=""`).
+   - **Header**: Circular blue lightbulb icon (`far fa-lightbulb`), title `Service Guide`, subtitle `Choose the right service for your home or business.`, and `Step 1 of 4` pill badge.
+   - **Divider #1**: Light-grey horizontal divider.
+   - **Helper Box**: Light blue rounded card (`#f3f8ff`) containing text (`Not sure which cleaning service is right for you?` / `Select a service on the left and we'll show you the relevant options and questions.`) and a large vector cleaning SVG illustration.
+   - **Divider #2**: Second light-grey horizontal divider.
+   - **3 Feature Rows**: Rendered with ~40px circular light-blue icon containers (`#f3f8ff` background, `#0866e8` blue icon):
+     - `Tailored to your needs` (`fas fa-magic`) — `We customise each clean to fit your space and requirements.`
+     - `Upfront pricing` (`fas fa-tag`) — `Transparent pricing with no hidden costs.`
+     - `Professional cleaners` (`fas fa-user-shield`) — `Police-checked, trained, and committed to quality.`
+   - **Bottom Box**: Omitted in Default state for a clean vertical finish.
+
+2. **Selected Service State (Service Selected from Dropdown)**:
+   - **Dynamic Switching**: Updated via `updateServiceGuideCard(serviceId)` using dataset `window.bookingServicesData`.
+   - **Header**: 42px blue circle icon (`#0866e8`) with white info icon (`fas fa-info`), dynamic title `About {Selected Service Name}`, and `Step 1 of 4` pill badge.
+   - **Service Description**: Displays selected service database `description` plain text safely.
+   - **Divider**: Horizontal line.
+   - **Two-Column Layout**:
+     - **Left Column**: Heading `What's included` and dynamic item list from `whats_included` JSON array rendered with emerald green `fas fa-check-circle` icons (`#10b981`), aligned flush with the heading's left margin.
+     - **Right Column**: Multi-storey commercial office building SVG illustration (~150px width).
+   - **Bottom Info Box**: Light blue shield box (`Customised cleaning plans available to suit your business needs.`).
 
 ### Views
 
@@ -124,7 +123,7 @@ Important behavior:
 - `resources/views/pages/booking-service/date-time.blade.php`
 - `resources/views/pages/booking-service/your-details.blade.php`
 - `resources/views/pages/booking-service/review-confirm.blade.php`
-- shared partials under `resources/views/pages/booking-service/partials/`
+- Shared partials under `resources/views/pages/booking-service/partials/` (`service-guide-card.blade.php`, `trust-strip.blade.php`, `promo-card.blade.php`, `support-card.blade.php`, `page-header.blade.php`, `progress.blade.php`)
 
 ## 4. Database Design
 

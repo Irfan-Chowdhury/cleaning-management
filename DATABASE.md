@@ -18,6 +18,7 @@
 - id
 - name
 - description
+- whats_included
 - status
 
 
