@@ -268,7 +268,8 @@ Need to payment status. create migration file. Then integrate this payments with
 data should retrive from actual Data from Db and display the data in view. After submitting, booking status will be change into approved to confirmed and then Admin can get a notification.
 Use validation, business logic separate.
 
-## Rules of Refer or Promo Code Or Wallet
+## Refer or Promo Code Or Wallet
+**---------------- 1st Part ----------------**
 Now come to the point Referral or Promo Code Or Wallet Which is mainly a discount system. 
 For ste-p 1-3, In right side there a common field Referral or Promo Code. But before there should be changed. The promo-card.blade.php should display only in Step-4. Don't for Step-1-3. There will be Two radio button. Use a Appropritae Label Name Discount Type Offer.
 
@@ -280,8 +281,31 @@ i) then check bookings.total_amount > settings.minimum_booking_amount true or fa
 ii) If false, then display his remaing wallet balance, and then input field option to type his amount. when type the amount which he inputted for 
   a)inputted amount < remaing wallet balance if true then proceed for next otherwise display insuffient balance otherwise .
   b) then if inputted amount <= settings.max_wallet_usage is true then display the subtotal, total, discount in that page after amount typing using jquery. Then finally when submit for confirm store it database.
-
 * if Select option 2, the hidden "Have a Referral or Promo Code?" display. Just Display we will discuss with it later
+
+
+**---------------- 2nd Part **----------------
+Target: Step-4, url: booking-service/review-confirm?booking={id}, blade file: review-confirm.blade.php
+
+*If select 2 no option (Referral/Promo Code), 
+Common Senerio: then display the input field to type the code. If someone type the refereal code or Promo code it check data from users table or promotions table then set data in session. Apply will be happend using jquery ajax. Then after applying set a message that the code is applying instead of this line - `Use a referral code and get credit when you book!`  and there will be Cross icon to remove the offer code with confirm alert using sweatAlert. if click cross icon to remove the code then restore before as it is.
+
+First Implment For Referall Code,  
+
+## Referral Rules 
+* in Discount Offer section card, mention with a Note mark that to apply this offer minimum total booking amount [number](settings.minimum_booking_amount)
+* check the code exists or not from users table. then display validation message in bootom with red mark bellow the input field.
+* Customer cannot refer themselves
+* Whoever refers to the code, first check minimum 1 service booking is completed for * this customer. Findout the customer from users.referral_code get users.id then in bookings check the user's any booking exists and bookings.status == "completed".
+* Referral code can only be used once for every customer. in bookings table check the bookings.referal_code same code exists or not for only this customer. if true then return a validation message that "You already used this code" type.
+* check bookings.total_amount > settings.minimum_booking_amount true or false. if false then display a message in bottom that The total amount is less than minimum booking amount that's why can not use referral code.
+* Though the user can use Refferal code offer one time in life, but it depends on if the bookings.status is completed. 
+* Once use any refferal code, next booking time the in bellow there a message will show that "You can not use any referal code second time." input and apply button will be hide.
+* when 'status'  => BookingStatus::COMPLETED, then he can not use any refferal_code second time
+
+Just do it. no need to update in any documentation files further my order.
+
+common rules:* use proper validation, Separate business logic in a service class, write relavant test case using the service class's piece of method,
 
 
 ## Admin Booking Page `/bookings/{id}` 

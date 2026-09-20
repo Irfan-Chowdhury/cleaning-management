@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ApplyPromoRequest;
 use App\Http\Requests\BookingConfirmRequest;
 use App\Http\Requests\BookingStep1Request;
 use App\Http\Requests\BookingStep2Request;
 use App\Http\Requests\BookingStep3Request;
+use App\Http\Requests\RemovePromoRequest;
 use App\Models\Booking;
 use App\Models\Holiday;
 use App\Models\Promotion;
@@ -16,6 +18,7 @@ use App\Models\WalletTransaction;
 use App\Models\WeeklySchedule;
 use App\Services\BookingService;
 use App\Services\BookingSessionService;
+use App\Services\ReferralService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -396,9 +399,43 @@ class BookingServiceController extends Controller
 
         $this->bookingService->confirmBookingByCustomer($booking, auth()->user(), $walletAmount);
 
+        // Destroy referral related session data for this user
+        session()->forget('booking_wizard.offer');
+
         $targetRoute = (int) auth()->user()->role === 1 ? 'bookings.index' : 'customer.bookings.index';
 
         return redirect()->route($targetRoute)
             ->with('success', "Booking #{$booking->id} has been confirmed!");
+    }
+
+    public function applyPromo(ApplyPromoRequest $request, ReferralService $referralService): JsonResponse
+    {
+        $validated = $request->validated();
+        $booking = Booking::find((int) $validated['booking_id']);
+
+        if (!$booking) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Booking not found.',
+            ], 422);
+        }
+
+        $result = $referralService->applyCodeToBooking($booking, $validated['code'], auth()->user());
+
+        if (!$result['success']) {
+            return response()->json($result, 422);
+        }
+
+        return response()->json($result);
+    }
+
+    public function removePromo(RemovePromoRequest $request, ReferralService $referralService): JsonResponse
+    {
+        $validated = $request->validated();
+        $booking = Booking::find((int) $validated['booking_id']);
+
+        $result = $referralService->removeCodeFromBooking($booking);
+
+        return response()->json($result);
     }
 }

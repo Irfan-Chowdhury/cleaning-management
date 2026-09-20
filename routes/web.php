@@ -73,6 +73,8 @@ Route::middleware('auth')->prefix('booking-service')->group(function () {
     Route::post('/step-3', [BookingServiceController::class, 'storeStep3'])->name('booking-service.store-step-3');
     Route::get('/review-confirm', [BookingServiceController::class, 'reviewConfirm'])->name('booking-service.review-confirm');
     Route::post('/confirm', [BookingServiceController::class, 'confirmBooking'])->name('booking-service.confirm');
+    Route::post('/apply-promo', [BookingServiceController::class, 'applyPromo'])->name('booking-service.apply-promo');
+    Route::post('/remove-promo', [BookingServiceController::class, 'removePromo'])->name('booking-service.remove-promo');
 });
 
 // Admin Protected Routes

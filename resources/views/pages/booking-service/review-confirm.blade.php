@@ -100,10 +100,10 @@
                             <h3><i class="fas fa-tag" aria-hidden="true"></i> Payment &amp; Offers</h3>
                         </div>
                         <div class="payment-review-grid">
-                            @if ($appliedCode)
+                            @if (!empty($latestBooking->referal_code))
                                 <div class="applied-promo-panel">
-                                    <span>Referral / Promo Code</span>
-                                    <strong>{{ $appliedCode }} <em>Applied</em></strong>
+                                    <span>Referral Code</span>
+                                    <strong>{{ $latestBooking->referal_code }} <em>Applied</em></strong>
                                     <p>Discount: ${{ number_format((float) $latestBooking->discount_amount, 2) }}</p>
                                 </div>
                             @else
@@ -230,6 +230,132 @@
                 updateLivePricing(subtotal, inputVal);
             });
 
+            // Apply Referral or Promo Code via AJAX
+            $('#btn-apply-promo').on('click', function (e) {
+                e.preventDefault();
+                var code = $('#promo-code-input').val().trim();
+                var bookingId = $('input[name="booking_id"]').val();
+                var $feedback = $('#promo-feedback-msg');
+
+                if (!code) {
+                    var emptyMsg = 'Please enter a valid referral code.';
+                    $feedback.show().html('<i class="fas fa-exclamation-circle mr-1"></i> ' + emptyMsg);
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Code Required',
+                            text: emptyMsg,
+                            confirmButtonColor: '#2563eb'
+                        });
+                    }
+                    return;
+                }
+
+                $feedback.hide().text('');
+
+                $.ajax({
+                    url: "{{ route('booking-service.apply-promo') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        booking_id: bookingId,
+                        code: code
+                    },
+                    success: function (res) {
+                        if (res.success) {
+                            $('#applied-code-text').text(res.code);
+                            $('#applied-discount-text').text('- $' + parseFloat(res.discount_amount).toFixed(2));
+
+                            $('#promo-input-wrapper').hide();
+                            $('#promo-applied-wrapper').slideDown(200);
+
+                            updateLivePricing(res.subtotal, res.discount_amount);
+
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Offer Applied!',
+                                    text: res.message,
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            }
+                        }
+                    },
+                    error: function (xhr) {
+                        var errorMsg = 'Failed to apply code. Please try again.';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMsg = xhr.responseJSON.message;
+                        }
+                        $feedback.show().html('<i class="fas fa-times-circle mr-1"></i> ' + errorMsg);
+
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Referral Code Error',
+                                text: errorMsg,
+                                confirmButtonColor: '#2563eb'
+                            });
+                        }
+                    }
+                });
+            });
+
+            // Remove Referral or Promo Code via AJAX with SweetAlert Confirmation
+            $(document).on('click', '#btn-remove-promo', function (e) {
+                e.preventDefault();
+                var bookingId = $('input[name="booking_id"]').val();
+
+                var performRemoval = function () {
+                    $.ajax({
+                        url: "{{ route('booking-service.remove-promo') }}",
+                        type: "POST",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            booking_id: bookingId
+                        },
+                        success: function (res) {
+                            $('#promo-code-input').val('');
+                            $('#promo-feedback-msg').hide().text('');
+                            $('#promo-applied-wrapper').hide();
+                            $('#promo-input-wrapper').slideDown(200);
+
+                            updateLivePricing(res.subtotal, 0);
+
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: 'Offer Removed',
+                                    text: 'Discount code has been removed.',
+                                    timer: 1800,
+                                    showConfirmButton: false
+                                });
+                            }
+                        }
+                    });
+                };
+
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Remove Offer Code?',
+                        text: 'Are you sure you want to remove this discount code?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#64748b',
+                        confirmButtonText: 'Yes, remove it!'
+                    }).then(function (result) {
+                        if (result.isConfirmed) {
+                            performRemoval();
+                        }
+                    });
+                } else {
+                    if (confirm('Are you sure you want to remove this discount code?')) {
+                        performRemoval();
+                    }
+                }
+            });
+
             function updateLivePricing(subtotal, discount) {
                 var finalTotal = Math.max(0, subtotal - discount);
 
@@ -245,14 +371,18 @@
                 }
                 $('#main-grand-total-val').text('$' + finalTotal.toFixed(2));
 
-                // Update right sidebar summary card
-                if (discount > 0) {
-                    $('#summary-discount-row').show();
-                    $('#summary-discount-val').text('- $' + discount.toFixed(2));
-                } else {
-                    $('#summary-discount-row').hide();
+                // Update right sidebar summary card if present
+                if ($('#summary-discount-row').length) {
+                    if (discount > 0) {
+                        $('#summary-discount-row').show();
+                        $('#summary-discount-val').text('- $' + discount.toFixed(2));
+                    } else {
+                        $('#summary-discount-row').hide();
+                    }
                 }
-                $('#summary-total-val').text('$' + finalTotal.toFixed(2));
+                if ($('#summary-total-val').length) {
+                    $('#summary-total-val').text('$' + finalTotal.toFixed(2));
+                }
             }
         });
     </script>

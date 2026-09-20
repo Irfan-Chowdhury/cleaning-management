@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->json('whats_included')->nullable()->after('description');
+            $table->json('whats_included')->nullable();
             $table->string('status')->default('active');
             $table->timestamps();
         });
