@@ -284,6 +284,16 @@ ii) If false, then display his remaing wallet balance, and then input field opti
 * if Select option 2, the hidden "Have a Referral or Promo Code?" display. Just Display we will discuss with it later
 
 
+## Admin Booking Page `/bookings/{id}` 
+in view page
+Payment & Billing Breakdown section
+Discount Amount (Wallet or Referal Or Promo Code)
+
+if booking.credit_used data existis then = Wallet
+if booking.referal_code existis then = Referal
+if booking.promo_code existis then = Promo Code
+
+
 
 # Booking Ste-1
  # /booking-service/create when pagee load, initially service dropdown should set "select" deafult
