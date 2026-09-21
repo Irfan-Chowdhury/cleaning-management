@@ -178,8 +178,20 @@
                 } else {
                     $('#wallet-offer-panel').slideUp(200);
                     $('#promo-offer-panel').slideDown(200);
-                    // Reset wallet deduction when switching to promo
+                    // Reset wallet deduction when switching to promo/referral
                     $('#wallet-amount-input').val('').trigger('input');
+
+                    if (val === 'promo') {
+                        $('#code-section-title').text('Have a Promotional Code?');
+                        $('#promo-code-input').attr('placeholder', 'Enter promo code');
+                        $('#promo-note-text').text('Use a promotional code to save on your booking!');
+                        $('#referral-block-alert').hide();
+                    } else {
+                        $('#code-section-title').text('Have a Referral Code?');
+                        $('#promo-code-input').attr('placeholder', 'Enter referral code');
+                        $('#promo-note-text').text('Use a referral code and get credit when you book!');
+                        $('#referral-block-alert').show();
+                    }
                 }
             });
 
@@ -235,10 +247,11 @@
                 e.preventDefault();
                 var code = $('#promo-code-input').val().trim();
                 var bookingId = $('input[name="booking_id"]').val();
+                var offerType = $('input[name="offer_type"]:checked').val() || 'promo';
                 var $feedback = $('#promo-feedback-msg');
 
                 if (!code) {
-                    var emptyMsg = 'Please enter a valid referral code.';
+                    var emptyMsg = offerType === 'promo' ? 'Please enter a valid promotional code.' : 'Please enter a valid referral code.';
                     $feedback.show().html('<i class="fas fa-exclamation-circle mr-1"></i> ' + emptyMsg);
                     if (typeof Swal !== 'undefined') {
                         Swal.fire({
@@ -259,7 +272,8 @@
                     data: {
                         _token: "{{ csrf_token() }}",
                         booking_id: bookingId,
-                        code: code
+                        code: code,
+                        type: offerType
                     },
                     success: function (res) {
                         if (res.success) {
@@ -292,7 +306,7 @@
                         if (typeof Swal !== 'undefined') {
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Referral Code Error',
+                                title: 'Discount Code Error',
                                 text: errorMsg,
                                 confirmButtonColor: '#2563eb'
                             });

@@ -301,11 +301,14 @@ First Implment For Referall Code,
 * check bookings.total_amount > settings.minimum_booking_amount true or false. if false then display a message in bottom that The total amount is less than minimum booking amount that's why can not use referral code.
 * Though the user can use Refferal code offer one time in life, but it depends on if the bookings.status is completed. 
 * Once use any refferal code, next booking time the in bellow there a message will show that "You can not use any referal code second time." input and apply button will be hide.
-* when 'status'  => BookingStatus::COMPLETED, then he can not use any refferal_code second time
+* Can not use second time check if the user has bookings.status=='completed' and bookings.referal_code != NULL 
+simple
 
 Just do it. no need to update in any documentation files further my order.
 
 common rules:* use proper validation, Separate business logic in a service class, write relavant test case using the service class's piece of method,
+
+
 
 
 ## Admin Booking Page `/bookings/{id}` 

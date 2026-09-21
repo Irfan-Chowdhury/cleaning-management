@@ -18,6 +18,7 @@ use App\Models\WalletTransaction;
 use App\Models\WeeklySchedule;
 use App\Services\BookingService;
 use App\Services\BookingSessionService;
+use App\Services\PromotionDiscountService;
 use App\Services\ReferralService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -408,7 +409,7 @@ class BookingServiceController extends Controller
             ->with('success', "Booking #{$booking->id} has been confirmed!");
     }
 
-    public function applyPromo(ApplyReferralRequest $request, ReferralService $referralService): JsonResponse
+    public function applyPromo(ApplyReferralRequest $request, ReferralService $referralService, PromotionDiscountService $promotionDiscountService): JsonResponse
     {
         $validated = $request->validated();
         $booking = Booking::find((int) $validated['booking_id']);
@@ -420,7 +421,21 @@ class BookingServiceController extends Controller
             ], 422);
         }
 
-        $result = $referralService->applyCodeToBooking($booking, $validated['code'], auth()->user());
+        $code = trim($validated['code']);
+        $type = $request->input('type');
+
+        if ($type === 'referral') {
+            $result = $referralService->applyCodeToBooking($booking, $code, auth()->user());
+        } elseif ($type === 'promo') {
+            $result = $promotionDiscountService->applyPromotionToBooking($booking, $code, auth()->user());
+        } else {
+            $promoExists = \App\Models\Promotion::where('code', \Illuminate\Support\Str::upper($code))->exists();
+            if ($promoExists) {
+                $result = $promotionDiscountService->applyPromotionToBooking($booking, $code, auth()->user());
+            } else {
+                $result = $referralService->applyCodeToBooking($booking, $code, auth()->user());
+            }
+        }
 
         if (!$result['success']) {
             return response()->json($result, 422);
@@ -429,12 +444,16 @@ class BookingServiceController extends Controller
         return response()->json($result);
     }
 
-    public function removePromo(RemoveReferralRequest $request, ReferralService $referralService): JsonResponse
+    public function removePromo(RemoveReferralRequest $request, ReferralService $referralService, PromotionDiscountService $promotionDiscountService): JsonResponse
     {
         $validated = $request->validated();
         $booking = Booking::find((int) $validated['booking_id']);
 
-        $result = $referralService->removeCodeFromBooking($booking);
+        if ($booking && !empty($booking->promo_code)) {
+            $result = $promotionDiscountService->removePromotionFromBooking($booking);
+        } else {
+            $result = $referralService->removeCodeFromBooking($booking);
+        }
 
         return response()->json($result);
     }

@@ -1,11 +1,13 @@
-<?php
+use App\Models\Service;
 
-use App\Enums\BookingStatus;
-use App\Models\Booking;
-use App\Models\Setting;
-use App\Models\User;
-use App\Services\ReferralService;
-use Illuminate\Support\Facades\Cache;
+uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
+
+beforeEach(function () {
+    Service::firstOrCreate(['id' => 1], [
+        'name' => 'General Cleaning',
+        'status' => 'active',
+    ]);
+});
 
 function createReferralUser(string $email, string $referralCode): User
 {
@@ -165,6 +167,7 @@ it('returns validation error if subtotal is less than minimum booking amount', f
 
     Cache::forget('app_settings');
     Setting::updateOrCreate([], [
+        'company_name'           => 'Dust2Glow',
         'minimum_booking_amount' => 100.00,
         'referral_reward'        => 15.00,
     ]);
@@ -196,6 +199,7 @@ it('validates and applies valid referral code preserving original casing format'
 
     Cache::forget('app_settings');
     Setting::updateOrCreate([], [
+        'company_name'           => 'Dust2Glow',
         'minimum_booking_amount' => 50.00,
         'referral_reward'        => 15.00,
     ]);

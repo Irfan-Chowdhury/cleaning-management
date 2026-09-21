@@ -7,13 +7,24 @@ function getCustomerUser(): User
 {
     return User::where('email', 'customer@gmail.com')->first()
         ?? User::where('role', 2)->first()
-        ?? User::first();
+        ?? User::create([
+            'first_name' => 'Customer',
+            'last_name'  => 'User',
+            'email'      => 'customer_step1@test.com',
+            'role'       => 2,
+            'is_active'  => true,
+            'password'   => bcrypt('password'),
+        ]);
 }
 
 function getActiveService(): Service
 {
     return Service::where('status', 'active')->first()
-        ?? Service::first();
+        ?? Service::create([
+            'id'     => 1,
+            'name'   => 'General Cleaning',
+            'status' => 'active',
+        ]);
 }
 
 it('loads step 1 page for logged in customer user from UserSeeder', function () {

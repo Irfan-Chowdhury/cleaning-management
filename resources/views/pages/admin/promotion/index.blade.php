@@ -111,9 +111,9 @@
                         <div class="col-md-4 form-group">
                             <label for="promotion-status">Status <span class="text-danger">*</span></label>
                             <select class="form-control" id="promotion-status" name="status">
-                                <option value="active">Active</option>
-                                <option value="paused">Paused</option>
-                                <option value="expired">Expired</option>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                                <option value="2">Expired</option>
                             </select>
                         </div>
                     </div>
@@ -235,7 +235,7 @@
             $form.find('.promotion-field-error').remove();
             $('#promotion-id').val('');
             $('#promotion-form-method').val('POST');
-            $('#promotion-status').val('active');
+            $('#promotion-status').val(1);
             $form.attr('action', promotionsBaseUrl);
             toggleDiscountValueField();
         }

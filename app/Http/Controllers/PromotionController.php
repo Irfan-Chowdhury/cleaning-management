@@ -113,21 +113,17 @@ class PromotionController extends Controller
 
     private function statusBadge(Promotion $promotion): string
     {
-        $classes = [
-            'active' => 'badge-success',
-            'paused' => 'badge-warning',
-            'expired' => 'badge-secondary',
-        ];
+        $status = \App\Enums\PromotionStatus::fromValue($promotion->status);
 
-        $class = $classes[$promotion->status] ?? 'badge-secondary';
-
-        return '<span class="badge ' . $class . '" style="padding: 6px 8px; font-weight: 700; border-radius: 999px; min-width: 68px;">'
-            . e(ucfirst($promotion->status))
+        return '<span class="badge ' . $status->badgeClass() . '" style="padding: 6px 8px; font-weight: 700; border-radius: 999px; min-width: 68px;">'
+            . e($status->label())
             . '</span>';
     }
 
     private function actionColumn(Promotion $promotion): string
     {
+        $statusVal = \App\Enums\PromotionStatus::fromValue($promotion->status)->value;
+
         return '<div class="promotion-actions">'
             . '<button type="button"'
             . ' class="btn btn-sm btn-outline-primary promotion-action-btn js-promotion-edit"'
@@ -139,7 +135,7 @@ class PromotionController extends Controller
             . ' data-description="' . e($promotion->description ?? '') . '"'
             . ' data-discount_type="' . e($promotion->discount_type) . '"'
             . ' data-discount_value="' . e($promotion->discount_value) . '"'
-            . ' data-status="' . e($promotion->status) . '"'
+            . ' data-status="' . e($statusVal) . '"'
             . ' data-start_at="' . e($promotion->start_at?->format('Y-m-d\TH:i')) . '"'
             . ' data-expires_at="' . e($promotion->expires_at?->format('Y-m-d\TH:i')) . '"'
             . ' data-new_customers_only="' . e($promotion->new_customers_only ? 1 : 0) . '"'

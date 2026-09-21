@@ -1,12 +1,13 @@
-<?php
+use App\Models\Service;
 
-use App\Enums\BookingStatus;
-use App\Models\Booking;
-use App\Models\Setting;
-use App\Models\User;
-use App\Models\WalletTransaction;
-use App\Services\BookingService;
-use Illuminate\Support\Facades\Cache;
+uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
+
+beforeEach(function () {
+    Service::firstOrCreate(['id' => 1], [
+        'name' => 'General Cleaning',
+        'status' => 'active',
+    ]);
+});
 
 function step4WalletUser(): User
 {
