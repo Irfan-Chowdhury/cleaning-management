@@ -250,8 +250,11 @@
                         <label for="booking-slot">Time Slot <span class="text-danger">*</span></label>
                         <div class="booking-input-icon">
                             <i class="far fa-clock" aria-hidden="true"></i>
-                            <input type="text" class="form-control" id="booking-slot" name="slot" value="{{ old('slot', $booking->slot) }}" placeholder="e.g. 09:00 AM" required>
+                            <select class="form-control" id="booking-slot" name="slot" required>
+                                <option value="">Loading time slots...</option>
+                            </select>
                         </div>
+                        <small class="form-text text-muted" id="booking-slot-info">Time slots loaded based on Weekly Schedule for selected date.</small>
                     </div>
                 </div>
 
@@ -312,6 +315,113 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function () {
+            var slotsUrl = @json(route('booking-service.slots-for-date'));
+            var initialSlot = @json(old('slot', $booking->slot ?? ''));
+
+            function formatTimeStr(val) {
+                if (!val) return '';
+                val = $.trim(val);
+                if (val.match(/AM|PM/i)) return val.toUpperCase();
+                var parts = val.split(':');
+                if (parts.length >= 2) {
+                    var h = parseInt(parts[0], 10);
+                    var m = parts[1];
+                    var ampm = h >= 12 ? 'PM' : 'AM';
+                    h = h % 12;
+                    h = h ? h : 12;
+                    return h + ':' + m + ' ' + ampm;
+                }
+                return val;
+            }
+
+            function loadTimeSlotsForDate(dateStr, selectedSlotVal) {
+                var $slotSelect = $('#booking-slot');
+                var $infoText = $('#booking-slot-info');
+
+                if (!dateStr) {
+                    $slotSelect.html('<option value="">Please select a schedule date first...</option>').prop('disabled', true);
+                    $infoText.text('Select a date to view available Weekly Schedule time slots.');
+                    return;
+                }
+
+                $slotSelect.html('<option value="">Loading time slots from Weekly Schedule...</option>').prop('disabled', true);
+                $infoText.text('Loading available time slots...');
+
+                $.ajax({
+                    url: slotsUrl,
+                    method: 'GET',
+                    data: { date: dateStr },
+                    dataType: 'json'
+                }).done(function (res) {
+                    $slotSelect.empty().prop('disabled', false);
+
+                    if (res.is_holiday) {
+                        $slotSelect.html('<option value="" disabled selected>Holiday: ' + (res.holiday_title || '') + ' (No Slots)</option>');
+                        $infoText.html('<span class="text-danger"><i class="fas fa-umbrella-beach mr-1"></i> Selected date is a holiday (' + (res.holiday_title || '') + '). No slots available.</span>');
+                        return;
+                    }
+
+                    if (!res.is_day_active) {
+                        $slotSelect.html('<option value="" disabled selected>Service unavailable on ' + (res.day_of_week || 'this day') + 's</option>');
+                        $infoText.html('<span class="text-warning"><i class="fas fa-calendar-times mr-1"></i> Cleaning services are not available on ' + (res.day_of_week || '') + 's in Weekly Schedule.</span>');
+                        return;
+                    }
+
+                    if (!res.slots || !res.slots.length) {
+                        $slotSelect.html('<option value="" disabled selected>No time slots configured for ' + (res.day_of_week || 'this day') + 's</option>');
+                        $infoText.html('<span class="text-muted"><i class="fas fa-clock mr-1"></i> No slots configured for ' + (res.day_of_week || '') + 's.</span>');
+                        return;
+                    }
+
+                    $infoText.html('<span class="text-success"><i class="fas fa-check-circle mr-1"></i> Loaded ' + res.slots.length + ' Weekly Schedule time slots for ' + res.day_of_week + '.</span>');
+
+                    var targetFormatted = formatTimeStr(selectedSlotVal);
+                    var matched = false;
+
+                    $slotSelect.append('<option value="">Select a time slot...</option>');
+
+                    $.each(res.slots, function (idx, slot) {
+                        var slotDisplay = slot.display_time || formatTimeStr(slot.start_time);
+                        var slotValue = slot.start_time || slotDisplay;
+                        var isCurrent = (
+                            selectedSlotVal === slotValue ||
+                            selectedSlotVal === slotDisplay ||
+                            targetFormatted === formatTimeStr(slot.start_time) ||
+                            targetFormatted === slotDisplay
+                        );
+
+                        if (isCurrent) {
+                            matched = true;
+                        }
+
+                        var isDisabled = slot.is_booked && !isCurrent;
+                        var optText = slotDisplay + (isDisabled ? ' (Already Booked)' : '');
+                        var selectedAttr = isCurrent ? ' selected' : '';
+                        var disabledAttr = isDisabled ? ' disabled' : '';
+
+                        $slotSelect.append('<option value="' + slotValue + '"' + selectedAttr + disabledAttr + '>' + optText + '</option>');
+                    });
+
+                    if (selectedSlotVal && !matched) {
+                        var formattedLabel = formatTimeStr(selectedSlotVal);
+                        $slotSelect.append('<option value="' + selectedSlotVal + '" selected>' + formattedLabel + ' (Current Slot)</option>');
+                    }
+                }).fail(function () {
+                    $slotSelect.html('<option value="">Failed to load slots</option>').prop('disabled', false);
+                    $infoText.html('<span class="text-danger"><i class="fas fa-exclamation-triangle mr-1"></i> Failed to fetch Weekly Schedule slots. Please try again.</span>');
+                });
+            }
+
+            $('#booking-date').on('change', function () {
+                var newDate = $(this).val();
+                loadTimeSlotsForDate(newDate, initialSlot);
+            });
+
+            var currentDate = $('#booking-date').val();
+            if (currentDate) {
+                loadTimeSlotsForDate(currentDate, initialSlot);
+            }
+
             $('#booking-edit-form').on('submit', function (e) {
                 var currentForm = this;
                 var statusVal = $('#booking-status').val();
