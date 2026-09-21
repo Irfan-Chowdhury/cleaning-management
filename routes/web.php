@@ -16,6 +16,8 @@ use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\AuditLogController;
+use App\Http\Controllers\Admin\GoogleReviewController as AdminGoogleReviewController;
+use App\Http\Middleware\EnsureGoogleReviewEnabled;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\VerificationController;
@@ -132,6 +134,16 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::get('/audit-logs/{auditLog}', [AuditLogController::class, 'show'])
         ->middleware('can:view-audit-logs')
         ->name('audit-logs.show');
+
+    // Google Review Reward Admin Routes
+    Route::middleware(EnsureGoogleReviewEnabled::class)->group(function () {
+        Route::get('/reviews', [AdminGoogleReviewController::class, 'index'])->name('reviews.index');
+        Route::get('/reviews/data', [AdminGoogleReviewController::class, 'data'])->name('reviews.data');
+        Route::get('/reviews/{review}/edit', [AdminGoogleReviewController::class, 'edit'])->name('reviews.edit');
+        Route::post('/reviews/{review}/approve', [AdminGoogleReviewController::class, 'approve'])->name('reviews.approve');
+        Route::post('/reviews/{review}/cancel', [AdminGoogleReviewController::class, 'cancel'])->name('reviews.cancel');
+        Route::delete('/reviews/{review}', [AdminGoogleReviewController::class, 'destroy'])->name('reviews.destroy');
+    });
 });
 
 require __DIR__.'/customer.php';
