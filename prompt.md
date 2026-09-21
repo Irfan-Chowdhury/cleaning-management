@@ -346,7 +346,7 @@ Senerio-2 : if Date Expire, then what is about the Booking ?
 
 Senerio-3: 
 Admin bookings/{id}/edit
-Time Slots display based on date wise -->Weekly Schedule by cascading dropdown list. Same Date functionality will be used in there as like Booking Service.
+Time Slots display based on date wise -->Weekly Schedule by dropdown list. If date select then it match the week day, then match Weekly Shedule time slots and then load in dropdwon. Follow the Booking Service Step-2.
 
 Senerio-4:
 Booking Status Should be Expired option.

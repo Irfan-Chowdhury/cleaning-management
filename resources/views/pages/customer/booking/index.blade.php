@@ -89,6 +89,16 @@
             color: #1e7e34;
             border: 1px solid #b7e1cd;
         }
+        .badge-status-approved {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            border: 1px solid #bae6fd;
+        }
+        .badge-status-processing {
+            background-color: #f3e8ff;
+            color: #7e22ce;
+            border: 1px solid #e9d5ff;
+        }
         .badge-status-pending {
             background-color: #fff8e6;
             color: #b7791f;
@@ -156,7 +166,9 @@
                         <select id="filter-status" class="form-control">
                             <option value="all">All</option>
                             <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
                             <option value="confirmed">Confirmed</option>
+                            <option value="processing">Processing</option>
                             <option value="completed">Completed</option>
                             <option value="cancelled">Cancelled</option>
                         </select>
@@ -216,6 +228,10 @@
 
                                 if ($statusLower === 'confirmed') {
                                     $statusBadgeClass = 'badge-status-confirmed';
+                                } elseif ($statusLower === 'approved') {
+                                    $statusBadgeClass = 'badge-status-approved';
+                                } elseif ($statusLower === 'processing') {
+                                    $statusBadgeClass = 'badge-status-processing';
                                 } elseif ($statusLower === 'pending') {
                                     $statusBadgeClass = 'badge-status-pending';
                                 } elseif ($statusLower === 'completed') {
@@ -361,8 +377,8 @@
                                     <span id="modal-paid-amount" class="font-weight-bold text-dark font-size-13"></span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="text-muted font-size-13">Wallet Used:</span>
-                                    <span id="modal-wallet-used" class="font-weight-bold text-dark font-size-13"></span>
+                                    <span class="text-muted font-size-13" id="modal-offer-label">Wallet Used:</span>
+                                    <span id="modal-offer-val" class="font-weight-bold text-dark font-size-13">$0.00</span>
                                 </div>
                             </div>
                         </div>
@@ -481,7 +497,9 @@
                 // Booking Status Badge
                 var statusLower = (booking.status || '').toLowerCase();
                 var statusBadgeClass = 'badge-status-confirmed';
-                if (statusLower === 'pending') statusBadgeClass = 'badge-status-pending';
+                if (statusLower === 'approved') statusBadgeClass = 'badge-status-approved';
+                else if (statusLower === 'processing') statusBadgeClass = 'badge-status-processing';
+                else if (statusLower === 'pending') statusBadgeClass = 'badge-status-pending';
                 else if (statusLower === 'completed') statusBadgeClass = 'badge-status-completed';
                 else if (statusLower === 'cancelled') statusBadgeClass = 'badge-status-cancelled';
 
@@ -507,7 +525,33 @@
                 );
 
                 $('#modal-paid-amount').text('$' + parseFloat(booking.paid_amount || 0).toFixed(2));
-                $('#modal-wallet-used').text('$' + parseFloat(booking.wallet_used || 0).toFixed(2));
+
+                var creditUsed = parseFloat(booking.credit_used || booking.wallet_used || 0);
+                var referalCode = (booking.referal_code || '').trim();
+                var promoCode = (booking.promo_code || '').trim();
+                var discountAmount = parseFloat(booking.discount_amount || 0);
+
+                if (creditUsed > 0) {
+                    $('#modal-offer-label').text('Wallet:');
+                    $('#modal-offer-val').text('$' + creditUsed.toFixed(2));
+                } else if (referalCode) {
+                    $('#modal-offer-label').text('Referral:');
+                    var refText = referalCode;
+                    if (discountAmount > 0) {
+                        refText += ' (-$' + discountAmount.toFixed(2) + ')';
+                    }
+                    $('#modal-offer-val').text(refText);
+                } else if (promoCode) {
+                    $('#modal-offer-label').text('Promo Code:');
+                    var promoText = promoCode;
+                    if (discountAmount > 0) {
+                        promoText += ' (-$' + discountAmount.toFixed(2) + ')';
+                    }
+                    $('#modal-offer-val').text(promoText);
+                } else {
+                    $('#modal-offer-label').text('Wallet Used:');
+                    $('#modal-offer-val').text('$0.00');
+                }
 
                 // Service Information / Answers (Questionnaires)
                 var qContainer = $('#modal-questionnaire-container');
