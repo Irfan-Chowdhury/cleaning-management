@@ -18,6 +18,19 @@
             : '09:00 AM';
         $appliedCode = $latestBooking->referal_code ?: ($latestBooking->promo_code ?: null);
         $answers = is_array($latestBooking->answers) ? $latestBooking->answers : [];
+
+        $initialOfferType = isset($latestBooking) && $latestBooking->promo_code
+            ? 'promo'
+            : (isset($latestBooking) && $latestBooking->referal_code
+                ? 'referral'
+                : session('booking_wizard.offer.type', 'wallet'));
+
+        $discountLabelText = match ($initialOfferType) {
+            'wallet' => 'Discount (Wallet)',
+            'referral' => 'Discount (Referral)',
+            'promo' => 'Discount (Promo)',
+            default => 'Discount (Wallet)',
+        };
     @endphp
 
     <div class="booking-page">
@@ -115,7 +128,7 @@
                             <div class="payment-total-panel">
                                 <div><span>Subtotal</span><strong id="main-subtotal-val">${{ number_format((float) ($latestBooking->subtotal > 0 ? $latestBooking->subtotal : $latestBooking->total_amount), 2) }}</strong></div>
                                 <div id="main-discount-row" style="{{ (float) $latestBooking->discount_amount > 0 ? '' : 'display: none;' }}">
-                                    <span>Discount / Wallet</span>
+                                    <span id="main-discount-label">{{ $discountLabelText }}</span>
                                     <strong id="main-discount-val" class="text-success">- ${{ number_format((float) $latestBooking->discount_amount, 2) }}</strong>
                                 </div>
                                 <hr>
@@ -173,6 +186,7 @@
                 $(this).closest('.discount-radio-card').addClass('active');
 
                 if (val === 'wallet') {
+                    $('#main-discount-label').text('Discount (Wallet)');
                     $('#wallet-offer-panel').slideDown(200);
                     $('#promo-offer-panel').slideUp(200);
                 } else {
@@ -182,11 +196,13 @@
                     $('#wallet-amount-input').val('').trigger('input');
 
                     if (val === 'promo') {
+                        $('#main-discount-label').text('Discount (Promo)');
                         $('#code-section-title').text('Have a Promotional Code?');
                         $('#promo-code-input').attr('placeholder', 'Enter promo code');
                         $('#promo-note-text').text('Use a promotional code to save on your booking!');
                         $('#referral-block-alert').hide();
                     } else {
+                        $('#main-discount-label').text('Discount (Referral)');
                         $('#code-section-title').text('Have a Referral Code?');
                         $('#promo-code-input').attr('placeholder', 'Enter referral code');
                         $('#promo-note-text').text('Use a referral code and get credit when you book!');
@@ -374,6 +390,15 @@
                 var finalTotal = Math.max(0, subtotal - discount);
 
                 $('#applied-wallet-amount-hidden').val(discount);
+
+                var selectedOfferType = $('input[name="offer_type"]:checked').val() || 'wallet';
+                var labelText = 'Discount (Wallet)';
+                if (selectedOfferType === 'referral') {
+                    labelText = 'Discount (Referral)';
+                } else if (selectedOfferType === 'promo') {
+                    labelText = 'Discount (Promo)';
+                }
+                $('#main-discount-label').text(labelText);
 
                 // Update main review panel price box & payment breakdown
                 $('#main-estimated-total').text('$' + finalTotal.toFixed(2));
