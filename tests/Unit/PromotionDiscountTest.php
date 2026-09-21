@@ -1,3 +1,5 @@
+<?php
+
 use App\Enums\PromotionStatus;
 use App\Models\Booking;
 use App\Models\Promotion;

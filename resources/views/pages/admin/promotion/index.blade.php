@@ -103,8 +103,8 @@
                         </div>
 
                         <div class="col-md-4 form-group" id="promotion-discount-value-group" style="display: none;">
-                            <label for="promotion-discount-value">Discount Value <span class="text-danger">*</span></label>
-                            <input type="number" step="0.01" min="0" class="form-control" id="promotion-discount-value"
+                            <label for="promotion-discount-value" id="promotion-discount-value-label">Discount Value <span class="text-danger">*</span></label>
+                            <input type="number" step="0.01" min="0.01" class="form-control" id="promotion-discount-value"
                                    name="discount_value" placeholder="0.00">
                         </div>
 
@@ -218,10 +218,20 @@
 
         function toggleDiscountValueField() {
             var selectedType = $('#promotion-discount-type').val();
-            if (selectedType === 'fixed') {
-                $('#promotion-discount-value-group').slideDown(200);
+            var $group = $('#promotion-discount-value-group');
+            var $label = $('#promotion-discount-value-label');
+            var $input = $('#promotion-discount-value');
+
+            if (selectedType === 'percentage') {
+                $label.html('Discount Value (%) <span class="text-danger">*</span>');
+                $input.attr('placeholder', 'e.g. 20 (for 20%)').attr('max', '100');
+                $group.slideDown(200);
+            } else if (selectedType === 'fixed') {
+                $label.html('Discount Value ($) <span class="text-danger">*</span>');
+                $input.attr('placeholder', '0.00').removeAttr('max');
+                $group.slideDown(200);
             } else {
-                $('#promotion-discount-value-group').slideUp(200);
+                $group.slideUp(200);
             }
         }
 
