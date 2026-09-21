@@ -102,7 +102,7 @@
                             </select>
                         </div>
 
-                        <div class="col-md-4 form-group">
+                        <div class="col-md-4 form-group" id="promotion-discount-value-group" style="display: none;">
                             <label for="promotion-discount-value">Discount Value <span class="text-danger">*</span></label>
                             <input type="number" step="0.01" min="0" class="form-control" id="promotion-discount-value"
                                    name="discount_value" placeholder="0.00">
@@ -216,6 +216,19 @@
         var $form = $('#promotion-modal-form');
         var $submit = $('#promotion-modal-submit');
 
+        function toggleDiscountValueField() {
+            var selectedType = $('#promotion-discount-type').val();
+            if (selectedType === 'fixed') {
+                $('#promotion-discount-value-group').slideDown(200);
+            } else {
+                $('#promotion-discount-value-group').slideUp(200);
+            }
+        }
+
+        $('#promotion-discount-type').on('change', function () {
+            toggleDiscountValueField();
+        });
+
         function resetForm() {
             $form[0].reset();
             $form.find('.is-invalid').removeClass('is-invalid');
@@ -224,6 +237,7 @@
             $('#promotion-form-method').val('POST');
             $('#promotion-status').val('active');
             $form.attr('action', promotionsBaseUrl);
+            toggleDiscountValueField();
         }
 
         $('#promotion-code').on('input', function () {
@@ -255,6 +269,8 @@
             $('#promotion-expires-at').val($btn.data('expires_at'));
             $('#promotion-new-customers-only').prop('checked', Number($btn.data('new_customers_only')) === 1);
             $('#promotion-existing-customers-only').prop('checked', Number($btn.data('existing_customers_only')) === 1);
+
+            toggleDiscountValueField();
 
             $('#promotion-form-method').val('PUT');
             $form.attr('action', promotionsBaseUrl + '/' + id);
