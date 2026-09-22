@@ -61,7 +61,7 @@ class PromotionService
             'description' => $data['description'] ?? null,
             'discount_type' => $data['discount_type'],
             'discount_value' => $data['discount_value'],
-            'status' => $data['status'],
+            'status' => (int) $data['status'],
             'start_at' => Carbon::parse($data['start_at'])->format('Y-m-d H:i:s'),
             'expires_at' => Carbon::parse($data['expires_at'])->format('Y-m-d H:i:s'),
             'new_customers_only' => (bool) ($data['new_customers_only'] ?? false),

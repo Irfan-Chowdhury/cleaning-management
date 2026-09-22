@@ -30,7 +30,7 @@ class UpdatePromotionRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'discount_type' => ['required', Rule::in(['fixed', 'percentage'])],
             'discount_value' => ['required', 'numeric', 'min:0.01', 'decimal:0,2'],
-            'status' => ['required', Rule::in(['active', 'paused', 'expired'])],
+            'status' => ['required', 'integer', Rule::in([0, 1, 2])],
             'start_at' => ['required', 'date'],
             'expires_at' => ['required', 'date', 'after:start_at'],
             'new_customers_only' => ['nullable', 'boolean'],

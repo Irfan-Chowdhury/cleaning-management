@@ -16,6 +16,8 @@ use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\AuditLogController;
+use App\Http\Controllers\Admin\GoogleReviewController as AdminGoogleReviewController;
+use App\Http\Middleware\EnsureGoogleReviewEnabled;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\VerificationController;
@@ -64,10 +66,17 @@ Route::middleware('auth')->group(function () {
 // Booking Wizard Routes (Accessible by both Admin & Customer)
 Route::middleware('auth')->prefix('booking-service')->group(function () {
     Route::get('/create', [BookingServiceController::class, 'create'])->name('booking-service.create');
+    Route::post('/step-1', [BookingServiceController::class, 'storeStep1'])->name('booking-service.store-step-1');
     Route::get('/questionnaire/{service}', [BookingServiceController::class, 'questionnaire'])->name('booking-service.questionnaire');
     Route::get('/date-time', [BookingServiceController::class, 'dateTime'])->name('booking-service.date-time');
+    Route::post('/step-2', [BookingServiceController::class, 'storeStep2'])->name('booking-service.store-step-2');
+    Route::get('/slots-for-date', [BookingServiceController::class, 'slotsForDate'])->name('booking-service.slots-for-date');
     Route::get('/your-details', [BookingServiceController::class, 'yourDetails'])->name('booking-service.your-details');
+    Route::post('/step-3', [BookingServiceController::class, 'storeStep3'])->name('booking-service.store-step-3');
     Route::get('/review-confirm', [BookingServiceController::class, 'reviewConfirm'])->name('booking-service.review-confirm');
+    Route::post('/confirm', [BookingServiceController::class, 'confirmBooking'])->name('booking-service.confirm');
+    Route::post('/apply-promo', [BookingServiceController::class, 'applyPromo'])->name('booking-service.apply-promo');
+    Route::post('/remove-promo', [BookingServiceController::class, 'removePromo'])->name('booking-service.remove-promo');
 });
 
 // Admin Protected Routes
@@ -125,6 +134,16 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::get('/audit-logs/{auditLog}', [AuditLogController::class, 'show'])
         ->middleware('can:view-audit-logs')
         ->name('audit-logs.show');
+
+    // Google Review Reward Admin Routes
+    Route::middleware(EnsureGoogleReviewEnabled::class)->group(function () {
+        Route::get('/reviews', [AdminGoogleReviewController::class, 'index'])->name('reviews.index');
+        Route::get('/reviews/data', [AdminGoogleReviewController::class, 'data'])->name('reviews.data');
+        Route::get('/reviews/{review}/edit', [AdminGoogleReviewController::class, 'edit'])->name('reviews.edit');
+        Route::post('/reviews/{review}/approve', [AdminGoogleReviewController::class, 'approve'])->name('reviews.approve');
+        Route::post('/reviews/{review}/cancel', [AdminGoogleReviewController::class, 'cancel'])->name('reviews.cancel');
+        Route::delete('/reviews/{review}', [AdminGoogleReviewController::class, 'destroy'])->name('reviews.destroy');
+    });
 });
 
 require __DIR__.'/customer.php';

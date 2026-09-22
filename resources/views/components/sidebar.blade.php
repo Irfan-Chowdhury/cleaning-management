@@ -79,6 +79,13 @@
             <span>Promotional Offers</span>
         </a>
 
+        @if($sidebarSettings?->google_review_enabled)
+        <a href="{{ route('reviews.index') }}" class="sidebar-link {{ request()->routeIs('reviews.*') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="fas fa-star" aria-hidden="true"></i></span>
+            <span>Review</span>
+        </a>
+        @endif
+
         <a href="{{ route('settings.index') }}" class="sidebar-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-cog" aria-hidden="true"></i></span>
             <span>Settings</span>
@@ -117,6 +124,13 @@
             <span class="sidebar-link-icon"><i class="fas fa-users" aria-hidden="true"></i></span>
             <span>Referrals</span>
         </a>
+
+        @if($sidebarSettings?->google_review_enabled)
+        <a href="{{ route('customer.review.index') }}" class="sidebar-link {{ request()->routeIs('customer.review.*') || request()->is('my-review*') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="fas fa-star" aria-hidden="true"></i></span>
+            <span>Review</span>
+        </a>
+        @endif
 
         <a href="{{ route('customer.profile.index') }}" class="sidebar-link {{ request()->routeIs('customer.profile.*') || request()->is('customer-profile*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-cog" aria-hidden="true"></i></span>

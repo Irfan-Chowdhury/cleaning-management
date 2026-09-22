@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\PromotionStatus;
 use App\Models\Promotion;
 use App\Models\User;
 use Database\Seeders\PromotionSeeder;
@@ -28,7 +29,7 @@ function validPromotionPayload(array $overrides = []): array
         'description' => 'Seasonal percentage discount for deep cleaning bookings.',
         'discount_type' => 'percentage',
         'discount_value' => '15.00',
-        'status' => 'active',
+        'status' => 1,
         'start_at' => now()->format('Y-m-d\TH:i'),
         'expires_at' => now()->addDays(10)->format('Y-m-d\TH:i'),
         'new_customers_only' => false,
@@ -80,7 +81,7 @@ it('stores a promotion', function () {
         'code' => 'WELCOME25',
         'discount_type' => 'percentage',
         'discount_value' => '15.00',
-        'status' => 'active',
+        'status' => 1,
         'new_customers_only' => true,
         'existing_customers_only' => false,
         'created_by' => $admin->id,
@@ -97,7 +98,7 @@ it('updates a promotion while keeping code uniqueness scoped to other rows', fun
         ->putJson(route('promotions.update', $promotion), validPromotionPayload([
             'name' => 'Updated Offer',
             'code' => 'SPRING15',
-            'status' => 'paused',
+            'status' => 0,
             'discount_type' => 'fixed',
             'discount_value' => '20.00',
         ]))
@@ -110,7 +111,7 @@ it('updates a promotion while keeping code uniqueness scoped to other rows', fun
         'id' => $promotion->id,
         'name' => 'Updated Offer',
         'code' => 'SPRING15',
-        'status' => 'paused',
+        'status' => 0,
         'discount_type' => 'fixed',
         'discount_value' => '20.00',
     ]);
@@ -147,7 +148,7 @@ it('validates promotion fields', function () {
             'code' => 'EXISTS',
             'discount_type' => 'percentage',
             'discount_value' => '101.00',
-            'status' => 'missing',
+            'status' => 999,
             'expires_at' => now()->subDay()->format('Y-m-d\TH:i'),
             'new_customers_only' => true,
             'existing_customers_only' => true,
@@ -174,7 +175,8 @@ it('casts promotion values', function () {
         ->and($promotion->start_at)->toBeInstanceOf(\Illuminate\Support\Carbon::class)
         ->and($promotion->expires_at)->toBeInstanceOf(\Illuminate\Support\Carbon::class)
         ->and($promotion->new_customers_only)->toBeTrue()
-        ->and($promotion->existing_customers_only)->toBeFalse();
+        ->and($promotion->existing_customers_only)->toBeFalse()
+        ->and($promotion->status)->toBe(PromotionStatus::ACTIVE);
 });
 
 it('seeds five demo promotions', function () {
@@ -186,6 +188,6 @@ it('seeds five demo promotions', function () {
 
     $this->assertDatabaseHas('promotions', [
         'code' => 'WELCOME25',
-        'status' => 'active',
+        'status' => 1,
     ]);
 });

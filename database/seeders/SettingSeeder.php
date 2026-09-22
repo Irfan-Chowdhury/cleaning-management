@@ -22,7 +22,7 @@ class SettingSeeder extends Seeder
                 'timezone' => 'America/New_York',
                 'currency' => 'USD',
                 'minimum_booking_amount' => 50.00,
-                'maximum_booking_amount' => 1500.00,
+                'max_wallet_usage' => 100.00,
                 'maximum_advance_booking_days' => 30,
                 'cancellation_notice_hours' => 24,
                 'welcome_credit' => 20.00,

@@ -89,6 +89,16 @@
             color: #1e7e34;
             border: 1px solid #b7e1cd;
         }
+        .badge-status-approved {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            border: 1px solid #bae6fd;
+        }
+        .badge-status-processing {
+            background-color: #f3e8ff;
+            color: #7e22ce;
+            border: 1px solid #e9d5ff;
+        }
         .badge-status-pending {
             background-color: #fff8e6;
             color: #b7791f;
@@ -156,7 +166,9 @@
                         <select id="filter-status" class="form-control">
                             <option value="all">All</option>
                             <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
                             <option value="confirmed">Confirmed</option>
+                            <option value="processing">Processing</option>
                             <option value="completed">Completed</option>
                             <option value="cancelled">Cancelled</option>
                         </select>
@@ -198,7 +210,6 @@
                 <table id="customer-bookings-table" class="table table-hover table-bordered nowrap customers-table" style="width: 100%">
                     <thead>
                         <tr>
-                            <th>#</th>
                             <th>Booking ID</th>
                             <th>Service</th>
                             <th>Date</th>
@@ -217,6 +228,10 @@
 
                                 if ($statusLower === 'confirmed') {
                                     $statusBadgeClass = 'badge-status-confirmed';
+                                } elseif ($statusLower === 'approved') {
+                                    $statusBadgeClass = 'badge-status-approved';
+                                } elseif ($statusLower === 'processing') {
+                                    $statusBadgeClass = 'badge-status-processing';
                                 } elseif ($statusLower === 'pending') {
                                     $statusBadgeClass = 'badge-status-pending';
                                 } elseif ($statusLower === 'completed') {
@@ -234,7 +249,6 @@
                                 }
                             @endphp
                             <tr data-status="{{ $statusLower }}" data-date="{{ $booking->date }}">
-                                <td>{{ $loop->iteration }}</td>
                                 <td>
                                     <span class="booking-id-tag">{{ $booking->booking_id }}</span>
                                 </td>
@@ -265,13 +279,21 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <div class="customer-actions justify-content-center">
+                                    <div class="customer-actions justify-content-center d-flex align-items-center">
                                         <button type="button" 
-                                                class="btn btn-sm btn-outline-primary customer-action-btn view-booking-btn" 
+                                                class="btn btn-sm btn-outline-primary customer-action-btn view-booking-btn mr-1" 
                                                 title="View Details"
                                                 data-booking="{{ json_encode($booking) }}">
                                             <i class="fas fa-eye" aria-hidden="true"></i>
                                         </button>
+                                        @if ($statusLower === 'approved' || ($booking->status_raw ?? '') === 'approved')
+                                            <a href="{{ route('booking-service.review-confirm', ['booking' => $booking->id]) }}"
+                                               class="btn btn-sm btn-success px-2 py-1"
+                                               title="Proceed to Step 4 (Review & Confirm)"
+                                               style="border-radius: 6px; font-weight: 600; font-size: 12px;">
+                                                <i class="fas fa-calendar-check mr-1" aria-hidden="true"></i> Step 4
+                                            </a>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -355,8 +377,8 @@
                                     <span id="modal-paid-amount" class="font-weight-bold text-dark font-size-13"></span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="text-muted font-size-13">Wallet Used:</span>
-                                    <span id="modal-wallet-used" class="font-weight-bold text-dark font-size-13"></span>
+                                    <span class="text-muted font-size-13" id="modal-offer-label">Wallet Used:</span>
+                                    <span id="modal-offer-val" class="font-weight-bold text-dark font-size-13">$0.00</span>
                                 </div>
                             </div>
                         </div>
@@ -426,11 +448,11 @@
             // Initialize DataTable
             var table = $('#customer-bookings-table').DataTable({
                 responsive: true,
-                order: [[0, 'asc']],
+                order: [[0, 'desc']],
                 dom: "<'row'<'col-sm-12'tr>>" +
                      "<'row mt-3'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
                 columnDefs: [
-                    { orderable: false, targets: [8] }
+                    { orderable: false, targets: [7] }
                 ],
                 language: {
                     zeroRecords: 'No matching bookings found.',
@@ -475,7 +497,9 @@
                 // Booking Status Badge
                 var statusLower = (booking.status || '').toLowerCase();
                 var statusBadgeClass = 'badge-status-confirmed';
-                if (statusLower === 'pending') statusBadgeClass = 'badge-status-pending';
+                if (statusLower === 'approved') statusBadgeClass = 'badge-status-approved';
+                else if (statusLower === 'processing') statusBadgeClass = 'badge-status-processing';
+                else if (statusLower === 'pending') statusBadgeClass = 'badge-status-pending';
                 else if (statusLower === 'completed') statusBadgeClass = 'badge-status-completed';
                 else if (statusLower === 'cancelled') statusBadgeClass = 'badge-status-cancelled';
 
@@ -501,7 +525,33 @@
                 );
 
                 $('#modal-paid-amount').text('$' + parseFloat(booking.paid_amount || 0).toFixed(2));
-                $('#modal-wallet-used').text('$' + parseFloat(booking.wallet_used || 0).toFixed(2));
+
+                var creditUsed = parseFloat(booking.credit_used || booking.wallet_used || 0);
+                var referalCode = (booking.referal_code || '').trim();
+                var promoCode = (booking.promo_code || '').trim();
+                var discountAmount = parseFloat(booking.discount_amount || 0);
+
+                if (creditUsed > 0) {
+                    $('#modal-offer-label').text('Wallet:');
+                    $('#modal-offer-val').text('$' + creditUsed.toFixed(2));
+                } else if (referalCode) {
+                    $('#modal-offer-label').text('Referral:');
+                    var refText = referalCode;
+                    if (discountAmount > 0) {
+                        refText += ' (-$' + discountAmount.toFixed(2) + ')';
+                    }
+                    $('#modal-offer-val').text(refText);
+                } else if (promoCode) {
+                    $('#modal-offer-label').text('Promo Code:');
+                    var promoText = promoCode;
+                    if (discountAmount > 0) {
+                        promoText += ' (-$' + discountAmount.toFixed(2) + ')';
+                    }
+                    $('#modal-offer-val').text(promoText);
+                } else {
+                    $('#modal-offer-label').text('Wallet Used:');
+                    $('#modal-offer-val').text('$0.00');
+                }
 
                 // Service Information / Answers (Questionnaires)
                 var qContainer = $('#modal-questionnaire-container');
@@ -530,13 +580,13 @@
                     );
                 }
 
-                // Cancel Booking Action
+                // Cancel Booking Action (Displayed ONLY when status is Approved)
                 var cancelContainer = $('#modal-cancel-action');
                 cancelContainer.empty();
-                if (booking.cancellation_eligible && statusLower !== 'cancelled' && statusLower !== 'completed') {
+                if (statusLower === 'approved') {
                     cancelContainer.html(
-                        '<button type="button" class="btn btn-outline-danger px-3 btn-cancel-booking" style="border-radius: 8px; font-weight: 600; font-size: 13px;">' +
-                            '<i class="fas fa-times-circle mr-1"></i> Cancel Booking' +
+                        '<button type="button" class="btn btn-outline-danger px-3 btn-cancel-booking" data-id="' + booking.id + '" style="border-radius: 8px; font-weight: 600; font-size: 13px;">' +
+                            '<i class="fas fa-times-circle mr-1"></i> Cancel Schedule' +
                         '</button>'
                     );
                 }
@@ -555,11 +605,98 @@
                 $('#bookingDetailModal').modal('show');
             });
 
-            // Action Handlers
+            // Action Handlers for Booking Cancellation
             $(document).on('click', '.btn-cancel-booking', function () {
-                if (confirm('Are you sure you want to cancel this booking?')) {
-                    alert('Booking cancellation request submitted successfully.');
-                    $('#bookingDetailModal').modal('hide');
+                var bookingId = $(this).attr('data-id');
+                if (!bookingId) return;
+
+                var bookingCode = 'BK-' + String(bookingId).padStart(3, '0');
+
+                function executeCancellation() {
+                    var $btn = $('.btn-cancel-booking');
+                    $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i> Cancelling...');
+
+                    $.ajax({
+                        url: '{{ url("/my-bookings") }}/' + bookingId + '/cancel',
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function (response) {
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Cancelled!',
+                                    text: response.message || 'Booking schedule has been cancelled successfully.',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            } else {
+                                alert(response.message || 'Booking schedule has been cancelled successfully.');
+                            }
+
+                            // Update modal status badge
+                            $('#modal-status-badge').html(
+                                '<span class="badge badge-status-cancelled" style="padding: 5px 11px; font-weight: 700; border-radius: 999px;">Cancelled</span>'
+                            );
+
+                            // Clear cancel action button from modal
+                            $('#modal-cancel-action').empty();
+
+                            // Update table row status badge
+                            var $row = $('tr[data-status]').filter(function () {
+                                var rowTag = $(this).find('.booking-id-tag').text().trim();
+                                return rowTag === bookingCode;
+                            });
+
+                            if ($row.length) {
+                                $row.attr('data-status', 'cancelled');
+                                $row.find('td:nth-child(6)').html(
+                                    '<span class="badge badge-status-cancelled" style="padding: 6px 12px; font-weight: 700; border-radius: 999px;">Cancelled</span>'
+                                );
+                                $row.find('.btn-success').remove();
+                            }
+
+                            setTimeout(function () {
+                                $('#bookingDetailModal').modal('hide');
+                            }, 1200);
+                        },
+                        error: function (xhr) {
+                            $btn.prop('disabled', false).html('<i class="fas fa-times-circle mr-1"></i> Cancel Schedule');
+                            var errorMsg = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : 'Failed to cancel booking.';
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Cancellation Failed',
+                                    text: errorMsg
+                                });
+                            } else {
+                                alert(errorMsg);
+                            }
+                        }
+                    });
+                }
+
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Cancel Booking Schedule?',
+                        html: 'Are you sure you want to cancel schedule for <strong>' + bookingCode + '</strong>?'
+                            + '<br><small class="text-muted">This action will change status to Cancelled and notify the admin team.</small>',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Yes, Cancel Schedule!',
+                        cancelButtonText: 'No, Keep It'
+                    }).then(function (result) {
+                        if (result.isConfirmed) {
+                            executeCancellation();
+                        }
+                    });
+                } else {
+                    if (confirm('Are you sure you want to cancel schedule for ' + bookingCode + '?')) {
+                        executeCancellation();
+                    }
                 }
             });
 

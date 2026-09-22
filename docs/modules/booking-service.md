@@ -14,12 +14,12 @@ The feature exists to convert customers from service selection into a completed 
 Customer opens /booking-service/create
   -> BookingServiceController@create
   -> Service::where('status', 'active')->orderBy('name')->get()
-  -> pages.booking-service.create Blade view
-  -> Customer selects a service
+  -> pages.booking-service.create Blade view (dropdown defaults to "Select")
+  -> Initial State: Renders Default Service Guide Card (Header, Helper Box, 3 Feature Rows)
+  -> Customer selects a service from dropdown
   -> jQuery calls /booking-service/questionnaire/{service}
-  -> BookingServiceController@questionnaire
   -> Service questions and options are returned as JSON
-  -> JavaScript renders fields based on each question field_type
+  -> JavaScript updates right-side card dynamically to Selected Service State (About {Service Name}, description, What's included checklist, building SVG illustration, bottom shield box)
 ```
 
 ### Step 2: Date & Time
@@ -27,9 +27,16 @@ Customer opens /booking-service/create
 ```text
 Customer clicks Continue to Date & Time
   -> /booking-service/date-time
-  -> BookingServiceController@dateTime
-  -> Static Blade date and time selection UI
-  -> JavaScript toggles selected date and time button states
+  -> BookingServiceController@dateTime (loads active holidays & session data)
+  -> Dynamic Blade date and time selection UI
+  -> JavaScript initializes current month calendar (prev month disabled)
+  -> JavaScript disables past dates & active holiday dates (with hover title tooltip)
+  -> Selecting date fires AJAX GET /booking-service/slots-for-date?date=YYYY-MM-DD
+  -> Server returns day availability, active schedule slots & booked slot states
+  -> Already booked slots are styled red and disabled
+  -> Form submits POST /booking-service/step-2 -> BookingStep2Request validation
+  -> BookingSessionService stores step 2 data in session
+  -> Redirects to /booking-service/your-details
 ```
 
 ### Step 3: Your Details
@@ -37,19 +44,43 @@ Customer clicks Continue to Date & Time
 ```text
 Customer clicks Continue to Your Details
   -> /booking-service/your-details
-  -> BookingServiceController@yourDetails
-  -> Static Blade customer details UI
-  -> JavaScript toggles account details vs manual entry mode
+  -> BookingServiceController@yourDetails (validates Step 1 and Step 2 session presence)
+  -> Customer inputs or uses saved account details
+  -> Form submits POST /booking-service/step-3 -> BookingStep3Request validation
+  -> BookingService creates Pending Booking & sends Admin notifications
+  -> BookingSessionService clears wizard session data
+  -> Redirects to /my-bookings (Customer Bookings table)
 ```
 
-### Step 4: Review & Confirm
+### Step 4: Review & Confirm (Approved Bookings & Discount Type Offer)
 
 ```text
-Customer clicks Continue to Review & Confirm
-  -> /booking-service/review-confirm
-  -> BookingServiceController@reviewConfirm
-  -> Static review/payment UI
-  -> Confirm Booking & Pay button is displayed
+Step 4 is hidden during initial booking creation.
+Customer accesses Step 4 from /my-bookings when status becomes Approved:
+  -> GET /booking-service/review-confirm?booking={id}
+  -> BookingServiceController@reviewConfirm validates booking ID & Approved status
+  -> Renders Review & Confirm UI & Discount Offer Card (Wallet vs Promo/Referral Code)
+  -> Customer selects "Use Wallet" or "Referral/Promo Code"
+  -> Option 1 (Wallet): Checks subtotal >= minimum_booking_amount. Validates typed wallet credit against available balance & max_wallet_usage settings.
+  -> jQuery dynamically updates subtotal, discount/wallet deduction, and total amount live.
+  -> Customer submits form -> POST /booking-service/confirm
+  -> BookingService::confirmBookingByCustomer updates status to Confirmed, applies credit_used & discount_amount, creates WalletTransaction debit record, and notifies Admins.
+```
+
+### My Bookings (`/my-bookings`) & Approved Schedule Cancellation
+
+```text
+Customer views /my-bookings
+  -> Customer\BookingController@index
+  -> Customer opens Booking Details Modal (#bookingDetailModal)
+  -> If Booking status is Approved:
+     -> Displays "Cancel Schedule" button in modal footer
+     -> Customer clicks "Cancel Schedule" & confirms action
+     -> AJAX POST /my-bookings/{booking}/cancel
+     -> Customer\BookingController@cancel validates customer ownership & Approved status
+     -> Updates booking status to Cancelled (BookingStatus::CANCELLED)
+     -> Sends in-app database notification (BookingCancelledNotification) to Admin users
+     -> Modal status badge and DataTable row status update dynamically to Cancelled
 ```
 
 ## 3. Technical Implementation
@@ -59,37 +90,82 @@ Customer clicks Continue to Review & Confirm
 ```php
 Route::prefix('booking-service')->group(function () {
     Route::get('/create', [BookingServiceController::class, 'create'])->name('booking-service.create');
+    Route::post('/step-1', [BookingServiceController::class, 'storeStep1'])->name('booking-service.store-step-1');
     Route::get('/questionnaire/{service}', [BookingServiceController::class, 'questionnaire'])->name('booking-service.questionnaire');
     Route::get('/date-time', [BookingServiceController::class, 'dateTime'])->name('booking-service.date-time');
+    Route::post('/step-2', [BookingServiceController::class, 'storeStep2'])->name('booking-service.store-step-2');
+    Route::get('/slots-for-date', [BookingServiceController::class, 'slotsForDate'])->name('booking-service.slots-for-date');
     Route::get('/your-details', [BookingServiceController::class, 'yourDetails'])->name('booking-service.your-details');
     Route::get('/review-confirm', [BookingServiceController::class, 'reviewConfirm'])->name('booking-service.review-confirm');
 });
 ```
 
-### Controller
+### Controller & Business Logic
 
-`App\Http\Controllers\BookingServiceController`
+- **Controller**: `App\Http\Controllers\BookingServiceController`
+  - `create()` loads active services and retrieves Step 1 session data to pre-fill the form if returning. Exposes `$servicesData` as JSON to JavaScript (`window.bookingServicesData`).
+  - `storeStep1(BookingStep1Request $request)` validates Step 1 inputs, calls `BookingSessionService::saveStep1()`, and redirects to Step 2 (`route('booking-service.date-time')`).
+  - `storeStep2(BookingStep2Request $request)` validates Step 2 date & start time, stores in session via `BookingSessionService::saveStep2()`, and redirects to Step 3 (`route('booking-service.your-details')`).
+  - `storeStep3(BookingStep3Request $request)` validates Step 3 contact/address details, saves step 3 session, creates a pending `Booking` in DB via `BookingService::createBookingFromWizard()`, sends `NewBookingPendingNotification` to Admins, and redirects to Step 4 (`route('booking-service.review-confirm')`).
+  - `yourDetails()` renders Step 3 with account data pre-fill.
+  - `reviewConfirm()` renders Step 4 with booking review details.
 
-Important methods:
+### Frontend Component Architecture
 
-- `create()` loads active services for Step 1.
-- `questionnaire(Service $service)` returns service questions and options as JSON.
-- `dateTime()` renders Step 2.
-- `yourDetails()` renders Step 3.
-- `reviewConfirm()` renders Step 4.
+#### Step-1 Right-Side Service Guide Card (`resources/views/pages/booking-service/partials/service-guide-card.blade.php`)
 
-### Frontend
+The Step 1 right-side card operates in two distinct states rendered initially via Blade and dynamically swapped client-side via JavaScript (`updateServiceGuideCard(serviceId)` in `public/assets/js/booking_service.js`):
 
-`public/assets/js/booking_service.js`
+1. **Default State (Initial Page Load / No Service Selected)**:
+   - **Dropdown Default**: Set to `"Select"` (`value=""`).
+   - **Header**: Circular blue lightbulb icon (`far fa-lightbulb`), title `Service Guide`, subtitle `Choose the right service for your home or business.`, and `Step 1 of 4` pill badge.
+   - **Divider #1**: Light-grey horizontal divider.
+   - **Helper Box**: Light blue rounded card (`#f3f8ff`) containing text (`Not sure which cleaning service is right for you?` / `Select a service on the left and we'll show you the relevant options and questions.`) and a large vector cleaning SVG illustration.
+   - **Divider #2**: Second light-grey horizontal divider.
+   - **3 Feature Rows**: Rendered with ~40px circular light-blue icon containers (`#f3f8ff` background, `#0866e8` blue icon):
+     - `Tailored to your needs` (`fas fa-magic`) — `We customise each clean to fit your space and requirements.`
+     - `Upfront pricing` (`fas fa-tag`) — `Transparent pricing with no hidden costs.`
+     - `Professional cleaners` (`fas fa-user-shield`) — `Police-checked, trained, and committed to quality.`
+   - **Bottom Box**: Omitted in Default state for a clean vertical finish.
 
-Important behavior:
+2. **Selected Service State (Service Selected from Dropdown)**:
+   - **Dynamic Switching**: Updated via `updateServiceGuideCard(serviceId)` using dataset `window.bookingServicesData`.
+   - **Header**: 42px blue circle icon (`#0866e8`) with white info icon (`fas fa-info`), dynamic title `About {Selected Service Name}`, and `Step 1 of 4` pill badge.
+   - **Service Description**: Displays selected service database `description` plain text safely.
+   - **Divider**: Horizontal line.
+   - **Two-Column Layout**:
+     - **Left Column**: Heading `What's included` and dynamic item list from `whats_included` JSON array rendered with emerald green `fas fa-check-circle` icons (`#10b981`), aligned flush with the heading's left margin.
+     - **Right Column**: Multi-storey commercial office building SVG illustration (~150px width).
+   - **Bottom Info Box**: Light blue shield box (`Customised cleaning plans available to suit your business needs.`).
 
-- Counts characters for notes and special instructions.
-- Loads questionnaire data through AJAX when the selected service changes.
-- Renders input types from `field_type`.
-- Supports select, dropdown, checkbox, radio, textarea, number, date, and text fallback.
-- Toggles selected date and time buttons.
-- Toggles readonly behavior for customer detail fields based on detail mode.
+#### Step-2 Right-Side Scheduling Guide Card (`resources/views/pages/booking-service/partials/scheduling-guide.blade.php`)
+
+The Step 2 right-side card renders a static **Scheduling Guide** structure:
+
+- **Header**: 44px blue circular icon (`#0866e8`) with white calendar icon (`far fa-calendar-alt`), title `Scheduling Guide`, and `Step 2 of 4` pill badge.
+- **Introduction Text**: Explains scheduling availability guidelines.
+- **Divider #1**: Light-grey horizontal divider.
+- **3 Feature Rows**: Rendered with 46px circular light-blue icon containers (`#f3f8ff` background, `#0866e8` blue icon):
+  - `Flexible scheduling` (`far fa-clock`) — `Choose a time that fits your routine.`
+  - `Real-time availability` (`fas fa-users`) — `Only available appointment times are shown.`
+  - `Need to reschedule?` (`fas fa-sync-alt`) — `You can reschedule your booking according to our policy.`
+- **Divider #2**: Light-grey horizontal divider.
+- **Cancellation Policy Box**: Light blue rounded box (`#f3f8ff` background, `#dbeafe` border) with blue shield icon (`fas fa-shield-alt`). Displays:
+  - `Cancellation policy`
+  - `Free cancellation with at least {X} hours' notice.` — `X` dynamically binds to `settings.cancellation_notice_hours` configured in Admin `/settings`.
+
+#### Step-3 Right-Side Your Information Card (`resources/views/pages/booking-service/partials/your-information.blade.php`)
+
+The Step 3 right-side card renders a static **Your Information** structure:
+
+- **Header Section**: 44px blue circular container (`#0866e8`) with white shield icon (`fas fa-shield-alt`), title `Your Information`, subtitle `Your details are secure.`, and description `We only use your information to arrange and communicate about your cleaning service.`
+- **Divider #1**: Light-grey horizontal divider.
+- **Section Heading**: `Why we need this information`
+- **3 Information Rows**: Rendered with 42px circular light-blue icon containers (`#f3f8ff` background, `#0866e8` blue icon):
+  - `Service address` (`fas fa-map-marker-alt`) — `So our cleaners know where to go.`
+  - `Contact details` (`fas fa-phone-alt`) — `So we can send booking updates and contact you if needed.`
+  - `Privacy & security` (`fas fa-lock`) — `Your information is securely handled and never sold.`
+- **Bottom Box**: Light blue rounded box (`#f3f8ff` background, `#dbeafe` border) with blue sparkle/magic icon (`fas fa-magic`), title `Almost there!`, and description `You'll review all your booking details and pricing before confirming.`
 
 ### Views
 
@@ -97,17 +173,62 @@ Important behavior:
 - `resources/views/pages/booking-service/date-time.blade.php`
 - `resources/views/pages/booking-service/your-details.blade.php`
 - `resources/views/pages/booking-service/review-confirm.blade.php`
-- shared partials under `resources/views/pages/booking-service/partials/`
+- Shared partials under `resources/views/pages/booking-service/partials/` (`service-guide-card.blade.php`, `scheduling-guide.blade.php`, `your-information.blade.php`, `trust-strip.blade.php`, `promo-card.blade.php`, `support-card.blade.php`, `page-header.blade.php`, `progress.blade.php`)
 
 ## 4. Database Design
 
-The implemented booking flow currently reads from the service catalog tables:
+The booking service module reads from service catalog tables and writes to the `bookings` table:
 
 - `services`
 - `service_questions`
 - `question_options`
+- `bookings`
 
-No `bookings` table is currently implemented in migrations.
+### `bookings` Table Data Model
+
+`bookings` columns:
+
+- `id`
+- `user_id` (nullable foreign key to `users.id`)
+- `service_id` (foreign key to `services.id`)
+- `answers` (JSON array storing questionnaire questions and answers)
+- `frequency` (default `one_time`)
+- `booking_date` (nullable)
+- `start_time` (nullable)
+- `end_time` (nullable)
+- `customer_name` (nullable)
+- `customer_email` (nullable)
+- `customer_phone` (nullable)
+- `customer_address` (nullable)
+- `unit_suite_floor` (nullable)
+- `suburb` (nullable)
+- `postcode` (nullable)
+- `special_instructions` (nullable)
+- `service_notes` (nullable)
+- `status` (default `pending`)
+- `payment_status` (default `pending`)
+- `payment_method` (default `pending`)
+- `subtotal` (default `0.00`)
+- `discount_amount` (default `0.00`)
+- `credit_used` (default `0.00`)
+- `total_amount` (default `0.00`)
+- `referal_code` (nullable)
+- `promo_code` (nullable)
+- `created_at`
+- `updated_at`
+
+### `payments` Table Data Model
+
+`payments` columns:
+
+- `id`
+- `booking_id` (foreign key to `bookings.id`, cascadeOnDelete)
+- `user_id` (nullable foreign key to `users.id`, nullOnDelete)
+- `amount` (decimal `10,2`, default `0.00`)
+- `payment_method` (nullable string, default `pending`)
+- `payment_status` (nullable string, default `pending`)
+- `created_at`
+- `updated_at`
 
 ### Questionnaire Data Model
 
@@ -191,7 +312,8 @@ GET /booking-service/questionnaire/1
 - The questionnaire is loaded asynchronously so Step 1 can respond to the selected service without reloading the page.
 - The backend returns a small, purpose-built JSON structure instead of exposing full Eloquent models.
 - Field rendering is centralized in JavaScript so new question types can be introduced through `field_type` values.
-- Current review and confirmation screens use static placeholder values while the booking persistence model is still pending.
+- Datatables on `/my-bookings` and `/bookings` display `Booking ID` in the 1st column (serial number column removed) and order records by `Booking ID DESC`.
+- Admin `/bookings/{id}` page features a full-width multi-card layout displaying customer profile, service address & instructions, booking schedule & frequency, payment breakdown, and Step 1 questionnaire Q&As.
 
 ## 9. Edge Cases and Limitations
 

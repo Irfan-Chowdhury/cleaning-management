@@ -102,18 +102,18 @@
                             </select>
                         </div>
 
-                        <div class="col-md-4 form-group">
-                            <label for="promotion-discount-value">Discount Value <span class="text-danger">*</span></label>
-                            <input type="number" step="0.01" min="0" class="form-control" id="promotion-discount-value"
+                        <div class="col-md-4 form-group" id="promotion-discount-value-group" style="display: none;">
+                            <label for="promotion-discount-value" id="promotion-discount-value-label">Discount Value <span class="text-danger">*</span></label>
+                            <input type="number" step="0.01" min="0.01" class="form-control" id="promotion-discount-value"
                                    name="discount_value" placeholder="0.00">
                         </div>
 
                         <div class="col-md-4 form-group">
                             <label for="promotion-status">Status <span class="text-danger">*</span></label>
                             <select class="form-control" id="promotion-status" name="status">
-                                <option value="active">Active</option>
-                                <option value="paused">Paused</option>
-                                <option value="expired">Expired</option>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                                <option value="2">Expired</option>
                             </select>
                         </div>
                     </div>
@@ -216,14 +216,38 @@
         var $form = $('#promotion-modal-form');
         var $submit = $('#promotion-modal-submit');
 
+        function toggleDiscountValueField() {
+            var selectedType = $('#promotion-discount-type').val();
+            var $group = $('#promotion-discount-value-group');
+            var $label = $('#promotion-discount-value-label');
+            var $input = $('#promotion-discount-value');
+
+            if (selectedType === 'percentage') {
+                $label.html('Discount Value (%) <span class="text-danger">*</span>');
+                $input.attr('placeholder', 'e.g. 20 (for 20%)').attr('max', '100');
+                $group.slideDown(200);
+            } else if (selectedType === 'fixed') {
+                $label.html('Discount Value ($) <span class="text-danger">*</span>');
+                $input.attr('placeholder', '0.00').removeAttr('max');
+                $group.slideDown(200);
+            } else {
+                $group.slideUp(200);
+            }
+        }
+
+        $('#promotion-discount-type').on('change', function () {
+            toggleDiscountValueField();
+        });
+
         function resetForm() {
             $form[0].reset();
             $form.find('.is-invalid').removeClass('is-invalid');
             $form.find('.promotion-field-error').remove();
             $('#promotion-id').val('');
             $('#promotion-form-method').val('POST');
-            $('#promotion-status').val('active');
+            $('#promotion-status').val(1);
             $form.attr('action', promotionsBaseUrl);
+            toggleDiscountValueField();
         }
 
         $('#promotion-code').on('input', function () {
@@ -255,6 +279,8 @@
             $('#promotion-expires-at').val($btn.data('expires_at'));
             $('#promotion-new-customers-only').prop('checked', Number($btn.data('new_customers_only')) === 1);
             $('#promotion-existing-customers-only').prop('checked', Number($btn.data('existing_customers_only')) === 1);
+
+            toggleDiscountValueField();
 
             $('#promotion-form-method').val('PUT');
             $form.attr('action', promotionsBaseUrl + '/' + id);

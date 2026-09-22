@@ -248,6 +248,56 @@
     box-shadow: 0 0 0 0.2rem rgba(8, 102, 232, 0.14);
 }
 
+.whats-included-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.included-feature-add-btn {
+    display: inline-flex;
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: 13px;
+    border-radius: 7px;
+}
+
+.included-feature-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.included-feature-row .form-control {
+    min-height: 40px;
+    font-size: 13.5px;
+}
+
+.included-feature-remove-btn {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    color: #dc3545;
+    background: #fff5f5;
+    border: 1px solid #fecdca;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.included-feature-remove-btn:hover {
+    color: #ffffff;
+    background: #dc3545;
+    border-color: #dc3545;
+}
+
 .service-modal-actions .btn {
     display: inline-flex;
     min-height: 40px;
@@ -311,6 +361,35 @@
     color: #344054;
     font-size: 14px;
     line-height: 1.6;
+}
+
+.service-included-view {
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+
+.service-included-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.service-included-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #344054;
+    line-height: 1.5;
+}
+
+.service-included-item i {
+    font-size: 16px;
+    color: #12b76a;
+    margin-top: 2px;
+    flex-shrink: 0;
 }
 
 .service-questions-view {

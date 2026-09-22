@@ -117,12 +117,6 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="maximum_booking_amount">Maximum Booking Amount</label>
-                        <input type="number" step="0.01" min="0" class="form-control" id="maximum_booking_amount"
-                               name="maximum_booking_amount" value="{{ old('maximum_booking_amount', $settings->maximum_booking_amount) }}" placeholder="0.00">
-                    </div>
-
-                    <div class="form-group">
                         <label for="maximum_advance_booking_days">Maximum Advance Booking Days</label>
                         <input type="number" step="1" min="1" class="form-control" id="maximum_advance_booking_days"
                                name="maximum_advance_booking_days" value="{{ old('maximum_advance_booking_days', $settings->maximum_advance_booking_days) }}" placeholder="30">
@@ -141,11 +135,22 @@
                     <span class="settings-section-icon"><i class="fas fa-gift" aria-hidden="true"></i></span>
                     <div>
                         <h3>Customer and Reward Configuration</h3>
-                        <p>Set credit and reward amounts, then enable or disable each reward type.</p>
+                        <p>Set credit, reward amounts, and wallet limits, then enable or disable each reward type.</p>
                     </div>
                 </div>
 
                 <div class="settings-grid settings-reward-grid">
+                    <div class="settings-toggle-group">
+                        <div class="form-group mb-0">
+                            <label for="max_wallet_usage">Max Wallet Usage Per Booking</label>
+                            <input type="number" step="0.01" min="0" class="form-control" id="max_wallet_usage"
+                                   name="max_wallet_usage" value="{{ old('max_wallet_usage', $settings->max_wallet_usage) }}" placeholder="0.00">
+                        </div>
+                        <div class="settings-card-meta">
+                            <i class="fas fa-wallet text-primary mr-1" aria-hidden="true"></i> <span class="text-muted font-weight-normal small">Usage Limit</span>
+                        </div>
+                    </div>
+
                     <div class="settings-toggle-group">
                         <div class="form-group mb-0">
                             <label for="welcome_credit">Welcome Credit</label>

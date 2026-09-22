@@ -23,7 +23,7 @@ class SettingRequest extends FormRequest
             'timezone' => ['nullable', 'timezone', 'max:100'],
             'currency' => ['nullable', 'string', 'size:3', 'regex:/^[A-Z]{3}$/'],
             'minimum_booking_amount' => ['nullable', 'numeric', 'min:0', 'decimal:0,2'],
-            'maximum_booking_amount' => ['nullable', 'numeric', 'min:0', 'decimal:0,2'],
+            'max_wallet_usage' => ['nullable', 'numeric', 'min:0', 'decimal:0,2'],
             'maximum_advance_booking_days' => ['nullable', 'integer', 'min:1'],
             'cancellation_notice_hours' => ['nullable', 'integer', 'min:0'],
             'welcome_credit' => ['nullable', 'numeric', 'min:0'],
@@ -39,16 +39,7 @@ class SettingRequest extends FormRequest
 
     public function after(): array
     {
-        return [
-            function (Validator $validator): void {
-                $minimum = $this->input('minimum_booking_amount');
-                $maximum = $this->input('maximum_booking_amount');
-
-                if ($minimum !== null && $maximum !== null && (float) $maximum < (float) $minimum) {
-                    $validator->errors()->add('maximum_booking_amount', 'Maximum booking amount must be greater than or equal to the minimum booking amount.');
-                }
-            },
-        ];
+        return [];
     }
 
     public function messages(): array

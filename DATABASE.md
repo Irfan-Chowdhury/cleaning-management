@@ -18,6 +18,7 @@
 - id
 - name
 - description
+- whats_included
 - status
 
 
@@ -88,8 +89,8 @@ source will be like welcome_bonus, referral_bonus, review_bonus, admin_adjustmen
 - booking_id
 - user_id
 - amount
-- payment_method
-- payment_status
+- payment_method nullable
+- payment_status nullable
 - created_at
 
 
@@ -107,7 +108,7 @@ currency
 
 -- Booking Configuration
 minimum_booking_amount
-maximum_booking_amount
+max_wallet_usage
 maximum_advance_booking_days
 cancellation_notice_hours
 

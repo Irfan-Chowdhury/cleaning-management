@@ -59,7 +59,7 @@
                                         <a href="{{ route('services.show', $service) }}" class="btn btn-sm btn-outline-success service-action-btn" title="View">
                                             <i class="fas fa-eye" aria-hidden="true"></i>
                                         </a>
-                                        <button type="button" class="btn btn-sm btn-outline-primary service-action-btn js-service-edit" title="Edit" data-toggle="modal" data-target="#service-form-modal" data-action="{{ route('services.update', $service) }}" data-name="{{ $service->name }}" data-description="{{ $service->description }}" data-status="{{ $service->status }}">
+                                        <button type="button" class="btn btn-sm btn-outline-primary service-action-btn js-service-edit" title="Edit" data-toggle="modal" data-target="#service-form-modal" data-action="{{ route('services.update', $service) }}" data-name="{{ $service->name }}" data-description="{{ $service->description }}" data-status="{{ $service->status }}" data-whats-included="{{ json_encode($service->whats_included ?? []) }}">
                                             <i class="fas fa-edit" aria-hidden="true"></i>
                                         </button>
                                         <button type="button" class="btn btn-sm btn-outline-danger service-action-btn js-delete-confirm" title="Delete" data-action="{{ route('services.destroy', $service) }}" data-name="{{ $service->name }}">

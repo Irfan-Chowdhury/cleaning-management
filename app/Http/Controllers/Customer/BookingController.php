@@ -2,8 +2,14 @@
 
 namespace App\Http\Controllers\Customer;
 
+use App\Enums\BookingStatus;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\Booking;
+use App\Models\User;
+use App\Notifications\BookingCancelledNotification;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
 {
@@ -12,161 +18,120 @@ class BookingController extends Controller
      */
     public function index()
     {
-        $bookings = collect([
-            (object)[
-                'id'                   => 1,
-                'booking_id'           => 'BK-001',
-                'service_name'         => 'Deep Home Cleaning',
-                'date'                 => '2026-08-20',
-                'time'                 => '09:00 AM - 11:00 AM',
-                'amount'               => 180.00,
-                'status'               => 'Confirmed',
-                'payment_status'       => 'Paid',
-                'payment_method'       => 'Credit Card (Visa **** 4242)',
-                'paid_amount'          => 180.00,
-                'wallet_used'          => 0.00,
-                'cancellation_eligible'=> true,
-                'questionnaires'       => [
-                    [
-                        'question' => 'How many bedrooms and bathrooms require cleaning?',
-                        'answer'   => '3 Bedrooms, 2 Bathrooms'
-                    ],
-                    [
-                        'question' => 'Are there any pets present in the residence?',
-                        'answer'   => 'Yes (1 Golden Retriever, friendly)'
-                    ],
-                    [
-                        'question' => 'Any special requests or focus areas?',
-                        'answer'   => 'Please perform deep scrubbing on kitchen oven and master shower tiles.'
-                    ]
+        $userId = Auth::id();
+        $dbBookings = Booking::with(['service', 'payment'])
+            ->where('user_id', $userId)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        if ($dbBookings->isNotEmpty()) {
+            $bookings = $dbBookings->map(function ($b) {
+                $statusVal = $b->status instanceof \App\Enums\BookingStatus ? $b->status->value : (string) $b->status;
+                $paymentStatusRaw = strtolower($b->payment?->payment_status ?? $b->payment_status ?? 'pending');
+                $paymentStatus = ucfirst($paymentStatusRaw);
+                $paymentMethod = $b->payment?->payment_method ?? $b->payment_method ?? 'Pending Payment';
+
+                $questionnaires = [];
+                if (!empty($b->answers) && is_array($b->answers)) {
+                    $questionnaires = $b->answers;
+                }
+                if (!empty($b->service_notes)) {
+                    $questionnaires[] = [
+                        'question' => 'Service Notes',
+                        'answer'   => $b->service_notes,
+                    ];
+                }
+                if (!empty($b->special_instructions)) {
+                    $questionnaires[] = [
+                        'question' => 'Special Instructions',
+                        'answer'   => $b->special_instructions,
+                    ];
+                }
+
+                return (object)[
+                    'id'                   => $b->id,
+                    'booking_id'           => 'BK-' . sprintf('%03d', $b->id),
+                    'service_name'         => $b->service?->name ?? 'Cleaning Service',
+                    'date'                 => $b->booking_date ?? $b->created_at->format('Y-m-d'),
+                    'time'                 => $b->start_time ? \Carbon\Carbon::parse($b->start_time)->format('g:i A') : '09:00 AM',
+                    'amount'               => (float) $b->total_amount,
+                    'status'               => ucfirst($statusVal),
+                    'status_raw'           => strtolower($statusVal),
+                    'payment_status'       => $paymentStatus,
+                    'payment_method'       => $paymentMethod === 'pending' ? 'Pending Payment' : $paymentMethod,
+                    'paid_amount'          => $paymentStatusRaw === 'paid' ? (float) $b->total_amount : 0.00,
+                    'wallet_used'          => (float) $b->credit_used,
+                    'credit_used'          => (float) $b->credit_used,
+                    'discount_amount'      => (float) $b->discount_amount,
+                    'referal_code'         => $b->referal_code,
+                    'promo_code'           => $b->promo_code,
+                    'cancellation_eligible'=> ($statusVal === 'approved'),
+                    'questionnaires'       => $questionnaires,
+                ];
+            });
+        } else {
+            $bookings = collect([
+                (object)[
+                    'id'                   => 1,
+                    'booking_id'           => 'BK-001',
+                    'service_name'         => 'Deep Home Cleaning',
+                    'date'                 => '2026-08-20',
+                    'time'                 => '09:00 AM',
+                    'amount'               => 180.00,
+                    'status'               => 'Approved',
+                    'status_raw'           => 'approved',
+                    'payment_status'       => 'Paid',
+                    'payment_method'       => 'Credit Card (Visa **** 4242)',
+                    'paid_amount'          => 180.00,
+                    'wallet_used'          => 0.00,
+                    'credit_used'          => 0.00,
+                    'discount_amount'      => 0.00,
+                    'referal_code'         => null,
+                    'promo_code'           => null,
+                    'cancellation_eligible'=> true,
+                    'questionnaires'       => []
                 ]
-            ],
-            (object)[
-                'id'                   => 2,
-                'booking_id'           => 'BK-002',
-                'service_name'         => 'Office Sanitation Service',
-                'date'                 => '2026-08-21',
-                'time'                 => '10:00 AM - 12:30 PM',
-                'amount'               => 350.50,
-                'status'               => 'Pending',
-                'payment_status'       => 'Unpaid',
-                'payment_method'       => 'Pending Payment Selection',
-                'paid_amount'          => 0.00,
-                'wallet_used'          => 0.00,
-                'cancellation_eligible'=> true,
-                'questionnaires'       => [
-                    [
-                        'question' => 'Total office floor area size?',
-                        'answer'   => '2,500 sq. ft. (Open floor + 4 private cabins)'
-                    ],
-                    [
-                        'question' => 'Sanitation type preference?',
-                        'answer'   => 'Hospital-grade Surface & Air Fogging'
-                    ],
-                    [
-                        'question' => 'Building entry instructions?',
-                        'answer'   => 'Pick up keycard at main reception security desk.'
-                    ]
-                ]
-            ],
-            (object)[
-                'id'                   => 3,
-                'booking_id'           => 'BK-003',
-                'service_name'         => 'Carpet Wash & Steam',
-                'date'                 => '2026-08-22',
-                'time'                 => '02:00 PM - 04:00 PM',
-                'amount'               => 120.00,
-                'status'               => 'Completed',
-                'payment_status'       => 'Paid',
-                'payment_method'       => 'Customer Wallet',
-                'paid_amount'          => 120.00,
-                'wallet_used'          => 120.00,
-                'cancellation_eligible'=> false,
-                'questionnaires'       => [
-                    [
-                        'question' => 'Number of carpeted rooms or areas?',
-                        'answer'   => '2 Bedrooms + 1 Large Living Room Carpet'
-                    ],
-                    [
-                        'question' => 'Tough stain treatment requested?',
-                        'answer'   => 'Coffee stain treatment on living room rug'
-                    ]
-                ]
-            ],
-            (object)[
-                'id'                   => 4,
-                'booking_id'           => 'BK-004',
-                'service_name'         => 'Window Washing',
-                'date'                 => '2026-08-23',
-                'time'                 => '04:30 PM - 06:00 PM',
-                'amount'               => 95.00,
-                'status'               => 'Cancelled',
-                'payment_status'       => 'Refunded',
-                'payment_method'       => 'Credit Card (Refunded)',
-                'paid_amount'          => 0.00,
-                'wallet_used'          => 0.00,
-                'cancellation_eligible'=> false,
-                'questionnaires'       => [
-                    [
-                        'question' => 'Building height and total exterior windows?',
-                        'answer'   => '2-Story House, 14 Exterior Windows'
-                    ],
-                    [
-                        'question' => 'Include window screen cleaning?',
-                        'answer'   => 'Yes, clean all window mesh screens'
-                    ]
-                ]
-            ],
-            (object)[
-                'id'                   => 5,
-                'booking_id'           => 'BK-005',
-                'service_name'         => 'Move-in / Move-out Cleaning',
-                'date'                 => '2026-08-24',
-                'time'                 => '08:00 AM - 12:00 PM',
-                'amount'               => 240.00,
-                'status'               => 'Confirmed',
-                'payment_status'       => 'Paid',
-                'payment_method'       => 'Credit Card + Wallet',
-                'paid_amount'          => 200.00,
-                'wallet_used'          => 40.00,
-                'cancellation_eligible'=> true,
-                'questionnaires'       => [
-                    [
-                        'question' => 'Property type and occupancy state?',
-                        'answer'   => 'Unfurnished 2-Bedroom Condo (Move-Out)'
-                    ],
-                    [
-                        'question' => 'Inside appliance deep cleaning required?',
-                        'answer'   => 'Yes, include refrigerator and oven interiors'
-                    ]
-                ]
-            ],
-            (object)[
-                'id'                   => 6,
-                'booking_id'           => 'BK-006',
-                'service_name'         => 'Kitchen Deep Clean',
-                'date'                 => '2026-08-25',
-                'time'                 => '01:00 PM - 03:00 PM',
-                'amount'               => 150.00,
-                'status'               => 'Pending',
-                'payment_status'       => 'Unpaid',
-                'payment_method'       => 'Cash on Service Completion',
-                'paid_amount'          => 0.00,
-                'wallet_used'          => 0.00,
-                'cancellation_eligible'=> true,
-                'questionnaires'       => [
-                    [
-                        'question' => 'Oven hood and range degreasing needed?',
-                        'answer'   => 'Yes, heavy grease accumulation treatment'
-                    ],
-                    [
-                        'question' => 'Cabinet interior wiping?',
-                        'answer'   => 'Clean empty pantry shelves inside'
-                    ]
-                ]
-            ],
-        ]);
+            ]);
+        }
 
         return view('pages.customer.booking.index', compact('bookings'));
+    }
+
+    /**
+     * Cancel an approved booking by customer and notify admin.
+     */
+    public function cancel(Booking $booking): JsonResponse
+    {
+        if ((int) $booking->user_id !== (int) Auth::id()) {
+            return response()->json(['error' => 'Unauthorized action.'], 403);
+        }
+
+        $statusVal = $booking->status instanceof BookingStatus ? $booking->status->value : (string) $booking->status;
+
+        if (strtolower($statusVal) !== 'approved') {
+            return response()->json([
+                'error' => 'Only approved bookings can be cancelled schedule.'
+            ], 422);
+        }
+
+        $booking->status = BookingStatus::CANCELLED;
+        $booking->save();
+
+        // Send app notification to all Admins
+        try {
+            $admins = User::where('role', 1)->get();
+            foreach ($admins as $admin) {
+                $admin->notify(new BookingCancelledNotification($booking));
+            }
+        } catch (\Throwable $e) {
+            Log::error('Failed to send admin booking cancellation notification: ' . $e->getMessage());
+        }
+
+        return response()->json([
+            'success'    => true,
+            'message'    => 'Booking schedule has been cancelled successfully.',
+            'status'     => 'Cancelled',
+            'status_raw' => 'cancelled',
+        ]);
     }
 }

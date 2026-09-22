@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\PromotionStatus;
 use App\Models\Promotion;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -9,7 +10,7 @@ use Illuminate\Database\Seeder;
 class PromotionSeeder extends Seeder
 {
     /**
-     * Seed demo promotional offers.
+     * php artisan db:seed --class=PromotionSeeder
      */
     public function run(): void
     {
@@ -22,7 +23,7 @@ class PromotionSeeder extends Seeder
                 'description' => 'Introductory discount for first-time cleaning service customers.',
                 'discount_type' => 'fixed',
                 'discount_value' => 25.00,
-                'status' => 'active',
+                'status' => PromotionStatus::ACTIVE,
                 'start_at' => now()->subDays(5),
                 'expires_at' => now()->addDays(45),
                 'new_customers_only' => true,
@@ -34,7 +35,7 @@ class PromotionSeeder extends Seeder
                 'description' => 'Seasonal percentage discount for deep cleaning bookings.',
                 'discount_type' => 'percentage',
                 'discount_value' => 15.00,
-                'status' => 'active',
+                'status' => PromotionStatus::ACTIVE,
                 'start_at' => now()->subDays(2),
                 'expires_at' => now()->addDays(30),
                 'new_customers_only' => false,
@@ -46,19 +47,19 @@ class PromotionSeeder extends Seeder
                 'description' => 'Special offer for returning customers.',
                 'discount_type' => 'percentage',
                 'discount_value' => 10.00,
-                'status' => 'active',
+                'status' => PromotionStatus::ACTIVE,
                 'start_at' => now()->subDay(),
                 'expires_at' => now()->addDays(60),
                 'new_customers_only' => false,
                 'existing_customers_only' => true,
             ],
             [
-                'name' => 'Paused Move Out Offer',
+                'name' => 'Inactive Move Out Offer',
                 'code' => 'MOVEOUT50',
-                'description' => 'Paused fixed discount prepared for move-out cleaning campaigns.',
+                'description' => 'Inactive fixed discount prepared for move-out cleaning campaigns.',
                 'discount_type' => 'fixed',
                 'discount_value' => 50.00,
-                'status' => 'paused',
+                'status' => PromotionStatus::INACTIVE,
                 'start_at' => now()->addDays(7),
                 'expires_at' => now()->addDays(90),
                 'new_customers_only' => false,
@@ -70,7 +71,7 @@ class PromotionSeeder extends Seeder
                 'description' => 'Previous holiday campaign retained for reporting history.',
                 'discount_type' => 'percentage',
                 'discount_value' => 20.00,
-                'status' => 'expired',
+                'status' => PromotionStatus::EXPIRED,
                 'start_at' => now()->subDays(90),
                 'expires_at' => now()->subDays(10),
                 'new_customers_only' => false,
