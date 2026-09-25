@@ -7,6 +7,20 @@
 @endpush
 
 @section('content')
+    <div class="alert alert-warning d-flex align-items-center mb-4 p-3 shadow-sm rounded-lg" style="background-color: #fff8e6; border: 1px solid #ffe0b2; border-left: 5px solid #ff9800; color: #8c5400;" role="alert">
+        <div class="mr-3" style="font-size: 24px;">
+            <i class="fas fa-tools text-warning"></i>
+        </div>
+        <div>
+            <h5 class="alert-heading font-weight-bold mb-1" style="font-size: 16px; color: #d97706;">
+                Page Under Construction &bull; Coming Soon!
+            </h5>
+            <p class="mb-0 small" style="color: #92400e;">
+                We are actively working on enhancing this dashboard with exciting features. Stay tuned!
+            </p>
+        </div>
+    </div>
+
     <div class="customer-dashboard">
         <section class="dashboard-section dashboard-section-top">
             <div class="dashboard-card next-cleaning-card">
