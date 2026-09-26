@@ -120,7 +120,7 @@
             <span>Wallet</span>
         </a>
 
-        <a href="{{ route('customer.referrals.index') }}" class="sidebar-link {{ request()->routeIs('customer.referrals.*') || request()->is('customer-referrals*') ? 'active' : '' }}">
+        <a href="{{ route('customer.referrals.index') }}" class="sidebar-link {{ request()->routeIs('customer.referrals.*') || request()->is('my-referrals*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-users" aria-hidden="true"></i></span>
             <span>Referrals</span>
         </a>

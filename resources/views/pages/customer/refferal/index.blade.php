@@ -115,19 +115,6 @@
 @endpush
 
 @section('content')
-    <div class="alert alert-warning d-flex align-items-center mb-4 p-3 shadow-sm rounded-lg" style="background-color: #fff8e6; border: 1px solid #ffe0b2; border-left: 5px solid #ff9800; color: #8c5400;" role="alert">
-        <div class="mr-3" style="font-size: 24px;">
-            <i class="fas fa-tools text-warning"></i>
-        </div>
-        <div>
-            <h5 class="alert-heading font-weight-bold mb-1" style="font-size: 16px; color: #d97706;">
-                Page Under Construction &bull; Coming Soon!
-            </h5>
-            <p class="mb-0 small" style="color: #92400e;">
-                We are actively working on enhancing this page with exciting features. Stay tuned!
-            </p>
-        </div>
-    </div>
     <div class="customers-page">
         <!-- Page Header -->
         <div class="customers-header mb-4">
@@ -137,18 +124,18 @@
             </div>
         </div>
 
-        <!-- Referral Link & Referral Code Cards Section (Wireframe Line 454-459) -->
+        <!-- Referral Link & Referral Code Cards Section -->
         <div class="referral-program-card">
             <div class="row">
                 <!-- Referral Code Box -->
-                <div class="col-lg-5 mb-4 mb-lg-0">
+                <div class="col-lg-6 mb-4 mb-lg-0">
                     <label for="referral-code-input" class="font-weight-bold text-dark mb-2" style="font-size: 14px;">
                         <i class="fas fa-ticket-alt text-primary mr-1"></i> Your Referral Code
                     </label>
                     <div class="input-group referral-input-group">
                         <input type="text" id="referral-code-input" class="form-control" value="{{ $referralCode }}" readonly>
                         <div class="input-group-append">
-                            <button type="button" id="btn-copy-code" class="btn btn-primary btn-copy" title="Copy Referral Code">
+                            <button type="button" id="btn-copy-code" class="btn btn-primary btn-copy">
                                 <i class="far fa-copy"></i> Copy
                             </button>
                         </div>
@@ -156,18 +143,15 @@
                 </div>
 
                 <!-- Referral Link Box -->
-                <div class="col-lg-7">
+                <div class="col-lg-6">
                     <label for="referral-link-input" class="font-weight-bold text-dark mb-2" style="font-size: 14px;">
                         <i class="fas fa-link text-primary mr-1"></i> Your Referral Link
                     </label>
                     <div class="input-group referral-input-group">
                         <input type="text" id="referral-link-input" class="form-control" value="{{ $referralLink }}" readonly>
                         <div class="input-group-append">
-                            <button type="button" id="btn-copy-link" class="btn btn-primary btn-copy" title="Copy Referral Link">
+                            <button type="button" id="btn-copy-link" class="btn btn-primary btn-copy">
                                 <i class="far fa-copy"></i> Copy
-                            </button>
-                            <button type="button" id="btn-share-link" class="btn btn-outline-primary btn-copy ml-2" title="Share Link">
-                                <i class="fas fa-share-alt"></i> Share
                             </button>
                         </div>
                     </div>
@@ -175,7 +159,7 @@
             </div>
         </div>
 
-        <!-- Summary Metric Cards (Wireframe Line 460-462) -->
+        <!-- Summary Metric Cards -->
         <div class="row mb-4">
             <!-- Total Referrals -->
             <div class="col-md-4 mb-3 mb-md-0">
@@ -217,7 +201,7 @@
             </div>
         </div>
 
-        <!-- Referral History Datatable Card (Wireframe Line 464-471) -->
+        <!-- Referral History Datatable Card -->
         <div class="customers-table-card">
             <div class="customers-table-card-header">
                 <div>
@@ -239,7 +223,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($referrals as $item)
+                        @foreach ($referrals as $item)
                             @php
                                 $statusLower = strtolower($item->status);
                                 if ($statusLower === 'rewarded') {
@@ -287,14 +271,7 @@
                                     @endif
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="text-center py-4 text-muted">
-                                    <i class="fas fa-user-friends fa-2x mb-2 d-block" aria-hidden="true"></i>
-                                    No referrals recorded yet.
-                                </td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -319,46 +296,69 @@
                 language: {
                     search: 'Search referrals:',
                     lengthMenu: 'Show _MENU_ entries',
+                    emptyTable: '<div class="text-center py-4 text-muted"><i class="fas fa-user-friends fa-2x mb-2 d-block" aria-hidden="true"></i>No referrals recorded yet.</div>',
+                    zeroRecords: '<div class="text-center py-4 text-muted"><i class="fas fa-search fa-2x mb-2 d-block" aria-hidden="true"></i>No matching referrals found.</div>'
                 }
             });
 
-            // Copy Helper
-            function copyToClipboard(elementId, successMessage) {
-                var input = document.getElementById(elementId);
-                input.select();
-                input.setSelectionRange(0, 99999);
-                navigator.clipboard.writeText(input.value).then(function () {
-                    alert(successMessage);
-                }).catch(function () {
-                    document.execCommand('copy');
-                    alert(successMessage);
-                });
+            // Enhanced Copy Helper with Tooltip & Checkmark
+            function copyToClipboard(inputId, $btn) {
+                var input = document.getElementById(inputId);
+                var textToCopy = input.value;
+
+                function showSuccess() {
+                    var originalHtml = $btn.data('original-html') || $btn.html();
+                    if (!$btn.data('original-html')) {
+                        $btn.data('original-html', originalHtml);
+                    }
+
+                    // Change button UI to green checkmark
+                    $btn.html('<i class="fas fa-check mr-1"></i> Copied')
+                        .removeClass('btn-primary')
+                        .addClass('btn-success');
+
+                    // Trigger Tooltip
+                    $btn.attr('title', '✓ Copied')
+                        .tooltip({ trigger: 'manual', placement: 'top' })
+                        .tooltip('show');
+
+                    // Reset after 2 seconds
+                    setTimeout(function () {
+                        $btn.tooltip('hide').tooltip('dispose');
+                        $btn.html(originalHtml)
+                            .removeClass('btn-success')
+                            .addClass('btn-primary');
+                    }, 2000);
+                }
+
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(textToCopy).then(showSuccess).catch(function () {
+                        fallbackCopy();
+                    });
+                } else {
+                    fallbackCopy();
+                }
+
+                function fallbackCopy() {
+                    input.select();
+                    input.setSelectionRange(0, 99999);
+                    try {
+                        document.execCommand('copy');
+                        showSuccess();
+                    } catch (err) {
+                        console.error('Failed to copy', err);
+                    }
+                }
             }
 
             // Copy Code Event
             $('#btn-copy-code').on('click', function () {
-                copyToClipboard('referral-code-input', 'Referral code copied to clipboard!');
+                copyToClipboard('referral-code-input', $(this));
             });
 
             // Copy Link Event
             $('#btn-copy-link').on('click', function () {
-                copyToClipboard('referral-link-input', 'Referral link copied to clipboard!');
-            });
-
-            // Share Link Event
-            $('#btn-share-link').on('click', function () {
-                var link = $('#referral-link-input').val();
-                if (navigator.share) {
-                    navigator.share({
-                        title: 'Join Clean & Manage',
-                        text: 'Use my referral link to get cleaning service discounts!',
-                        url: link
-                    }).catch(function (err) {
-                        console.log('Share canceled', err);
-                    });
-                } else {
-                    copyToClipboard('referral-link-input', 'Referral link copied to clipboard for sharing!');
-                }
+                copyToClipboard('referral-link-input', $(this));
             });
         });
     </script>
