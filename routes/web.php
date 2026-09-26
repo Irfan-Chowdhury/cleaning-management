@@ -25,6 +25,8 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use Illuminate\Support\Facades\File;
+use App\Models\Setting;
 
 Route::get('/', function () {
     if (! Auth::check()) {
@@ -182,4 +184,24 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
 
         return nl2br(Artisan::output());
     })->where('class', '[A-Za-z0-9_]+');
+
+    Route::get('/documentation', function () {
+        $content = File::get(public_path() . '/documentation/index.html');
+        try {
+            $setting = Setting::latest()->first();
+            $logoUrl = $setting?->company_logo_url;
+        } catch (\Throwable $e) {
+            $logoUrl = null;
+        }
+
+        $logoUrl = $logoUrl ?? asset('public/assets/images/company_logo/brand_logo.png');
+
+        $content = preg_replace(
+            '/<img\s+id="doc-logo"\s+src="[^"]*"/i',
+            '<img id="doc-logo" src="' . e($logoUrl) . '"',
+            $content
+        );
+
+        return response($content);
+    });
 });

@@ -1,0 +1,1537 @@
+<!doctype html>
+<!--[if IE 6 ]><html lang="en-us" class="ie6"> <![endif]-->
+<!--[if IE 7 ]><html lang="en-us" class="ie7"> <![endif]-->
+<!--[if IE 8 ]><html lang="en-us" class="ie8"> <![endif]-->
+<!--[if (gt IE 7)|!(IE)]><!-->
+<html lang="en-us">
+<!--<![endif]-->
+
+<head>
+    <meta charset="utf-8">
+    <title>Dust2Glow - Documentation</title>
+    <meta name="description" content="Dust2Glow offers a comprehensive cleaning service management solution to manage all of your cleaning service booking, schedule, and business operations." />
+    <meta name="author" content="LionCoders">
+    <meta name="copyright" content="LionCoders">
+    <link rel="icon" href="public/documentation/assets/images/favicon/favicon.png" />
+
+    <!-- Google fonts - Roboto -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:400,700">
+    <link rel="stylesheet" href="public/documentation/assets/css/documenter_style.css" media="all">
+    <link rel="stylesheet" href="public/documentation/assets/css/jquery.mCustomScrollbar.css" media="all">
+
+    <script src="public/documentation/assets/js/jquery.js"></script>
+    <script src="public/documentation/assets/js/jquery.mCustomScrollbar.js"></script>
+    <script src="public/documentation/assets/js/smooth-scroll.min.js"></script>
+    <script src="public/documentation/assets/js/typeAhead.js"></script>
+    <script src="public/documentation/assets/js/script.js"></script>
+</head>
+
+<body>
+<div id="documenter_sidebar">
+    <img id="doc-logo" src="public/documentation/assets/images/logo-cartpro.webp" style="border: none;margin: 10px 30px -10px;width: 150px">
+
+    <ul id="documenter_nav">
+        <li><a class="current" href="#documenter_cover">Start</a></li>
+        <li><a href="#server_requirement" title="SERVER REQUIREMENTS">Server Requirements</a></li>
+        <li><a href="#admin_log_in" title="Log In">Log In</a></li>
+        <li><a href="#admin_dashboard" title="Admin DASHBOARD">Dashboard</a></li>
+        <li><a href="#empty_database" title="Empty Database">Empty Database</a></li>
+        <li><a href="#system_backup" title="System Backup">System Backup</a></li>
+        <li><a href="#datatable_options" title="Datatable Options">Datatable Options</a></li>
+        <li><a href="#category" title="Categories">Categories</a></li>
+        <li><a href="#brand" title="Brands">Brands</a></li>
+        <li><a href="#attribute_set" title="Attribute Set">Attribute Set</a></li>
+        <li><a href="#attributes" title="Attributes">Attributes</a></li>
+        <li><a href="#tag" title="Tag">Tags</a></li>
+        <li><a href="#product" title="Product">Catalog</a></li>
+        <li><a href="#review" title="review">Reviews</a></li>
+        <li><a href="#order" title="Order">Order</a></li>
+        <li><a href="#transaction" title="Transaction">Transaction</a></li>
+        <li><a href="#flash_sale" title="Flash Sale">Flash Sale</a></li>
+        <li><a href="#coupon" title="Coupons">Coupons</a></li>
+        <li><a href="#faq" title="FAQ Setting">FAQ Setting</a></li>
+        <li><a href="#page" title="Page">Pages</a></li>
+        <li><a href="#menu" title="Menu">Menus</a></li>
+        <li><a href="#slider" title="Slider">Slider</a></li>
+        <li><a href="#storefront" title="Storefront">Storefront</a></li>
+        <li><a href="#user" title="Users">Users</a></li>
+        <li><a href="#role" title="Roles">Roles</a></li>
+        <li><a href="#tax" title="Taxes">Taxes</a></li>
+        <li><a href="#translation" title="Translation">Translation</a></li>
+        <li><a href="#currency_rates" title="Currency Rates">Currency Rates</a></li>
+        <li><a href="#country" title="Country">Country</a></li>
+        <li><a href="#currency" title="Currency">Currency</a></li>
+        <li><a href="#setting" title="Other Settings">Other Settings</a></li>
+        <li><a href="#language" title="Language">Language</a></li>
+        <li><a href="#clearCache" title="Clear Cache">Clear Cache</a></li>
+        <li><a href="#versionUpgrade" title="Version Upgrade">Version Upgrade</a></li>
+        <li><a href="#bugUpdate" title="Bug Update">Bug Update</a></li>
+        <li><a href="#support" title="Support">Support</a></li>
+    </ul>
+</div>
+<div id="documenter_content">
+
+    <div id="the-basics">
+        <input class="typeahead form-control" type="text" placeholder="Search">
+    </div>
+
+    <section id="documenter_cover">
+        <h1>Dust2Glow - Cleaning Service Management System</h1>
+        <div id="documenter_buttons"></div>
+        <hr>
+        <p>Dust2Glow is a comprehensive Cleaning Service Management System designed to streamline cleaning service bookings, customer management, scheduling, and administrative operations. It features an intuitive customer booking flow, an administrative management panel, service catalog control, holiday management, and customizable system settings tailored for professional cleaning services.</p>
+        <p>
+            The documentation is written in chronological order. Please follow the section guides to configure and manage your system efficiently. You can also search using the search bar for a specific query.
+        </p>
+    </section>
+
+    <section id="server_requirement">
+        <div class="page-header">
+            <h3>SERVER REQUIREMENT</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            The software is built on most popular PHP framework Laravel(Version 8). The minimum
+            requirements for running the software is listed below .Please do check if your server matches those
+            requirements</p>
+        <ul>
+            <li>PHP - 7.4</li>
+            <li>BCMath PHP Extension</li>
+            <li>Ctype PHP Extension</li>
+            <li>Fileinfo PHP Extension</li>
+            <li>JSON PHP Extension</li>
+            <li>Mbstring PHP Extension</li>
+            <li>OpenSSL PHP Extension</li>
+            <li>PDO PHP Extension</li>
+            <li>Tokenizer PHP Extension</li>
+            <li>XML PHP Extension</li>
+        </ul>
+        <p>
+            &nbsp;</p>
+        <p>
+            <strong><i>NB:</strong> Please note if you try to install the application on any other server say LiteSpeed or IIS, you
+                may get undesirable result. We do not recommend you to use other server than Apache or Nginx. Also
+                we do not provide support for installation in server other than Apache and localhost installation. Please follow the installation process,
+            below. Do not use php artisan serve command. And lastly we don't provide support in the localhost (except online server).</i></p>
+    </section>
+
+
+
+    <section id="admin_log_in">
+        <div class="page-header">
+            <h3>Log In</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            After installation go to the project/root url.Then you will be prompt to admin login.To access the admin panel add /admin
+            after your website address.For example if your website address is "www.example.com", then your admin panel is located at "www.example.com/admin".The login credentials provided below are for initial usage only - do not forget
+            to update your password after first successful login.
+
+
+        <ul>
+            <li>Username ::: admin</li>
+            <li>Password ::: admin</li>
+        </ul>
+
+        </p>
+        <p>
+            <img alt="" src="public/documentation/assets/images/cartpro_admin/adminLoginPage.png">
+        </p>
+        <p>
+            After successful login you will be redirected to the admin dashboard.
+        </p>
+    </section>
+
+    <section id="admin_dashboard">
+        <div class="page-header">
+            <h3>Admin DASHBOARD</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            The system offers an informative,interactive and user friendly admin dashboard.
+            The dashboard shows summarized information about the organization in a nutshell.
+        </p>
+        <p>
+            <img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_1.png">
+        </p>
+    </section>
+
+    <section id="empty_database">
+        <div class="page-header">
+            <h3>Empty Database</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            After first time login you may want to delete the preloaded data. For that, Click on the
+            Empty Database. All the
+            preloaded data will be deleted from the database except few mandatory record that is essential for
+            running the software properly.<br>
+            <strong>Note:</strong> This is a batch process, so the action will take some time. Please wait
+            patiently.
+            <strong>***</strong> This action is irreversible, if you have your own data/record in the database, this
+            action will delete all of them.
+            This action is recommended only for the first time, unless you are sure about what you are doing.
+        </p>
+        <p>
+            <img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_2.png">
+        </p>
+    </section>
+
+    <section id="system_backup">
+        <div class="page-header">
+            <h3>System Backup</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            If you want, you can take a backup of your system. You can backup only files or database. Please follow the screenshoot below.
+            <br>
+            <strong>Note:</strong> This will take some time. Please wait patiently. And if you download only files, please extract the vendor.zip file before using the backup.
+        </p>
+        <p>
+            <img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_91.png">
+        </p>
+    </section>
+
+    <section id="datatable_options">
+        <div class="page-header">
+            <h3>Datatable Options</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            DataTables is a table enhancing plug-in that offers sorting, paging and filtering
+            abilities . In this software, datatable is used as a toll for showing data. <br>
+            Here are some of the features and usage for datatable :::
+        </p>
+        <p>
+            <img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_3.png">
+        </p>
+        <ol>
+            <li>you can select how many records to be shown in a single page (10,25 or all).Default is 10</li>
+            <li><strong>Search:</strong> Search the records/rows using keywords</li>
+            <li>You can export the records to a pdf using this button</li>
+            <li>You can export the records to a csv using this button</li>
+            <li>You can print the records using this button</li>
+            <li>You can hide/show specific columns using this button</li>
+            <!-- <li>View details of a specific record</li>
+            <li>Edit/Update a specific record</li>
+            <li>Delete a specific record</li> -->
+            <li><strong>Selector:</strong> You can select all the records/rows and perform action like print to
+                pdf/csv/print or delete multiple rows
+            </li>
+            <li><strong>Sorting:</strong> Sort columns</li>
+            <li>Edit Data</li>
+            <li>Active/Inactive Data</li>
+        </ol>
+    </section>
+
+    <section id="category">
+        <div class="page-header">
+            <h3>Category</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Products</strong> --> <strong>Category</strong>.<br>
+            You can data create, edit and active-inactive in Category.
+        </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_4.png"></p>
+
+        <div class="page-header">
+            <h5><b>Add Category</b></h5>
+            <hr class="notop">
+            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_4_2.png"></p>
+            <ul>
+                <li><b>Category Name (translatable):</b> The name of the category.</li>
+                <li><b>Status:</b> Enable the category by checking this checkbox. Only enabled categories can be used.</li>
+            </ul>
+        </div>
+
+        <br>
+        <div class="page-header">
+            <h5><b>Edit Category</b></h5>
+            <hr class="notop">
+            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_4_3.png"></p>
+        </div>
+        <div class="page-header">
+            <h5><b>Bulk Action</b></h5>
+            <hr class="notop">
+            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_4_4.png"></p>
+        </div>
+    </section>
+
+    <section id="brand">
+        <div class="page-header">
+            <h3>Brands</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Products</strong> --> <strong>Brands</strong>.<br>
+            You can data create, edit and active-inactive in Brand.
+        </p>
+        <p>
+            <img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_5.png">
+        </p>
+
+        <div class="page-header">
+            <h5><b>Add Brand</b></h5>
+            <hr class="notop">
+            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_5_2.png"></p>
+            <ul>
+                <li><b>Brand Name (translatable):</b> The name of the Brand.</li>
+                <li><b>Status:</b> Enable the Brand by checking this checkbox. Only enabled Brands can be used.</li>
+            </ul>
+        </div>
+        <br>
+        <div class="page-header">
+            <h5><b>Edit Brand</b></h5>
+            <hr class="notop">
+            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_5_3.png"></p>
+        </div>
+    </section>
+
+    <section id="attribute_set">
+        <div class="page-header">
+            <h3>Attribute Sets</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Products</strong> --> <strong>Attribute Set</strong>.<br>
+            You can data create, edit and active-inactive in Attribute Set. Organize your attributes by grouping them under the attribute sets.
+        </p>
+        <p>
+            <img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_6.png">
+        </p>
+        <div class="page-header">
+            <h5><b>Options</b></h5>
+            <hr class="notop">
+            <p>Options lets you customize the variation of the product. Customers will see available options on the product page. Customers must select the required option before adding the product to the shopping cart.</p>
+            <p>There are two types of options, Global and Local. When you create an option from the Options page it will be a global option and can be added to any product. Local options are product specific, when you create an option from the Options tab of a product it will then become a local option and will only accessible from that product</p>
+        </div>
+        <br>
+        <div class="page-header">
+            <h5><b>Add Attribute Sets</b></h5>
+            <hr class="notop">
+            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_6_2.png"></p>
+            <ul>
+                <li><b>Attribute Sets Name (translatable):</b> The name of the Attribute Sets.</li>
+                <li><b>Status:</b> Enable the Attribute Sets by checking this checkbox. Only enabled Attribute Sets can be used.</li>
+            </ul>
+            <br>
+        </div>
+        <div class="page-header">
+            <h5><b>Edit Attribute Sets</b></h5>
+            <hr class="notop">
+            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_6_3.png"></p>
+        </div>
+        <div class="page-header">
+            <h5><b>Bulk Action</b></h5>
+            <hr class="notop">
+            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_6_4.png"></p>
+        </div>
+        <div class="page-header">
+            <h5><b>Delete</b></h5>
+            <hr class="notop">
+            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_6_5.png"></p>
+        </div>
+    </section>
+
+    <section id="attributes">
+        <div class="page-header">
+            <h3>Attributes</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Products</strong> --> <strong>Attributes</strong>.<br>
+            You can data create, edit and active-inactive in Attributes.
+        </p>
+        <p>Attributes can be used for filtering products. Customers will see attributes as a table on the product page</p>
+        <p>
+            <img src="public/documentation/assets/images/cartpro_admin/Screenshot_7.png">
+        </p>
+        <p>
+            During attribute create you can set Attribute Set Name, New Attribute Name, Categories, Filterable, Status.
+        </p>
+        <p>
+            <img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_8.png">
+        </p>
+        <p>
+            <img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_9.png">
+        </p>
+        <ul>
+            <li><b>Attribute Set:</b> Attributes are grouped by the attribute sets. You can create attribute set from the Attribute Set sub-menu.</li>
+            <li><b>Attribute Name (translatable):</b> The name of the Attribute.</li>
+            <li><b>Status:</b> Enable the Attribute by checking this checkbox. Only enabled Attribute can be used.</li>
+            <br>
+        </ul>
+    </section>
+
+    <section id="tag">
+        <div class="page-header">
+            <h3>Tags</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Products</strong> --> <strong>Tags</strong>.<br>
+            You can data create, edit and active-inactive in Tags.
+        </p>
+        <p>
+            <img src="public/documentation/assets/images/cartpro_admin/Screenshot_10.png">
+        </p>
+
+        <div class="page-header">
+            <h5><b>Add Tags</b></h5>
+            <hr class="notop">
+            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_10_2.png"></p>
+            <ul>
+                <li><b>Tags Name (translatable):</b> The name of the Tags.</li>
+                <li><b>Status:</b> Enable the Tags by checking this checkbox. Only enabled Tags can be used.</li>
+            </ul>
+            <br>
+        </div>
+        <div class="page-header">
+            <h5><b>Edit Tags</b></h5>
+            <hr class="notop">
+            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_10_3.png"></p>
+        </div>
+        <div class="page-header">
+            <h5><b>Confirmation</b></h5>
+            <hr class="notop">
+            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_10_4.png"></p>
+        </div>
+    </section>
+
+    <section id="product">
+        <div class="page-header">
+            <h3>Catalog</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Products</strong> --> <strong>Catalog</strong>.<br>
+            You can create, edit data and active-inactive in Products.
+        </p>
+        <p>
+            <img src="public/documentation/assets/images/cartpro_admin/Screenshot_11.png">
+        </p>
+
+        <div class="page-header">
+            <h5><b>Create Product</b></h5>
+            <hr class="notop">
+            <p>Navigate to <b>Products > Catalog > Create Product </b> to create a new product.</p>
+            <p><b><i>[ TIP : Fields with the red asterisks are required.</i></b></p>
+            <p>If your store has more than one locale then translatable fields can be translated into other languages. You'll learn how to add more locale and translate a translatable field later in this guide.
+                If you want to create a simple product then just fill the required fields under the Basic Information group. In order to create a configurable product, you can fill the fields under Advanced Information group.
+            </p>
+        </div>
+
+        <p>During Creating a product</p>
+
+        <!--General-->
+        <p><b><i>General:</i></b></p>
+        <p>You can set Product Name, Description, Brand, Categories, Tax, Tags Status</p>
+        <p><img src="public/documentation/assets/images/cartpro_admin/Screenshot_12.png"></p>
+        <ul>
+            <li><b>Product Name</b> (translatable): The name of the product.</li>
+            <li><b>Description </b> (translatable): The description of the product..</li>
+            <li><b>Categories: </b> You can organize products by adding categories to it. You've already seen how to create categories on top in this guide.</li>
+            <li><b>Status:: </b> Enable the product by checking this checkbox. Customers will only see the enabled products.</li>
+        </ul>
+
+        <!--Price-->
+        <p><b><i>Price:</i></b></p>
+        <p>You can set Price, Special Price, Special Price Type, Special Price Start, Special Price End</p>
+        <p><img src="public/documentation/assets/images/cartpro_admin/Screenshot_13.png"></p>
+        <ul>
+            <li><b>Price</b> The base price of the product.</li>
+            <li><b>Special Price </b> The discounted price of the product.</li>
+            <li><b>Special Price Start: </b> The start date of the special price.</li>
+            <li><b>Special Price End: </b> The end date of the special price.</li>
+        </ul>
+
+        <!--Inventory-->
+        <p><b><i>Inventory:</i></b></p>
+        <p>You can set SKU, Inventory Management, Quantity, Stock Availibility</p>
+        <p><img src="public/documentation/assets/images/cartpro_admin/Screenshot_14.png"></p>
+        <ul>
+            <li><b>SKU </b> (stock keeping unit): The SKU of the product.</li>
+            <li><b>Inventory Management </b> Select the Track Inventory option, if you want to manage your product's inventory.</li>
+            <li><b>Qty: </b> If you've selected the Track Inventory option then you'll see a new Qty field under the Inventory Management field. You can add the total available amount of the product here.</li>
+            <li><b>Stock Availability: </b> Customers will only able to purchase In Stock products.</li>
+        </ul>
+
+        <!--Image-->
+        <p><b><i>Image:</i></b></p>
+        <p><img src="public/documentation/assets/images/cartpro_admin/Screenshot_15.png"></p>
+        <ul>
+            <li><b>Base Image </b> This is the thumbnail image of the product.</li>
+            <li><b>Additional Images </b> You can add multiple additional images here.</li>
+        </ul>
+
+        <!--SEO-->
+        <p><b><i>SEO:</i></b></p>
+        <p><img src="public/documentation/assets/images/cartpro_admin/Screenshot_16.png"></p>
+        <ul>
+            <li><b>Meta Title </b>  (translatable)</li>
+            <li><b>Meta Description </b> (translatable)</li>
+        </ul>
+
+        <!--Attribute-->
+        <p><b><i>Attribute:</i></b></p>
+        <p>In order to add attributes you must first create an attribute from the Attributes menu. Attributes can be used for filtering products and showing additional information about the product in a tabular form.</p>
+        <p><img src="public/documentation/assets/images/cartpro_admin/Screenshot_17.png"></p>
+        <p>In product search page customers will see filtered navigation for filtering products by attribute.</p>
+
+        <!--Additional-->
+        <p><b><i>Additional:</i></b></p>
+        <p>You can set additional information</p>
+        <p><img src="public/documentation/assets/images/cartpro_admin/Screenshot_18.png"></p>
+        <ul>
+            <li><b>Short Description </b> (translatable): The short description of the product.</li>
+            <li><b>Product New From:</b> The start date for the New badge in the product card.</li>
+            <li><b>Product New To:</b> The end date for the New badge in the product card.</li>
+        </ul>
+
+        <br>
+        <!--Weight-->
+        <p><b><i>Weight:</i></b></p>
+        <p>You can maintain weight base calculation.</p>
+        <p><img src="public/documentation/assets/images/cartpro_admin/Screenshot_113.png"></p>
+        <ul>
+            <li>Price will be calculated on weight basis. (1 KG= 1000 gm). On the other hand if your product depends on weight basis like hen, fruits, milk etc. then set <b>"1"</b> in weight input field and enable the checkbox because product will calculate 1 KG = 1000 gm basis and the attribute value should be assigned as like <b>"200 gm", "500 gm", "1000 gm"</b> etc.</li>
+            <li>This time attribute values should look like which is given below -</li>
+            <li>If you don't want weight base calculation, then untick the checkbox</li>
+        </ul>
+        <p><img src="public/documentation/assets/images/cartpro_admin/Screenshot_114.png"></p>
+    </section>
+
+    <section id="review">
+        <div class="page-header">
+            <h3>Reviews</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Product</strong> -> <strong>Reviews</strong>.<br>
+            Customers can review a product and give a rating to it from the product page. By default, when you install FleetCart all reviews will be approved automatically. But you can change this behavior from the settings.
+            <br> You can also see product specific reviews from the product edit page under the Reviews tab in Advanced Information group.
+        </p>
+        <p>From Customers</p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_19_0.png"></p>
+        <p><p>From Admin</p></p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_19.png"></p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_20.png"></p>
+    </section>
+
+    <section id="order">
+        <div class="page-header">
+            <h3>Orders</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Sales</strong> -> <strong>Order</strong>.<br>
+            <p>All customer orders are under the Orders sub-menu. In order to view the details of an order click the order row in the table.</p>
+        </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_21.png"></p>
+        <p>
+            <strong>Show Order</strong>.<br>
+            Click on the order eye icon in the table to view the details of the order.
+        </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_22.png"></p>
+    </section>
+
+    <section id="transaction">
+        <div class="page-header">
+            <h3>Transaction</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Sales</strong> -> <strong>Transaction</strong>.<br>
+            Transactions page has a list of all transaction IDs and it's payment method. You can view the order details of the transaction by clicking the order ID in the table.
+        </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_23.png"></p>
+    </section>
+
+    <section id="flash_sale">
+        <div class="page-header">
+            <h3>Flash Sale</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Flash Sale</strong><br>
+            You can create, edit and active-inactive data in Flash Sales.
+        </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_24.png"></p>
+        <p>
+            <strong>Flash Sale --> Flash Sale Create</strong><br>
+            1. Products : You have to choose any Product Name, then have to set End Date, Price , Quantity.
+        </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_25.png"></p>
+        <p> 2. Settings : You have to input Campaign Name, status.</p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_26.png"></p>
+    </section>
+
+    <section id="coupon">
+        <div class="page-header">
+            <h3>Coupons</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            You can encourage customers to buy a product by giving a discount. Every product can have a discounted price but if you want more control over discounts then you can create a coupon for that. Coupons are highly customizable and can be used for any product.
+            <br>
+            Customers can apply coupons to their shopping cart from the cart page. After applying a coupon to the shopping cart coupon value will be subtracted from the subtotal.
+        </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_27_0.png"></p>
+
+
+        <p>From Admin</p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_27.png"></p>
+        <div class="page-header">
+            <h5><b>Create Coupon</b></h5>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Coupons --> Create</strong><br>
+            1. General : You can set Coupon Name, Coupon Code, Discount Type, Value, Free Shipping, Start Date, End Date, Status.
+        </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_115.jpeg"></p>
+        <ul>
+            <li><b>Coupon Name</b> (translatable): The name of the coupon.</li>
+            <li><b>Code</b> A unique code for the coupon. Customers will use this code for applying the coupon to their shopping cart.</li>
+            <li><b>Discount Type:</b> You can either set a fixed value coupon. The value of coupon will be calculated based on the shopping cart.</li>
+            <li><b>Value:</b> Set the value of the coupon.</li>
+            <li><b>Status:</b> Enable the coupon by checking this checkbox. Only enabled coupons can be used.</li>
+            <li><b>Enable Expiry Date:</b> Coupon will available within the expiry date if you want.</li>
+            <li><b>Enable Usage Limit Per Coupon:</b> Coupon will available base on quantity if you want.</li>
+        </ul>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq">
+        <div class="page-header">
+            <h3>FAQ Setting</h3>
+            <hr class="notop">
+        </div>
+
+        <!-- Type -->
+        <h4>(Type)</h4>
+        <p><strong>FAQ Setting--> Type</strong></p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_93.png"></p>
+        <h4><strong>Create</strong></h4>
+        <p>You can add Type.</p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_94.png"></p>
+        <ul>
+            <li><b>Type Name</b> (translatable): The name of the Type Name.</li>
+        </ul>
+
+
+        <!-- FAQ -->
+        <h4>(FAQ)</h4>
+        <p><strong>FAQ Setting--> FAQ Set</strong></p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_95.png"></p>
+        <h4><strong>Create</strong></h4>
+        <p>You can add Type.</p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_96.png"></p>
+        <ul>
+            <li><b>FAQ Type</b> You have to select FAQ Type </li>
+            <li><b>Title</b> (translatable): The name of the Title.</li>
+            <li><b>Description</b> (translatable): The name of the Description.</li>
+            <li><b>Active</b> You can enable-disable the checkbox</li>
+        </ul>
+        <br>
+        <h4><strong>Edit</strong></h4>
+        <p>You can edit</p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_97.png"></p>
+    </section>
+
+    <section id="page">
+        <div class="page-header">
+            <h3>Pages</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Pages</strong><br>
+            You can create, edit and active-inactive data in Pages. You can create as many custom page as you want. You can create an About page or a Privacy Policy page to give your customers a better knowledge of your store.
+        </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_31.png"></p>
+
+        <div class="page-header">
+            <h5><b>Create Page</b></h5>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Online Store --> Pages --> Add Page</strong><br>
+            1. General : You can set Page Name, Body, Active.
+        </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_32.png"></p>
+        <ul>
+            <li><b>Page Name: </b>  (translatable) The name of the page.</li>
+            <li><b>Body:</b>  (translatable) The content of the page.</li>
+            <li><b>Meta Title:</b>  (translatable) The content of the Meta title.</li>
+            <li><b>Meta Description:</b>  (translatable) The content of the description.</li>
+            <li><b>Meta URL:</b>  The content of the Meta URL.</li>
+            <li><b>Meta Type:</b>  The content of the Meta Type.</li>
+            <li><b>Status:</b>Enable the page by checking this checkbox.</li>
+        </ul>
+
+        <br>
+        <div class="page-header">
+            <h5><b>Edit Page</b></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_32_2.png"></p>
+
+        <div class="page-header">
+            <h5><b>Bulk Action</b></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_32_3.png"></p>
+    </section>
+
+    <!-- Menu -->
+    <section id="menu">
+        <div class="page-header">
+            <h3>Menus</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            You can customize your online store navigation menus from here. There are usually three types of menus, Primary Menu, Category Menu, and Footer Menu.
+            <br>
+            After creating menus, navigate to Online Store > Menus then choose Primary Menu, Category Menu, and Footer Menu.
+        </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_33.png"></p>
+
+
+        <div class="page-header">
+            <h5><b>Add New Menu</b></h5>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Menus --> Add New Menu</strong><br>
+            Navigate to Menus > Create Menu to create a new menu.
+        </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_34.png"></p>
+        <ul>
+            <li><b>Menu Name: </b>  (translatable) The name of the Menu.</li>
+            <li><b>Status:</b>Enable the page by checking this checkbox.</li>
+        </ul>
+
+        <br>
+        <div class="page-header">
+            <h5><b>Menu Structure</b></h5>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Menus --> Menu Structure</strong><br>
+            Please click on the eye icon from the Menu Page and then go Menu Structure.
+        </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_35.png"></p>
+
+    </section>
+
+    <!-- Slider -->
+    <section id="slider">
+        <div class="page-header">
+            <h3>Slider</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Online Store --> Slider </strong><br>
+            You can create multiple sliders for your store, then switch between them anytime you like.
+        </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_61.png"></p>
+
+        <div class="page-header">
+            <h5><i><b>Add Slider</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p>Navigate to Online Store  > Add Slider to create a new slider</p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_62.png"></p>
+        <ul>
+            <li><b>Name</b> (translatable): The name of the slider.</li>
+            <li><b>Category</b>: Type of category.</li>
+            <li><b>Text Alignment</b>: Left or Right of text.</li>
+            <li><b>Text Color</b>: Put Color Code.</li>
+            <li><b>Status:</b> Enable the slider by checking this checkbox. Only enabled slider can be used.</li>
+        </ul>
+        <br>
+
+        <div class="page-header">
+            <h5><i><b>Edit Slider</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p>Navigate to Online Store  > Edit Slider to create a new slider</p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_62_2.png"></p>
+    </section>
+
+
+    <!-- Storefront -->
+    <section id="storefront">
+        <div class="page-header">
+            <h3>Storefront</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Online Store --> Storefront </strong><br>
+            You can modify data from Storefront. Thee is two section. General Setting Section and Home Page Section. <br>
+
+        </p>
+
+        <div class="page-header">
+            <h5><i><b>1. General</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_43.png"></p>
+        <ul>
+            <li><b>Terms & Conditions Page:</b> Select the terms & conditions page for your store.</li>
+            <li><b>Privacy Policy Page:</b> Select the privacy policy page for your store.</li>
+            <li><b>Slider:</b> Select the slider for your store.</li>
+            <li><b>Footer Address:</b> Fill your store address for the footer of your store.</li>
+        </ul>
+        <br>
+
+
+
+        <div class="page-header">
+            <h5><i><b>2. Menus</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_44.png"></p>
+        <ul>
+            <li><b>Primary Menu:</b> Primary menu of the store.</li>
+            <li><b>Category Menu Title:</b>  (translatable).</li>
+            <li><b>Category Menu:</b> Category menu of the store..</li>
+            <li><b>Footer Menu:</b> Footer menu of the store.</li>
+        </ul>
+        <br>
+
+        <div class="page-header">
+            <h5><i><b>3. Social Links</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p>Social links are shown in the footer of the website.</p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_45.png"></p>
+
+
+        <div class="page-header">
+            <h5><i><b>4. Features</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_46.png"></p>
+
+        <div class="page-header">
+            <h5><i><b>5. Logo</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_47.png"></p>
+
+        <div class="page-header">
+            <h5><i><b>6. Footer</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_48.png"></p>
+
+        <div class="page-header">
+            <h5><i><b>7. Newslatter</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_49.png"></p>
+
+        <div class="page-header">
+            <h5><i><b>8. Product Page</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_50.png"></p>
+
+        <div class="page-header">
+            <h5><i><b>9. Slider Banner</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_51.png"></p>
+
+        <div class="page-header">
+            <h5><i><b>10. One Column Banner</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_52.png"></p>
+
+        <div class="page-header">
+            <h5><i><b>11. Two Colunm Banner</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_53.png"></p>
+
+        <div class="page-header">
+            <h5><i><b>12. Three Colunm Banne</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_54.png"></p>
+
+        <div class="page-header">
+            <h5><i><b>13. Three Colunm Full Width Banner</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_55.png"></p>
+
+        <div class="page-header">
+            <h5><i><b>14. Featured Category</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_56.png"></p>
+
+        <div class="page-header">
+            <h5><i><b>15. Top Brands</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_57.png"></p>
+
+        <div class="page-header">
+            <h5><i><b>16. Flash Sales and Verticle Products</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_58.png"></p>
+
+        <div class="page-header">
+            <h5><i><b>17. Products Tabs One</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_59.png"></p>
+
+        <div class="page-header">
+            <h5><i><b>18. Products Tabs Two</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_60.png"></p>
+    </section>
+
+
+    <!-- User -->
+    <section id="user">
+        <div class="page-header">
+            <h3>Users</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Users And Roles --> Users</strong><br>
+            You can create, edit and active-inactive data in Users.
+        </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_36.png"></p>
+
+        <div class="page-header">
+            <h5><b>Add User</b></h5>
+            <hr class="notop">
+        </div>
+        <p>Navigate to Users > Create User to create a new user.</p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_37.png"></p>
+
+        <div class="page-header">
+            <h5><b>Edit User</b></h5>
+            <hr class="notop">
+        </div>
+        <p>Navigate to Users > Edit User to create a new user.</p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_37_2.png"></p>
+    </section>
+
+
+    <!-- Role -->
+    <section id="role">
+        <div class="page-header">
+            <h3>Roles</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Users And Roles --> Roles</strong><br>
+            You can create, edit and active-inactive data in Roles and also set Permission.
+        </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_38.png"></p>
+        <div class="page-header">
+            <h5><b>Add Role</b></h5>
+            <hr class="notop">
+        </div>
+        <p> You can set Role.</p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_39.png"></p>
+        <div class="page-header">
+            <h5><b>Edit Role</b></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_39_2.png"></p>
+
+        <div class="page-header">
+            <h5><b>Permission</b></h5>
+            <hr class="notop">
+        </div>
+        <p> You can set Permission according to role.</p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_40.png"></p>
+    </section>
+    <!--/ Role -->
+
+
+    <!--Tax -->
+    <section id="tax">
+        <div class="page-header">
+            <h3>Taxes</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Localizations --> Taxes </strong><br>
+            Taxes can be configured for taxable products in your store. After creating a tax add that tax class to all the taxable products.
+            <br>
+            Tax will be added automatically to the cart during the checkout process.
+        </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_41_0.png"></p>
+
+        <div class="page-header">
+            <h5><b>From Admin</b></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_41.png"></p>
+
+        <div class="page-header">
+            <h5><b>Add Tax</b></h5>
+            <hr class="notop">
+        </div>
+        <p>Navigate to Taxes > Create Tax to create a new tax.</p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_42.png"></p>
+
+        <div class="page-header">
+            <h5><b>Edit Tax</b></h5>
+            <hr class="notop">
+        </div>
+        <p>Navigate to Taxes > Edit Tax.</p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_42_2.png"></p>
+    </section>
+     <!--/ Tax -->
+
+
+     <!--Translation -->
+     <section id="translation">
+        <div class="page-header">
+            <h3>Translation</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Localizations --> Translation </strong><br>
+            You can translate your store's strings from the built-in translation editor for all supported locales. You can also use the translation editor for editing the default strings.
+        </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_78.png"></p>
+
+        <div class="page-header">
+            <h5><b>Add Translation</b></h5>
+            <hr class="notop">
+        </div>
+        <p>Navigate to Translation > Add Translation.</p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_79.png"></p>
+
+        <div class="page-header">
+            <h5><b>Edit Translation</b></h5>
+            <hr class="notop">
+        </div>
+        <p>Click in text field and click update icon button</p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_80.png"></p>
+    </section>
+     <!--Translation -->
+
+
+     <!--Currency Rates -->
+     <section id="currency_rates">
+        <div class="page-header">
+            <h3>Currency Rates</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Localizations --> Currency Rates </strong><br>
+            Currency rates are used for determining the product price when a customer changed the currency. If your store only supports one currency, then you don't need to update currency rates.
+            <br>You can use third-party service like Fixer, 1Forge, or Currency Data Feed to refresh currency rates. Click on the Refresh Rates button to refresh currency rates. If a third-party service is not configured, configure it from Settings > Currency.
+        </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_81.png"></p>
+
+        <div class="page-header">
+            <h5><b>Edit Currency Rates</b></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_82.png"></p>
+    </section>
+
+    <!--Country -->
+    <section id="country">
+        <div class="page-header">
+            <h3>Country</h3>
+            <hr class="notop">
+        </div>
+        <p><strong>Site Settings --> Country </strong><br></p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_98.png"></p>
+
+
+        <div class="page-header">
+            <h5><b>Add</b></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_99.png"></p>
+
+
+        <div class="page-header">
+            <h5><b>Edit</b></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_100.png"></p>
+    </section>
+
+    <!--Country -->
+    <section id="currency">
+        <div class="page-header">
+            <h3>Currency</h3>
+            <hr class="notop">
+        </div>
+        <p><strong>Site Settings --> Currency </strong><br></p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_101.png"></p>
+
+
+        <div class="page-header">
+            <h5><b>Add</b></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_102.png"></p>
+
+
+        <div class="page-header">
+            <h5><b>Edit</b></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_103.png"></p>
+    </section>
+
+    <!-- Setting -->
+    <section id="setting">
+        <div class="page-header">
+            <h3>Other Setting</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Site Settings --> Other Setting </strong><br>
+            You can modify data from Setting. There is two section. General Setting Section and Home Page Section.<br>
+        </p>
+        <div class="page-header">
+            <h5><i><b># General</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_65.png"></p>
+        <ul>
+            <li><b>Supported Countries:</b> Supported countries of your store.</li>
+            <li><b>Default Country:</b> The default country of your store.</li>
+            <li><b>Supported Locales: </b> Supported locales of your store.</li>
+            <li><b>Default Timezone:</b> The default timezone of your store.</li>
+            <li><b>Customer Role:</b> Role of the customer when they register..</li>
+            <li><b>Review and Rating:</b> Customer can give review and rating system</li>
+        </ul>
+        <br>
+
+        <div class="page-header">
+            <h5><i><b># Home Page SEO</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_104.png"></p>
+
+        <div class="page-header">
+            <h5><i><b># Store Contact</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_67.png"></p>
+
+        <div class="page-header">
+            <h5><i><b># About Us</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_105.png"></p>
+
+        <div class="page-header">
+            <h5><i><b># Currency</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_68.png"></p>
+        <ul>
+            <li><b>Supported Currencies:</b> Supported currencies of your store.</li>
+            <li><b>Default Currency:</b> Default currency of your store</li>
+            <li><b>Exchange Rate Service:</b> Third party currency exchange rate service.</li>
+            <li><b>Auto Refresh:</b> Auto refresh currency rates Daily, Weekly, or Monthly.</li>
+            <li><b>Default Symbol:</b> Defferent countries different symbol.</li>
+        </ul>
+        <br>
+
+        <div class="page-header">
+            <h5><i><b># Mail</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_70.png"></p>
+        <ul>
+            <li><b>Mail From Address:</b> This mail from address is used for all kind of emails.</li>
+            <li><b>Mail From Name:</b> This mail from name is used for all kind of emails.</li>
+            <li><b>Mail Host:</b> The host of your SMTP server.</li>
+            <li><b>Mail Port:</b> The port of your SMTP server.</li>
+            <li><b>Mail Username:</b> The username of your SMTP server.</li>
+            <li><b>Mail Password:</b>The password of your SMTP server.</li>
+        </ul>
+        <br>
+
+        <div class="page-header">
+            <h5><i><b># Newslatter</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_71.png"></p>
+        <ul>
+            <li><b>Newsletter:</b> Allow customers to subscribe to your newsletter.</li>
+            <li><b>Mailchimp API Key:</b> Setup Mail Api Key.</li>
+            <li><b>Mailchimp List ID:</b> Setup Mailchimp List ID.</li>
+        </ul>
+        <br>
+
+
+        <div class="page-header">
+            <h5><i><b># Facebook</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_73.png"></p>
+
+        <div class="page-header">
+            <h5><i><b># Google</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_74.png"></p>
+
+        <div class="page-header">
+            <h5><i><b># Free Shipping</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_75.png"></p>
+        <ul>
+            <li><b>Status:</b> Enable this shipping method by checking this checkbox..</li>
+            <li><b>Label :</b> (translatable): The label for this shipping method.</li>
+        </ul>
+        <br>
+
+        <div class="page-header">
+            <h5><i><b># Local Pickup</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_76.png"></p>
+        <ul>
+            <li><b>Status:</b>Enable this shipping method by checking this checkbox.</li>
+            <li><b>Label :</b> (translatable): The label for this shipping method.</li>
+            <li><b>Cost :</b>The cost for this shipping method.</li>
+        </ul>
+        <br>
+
+        <div class="page-header">
+            <h5><i><b># Flat Rate</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_77.png"></p>
+        <ul>
+            <li><b>Status:</b>Enable this Flat Rate by checking this checkbox.</li>
+            <li><b>Label :</b> (translatable): The label for this Flat Rate.</li>
+            <li><b>Cost :</b>The cost for this Flat Rate method.</li>
+        </ul>
+        <br>
+
+        <div class="page-header">
+            <h5><i><b># Empty Database</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_83.png"></p>
+        <p>For using DB empty except some table</p>
+
+        <div class="page-header">
+            <h5><i><b># Paypal</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_84.png"></p>
+        <ul>
+            <li>Status: Enable this payment method by checking this checkbox.</li>
+            <li>Label (translatable): The label for this payment method.</li>
+            <li>Client Id: The Client Id have to fillup.</li>
+            <li>Secret: The Secret Id have to fillup.</li>
+        </ul>
+        <br>
+
+        <div class="page-header">
+            <h5><i><b># Stripe</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_85.png"></p>
+        <ul>
+            <li>Status: Enable this payment method by checking this checkbox.</li>
+            <li>Label: The label for this payment method.</li>
+            <li>Description: The description for this payment method.</li>
+            <li>Publishable Key: The stripe API publishable key.</li>
+            <li>Secret Key: The stripe API secret key.</li>
+        </ul>
+        <br>
+
+        <div class="page-header">
+            <h5><i><b># SSL Commerz</b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_86.png"></p>
+        <ul>
+            <li>Status: Enable this payment method by checking this checkbox.</li>
+            <li>Store ID: The Store ID publishable key.</li>
+            <li>Secret Key: The secret key.</li>
+        </ul>
+
+        <br>
+        <div class="page-header">
+            <h5><i><b># Cash On Delivery
+            </b></i></h5>
+            <hr class="notop">
+        </div>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_87.png"></p>
+        <ul>
+            <li>Status: Enable this payment method by checking this checkbox.</li>
+            <li>Label: The label for this payment method.</li>
+            <li>Description: The description for this payment method.</li>
+        </ul>
+        <br>
+    </section>
+
+
+    <section id="language">
+        <div class="page-header">
+            <h3>Language</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            <strong>Settings</strong> --> <strong>Language</strong>.<br>
+            You can data create, edit and Delete in Language.
+        </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_88.png"></p>
+
+        <div class="page-header">
+            <h5><b>Add Language</b></h5>
+            <hr class="notop">
+            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_89.png"></p>
+            <br>
+        </div>
+        <div class="page-header">
+            <h5><b>Edit Language</b></h5>
+            <hr class="notop">
+            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_90.png"></p>
+            <br>
+        </div>
+    </section>
+
+    <section id="clearCache">
+        <div class="page-header">
+            <h3>Clear Cache</h3>
+            <hr class="notop">
+        </div>
+        <p>Clear all cache with refresh. Click there the reload icon. </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_106.png"></p>
+    </section>
+
+
+
+    <section id="versionUpgrade">
+        <div class="page-header">
+            <h3>Version Upgrade</h3>
+            <hr class="notop">
+        </div>
+        <p>You will see a announce notification if a new version has been released. Click there to go new release page.</p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_107.png"></p>
+
+        <p>After going the release page you will see some info. So click on the upgrade button to action. But before upgrading, we highly recomended you to keep a backup of your current script and database. </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_108.png"></p>
+
+        <p>After clicking it takes few time. You have to wait. After completing the upgrade process, it will redirect to you dashboard and a congratulation message will be shown.</p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_109.png"></p>
+        <p><i><b>[Note: This feature is available from version no - 1.0.7. One important things that this feature is tested by only cPanel hosting server and few others. If your server is defferent and not working please let us know.]</b></i></p>
+    </section>
+
+
+    <section id="bugUpdate">
+        <div class="page-header">
+            <h3>Bug Update</h3>
+            <hr class="notop">
+        </div>
+        <p>You will see a alert notification if a new bug found. Click there to go bug page.</p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_110.png"></p>
+
+        <p>After going the page you will see some info. So click on the update button to action. But before updating, we highly recomended you to keep a backup of your current script and database. </p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_111.png"></p>
+
+        <p>After clicking it takes few time. You have to wait. After completing the update process, it will redirect to you dashboard and a congratulation message will be shown.</p>
+        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_112.png"></p>
+        <p><i><b>[Note: This feature is available from version no - 1.0.7. And when a new version will be released, auto bug update will be turned off for the previous version. Auto Bug update always available for current version.One important things that this feature is tested by only cPanel hosting server and few others. If your server is defferent and not working please let us know.]</b></i></p>
+    </section>
+
+
+
+    <section id="support">
+        <div class="page-header">
+            <h3>SUPPORT</h3>
+            <hr class="notop">
+        </div>
+        <p>
+            We are happy to provide support for any issues within our software. We also provide customization service for as little as $15/hour.
+            So if you have any features in mind or suugestions or face any problem, please feel free to knock us at <a href="https://lion-coders.com/support" target="__blank"><b>Support Link</b></a>.
+            Please note that we don't provide support though any other means (example- whatsapp, comments etc.).
+            So, please refrain from commenting your queries on codecanyon or kocking us elsewhere.
+        </p>
+
+        <p>
+            Also, in case of any errors/bugs/issues on your installation, please contact us with your hosting details (url, username, password), software admin access (url, username, password) and purchase code.
+            If your support period has expired, please renew support on codecanyon before contacting us for support.
+        </p>
+
+        <p>
+            Thanks a lot for using this user friendly software. Hope you found this documentation helpful for using
+            this software. Please support this product by giving your ratings and testimonial.</p>
+        <p>
+            With best wishes - <a href="http://lion-coders.com">LionCoders</a>
+        </p>
+    </section>
+
+
+
+
+
+    <!-- End CartPro Documentation -->
+</div>
+<script type="text/javascript">
+
+    $("#documenter_sidebar").mCustomScrollbar({
+        theme: "light",
+        scrollInertia: 200
+    });
+
+
+    var substringMatcher = function (strs) {
+        return function findMatches(q, cb) {
+            var matches, substringRegex;
+
+            // an array that will be populated with substring matches
+            matches = [];
+
+            // regex used to determine if a string contains the substring `q`
+            substrRegex = new RegExp(q, 'i');
+
+            // iterate through the pool of strings and for any string that
+            // contains the substring `q`, add it to the `matches` array
+            $.each(strs, function (i, str) {
+                if (substrRegex.test(str)) {
+                    matches.push(str);
+                }
+            });
+
+            cb(matches);
+        };
+    };
+
+    var states = ['Start',
+        'Server Requirements',
+        'Software Update',
+        'Log In',
+        'Admin Dashboard',
+        'Empty Database',
+        'Datatable Options',
+        'Location',
+        'Company',
+        'Department',
+        'Designation',
+        'Office Shift',
+        'Account List',
+        'Roles Access',
+        'General Setting',
+        'Mail Server',
+        'Language Setting',
+        'Variable Type',
+        'Variable Method',
+        'Employee List',
+        'Import Employee',
+        'User List',
+        'Assign Role',
+        'User Last Login',
+        'Location',
+        'Award',
+        'Travel',
+        'Transfer',
+        'Resignation',
+        'Complaint',
+        'Warning',
+        'Termination',
+        'Announcement',
+        'Company Policy',
+        'Attendance',
+        'Datewise Attendance',
+        'Monthly Attendance',
+        'Update Attendance',
+        'Import Attendance',
+        'Manage Holiday',
+        'Manage Leave',
+        'Payslip Report',
+        'Attendance Report',
+        'Training Report',
+        'Project Report',
+        'Task Report',
+        'Employee Report',
+        'Account Report',
+        'Expense Report',
+        'Deposit Report',
+        'Transaction Report',
+        'Job Post',
+        'Job Candidate',
+        'Job Interview',
+        'CMS',
+        'New Payment',
+        'Payslip History',
+        'HR Calendar',
+        'Event',
+        'Meeting',
+        'Client',
+        'Tax Type',
+        'Project',
+        'Task',
+        'Invoice',
+        'Support Ticket',
+        'Account Balance',
+        'Payee',
+        'Payer',
+        'Deposit',
+        'Expense',
+        'Transaction',
+        'Transfer',
+        'Asset Category',
+        'Asset',
+        'File Configuration',
+        'File Manager',
+        'Official Document',
+        'Client Dashboard',
+        'Client Project',
+        'Client Task',
+        'Client Invoice',
+        'Client Invoice Paid',
+        'Employee Dashboard',
+        'Support',
+        'General Error'
+    ];
+
+    $('#the-basics .typeahead').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 1
+        },
+        {
+            name: 'states',
+            source: substringMatcher(states)
+        });
+
+    $('.typeahead').bind('typeahead:select', function (ev, suggestion) {
+        let a = suggestion.toLowerCase();
+        a = a.replace(/\s+/g, "_");
+
+        let site_url = window.location.href;
+
+        site_url = site_url.split("#")[0];
+
+        window.location.href = site_url + '#' + a;
+    });
+
+
+</script>
+</body>
+
+</html>
