@@ -6,7 +6,40 @@ Settings Management lets authenticated admin users manage core company and syste
 
 The current implementation stores one active settings record by updating the latest `settings` row. If no settings row exists, the update flow creates one.
 
-## 2. Functional Flow
+## 2. Settings Control Panel Interface
+
+- **Visual Reference Image**: [System Settings Panel](https://snipboard.io/pA9UTb.jpg)
+
+![System Settings Panel](https://snipboard.io/pA9UTb.jpg)
+
+### Configuration Field Sections
+
+1. **Company Identity & Branding**:
+   - `company_name`: Official business title shown across headers, receipts, and invoices.
+   - `company_logo`: Upload brand image (PNG/JPG/WEBP/SVG). Replaces default logo on header, sidebar, and receipts.
+   - `phone` & `email`: Customer support phone hotline and email address.
+   - `address`: Physical headquarters address.
+
+2. **System Timezone & Currency**:
+   - `timezone`: Sets global runtime PHP/Laravel timezone (e.g. `America/New_York`, `Australia/Sydney`). Controls all booking slot generation and schedule availability.
+   - `currency`: ISO currency code and symbol (e.g. `USD`, `$`).
+
+3. **Booking Rules & Limits**:
+   - `minimum_booking_amount`: Minimum required subtotal before checkout.
+   - `max_wallet_usage`: Maximum dollar credit amount usable per single booking.
+   - `maximum_advance_booking_days`: Limits calendar scheduling horizon (e.g. 30 days into the future).
+   - `cancellation_notice_hours`: Hours required for free customer cancellation notice.
+
+4. **Rewards & Feature Toggles**:
+   - `welcome_credit` & `welcome_credit_enabled`: Credit bonus awarded on initial customer email verification.
+   - `referral_reward` & `referral_reward_enabled`: Credit bonus awarded on completed referred booking.
+   - `google_review_reward` & `google_review_enabled`: Master toggle and reward bonus for approved Google Reviews.
+
+5. **Promotions & Coupon Controls**:
+   - `promotion_max_uses`: Global maximum redemptions limit for promo codes.
+   - `promotion_max_uses_per_customer`: Maximum usage limit per individual customer.
+
+## 3. Functional Flow
 
 ### View Settings
 

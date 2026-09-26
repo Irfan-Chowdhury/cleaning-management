@@ -14,9 +14,23 @@ Audit logs are strictly append-only. No edit or delete routes exist for audit re
 
 Admin users can view and search audit entries at `/audit-logs` using a server-side Yajra DataTables interface and inspect change diffs in an interactive details modal.
 
+## 2. Visual User Guide
+
+### 1. Audit Logs Overview List Page
+- **URL**: `GET /audit-logs`
+- **Visual Image Link**: [Audit Logs Overview Page](https://snipboard.io/Hzs0k7.jpg)
+
+![Audit Logs Overview Page](https://snipboard.io/Hzs0k7.jpg)
+
+### 2. Audit Log Details View Modal
+- **URL**: `GET /audit-logs/{id}`
+- **Visual Image Link**: [Audit Log Details View Modal](https://snipboard.io/VfDeQZ.jpg)
+
+![Audit Log Details View Modal](https://snipboard.io/VfDeQZ.jpg)
+
 ---
 
-## 2. Functional Flow
+## 3. Functional Flow
 
 ### Audit Log Listing
 ```text

@@ -1,1512 +1,1118 @@
 <!doctype html>
-<!--[if IE 6 ]><html lang="en-us" class="ie6"> <![endif]-->
-<!--[if IE 7 ]><html lang="en-us" class="ie7"> <![endif]-->
-<!--[if IE 8 ]><html lang="en-us" class="ie8"> <![endif]-->
-<!--[if (gt IE 7)|!(IE)]><!-->
 <html lang="en-us">
-<!--<![endif]-->
 
 <head>
     <meta charset="utf-8">
-    <title>Dust2Glow - Documentation</title>
-    <meta name="description" content="Dust2Glow offers a comprehensive cleaning service management solution to manage all of your cleaning service booking, schedule, and business operations." />
-    <meta name="author" content="LionCoders">
-    <meta name="copyright" content="LionCoders">
+    <title>Dust2Glow - Cleaning Service Management System Documentation</title>
+    <meta name="description" content="Official technical and user documentation for Dust2Glow Cleaning Service Management System." />
+    <meta name="author" content="Dust2Glow Team">
     <link rel="icon" href="public/documentation/assets/images/favicon/favicon.png" />
 
-    <!-- Google fonts - Roboto -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:400,700">
+    <!-- Google fonts - Nunito -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:400,600,700">
     <link rel="stylesheet" href="public/documentation/assets/css/documenter_style.css" media="all">
     <link rel="stylesheet" href="public/documentation/assets/css/jquery.mCustomScrollbar.css" media="all">
 
+    <style>
+        body { font-family: 'Nunito', sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 0; }
+        
+        /* 1. LEFT SIDEBAR SCROLL FIX */
+        #documenter_sidebar {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 250px !important;
+            height: 100vh !important;
+            max-height: 100vh !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            background-color: #ffffff !important;
+            border-right: 1px solid #e2e8f0 !important;
+            z-index: 1000 !important;
+            padding-bottom: 60px !important;
+            box-sizing: border-box !important;
+        }
+
+        /* Custom Scrollbar for Left Sidebar */
+        #documenter_sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+        #documenter_sidebar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        #documenter_sidebar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        #documenter_sidebar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        #documenter_sidebar #doc-logo {
+            display: block !important;
+            margin: 20px auto 15px auto !important;
+            max-width: 170px !important;
+            height: auto !important;
+        }
+
+        #documenter_nav {
+            padding: 10px 0 60px 0 !important;
+            margin: 0 !important;
+            list-style: none !important;
+        }
+
+        #documenter_nav li {
+            list-style: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        #documenter_nav li a {
+            display: block !important;
+            padding: 10px 20px !important;
+            font-size: 14px !important;
+            color: #475569 !important;
+            font-weight: 600 !important;
+            text-decoration: none !important;
+            border-left: 3px solid transparent !important;
+            transition: all 0.2s ease !important;
+        }
+
+        #documenter_nav li a:hover,
+        #documenter_nav li a.current {
+            color: #0866e8 !important;
+            background-color: #eff6ff !important;
+            border-left-color: #0866e8 !important;
+        }
+
+        /* 2. TOP FIXED SEARCH HEADER */
+        #the-basics {
+            position: fixed !important;
+            top: 0 !important;
+            left: 250px !important;
+            right: 0 !important;
+            width: auto !important;
+            height: 65px !important;
+            background-color: #ffffff !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            padding: 12px 30px !important;
+            box-sizing: border-box !important;
+            z-index: 999 !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
+        }
+
+        .twitter-typeahead {
+            width: 100% !important;
+            max-width: 650px !important;
+            display: block !important;
+        }
+
+        .typeahead.form-control,
+        .twitter-typeahead input {
+            width: 100% !important;
+            height: 40px !important;
+            padding: 8px 16px 8px 38px !important;
+            font-size: 14px !important;
+            color: #1e293b !important;
+            background-color: #f8fafc !important;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E") !important;
+            background-repeat: no-repeat !important;
+            background-position: 12px center !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 6px !important;
+            box-sizing: border-box !important;
+            outline: none !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .twitter-typeahead input:focus {
+            background-color: #ffffff !important;
+            border-color: #0866e8 !important;
+            box-shadow: 0 0 0 3px rgba(8, 102, 232, 0.15) !important;
+        }
+
+        /* Typeahead Search Dropdown Menu */
+        .tt-menu,
+        .tt-dropdown-menu {
+            width: 100% !important;
+            margin-top: 6px !important;
+            background: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 8px !important;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+            overflow: hidden !important;
+            z-index: 10000 !important;
+        }
+
+        .tt-suggestion {
+            padding: 10px 16px !important;
+            font-size: 14px !important;
+            color: #334155 !important;
+            cursor: pointer !important;
+            transition: background 0.15s ease !important;
+        }
+
+        .tt-suggestion:hover,
+        .tt-suggestion.tt-cursor {
+            background-color: #0866e8 !important;
+            color: #ffffff !important;
+        }
+
+        /* DOCUMENTER CONTENT LAYOUT */
+        #documenter_content {
+            position: relative !important;
+            left: 0 !important;
+            margin-left: 250px !important;
+            width: calc(100% - 250px) !important;
+            padding: 85px 40px 100px 40px !important;
+            box-sizing: border-box !important;
+            z-index: 1 !important;
+        }
+
+        #documenter_content section {
+            min-height: auto !important;
+            padding-top: 25px !important;
+            margin-bottom: 40px !important;
+        }
+
+        .badge-info-cust { background-color: #0866e8; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+        .badge-success-cust { background-color: #28a745; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+        .badge-warning-cust { background-color: #ffc107; color: #212529; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+        .badge-danger-cust { background-color: #dc3545; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+        .doc-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 14px; }
+        .doc-table th, .doc-table td { border: 1px solid #e8edf5; padding: 10px 12px; text-align: left; }
+        .doc-table th { background-color: #f4f7fa; color: #111c3a; font-weight: 700; }
+        .doc-card { background: #fff; border: 1px solid #e8edf5; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .code-block { background: #1e293b; color: #f8fafc; padding: 14px; border-radius: 6px; font-family: monospace; font-size: 13px; overflow-x: auto; margin: 12px 0; }
+        .step-number { display: inline-block; width: 26px; height: 26px; background: #0866e8; color: #fff; border-radius: 50%; text-align: center; line-height: 26px; font-weight: bold; margin-right: 8px; font-size: 13px; }
+    </style>
+
     <script src="public/documentation/assets/js/jquery.js"></script>
-    <script src="public/documentation/assets/js/jquery.mCustomScrollbar.js"></script>
     <script src="public/documentation/assets/js/smooth-scroll.min.js"></script>
     <script src="public/documentation/assets/js/typeAhead.js"></script>
-    <script src="public/documentation/assets/js/script.js"></script>
 </head>
 
 <body>
 <div id="documenter_sidebar">
-    <img id="doc-logo" src="public/documentation/assets/images/logo-cartpro.webp" style="border: none;margin: 10px 30px -10px;width: 150px">
+    <img id="doc-logo" src="public/assets/images/company_logo/brand_logo.png">
 
     <ul id="documenter_nav">
-        <li><a class="current" href="#documenter_cover">Start</a></li>
-        <li><a href="#server_requirement" title="SERVER REQUIREMENTS">Server Requirements</a></li>
-        <li><a href="#admin_log_in" title="Log In">Log In</a></li>
-        <li><a href="#admin_dashboard" title="Admin DASHBOARD">Dashboard</a></li>
-        <li><a href="#empty_database" title="Empty Database">Empty Database</a></li>
-        <li><a href="#system_backup" title="System Backup">System Backup</a></li>
-        <li><a href="#datatable_options" title="Datatable Options">Datatable Options</a></li>
-        <li><a href="#category" title="Categories">Categories</a></li>
-        <li><a href="#brand" title="Brands">Brands</a></li>
-        <li><a href="#attribute_set" title="Attribute Set">Attribute Set</a></li>
-        <li><a href="#attributes" title="Attributes">Attributes</a></li>
-        <li><a href="#tag" title="Tag">Tags</a></li>
-        <li><a href="#product" title="Product">Catalog</a></li>
-        <li><a href="#review" title="review">Reviews</a></li>
-        <li><a href="#order" title="Order">Order</a></li>
-        <li><a href="#transaction" title="Transaction">Transaction</a></li>
-        <li><a href="#flash_sale" title="Flash Sale">Flash Sale</a></li>
-        <li><a href="#coupon" title="Coupons">Coupons</a></li>
-        <li><a href="#faq" title="FAQ Setting">FAQ Setting</a></li>
-        <li><a href="#page" title="Page">Pages</a></li>
-        <li><a href="#menu" title="Menu">Menus</a></li>
-        <li><a href="#slider" title="Slider">Slider</a></li>
-        <li><a href="#storefront" title="Storefront">Storefront</a></li>
-        <li><a href="#user" title="Users">Users</a></li>
-        <li><a href="#role" title="Roles">Roles</a></li>
-        <li><a href="#tax" title="Taxes">Taxes</a></li>
-        <li><a href="#translation" title="Translation">Translation</a></li>
-        <li><a href="#currency_rates" title="Currency Rates">Currency Rates</a></li>
-        <li><a href="#country" title="Country">Country</a></li>
-        <li><a href="#currency" title="Currency">Currency</a></li>
-        <li><a href="#setting" title="Other Settings">Other Settings</a></li>
-        <li><a href="#language" title="Language">Language</a></li>
-        <li><a href="#clearCache" title="Clear Cache">Clear Cache</a></li>
-        <li><a href="#versionUpgrade" title="Version Upgrade">Version Upgrade</a></li>
-        <li><a href="#bugUpdate" title="Bug Update">Bug Update</a></li>
-        <li><a href="#support" title="Support">Support</a></li>
+        <li><a class="current" href="#documenter_cover">Start & Overview</a></li>
+        <li><a href="#server_requirements" title="Server Requirements">Server Requirements</a></li>
+        <li><a href="#installation_setup" title="Installation & Setup">Installation & Setup</a></li>
+        <li><a href="#auth_security" title="Authentication & Security">Auth & Security</a></li>
+        <li><a href="#admin_dashboard" title="Admin Dashboard">Admin Dashboard</a></li>
+        <li><a href="#customer_dashboard" title="Customer Dashboard">Customer Dashboard</a></li>
+        <li><a href="#sub_admin_management" title="Sub-Admin Management">Sub-Admin Management</a></li>
+        <li><a href="#customer_management" title="Customer Management">Customer Management</a></li>
+        <li><a href="#service_catalog" title="Service Catalog">Service Catalog</a></li>
+        <li><a href="#weekly_schedule" title="Weekly Schedule & Shifts">Weekly Schedule</a></li>
+        <li><a href="#holiday_management" title="Holiday Management">Holiday Management</a></li>
+        <li><a href="#booking_wizard" title="Booking Wizard Flow">Booking Wizard</a></li>
+        <li><a href="#booking_operations" title="Booking Operations">Booking Operations</a></li>
+        <li><a href="#wallet_system" title="Wallet System">Wallet System</a></li>
+        <li><a href="#referral_system" title="Referral System">Referral System</a></li>
+        <li><a href="#promotions_discounts" title="Promotions & Discounts">Promotions & Discounts</a></li>
+        <li><a href="#google_review_reward" title="Google Review Reward">Google Review Reward</a></li>
+        <li><a href="#notifications_system" title="Notifications System">Notifications System</a></li>
+        <li><a href="#system_settings" title="System Settings">System Settings</a></li>
+        <li><a href="#audit_logs" title="Audit Logs & Security">Audit Logs</a></li>
+        <li><a href="#utility_routes" title="Utility Routes">Utility Routes</a></li>
+        <li><a href="#support" title="Support & Troubleshooting">Support</a></li>
     </ul>
 </div>
+
 <div id="documenter_content">
 
     <div id="the-basics">
-        <input class="typeahead form-control" type="text" placeholder="Search">
+        <input class="typeahead form-control" type="text" placeholder="Search documentation topics...">
     </div>
 
+    <!-- START & OVERVIEW -->
     <section id="documenter_cover">
         <h1>Dust2Glow - Cleaning Service Management System</h1>
         <div id="documenter_buttons"></div>
         <hr>
-        <p>Dust2Glow is a comprehensive Cleaning Service Management System designed to streamline cleaning service bookings, customer management, scheduling, and administrative operations. It features an intuitive customer booking flow, an administrative management panel, service catalog control, holiday management, and customizable system settings tailored for professional cleaning services.</p>
-        <p>
-            The documentation is written in chronological order. Please follow the section guides to configure and manage your system efficiently. You can also search using the search bar for a specific query.
-        </p>
+        <p>Welcome to the official system documentation for <strong>Dust2Glow</strong>, an enterprise-grade Cleaning Service Management Platform built on PHP 8.2+ and Laravel 12. This documentation covers system installation, architecture, role management, customer booking workflows, wallet/reward engines, and administrative controls.</p>
+        
+        <div class="doc-card">
+            <h3>System Architecture Highlights</h3>
+            <ul>
+                <li><strong>Backend Framework:</strong> PHP 8.2+ / Laravel 12 with Fortify authentication and Sanctum API security.</li>
+                <li><strong>Frontend Stack:</strong> Responsive Blade Templates, Bootstrap 4, jQuery, Yajra DataTables, and SweetAlert2.</li>
+                <li><strong>Database:</strong> MySQL 8.0+ with transactional integrity, foreign keys, and migration-driven schema management.</li>
+                <li><strong>Role Security:</strong> Granular access control using Middleware guards (`can:admin`, `can:customer`, `can:view-audit-logs`).</li>
+                <li><strong>Testing Suite:</strong> Automated PEST unit and feature test suite with 100% assertions coverage for critical modules.</li>
+            </ul>
+        </div>
     </section>
 
-    <section id="server_requirement">
+    <!-- SERVER REQUIREMENTS -->
+    <section id="server_requirements">
         <div class="page-header">
-            <h3>SERVER REQUIREMENT</h3>
+            <h3>Server Requirements</h3>
             <hr class="notop">
         </div>
-        <p>
-            The software is built on most popular PHP framework Laravel(Version 8). The minimum
-            requirements for running the software is listed below .Please do check if your server matches those
-            requirements</p>
-        <ul>
-            <li>PHP - 7.4</li>
-            <li>BCMath PHP Extension</li>
-            <li>Ctype PHP Extension</li>
-            <li>Fileinfo PHP Extension</li>
-            <li>JSON PHP Extension</li>
-            <li>Mbstring PHP Extension</li>
-            <li>OpenSSL PHP Extension</li>
-            <li>PDO PHP Extension</li>
-            <li>Tokenizer PHP Extension</li>
-            <li>XML PHP Extension</li>
-        </ul>
-        <p>
-            &nbsp;</p>
-        <p>
-            <strong><i>NB:</strong> Please note if you try to install the application on any other server say LiteSpeed or IIS, you
-                may get undesirable result. We do not recommend you to use other server than Apache or Nginx. Also
-                we do not provide support for installation in server other than Apache and localhost installation. Please follow the installation process,
-            below. Do not use php artisan serve command. And lastly we don't provide support in the localhost (except online server).</i></p>
+        <p>Ensure your Web Server (Apache or Nginx) satisfies the following server environment specifications:</p>
+        <table class="doc-table">
+            <thead>
+                <tr>
+                    <th>Component</th>
+                    <th>Requirement</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>PHP Version</td>
+                    <td>PHP 8.2.0 or higher</td>
+                    <td>Recommended: PHP 8.3 / 8.4</td>
+                </tr>
+                <tr>
+                    <td>PHP Extensions</td>
+                    <td>BCMath, Ctype, Fileinfo, JSON, Mbstring, OpenSSL, PDO, PDO_MySQL, Tokenizer, XML</td>
+                    <td>Required for Laravel 12 core and Yajra DataTables</td>
+                </tr>
+                <tr>
+                    <td>Database Server</td>
+                    <td>MySQL 8.0+ or MariaDB 10.5+</td>
+                    <td>InnoDB storage engine with UTF8MB4 charset support</td>
+                </tr>
+                <tr>
+                    <td>Web Server</td>
+                    <td>Nginx 1.20+ or Apache 2.4+</td>
+                    <td>URL rewriting (`mod_rewrite` on Apache) enabled</td>
+                </tr>
+            </tbody>
+        </table>
     </section>
 
-
-
-    <section id="admin_log_in">
+    <!-- INSTALLATION & SETUP -->
+    <section id="installation_setup">
         <div class="page-header">
-            <h3>Log In</h3>
+            <h3>Installation & Setup</h3>
             <hr class="notop">
         </div>
-        <p>
-            After installation go to the project/root url.Then you will be prompt to admin login.To access the admin panel add /admin
-            after your website address.For example if your website address is "www.example.com", then your admin panel is located at "www.example.com/admin".The login credentials provided below are for initial usage only - do not forget
-            to update your password after first successful login.
+        <p>Follow these steps to deploy and initialize the application on your server environment:</p>
 
+        <p><span class="step-number">1</span> <strong>Clone and Install Dependencies</strong></p>
+        <div class="code-block">
+git clone &lt;repository-url&gt;
+cd cleaning-management
+composer install
+npm install && npm run build
+        </div>
 
-        <ul>
-            <li>Username ::: admin</li>
-            <li>Password ::: admin</li>
-        </ul>
+        <p><span class="step-number">2</span> <strong>Environment Configuration</strong></p>
+        <p>Copy `.env.example` to `.env` and set your database connection details and application variables:</p>
+        <div class="code-block">
+cp .env.example .env
+php artisan key:generate
+        </div>
 
-        </p>
-        <p>
-            <img alt="" src="public/documentation/assets/images/cartpro_admin/adminLoginPage.png">
-        </p>
-        <p>
-            After successful login you will be redirected to the admin dashboard.
-        </p>
+        <p><span class="step-number">3</span> <strong>Database Migration & Seeding</strong></p>
+        <p>Execute migrations and seed default administrative accounts and system settings:</p>
+        <div class="code-block">
+php artisan migrate --seed
+        </div>
+
+        <p><span class="step-number">4</span> <strong>Storage Link Creation</strong></p>
+        <div class="code-block">
+php artisan storage:link
+        </div>
     </section>
 
+    <!-- AUTHENTICATION & SECURITY -->
+    <section id="auth_security">
+        <div class="page-header">
+            <h3>Authentication & Security</h3>
+            <hr class="notop">
+        </div>
+        <p>The authentication layer provides secure access for administrators, sub-admins, and customers with strict role separation.</p>
+        
+        <table class="doc-table">
+            <thead>
+                <tr>
+                    <th>Role ID</th>
+                    <th>Role Name</th>
+                    <th>Default Dashboard</th>
+                    <th>Permissions & Boundaries</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="badge-info-cust">Role 1</span></td>
+                    <td>Admin / Sub-Admin</td>
+                    <td><code>/admin-dashboard</code></td>
+                    <td>Full access to services, bookings, customers, sub-admins, settings, audit logs, and rewards.</td>
+                </tr>
+                <tr>
+                    <td><span class="badge-success-cust">Role 2</span></td>
+                    <td>Customer</td>
+                    <td><code>/dashboard</code></td>
+                    <td>Booking wizard access, personal wallet, referral tracking, profile management, and review rewards.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="doc-card">
+            <h4>Security Features</h4>
+            <ul>
+                <li><strong>Email Verification:</strong> Unverified customers are redirected to <code>/email/verify</code> until email link is confirmed.</li>
+                <li><strong>Welcome Credit Bonus:</strong> Verified customers automatically receive welcome wallet credits if enabled in settings.</li>
+                <li><strong>Password Reset Flow:</strong> Secure tokenized email links via <code>/forgot-password</code> and <code>/reset-password/{token}</code>.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ADMIN DASHBOARD -->
     <section id="admin_dashboard">
         <div class="page-header">
-            <h3>Admin DASHBOARD</h3>
+            <h3>Admin Dashboard</h3>
             <hr class="notop">
         </div>
-        <p>
-            The system offers an informative,interactive and user friendly admin dashboard.
-            The dashboard shows summarized information about the organization in a nutshell.
-        </p>
-        <p>
-            <img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_1.png">
-        </p>
-    </section>
+        <p>The Admin Dashboard (<code>/admin-dashboard</code>) acts as the control tower for daily operations.</p>
 
-    <section id="empty_database">
-        <div class="page-header">
-            <h3>Empty Database</h3>
-            <hr class="notop">
-        </div>
-        <p>
-            After first time login you may want to delete the preloaded data. For that, Click on the
-            Empty Database. All the
-            preloaded data will be deleted from the database except few mandatory record that is essential for
-            running the software properly.<br>
-            <strong>Note:</strong> This is a batch process, so the action will take some time. Please wait
-            patiently.
-            <strong>***</strong> This action is irreversible, if you have your own data/record in the database, this
-            action will delete all of them.
-            This action is recommended only for the first time, unless you are sure about what you are doing.
-        </p>
-        <p>
-            <img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_2.png">
-        </p>
-    </section>
-
-    <section id="system_backup">
-        <div class="page-header">
-            <h3>System Backup</h3>
-            <hr class="notop">
-        </div>
-        <p>
-            If you want, you can take a backup of your system. You can backup only files or database. Please follow the screenshoot below.
-            <br>
-            <strong>Note:</strong> This will take some time. Please wait patiently. And if you download only files, please extract the vendor.zip file before using the backup.
-        </p>
-        <p>
-            <img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_91.png">
-        </p>
-    </section>
-
-    <section id="datatable_options">
-        <div class="page-header">
-            <h3>Datatable Options</h3>
-            <hr class="notop">
-        </div>
-        <p>
-            DataTables is a table enhancing plug-in that offers sorting, paging and filtering
-            abilities . In this software, datatable is used as a toll for showing data. <br>
-            Here are some of the features and usage for datatable :::
-        </p>
-        <p>
-            <img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_3.png">
-        </p>
-        <ol>
-            <li>you can select how many records to be shown in a single page (10,25 or all).Default is 10</li>
-            <li><strong>Search:</strong> Search the records/rows using keywords</li>
-            <li>You can export the records to a pdf using this button</li>
-            <li>You can export the records to a csv using this button</li>
-            <li>You can print the records using this button</li>
-            <li>You can hide/show specific columns using this button</li>
-            <!-- <li>View details of a specific record</li>
-            <li>Edit/Update a specific record</li>
-            <li>Delete a specific record</li> -->
-            <li><strong>Selector:</strong> You can select all the records/rows and perform action like print to
-                pdf/csv/print or delete multiple rows
-            </li>
-            <li><strong>Sorting:</strong> Sort columns</li>
-            <li>Edit Data</li>
-            <li>Active/Inactive Data</li>
-        </ol>
-    </section>
-
-    <section id="category">
-        <div class="page-header">
-            <h3>Category</h3>
-            <hr class="notop">
-        </div>
-        <p>
-            <strong>Products</strong> --> <strong>Category</strong>.<br>
-            You can data create, edit and active-inactive in Category.
-        </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_4.png"></p>
-
-        <div class="page-header">
-            <h5><b>Add Category</b></h5>
-            <hr class="notop">
-            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_4_2.png"></p>
+        <div class="doc-card">
+            <h4>Dashboard Modules</h4>
             <ul>
-                <li><b>Category Name (translatable):</b> The name of the category.</li>
-                <li><b>Status:</b> Enable the category by checking this checkbox. Only enabled categories can be used.</li>
+                <li><strong>Metrics Widgets:</strong> Total Bookings, Active Services, Total Customers, and Net Revenue counters.</li>
+                <li><strong>Recent Bookings Table:</strong> Live snapshot of latest booking submissions with status indicators.</li>
+                <li><strong>Quick Navigation:</strong> Instant actions to manage services, approve Google reviews, or update weekly schedules.</li>
             </ul>
         </div>
+    </section>
 
-        <br>
+    <!-- CUSTOMER DASHBOARD -->
+    <section id="customer_dashboard">
         <div class="page-header">
-            <h5><b>Edit Category</b></h5>
+            <h3>Customer Dashboard</h3>
             <hr class="notop">
-            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_4_3.png"></p>
         </div>
+        <p>The Customer Portal (<code>/dashboard</code>) gives users immediate visibility into their active cleanings and rewards.</p>
+
+        <ul>
+            <li><strong>Upcoming Cleanings:</strong> View upcoming scheduled cleaning appointments and status updates.</li>
+            <li><strong>Quick Booking Action:</strong> One-click navigation to start a new 4-step cleaning request.</li>
+            <li><strong>Wallet & Referral Balance:</strong> Live snapshot of wallet credits and personal referral code.</li>
+        </ul>
+    </section>
+
+    <!-- SUB-ADMIN MANAGEMENT -->
+    <section id="sub_admin_management">
         <div class="page-header">
-            <h5><b>Bulk Action</b></h5>
+            <h3>Sub-Admin Management</h3>
             <hr class="notop">
-            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_4_4.png"></p>
+        </div>
+        <p>Super Administrators can grant administrative operational privileges to staff members through the Sub-Admin module (<code>/sub-admins</code>). Below is a step-by-step visual guide for each CRUD (Create, Read, Update, Delete) operation.</p>
+
+        <div class="doc-card">
+            <h4>Sub-Admin Management Operations Overview</h4>
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Feature / Button</th>
+                        <th>Purpose & Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>View Sub-Admins</strong></td>
+                        <td>Sub Admins Menu / List Table</td>
+                        <td>View all registered sub-administrator staff accounts in the system.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Add Sub-Admin</strong></td>
+                        <td>"+ Add Sub Admin" Button</td>
+                        <td>Create a new sub-admin staff account with login credentials and profile photo.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Edit Sub-Admin</strong></td>
+                        <td>Edit (Pencil Icon) Button</td>
+                        <td>Update sub-admin name, email, phone number, profile photo, or reset password.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Delete Sub-Admin</strong></td>
+                        <td>Delete (Trash Icon) Button</td>
+                        <td>Revoke and permanently delete a sub-admin staff account.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 1. INDEX PAGE (READ) -->
+        <div class="doc-card">
+            <h4>1. Sub-Admin Index Page (View List)</h4>
+            <p>To view all existing sub-administrators, navigate to <strong>Sub Admins</strong> from the main admin sidebar (<code>/sub-admins</code>).</p>
+            <ul>
+                <li><strong>Data Listing:</strong> Displays customer avatar, full name, email address, phone number, created date, and action buttons.</li>
+                <li><strong>Search & Filter:</strong> Use the live search box at the top right of the table to instantly filter sub-admins by name or email.</li>
+                <li><strong>Pagination & Sorting:</strong> Sort columns dynamically and change visible records per page.</li>
+            </ul>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/oPw5jN.jpg" alt="Sub-Admin Index List Interface" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Sub-Admin Index List Interface</p>
+            </div>
+        </div>
+
+        <!-- 2. CREATE SUB-ADMIN -->
+        <div class="doc-card">
+            <h4>2. Create New Sub-Admin (Add Record)</h4>
+            <p>To add a new staff member as a Sub-Admin, follow these steps:</p>
+            <ol>
+                <li>Click the blue <strong>"+ Add Sub Admin"</strong> button located at the top-right corner of the Sub-Admin index page.</li>
+                <li>The <strong>Create Sub Admin Modal</strong> will appear on screen.</li>
+                <li>Fill out the required information:
+                    <ul>
+                        <li><strong>First Name & Last Name:</strong> Enter full staff name.</li>
+                        <li><strong>Email Address:</strong> Provide a valid, unique email address for login.</li>
+                        <li><strong>Phone Number:</strong> Contact number (optional).</li>
+                        <li><strong>Password & Confirm Password:</strong> Set account password.</li>
+                        <li><strong>Profile Photo:</strong> Optionally upload a profile photo (JPEG/PNG).</li>
+                    </ul>
+                </li>
+                <li>Click <strong>"Save Sub Admin"</strong> to submit the form. Upon successful validation, the modal closes and the new sub-admin appears instantly in the table list.</li>
+            </ol>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/hDVP0U.jpg" alt="Create Sub-Admin Modal Form" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Create Sub-Admin Modal Form</p>
+            </div>
+        </div>
+
+        <!-- 3. EDIT SUB-ADMIN -->
+        <div class="doc-card">
+            <h4>3. Edit Sub-Admin Details (Update Record)</h4>
+            <p>To modify an existing sub-admin's details or credentials:</p>
+            <ol>
+                <li>In the Sub-Admins list table, find the target user row.</li>
+                <li>Click the <strong>Edit</strong> button (pencil icon) under the <em>Action</em> column.</li>
+                <li>The <strong>Edit Sub Admin Modal</strong> will open pre-filled with the user's existing details.</li>
+                <li>Update any necessary fields (Name, Email, Phone, or upload a new Profile Photo).</li>
+                <li><em>Password Note:</em> Leave the password fields blank if you wish to keep the existing password. Fill in new password fields only if you want to reset the user's password.</li>
+                <li>Click <strong>"Update Sub Admin"</strong> to save changes.</li>
+            </ol>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/YbtpW9.jpg" alt="Edit Sub-Admin Modal Form" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Edit Sub-Admin Modal Form</p>
+            </div>
+        </div>
+
+        <!-- 4. DELETE SUB-ADMIN -->
+        <div class="doc-card">
+            <h4>4. Delete Sub-Admin (Remove Account)</h4>
+            <p>To delete a sub-admin user account from the system:</p>
+            <ol>
+                <li>Locate the sub-admin account in the Sub-Admins list table.</li>
+                <li>Click the red <strong>Delete</strong> button (trash bin icon) in the <em>Action</em> column.</li>
+                <li>A SweetAlert confirmation popup will ask: <em>"Are you sure you want to delete this Sub Admin?"</em></li>
+                <li>Click <strong>"Yes, Delete it!"</strong> to confirm permanent removal, or click <strong>"Cancel"</strong> to keep the account.</li>
+            </ol>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/sQHMJ8.jpg" alt="Delete Confirmation Popup Dialog" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Delete Confirmation Popup Dialog</p>
+            </div>
         </div>
     </section>
 
-    <section id="brand">
+    <!-- CUSTOMER MANAGEMENT -->
+    <section id="customer_management">
         <div class="page-header">
-            <h3>Brands</h3>
+            <h3>Customer Management</h3>
             <hr class="notop">
         </div>
-        <p>
-            <strong>Products</strong> --> <strong>Brands</strong>.<br>
-            You can data create, edit and active-inactive in Brand.
-        </p>
-        <p>
-            <img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_5.png">
-        </p>
+        <p>Manage customer profiles, addresses, and booking history under <code>/customers</code>.</p>
 
+        <ul>
+            <li><strong>Customer DataTables:</strong> Filter by name, email, phone, or registration date.</li>
+            <li><strong>Detail Modal / View:</strong> Inspect customer default service address, total bookings count, and total wallet credits spent.</li>
+            <li><strong>Account Status Control:</strong> Manage customer activation and profile updates.</li>
+        </ul>
+    </section>
+
+    <!-- SERVICE CATALOG -->
+    <section id="service_catalog">
         <div class="page-header">
-            <h5><b>Add Brand</b></h5>
+            <h3>Service Catalog Management</h3>
             <hr class="notop">
-            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_5_2.png"></p>
+        </div>
+        <p>Configure cleaning offerings, pricing models, and service questionnaires at <code>/services</code>.</p>
+
+        <div class="doc-card">
+            <h4>Service Parameters</h4>
             <ul>
-                <li><b>Brand Name (translatable):</b> The name of the Brand.</li>
-                <li><b>Status:</b> Enable the Brand by checking this checkbox. Only enabled Brands can be used.</li>
+                <li><strong>Base Price & Duration:</strong> Base cost (e.g. $120.00) and estimated completion duration (e.g. 2.5 hours).</li>
+                <li><strong>Status Toggle:</strong> Enable or disable service visibility in the public booking wizard.</li>
+                <li><strong>Dynamic Questionnaire:</strong> Define custom options (e.g. number of bedrooms, bathrooms, deep cleaning add-ons).</li>
             </ul>
         </div>
-        <br>
-        <div class="page-header">
-            <h5><b>Edit Brand</b></h5>
-            <hr class="notop">
-            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_5_3.png"></p>
-        </div>
     </section>
 
-    <section id="attribute_set">
+    <!-- WEEKLY SCHEDULE & SHIFTS -->
+    <section id="weekly_schedule">
         <div class="page-header">
-            <h3>Attribute Sets</h3>
+            <h3>Weekly Schedule & Shift Setup</h3>
             <hr class="notop">
         </div>
-        <p>
-            <strong>Products</strong> --> <strong>Attribute Set</strong>.<br>
-            You can data create, edit and active-inactive in Attribute Set. Organize your attributes by grouping them under the attribute sets.
-        </p>
-        <p>
-            <img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_6.png">
-        </p>
-        <div class="page-header">
-            <h5><b>Options</b></h5>
-            <hr class="notop">
-            <p>Options lets you customize the variation of the product. Customers will see available options on the product page. Customers must select the required option before adding the product to the shopping cart.</p>
-            <p>There are two types of options, Global and Local. When you create an option from the Options page it will be a global option and can be added to any product. Local options are product specific, when you create an option from the Options tab of a product it will then become a local option and will only accessible from that product</p>
+        <p>The Weekly Schedule module (<code>/weekly-schedule</code>) allows Administrators to manage recurring operating hours, working days, shift start/end times, and booking slot durations for Monday through Sunday.</p>
+
+        <div class="doc-card">
+            <h4>Weekly Schedule Operations Overview</h4>
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Feature / Button</th>
+                        <th>Purpose & Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>View Weekly Schedule</strong></td>
+                        <td>Weekly Schedule Menu / Table</td>
+                        <td>View the operational status, business hours, and time slot durations for all 7 days of the week.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Edit Day Schedule</strong></td>
+                        <td>Edit (Pencil Icon) Button</td>
+                        <td>Configure working hours, opening/closing times, time-slot intervals, and max bookings per slot for a specific day.</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <br>
-        <div class="page-header">
-            <h5><b>Add Attribute Sets</b></h5>
-            <hr class="notop">
-            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_6_2.png"></p>
+
+        <!-- 1. WEEKLY SCHEDULE LIST PAGE -->
+        <div class="doc-card">
+            <h4>1. Weekly Schedule Overview List Page</h4>
+            <p>Access <strong>Weekly Schedule</strong> from the main admin sidebar (<code>/weekly-schedule</code>) to review weekly business hours.</p>
             <ul>
-                <li><b>Attribute Sets Name (translatable):</b> The name of the Attribute Sets.</li>
-                <li><b>Status:</b> Enable the Attribute Sets by checking this checkbox. Only enabled Attribute Sets can be used.</li>
+                <li><strong>Days Displayed:</strong> Lists all 7 days of the week (Monday to Sunday).</li>
+                <li><strong>Status Badges:</strong> Clearly marks days as <span class="badge-success-cust">Active</span> (open for customer bookings) or <span class="badge-danger-cust">Inactive</span> (closed/off days).</li>
+                <li><strong>Hours & Slots:</strong> Shows configured opening time, closing time, slot interval (e.g. 60 mins), and max simultaneous bookings per slot.</li>
             </ul>
-            <br>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/2uOnlZ.jpg" alt="Weekly Schedule Overview Page" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Weekly Schedule Overview Page</p>
+            </div>
         </div>
-        <div class="page-header">
-            <h5><b>Edit Attribute Sets</b></h5>
-            <hr class="notop">
-            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_6_3.png"></p>
-        </div>
-        <div class="page-header">
-            <h5><b>Bulk Action</b></h5>
-            <hr class="notop">
-            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_6_4.png"></p>
-        </div>
-        <div class="page-header">
-            <h5><b>Delete</b></h5>
-            <hr class="notop">
-            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_6_5.png"></p>
-        </div>
-    </section>
 
-    <section id="attributes">
-        <div class="page-header">
-            <h3>Attributes</h3>
-            <hr class="notop">
+        <!-- 2. EDIT DAY SCHEDULE PAGE -->
+        <div class="doc-card">
+            <h4>2. Edit Day Schedule & Shift Settings</h4>
+            <p>To update the operating shift or time slots for a specific day (e.g. <code>/weekly-schedule/monday/edit</code>):</p>
+            <ol>
+                <li>Click the <strong>Edit</strong> button (pencil icon) next to any day row on the Weekly Schedule list.</li>
+                <li>The Day Schedule Editor form will open:
+                    <ul>
+                        <li><strong>Active Status Toggle:</strong> Enable to open cleanings for this day; disable to mark the day as closed.</li>
+                        <li><strong>Opening Time:</strong> The start of the working shift (e.g. <code>08:00 AM</code>).</li>
+                        <li><strong>Closing Time:</strong> The end of the working shift (e.g. <code>06:00 PM</code>).</li>
+                        <li><strong>Time Slot Duration (Minutes):</strong> Length of each appointment interval (e.g. <code>60 mins</code> generates slots like 8:00 AM, 9:00 AM, 10:00 AM).</li>
+                        <li><strong>Max Bookings Per Slot:</strong> Maximum number of cleaning appointments allowed in the same time slot.</li>
+                    </ul>
+                </li>
+                <li>Click <strong>"Update Weekly Schedule"</strong> to save shift changes.</li>
+            </ol>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/unAc8o.jpg" alt="Edit Day Schedule Page Form" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Edit Day Schedule Page Form</p>
+            </div>
         </div>
-        <p>
-            <strong>Products</strong> --> <strong>Attributes</strong>.<br>
-            You can data create, edit and active-inactive in Attributes.
-        </p>
-        <p>Attributes can be used for filtering products. Customers will see attributes as a table on the product page</p>
-        <p>
-            <img src="public/documentation/assets/images/cartpro_admin/Screenshot_7.png">
-        </p>
-        <p>
-            During attribute create you can set Attribute Set Name, New Attribute Name, Categories, Filterable, Status.
-        </p>
-        <p>
-            <img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_8.png">
-        </p>
-        <p>
-            <img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_9.png">
-        </p>
-        <ul>
-            <li><b>Attribute Set:</b> Attributes are grouped by the attribute sets. You can create attribute set from the Attribute Set sub-menu.</li>
-            <li><b>Attribute Name (translatable):</b> The name of the Attribute.</li>
-            <li><b>Status:</b> Enable the Attribute by checking this checkbox. Only enabled Attribute can be used.</li>
-            <br>
-        </ul>
-    </section>
 
-    <section id="tag">
-        <div class="page-header">
-            <h3>Tags</h3>
-            <hr class="notop">
-        </div>
-        <p>
-            <strong>Products</strong> --> <strong>Tags</strong>.<br>
-            You can data create, edit and active-inactive in Tags.
-        </p>
-        <p>
-            <img src="public/documentation/assets/images/cartpro_admin/Screenshot_10.png">
-        </p>
-
-        <div class="page-header">
-            <h5><b>Add Tags</b></h5>
-            <hr class="notop">
-            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_10_2.png"></p>
+        <!-- 3. BOOKING WIZARD STEP-2 INTEGRATION -->
+        <div class="doc-card" style="border-left: 4px solid #0866e8;">
+            <h4>3. Booking Wizard Integration (Step-2 Date & Related Time Slots)</h4>
+            <p>The Weekly Schedule settings directly control customer availability and time slot generation during <strong>Step 2 of 4: Date & Time</strong> (<code>/booking-service/date-time</code>):</p>
             <ul>
-                <li><b>Tags Name (translatable):</b> The name of the Tags.</li>
-                <li><b>Status:</b> Enable the Tags by checking this checkbox. Only enabled Tags can be used.</li>
+                <li><strong>Day Selection & Related Time Slots:</strong> When a customer selects an active date on the calendar, the system automatically loads the time slots configured for that specific day of the week.</li>
+                <li><strong>Dynamic Slot Generation:</strong> Available time slots (e.g. <code>8:00 AM</code>, <code>10:00 AM</code>, <code>12:00 PM</code>, <code>2:00 PM</code>, <code>4:00 PM</code>) are generated strictly between the configured Opening Time and Closing Time based on the slot duration interval.</li>
+                <li><strong>Inactive Days Guard:</strong> Off/inactive days toggled in the Weekly Schedule cannot be selected by customers.</li>
             </ul>
-            <br>
-        </div>
-        <div class="page-header">
-            <h5><b>Edit Tags</b></h5>
-            <hr class="notop">
-            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_10_3.png"></p>
-        </div>
-        <div class="page-header">
-            <h5><b>Confirmation</b></h5>
-            <hr class="notop">
-            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_10_4.png"></p>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/oJy68t.jpg" alt="Step-2 Calendar Day & Related Time Slots" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Step-2 Calendar Day & Related Time Slots</p>
+            </div>
         </div>
     </section>
 
-    <section id="product">
-        <div class="page-header">
-            <h3>Catalog</h3>
-            <hr class="notop">
-        </div>
-        <p>
-            <strong>Products</strong> --> <strong>Catalog</strong>.<br>
-            You can create, edit data and active-inactive in Products.
-        </p>
-        <p>
-            <img src="public/documentation/assets/images/cartpro_admin/Screenshot_11.png">
-        </p>
-
-        <div class="page-header">
-            <h5><b>Create Product</b></h5>
-            <hr class="notop">
-            <p>Navigate to <b>Products > Catalog > Create Product </b> to create a new product.</p>
-            <p><b><i>[ TIP : Fields with the red asterisks are required.</i></b></p>
-            <p>If your store has more than one locale then translatable fields can be translated into other languages. You'll learn how to add more locale and translate a translatable field later in this guide.
-                If you want to create a simple product then just fill the required fields under the Basic Information group. In order to create a configurable product, you can fill the fields under Advanced Information group.
-            </p>
-        </div>
-
-        <p>During Creating a product</p>
-
-        <!--General-->
-        <p><b><i>General:</i></b></p>
-        <p>You can set Product Name, Description, Brand, Categories, Tax, Tags Status</p>
-        <p><img src="public/documentation/assets/images/cartpro_admin/Screenshot_12.png"></p>
-        <ul>
-            <li><b>Product Name</b> (translatable): The name of the product.</li>
-            <li><b>Description </b> (translatable): The description of the product..</li>
-            <li><b>Categories: </b> You can organize products by adding categories to it. You've already seen how to create categories on top in this guide.</li>
-            <li><b>Status:: </b> Enable the product by checking this checkbox. Customers will only see the enabled products.</li>
-        </ul>
-
-        <!--Price-->
-        <p><b><i>Price:</i></b></p>
-        <p>You can set Price, Special Price, Special Price Type, Special Price Start, Special Price End</p>
-        <p><img src="public/documentation/assets/images/cartpro_admin/Screenshot_13.png"></p>
-        <ul>
-            <li><b>Price</b> The base price of the product.</li>
-            <li><b>Special Price </b> The discounted price of the product.</li>
-            <li><b>Special Price Start: </b> The start date of the special price.</li>
-            <li><b>Special Price End: </b> The end date of the special price.</li>
-        </ul>
-
-        <!--Inventory-->
-        <p><b><i>Inventory:</i></b></p>
-        <p>You can set SKU, Inventory Management, Quantity, Stock Availibility</p>
-        <p><img src="public/documentation/assets/images/cartpro_admin/Screenshot_14.png"></p>
-        <ul>
-            <li><b>SKU </b> (stock keeping unit): The SKU of the product.</li>
-            <li><b>Inventory Management </b> Select the Track Inventory option, if you want to manage your product's inventory.</li>
-            <li><b>Qty: </b> If you've selected the Track Inventory option then you'll see a new Qty field under the Inventory Management field. You can add the total available amount of the product here.</li>
-            <li><b>Stock Availability: </b> Customers will only able to purchase In Stock products.</li>
-        </ul>
-
-        <!--Image-->
-        <p><b><i>Image:</i></b></p>
-        <p><img src="public/documentation/assets/images/cartpro_admin/Screenshot_15.png"></p>
-        <ul>
-            <li><b>Base Image </b> This is the thumbnail image of the product.</li>
-            <li><b>Additional Images </b> You can add multiple additional images here.</li>
-        </ul>
-
-        <!--SEO-->
-        <p><b><i>SEO:</i></b></p>
-        <p><img src="public/documentation/assets/images/cartpro_admin/Screenshot_16.png"></p>
-        <ul>
-            <li><b>Meta Title </b>  (translatable)</li>
-            <li><b>Meta Description </b> (translatable)</li>
-        </ul>
-
-        <!--Attribute-->
-        <p><b><i>Attribute:</i></b></p>
-        <p>In order to add attributes you must first create an attribute from the Attributes menu. Attributes can be used for filtering products and showing additional information about the product in a tabular form.</p>
-        <p><img src="public/documentation/assets/images/cartpro_admin/Screenshot_17.png"></p>
-        <p>In product search page customers will see filtered navigation for filtering products by attribute.</p>
-
-        <!--Additional-->
-        <p><b><i>Additional:</i></b></p>
-        <p>You can set additional information</p>
-        <p><img src="public/documentation/assets/images/cartpro_admin/Screenshot_18.png"></p>
-        <ul>
-            <li><b>Short Description </b> (translatable): The short description of the product.</li>
-            <li><b>Product New From:</b> The start date for the New badge in the product card.</li>
-            <li><b>Product New To:</b> The end date for the New badge in the product card.</li>
-        </ul>
-
-        <br>
-        <!--Weight-->
-        <p><b><i>Weight:</i></b></p>
-        <p>You can maintain weight base calculation.</p>
-        <p><img src="public/documentation/assets/images/cartpro_admin/Screenshot_113.png"></p>
-        <ul>
-            <li>Price will be calculated on weight basis. (1 KG= 1000 gm). On the other hand if your product depends on weight basis like hen, fruits, milk etc. then set <b>"1"</b> in weight input field and enable the checkbox because product will calculate 1 KG = 1000 gm basis and the attribute value should be assigned as like <b>"200 gm", "500 gm", "1000 gm"</b> etc.</li>
-            <li>This time attribute values should look like which is given below -</li>
-            <li>If you don't want weight base calculation, then untick the checkbox</li>
-        </ul>
-        <p><img src="public/documentation/assets/images/cartpro_admin/Screenshot_114.png"></p>
-    </section>
-
-    <section id="review">
-        <div class="page-header">
-            <h3>Reviews</h3>
-            <hr class="notop">
-        </div>
-        <p>
-            <strong>Product</strong> -> <strong>Reviews</strong>.<br>
-            Customers can review a product and give a rating to it from the product page. By default, when you install FleetCart all reviews will be approved automatically. But you can change this behavior from the settings.
-            <br> You can also see product specific reviews from the product edit page under the Reviews tab in Advanced Information group.
-        </p>
-        <p>From Customers</p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_19_0.png"></p>
-        <p><p>From Admin</p></p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_19.png"></p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_20.png"></p>
-    </section>
-
-    <section id="order">
-        <div class="page-header">
-            <h3>Orders</h3>
-            <hr class="notop">
-        </div>
-        <p>
-            <strong>Sales</strong> -> <strong>Order</strong>.<br>
-            <p>All customer orders are under the Orders sub-menu. In order to view the details of an order click the order row in the table.</p>
-        </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_21.png"></p>
-        <p>
-            <strong>Show Order</strong>.<br>
-            Click on the order eye icon in the table to view the details of the order.
-        </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_22.png"></p>
-    </section>
-
-    <section id="transaction">
-        <div class="page-header">
-            <h3>Transaction</h3>
-            <hr class="notop">
-        </div>
-        <p>
-            <strong>Sales</strong> -> <strong>Transaction</strong>.<br>
-            Transactions page has a list of all transaction IDs and it's payment method. You can view the order details of the transaction by clicking the order ID in the table.
-        </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_23.png"></p>
-    </section>
-
-    <section id="flash_sale">
-        <div class="page-header">
-            <h3>Flash Sale</h3>
-            <hr class="notop">
-        </div>
-        <p>
-            <strong>Flash Sale</strong><br>
-            You can create, edit and active-inactive data in Flash Sales.
-        </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_24.png"></p>
-        <p>
-            <strong>Flash Sale --> Flash Sale Create</strong><br>
-            1. Products : You have to choose any Product Name, then have to set End Date, Price , Quantity.
-        </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_25.png"></p>
-        <p> 2. Settings : You have to input Campaign Name, status.</p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_26.png"></p>
-    </section>
-
-    <section id="coupon">
-        <div class="page-header">
-            <h3>Coupons</h3>
-            <hr class="notop">
-        </div>
-        <p>
-            You can encourage customers to buy a product by giving a discount. Every product can have a discounted price but if you want more control over discounts then you can create a coupon for that. Coupons are highly customizable and can be used for any product.
-            <br>
-            Customers can apply coupons to their shopping cart from the cart page. After applying a coupon to the shopping cart coupon value will be subtracted from the subtotal.
-        </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_27_0.png"></p>
-
-
-        <p>From Admin</p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_27.png"></p>
-        <div class="page-header">
-            <h5><b>Create Coupon</b></h5>
-            <hr class="notop">
-        </div>
-        <p>
-            <strong>Coupons --> Create</strong><br>
-            1. General : You can set Coupon Name, Coupon Code, Discount Type, Value, Free Shipping, Start Date, End Date, Status.
-        </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_115.jpeg"></p>
-        <ul>
-            <li><b>Coupon Name</b> (translatable): The name of the coupon.</li>
-            <li><b>Code</b> A unique code for the coupon. Customers will use this code for applying the coupon to their shopping cart.</li>
-            <li><b>Discount Type:</b> You can either set a fixed value coupon. The value of coupon will be calculated based on the shopping cart.</li>
-            <li><b>Value:</b> Set the value of the coupon.</li>
-            <li><b>Status:</b> Enable the coupon by checking this checkbox. Only enabled coupons can be used.</li>
-            <li><b>Enable Expiry Date:</b> Coupon will available within the expiry date if you want.</li>
-            <li><b>Enable Usage Limit Per Coupon:</b> Coupon will available base on quantity if you want.</li>
-        </ul>
-    </section>
-
-    <!-- FAQ -->
-    <section id="faq">
-        <div class="page-header">
-            <h3>FAQ Setting</h3>
-            <hr class="notop">
-        </div>
-
-        <!-- Type -->
-        <h4>(Type)</h4>
-        <p><strong>FAQ Setting--> Type</strong></p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_93.png"></p>
-        <h4><strong>Create</strong></h4>
-        <p>You can add Type.</p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_94.png"></p>
-        <ul>
-            <li><b>Type Name</b> (translatable): The name of the Type Name.</li>
-        </ul>
-
-
-        <!-- FAQ -->
-        <h4>(FAQ)</h4>
-        <p><strong>FAQ Setting--> FAQ Set</strong></p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_95.png"></p>
-        <h4><strong>Create</strong></h4>
-        <p>You can add Type.</p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_96.png"></p>
-        <ul>
-            <li><b>FAQ Type</b> You have to select FAQ Type </li>
-            <li><b>Title</b> (translatable): The name of the Title.</li>
-            <li><b>Description</b> (translatable): The name of the Description.</li>
-            <li><b>Active</b> You can enable-disable the checkbox</li>
-        </ul>
-        <br>
-        <h4><strong>Edit</strong></h4>
-        <p>You can edit</p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_97.png"></p>
-    </section>
-
-    <section id="page">
-        <div class="page-header">
-            <h3>Pages</h3>
-            <hr class="notop">
-        </div>
-        <p>
-            <strong>Pages</strong><br>
-            You can create, edit and active-inactive data in Pages. You can create as many custom page as you want. You can create an About page or a Privacy Policy page to give your customers a better knowledge of your store.
-        </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_31.png"></p>
-
-        <div class="page-header">
-            <h5><b>Create Page</b></h5>
-            <hr class="notop">
-        </div>
-        <p>
-            <strong>Online Store --> Pages --> Add Page</strong><br>
-            1. General : You can set Page Name, Body, Active.
-        </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_32.png"></p>
-        <ul>
-            <li><b>Page Name: </b>  (translatable) The name of the page.</li>
-            <li><b>Body:</b>  (translatable) The content of the page.</li>
-            <li><b>Meta Title:</b>  (translatable) The content of the Meta title.</li>
-            <li><b>Meta Description:</b>  (translatable) The content of the description.</li>
-            <li><b>Meta URL:</b>  The content of the Meta URL.</li>
-            <li><b>Meta Type:</b>  The content of the Meta Type.</li>
-            <li><b>Status:</b>Enable the page by checking this checkbox.</li>
-        </ul>
-
-        <br>
-        <div class="page-header">
-            <h5><b>Edit Page</b></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_32_2.png"></p>
-
-        <div class="page-header">
-            <h5><b>Bulk Action</b></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_32_3.png"></p>
-    </section>
-
-    <!-- Menu -->
-    <section id="menu">
-        <div class="page-header">
-            <h3>Menus</h3>
-            <hr class="notop">
-        </div>
-        <p>
-            You can customize your online store navigation menus from here. There are usually three types of menus, Primary Menu, Category Menu, and Footer Menu.
-            <br>
-            After creating menus, navigate to Online Store > Menus then choose Primary Menu, Category Menu, and Footer Menu.
-        </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_33.png"></p>
-
-
-        <div class="page-header">
-            <h5><b>Add New Menu</b></h5>
-            <hr class="notop">
-        </div>
-        <p>
-            <strong>Menus --> Add New Menu</strong><br>
-            Navigate to Menus > Create Menu to create a new menu.
-        </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_34.png"></p>
-        <ul>
-            <li><b>Menu Name: </b>  (translatable) The name of the Menu.</li>
-            <li><b>Status:</b>Enable the page by checking this checkbox.</li>
-        </ul>
-
-        <br>
-        <div class="page-header">
-            <h5><b>Menu Structure</b></h5>
-            <hr class="notop">
-        </div>
-        <p>
-            <strong>Menus --> Menu Structure</strong><br>
-            Please click on the eye icon from the Menu Page and then go Menu Structure.
-        </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_35.png"></p>
-
-    </section>
-
-    <!-- Slider -->
-    <section id="slider">
-        <div class="page-header">
-            <h3>Slider</h3>
-            <hr class="notop">
-        </div>
-        <p>
-            <strong>Online Store --> Slider </strong><br>
-            You can create multiple sliders for your store, then switch between them anytime you like.
-        </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_61.png"></p>
-
-        <div class="page-header">
-            <h5><i><b>Add Slider</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p>Navigate to Online Store  > Add Slider to create a new slider</p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_62.png"></p>
-        <ul>
-            <li><b>Name</b> (translatable): The name of the slider.</li>
-            <li><b>Category</b>: Type of category.</li>
-            <li><b>Text Alignment</b>: Left or Right of text.</li>
-            <li><b>Text Color</b>: Put Color Code.</li>
-            <li><b>Status:</b> Enable the slider by checking this checkbox. Only enabled slider can be used.</li>
-        </ul>
-        <br>
-
-        <div class="page-header">
-            <h5><i><b>Edit Slider</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p>Navigate to Online Store  > Edit Slider to create a new slider</p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_62_2.png"></p>
-    </section>
-
-
-    <!-- Storefront -->
-    <section id="storefront">
-        <div class="page-header">
-            <h3>Storefront</h3>
-            <hr class="notop">
-        </div>
-        <p>
-            <strong>Online Store --> Storefront </strong><br>
-            You can modify data from Storefront. Thee is two section. General Setting Section and Home Page Section. <br>
-
-        </p>
-
-        <div class="page-header">
-            <h5><i><b>1. General</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_43.png"></p>
-        <ul>
-            <li><b>Terms & Conditions Page:</b> Select the terms & conditions page for your store.</li>
-            <li><b>Privacy Policy Page:</b> Select the privacy policy page for your store.</li>
-            <li><b>Slider:</b> Select the slider for your store.</li>
-            <li><b>Footer Address:</b> Fill your store address for the footer of your store.</li>
-        </ul>
-        <br>
-
-
-
-        <div class="page-header">
-            <h5><i><b>2. Menus</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_44.png"></p>
-        <ul>
-            <li><b>Primary Menu:</b> Primary menu of the store.</li>
-            <li><b>Category Menu Title:</b>  (translatable).</li>
-            <li><b>Category Menu:</b> Category menu of the store..</li>
-            <li><b>Footer Menu:</b> Footer menu of the store.</li>
-        </ul>
-        <br>
-
-        <div class="page-header">
-            <h5><i><b>3. Social Links</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p>Social links are shown in the footer of the website.</p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_45.png"></p>
-
-
-        <div class="page-header">
-            <h5><i><b>4. Features</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_46.png"></p>
-
-        <div class="page-header">
-            <h5><i><b>5. Logo</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_47.png"></p>
-
-        <div class="page-header">
-            <h5><i><b>6. Footer</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_48.png"></p>
-
-        <div class="page-header">
-            <h5><i><b>7. Newslatter</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_49.png"></p>
-
-        <div class="page-header">
-            <h5><i><b>8. Product Page</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_50.png"></p>
-
-        <div class="page-header">
-            <h5><i><b>9. Slider Banner</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_51.png"></p>
-
-        <div class="page-header">
-            <h5><i><b>10. One Column Banner</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_52.png"></p>
-
-        <div class="page-header">
-            <h5><i><b>11. Two Colunm Banner</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_53.png"></p>
-
-        <div class="page-header">
-            <h5><i><b>12. Three Colunm Banne</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_54.png"></p>
-
-        <div class="page-header">
-            <h5><i><b>13. Three Colunm Full Width Banner</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_55.png"></p>
-
-        <div class="page-header">
-            <h5><i><b>14. Featured Category</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_56.png"></p>
-
-        <div class="page-header">
-            <h5><i><b>15. Top Brands</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_57.png"></p>
-
-        <div class="page-header">
-            <h5><i><b>16. Flash Sales and Verticle Products</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_58.png"></p>
-
-        <div class="page-header">
-            <h5><i><b>17. Products Tabs One</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_59.png"></p>
-
-        <div class="page-header">
-            <h5><i><b>18. Products Tabs Two</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_60.png"></p>
-    </section>
-
-
-    <!-- User -->
-    <section id="user">
-        <div class="page-header">
-            <h3>Users</h3>
-            <hr class="notop">
-        </div>
-        <p>
-            <strong>Users And Roles --> Users</strong><br>
-            You can create, edit and active-inactive data in Users.
-        </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_36.png"></p>
-
-        <div class="page-header">
-            <h5><b>Add User</b></h5>
-            <hr class="notop">
-        </div>
-        <p>Navigate to Users > Create User to create a new user.</p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_37.png"></p>
-
-        <div class="page-header">
-            <h5><b>Edit User</b></h5>
-            <hr class="notop">
-        </div>
-        <p>Navigate to Users > Edit User to create a new user.</p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_37_2.png"></p>
-    </section>
-
-
-    <!-- Role -->
-    <section id="role">
-        <div class="page-header">
-            <h3>Roles</h3>
-            <hr class="notop">
-        </div>
-        <p>
-            <strong>Users And Roles --> Roles</strong><br>
-            You can create, edit and active-inactive data in Roles and also set Permission.
-        </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_38.png"></p>
-        <div class="page-header">
-            <h5><b>Add Role</b></h5>
-            <hr class="notop">
-        </div>
-        <p> You can set Role.</p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_39.png"></p>
-        <div class="page-header">
-            <h5><b>Edit Role</b></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_39_2.png"></p>
-
-        <div class="page-header">
-            <h5><b>Permission</b></h5>
-            <hr class="notop">
-        </div>
-        <p> You can set Permission according to role.</p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_40.png"></p>
-    </section>
-    <!--/ Role -->
-
-
-    <!--Tax -->
-    <section id="tax">
-        <div class="page-header">
-            <h3>Taxes</h3>
-            <hr class="notop">
-        </div>
-        <p>
-            <strong>Localizations --> Taxes </strong><br>
-            Taxes can be configured for taxable products in your store. After creating a tax add that tax class to all the taxable products.
-            <br>
-            Tax will be added automatically to the cart during the checkout process.
-        </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_41_0.png"></p>
-
-        <div class="page-header">
-            <h5><b>From Admin</b></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_41.png"></p>
-
-        <div class="page-header">
-            <h5><b>Add Tax</b></h5>
-            <hr class="notop">
-        </div>
-        <p>Navigate to Taxes > Create Tax to create a new tax.</p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_42.png"></p>
-
-        <div class="page-header">
-            <h5><b>Edit Tax</b></h5>
-            <hr class="notop">
-        </div>
-        <p>Navigate to Taxes > Edit Tax.</p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_42_2.png"></p>
-    </section>
-     <!--/ Tax -->
-
-
-     <!--Translation -->
-     <section id="translation">
-        <div class="page-header">
-            <h3>Translation</h3>
-            <hr class="notop">
-        </div>
-        <p>
-            <strong>Localizations --> Translation </strong><br>
-            You can translate your store's strings from the built-in translation editor for all supported locales. You can also use the translation editor for editing the default strings.
-        </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_78.png"></p>
-
-        <div class="page-header">
-            <h5><b>Add Translation</b></h5>
-            <hr class="notop">
-        </div>
-        <p>Navigate to Translation > Add Translation.</p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_79.png"></p>
-
-        <div class="page-header">
-            <h5><b>Edit Translation</b></h5>
-            <hr class="notop">
-        </div>
-        <p>Click in text field and click update icon button</p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_80.png"></p>
-    </section>
-     <!--Translation -->
-
-
-     <!--Currency Rates -->
-     <section id="currency_rates">
-        <div class="page-header">
-            <h3>Currency Rates</h3>
-            <hr class="notop">
-        </div>
-        <p>
-            <strong>Localizations --> Currency Rates </strong><br>
-            Currency rates are used for determining the product price when a customer changed the currency. If your store only supports one currency, then you don't need to update currency rates.
-            <br>You can use third-party service like Fixer, 1Forge, or Currency Data Feed to refresh currency rates. Click on the Refresh Rates button to refresh currency rates. If a third-party service is not configured, configure it from Settings > Currency.
-        </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_81.png"></p>
-
-        <div class="page-header">
-            <h5><b>Edit Currency Rates</b></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_82.png"></p>
-    </section>
-
-    <!--Country -->
-    <section id="country">
-        <div class="page-header">
-            <h3>Country</h3>
-            <hr class="notop">
-        </div>
-        <p><strong>Site Settings --> Country </strong><br></p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_98.png"></p>
-
-
-        <div class="page-header">
-            <h5><b>Add</b></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_99.png"></p>
-
-
-        <div class="page-header">
-            <h5><b>Edit</b></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_100.png"></p>
-    </section>
-
-    <!--Country -->
-    <section id="currency">
-        <div class="page-header">
-            <h3>Currency</h3>
-            <hr class="notop">
-        </div>
-        <p><strong>Site Settings --> Currency </strong><br></p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_101.png"></p>
-
-
-        <div class="page-header">
-            <h5><b>Add</b></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_102.png"></p>
-
-
-        <div class="page-header">
-            <h5><b>Edit</b></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_103.png"></p>
-    </section>
-
-    <!-- Setting -->
-    <section id="setting">
-        <div class="page-header">
-            <h3>Other Setting</h3>
-            <hr class="notop">
-        </div>
-        <p>
-            <strong>Site Settings --> Other Setting </strong><br>
-            You can modify data from Setting. There is two section. General Setting Section and Home Page Section.<br>
-        </p>
-        <div class="page-header">
-            <h5><i><b># General</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_65.png"></p>
-        <ul>
-            <li><b>Supported Countries:</b> Supported countries of your store.</li>
-            <li><b>Default Country:</b> The default country of your store.</li>
-            <li><b>Supported Locales: </b> Supported locales of your store.</li>
-            <li><b>Default Timezone:</b> The default timezone of your store.</li>
-            <li><b>Customer Role:</b> Role of the customer when they register..</li>
-            <li><b>Review and Rating:</b> Customer can give review and rating system</li>
-        </ul>
-        <br>
-
-        <div class="page-header">
-            <h5><i><b># Home Page SEO</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_104.png"></p>
-
-        <div class="page-header">
-            <h5><i><b># Store Contact</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_67.png"></p>
-
-        <div class="page-header">
-            <h5><i><b># About Us</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_105.png"></p>
-
-        <div class="page-header">
-            <h5><i><b># Currency</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_68.png"></p>
-        <ul>
-            <li><b>Supported Currencies:</b> Supported currencies of your store.</li>
-            <li><b>Default Currency:</b> Default currency of your store</li>
-            <li><b>Exchange Rate Service:</b> Third party currency exchange rate service.</li>
-            <li><b>Auto Refresh:</b> Auto refresh currency rates Daily, Weekly, or Monthly.</li>
-            <li><b>Default Symbol:</b> Defferent countries different symbol.</li>
-        </ul>
-        <br>
-
-        <div class="page-header">
-            <h5><i><b># Mail</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_70.png"></p>
-        <ul>
-            <li><b>Mail From Address:</b> This mail from address is used for all kind of emails.</li>
-            <li><b>Mail From Name:</b> This mail from name is used for all kind of emails.</li>
-            <li><b>Mail Host:</b> The host of your SMTP server.</li>
-            <li><b>Mail Port:</b> The port of your SMTP server.</li>
-            <li><b>Mail Username:</b> The username of your SMTP server.</li>
-            <li><b>Mail Password:</b>The password of your SMTP server.</li>
-        </ul>
-        <br>
-
-        <div class="page-header">
-            <h5><i><b># Newslatter</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_71.png"></p>
-        <ul>
-            <li><b>Newsletter:</b> Allow customers to subscribe to your newsletter.</li>
-            <li><b>Mailchimp API Key:</b> Setup Mail Api Key.</li>
-            <li><b>Mailchimp List ID:</b> Setup Mailchimp List ID.</li>
-        </ul>
-        <br>
-
-
-        <div class="page-header">
-            <h5><i><b># Facebook</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_73.png"></p>
-
-        <div class="page-header">
-            <h5><i><b># Google</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_74.png"></p>
-
-        <div class="page-header">
-            <h5><i><b># Free Shipping</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_75.png"></p>
-        <ul>
-            <li><b>Status:</b> Enable this shipping method by checking this checkbox..</li>
-            <li><b>Label :</b> (translatable): The label for this shipping method.</li>
-        </ul>
-        <br>
-
-        <div class="page-header">
-            <h5><i><b># Local Pickup</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_76.png"></p>
-        <ul>
-            <li><b>Status:</b>Enable this shipping method by checking this checkbox.</li>
-            <li><b>Label :</b> (translatable): The label for this shipping method.</li>
-            <li><b>Cost :</b>The cost for this shipping method.</li>
-        </ul>
-        <br>
-
-        <div class="page-header">
-            <h5><i><b># Flat Rate</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_77.png"></p>
-        <ul>
-            <li><b>Status:</b>Enable this Flat Rate by checking this checkbox.</li>
-            <li><b>Label :</b> (translatable): The label for this Flat Rate.</li>
-            <li><b>Cost :</b>The cost for this Flat Rate method.</li>
-        </ul>
-        <br>
-
-        <div class="page-header">
-            <h5><i><b># Empty Database</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_83.png"></p>
-        <p>For using DB empty except some table</p>
-
-        <div class="page-header">
-            <h5><i><b># Paypal</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_84.png"></p>
-        <ul>
-            <li>Status: Enable this payment method by checking this checkbox.</li>
-            <li>Label (translatable): The label for this payment method.</li>
-            <li>Client Id: The Client Id have to fillup.</li>
-            <li>Secret: The Secret Id have to fillup.</li>
-        </ul>
-        <br>
-
-        <div class="page-header">
-            <h5><i><b># Stripe</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_85.png"></p>
-        <ul>
-            <li>Status: Enable this payment method by checking this checkbox.</li>
-            <li>Label: The label for this payment method.</li>
-            <li>Description: The description for this payment method.</li>
-            <li>Publishable Key: The stripe API publishable key.</li>
-            <li>Secret Key: The stripe API secret key.</li>
-        </ul>
-        <br>
-
-        <div class="page-header">
-            <h5><i><b># SSL Commerz</b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_86.png"></p>
-        <ul>
-            <li>Status: Enable this payment method by checking this checkbox.</li>
-            <li>Store ID: The Store ID publishable key.</li>
-            <li>Secret Key: The secret key.</li>
-        </ul>
-
-        <br>
-        <div class="page-header">
-            <h5><i><b># Cash On Delivery
-            </b></i></h5>
-            <hr class="notop">
-        </div>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_87.png"></p>
-        <ul>
-            <li>Status: Enable this payment method by checking this checkbox.</li>
-            <li>Label: The label for this payment method.</li>
-            <li>Description: The description for this payment method.</li>
-        </ul>
-        <br>
-    </section>
-
-
-    <section id="language">
-        <div class="page-header">
-            <h3>Language</h3>
-            <hr class="notop">
-        </div>
-        <p>
-            <strong>Settings</strong> --> <strong>Language</strong>.<br>
-            You can data create, edit and Delete in Language.
-        </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_88.png"></p>
-
-        <div class="page-header">
-            <h5><b>Add Language</b></h5>
-            <hr class="notop">
-            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_89.png"></p>
-            <br>
-        </div>
-        <div class="page-header">
-            <h5><b>Edit Language</b></h5>
-            <hr class="notop">
-            <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_90.png"></p>
-            <br>
+    <!-- HOLIDAY MANAGEMENT -->
+    <section id="holiday_management">
+        <div class="page-header">
+            <h3>Holiday Management</h3>
+            <hr class="notop">
+        </div>
+        <p>The Holiday Management module (<code>/holidays</code>) allows Administrators to configure company blackout dates, office closures, and public holidays. Active holidays automatically disable date selection on the customer booking calendar with custom title tooltips.</p>
+
+        <div class="doc-card">
+            <h4>Holiday Management Operations Overview</h4>
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Feature / Button</th>
+                        <th>Purpose & Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>View Holidays</strong></td>
+                        <td>Holidays Menu / List Table</td>
+                        <td>View all registered company holidays, blackout dates, and office closures.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Add Holiday</strong></td>
+                        <td>"+ Add Holiday" Button</td>
+                        <td>Create a new holiday rule to disable booking availability for single or multiple days.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Edit Holiday</strong></td>
+                        <td>Edit (Pencil Icon) Button</td>
+                        <td>Modify the holiday title, date range, or activate/deactivate the blackout rule.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Delete Holiday</strong></td>
+                        <td>Delete (Trash Icon) Button</td>
+                        <td>Remove a holiday closure rule and restore booking availability on those dates.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 1. INDEX PAGE (LIST ALL HOLIDAYS) -->
+        <div class="doc-card">
+            <h4>1. List of All Holidays (Index View)</h4>
+            <p>Navigate to <strong>Holidays</strong> from the main admin sidebar (<code>/holidays</code>) to view all configured office closures.</p>
+            <ul>
+                <li><strong>Table Columns:</strong> Displays Holiday Title, Start Date, End Date, Status (Active/Inactive badge), and Action buttons.</li>
+                <li><strong>Filtering & Sorting:</strong> Filter holiday rules dynamically by title or date range.</li>
+            </ul>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/6eAnba.jpg" alt="Holidays List Interface" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Holidays List Interface</p>
+            </div>
+        </div>
+
+        <!-- 2. ADD HOLIDAY -->
+        <div class="doc-card">
+            <h4>2. Add New Holiday (Create Rule)</h4>
+            <p>To create a new holiday blackout rule:</p>
+            <ol>
+                <li>Click the blue <strong>"+ Add Holiday"</strong> button at the top-right of the Holidays list page.</li>
+                <li>The <strong>Add Holiday Modal</strong> will appear on screen.</li>
+                <li>Enter the holiday details:
+                    <ul>
+                        <li><strong>Title:</strong> Name of the holiday (e.g. <em>Testing Day</em>, <em>Christmas Day</em>).</li>
+                        <li><strong>Start Date:</strong> Date when the holiday blackout begins.</li>
+                        <li><strong>End Date:</strong> Date when the holiday blackout ends (supports multi-day holidays).</li>
+                        <li><strong>Status:</strong> Set to Active to enforce the blackout on the booking calendar.</li>
+                    </ul>
+                </li>
+                <li>Click <strong>"Save Holiday"</strong> to apply the rule.</li>
+            </ol>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/Yr2w1e.jpg" alt="Add Holiday Modal Form" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Add Holiday Modal Form</p>
+            </div>
+        </div>
+
+        <!-- 3. EDIT HOLIDAY -->
+        <div class="doc-card">
+            <h4>3. Edit Holiday Details (Update Rule)</h4>
+            <p>To modify an existing holiday blackout rule:</p>
+            <ol>
+                <li>In the Holidays list table, locate the holiday record.</li>
+                <li>Click the <strong>Edit</strong> button (pencil icon) in the <em>Action</em> column.</li>
+                <li>The <strong>Edit Holiday Modal</strong> will open pre-filled with the current title, date range, and status.</li>
+                <li>Update desired fields and click <strong>"Update Holiday"</strong> to save changes.</li>
+            </ol>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/08W3qU.jpg" alt="Edit Holiday Modal Form" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Edit Holiday Modal Form</p>
+            </div>
+        </div>
+
+        <!-- 4. DELETE HOLIDAY -->
+        <div class="doc-card">
+            <h4>4. Delete Holiday (Remove Blackout Rule)</h4>
+            <p>To remove a holiday blackout date rule:</p>
+            <ol>
+                <li>Find the holiday in the Holidays list table.</li>
+                <li>Click the red <strong>Delete</strong> button (trash bin icon).</li>
+                <li>A SweetAlert confirmation dialog will ask: <em>"Are you sure you want to delete this Holiday?"</em></li>
+                <li>Click <strong>"Yes, Delete it!"</strong> to confirm. The blackout date is removed and date selection on the calendar is restored.</li>
+            </ol>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/5tu7Kn.jpg" alt="Delete Holiday Confirmation Alert" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Delete Holiday Confirmation Alert</p>
+            </div>
+        </div>
+
+        <!-- 5. STEP-2 BOOKING CALENDAR INTEGRATION -->
+        <div class="doc-card" style="border-left: 4px solid #0866e8;">
+            <h4>5. Booking Wizard Step-2 Calendar Integration (Disabled Holiday Dates)</h4>
+            <p>When customers schedule a cleaning at <strong>Step 2 of 4: Date & Time</strong> (<code>/booking-service/date-time</code>), active holidays automatically enforce date blackout rules:</p>
+            <ul>
+                <li><strong>Visual Disabled Cell:</strong> Dates falling within an active holiday range are styled with a muted background, disabled cursor, and cannot be selected.</li>
+                <li><strong>Tooltip Title Popup:</strong> Hovering over a disabled holiday date displays a tooltip popup showing <code>Holiday: {Holiday Title}</code> (e.g., <code>Holiday: Testing Day</code>).</li>
+                <li><strong>Prevent Duplicate Bookings:</strong> Ensures cleanings are not scheduled on days when the business or office is closed.</li>
+            </ul>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/Rqg8Nk.jpg" alt="Step-2 Calendar Holiday Disabled Date Tooltip" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Step-2 Calendar Holiday Disabled Date Tooltip</p>
+            </div>
         </div>
     </section>
 
-    <section id="clearCache">
+    <!-- BOOKING WIZARD FLOW -->
+    <section id="booking_wizard">
         <div class="page-header">
-            <h3>Clear Cache</h3>
+            <h3>Booking Wizard Flow</h3>
             <hr class="notop">
         </div>
-        <p>Clear all cache with refresh. Click there the reload icon. </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_106.png"></p>
+        <p>The 4-Step Booking Wizard (<code>/booking-service/...</code>) guides customers through a seamless, responsive checkout experience.</p>
+
+        <table class="doc-table">
+            <thead>
+                <tr>
+                    <th>Step</th>
+                    <th>Route</th>
+                    <th>Title & Key Features</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Step 1</strong></td>
+                    <td><code>/booking-service/create</code></td>
+                    <td><strong>Service & Frequency:</strong> Select service type, frequency (one-time, weekly, bi-weekly, monthly), and questionnaire options.</td>
+                </tr>
+                <tr>
+                    <td><strong>Step 2</strong></td>
+                    <td><code>/booking-service/date-time</code></td>
+                    <td><strong>Date & Time:</strong> Interactive 7-column calendar, schedule blackout checking, and time slot picker.</td>
+                </tr>
+                <tr>
+                    <td><strong>Step 3</strong></td>
+                    <td><code>/booking-service/your-details</code></td>
+                    <td><strong>Your Details:</strong> Choose saved profile account details or enter manual address, suburb, postcode, and special instructions.</td>
+                </tr>
+                <tr>
+                    <td><strong>Step 4</strong></td>
+                    <td><code>/booking-service/review-confirm</code></td>
+                    <td><strong>Review & Confirm:</strong> Apply referral/promo codes, review line-item cost breakdown, and confirm order placement.</td>
+                </tr>
+            </tbody>
+        </table>
     </section>
 
-
-
-    <section id="versionUpgrade">
+    <!-- BOOKING OPERATIONS -->
+    <section id="booking_operations">
         <div class="page-header">
-            <h3>Version Upgrade</h3>
+            <h3>Booking Operations</h3>
             <hr class="notop">
         </div>
-        <p>You will see a announce notification if a new version has been released. Click there to go new release page.</p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_107.png"></p>
+        <p>Manage customer bookings and lifecycle state transitions through the admin panel (<code>/bookings</code>).</p>
 
-        <p>After going the release page you will see some info. So click on the upgrade button to action. But before upgrading, we highly recomended you to keep a backup of your current script and database. </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_108.png"></p>
-
-        <p>After clicking it takes few time. You have to wait. After completing the upgrade process, it will redirect to you dashboard and a congratulation message will be shown.</p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_109.png"></p>
-        <p><i><b>[Note: This feature is available from version no - 1.0.7. One important things that this feature is tested by only cPanel hosting server and few others. If your server is defferent and not working please let us know.]</b></i></p>
+        <div class="doc-card">
+            <h4>Booking Lifecycle States</h4>
+            <ul>
+                <li><span class="badge-warning-cust">Pending</span> Initial booking submission awaiting administrative approval.</li>
+                <li><span class="badge-info-cust">Approved</span> Booking verified and dispatched to cleaner schedule.</li>
+                <li><span class="badge-success-cust">Completed</span> Cleaning service completed. Triggers referral rewards if applicable.</li>
+                <li><span class="badge-danger-cust">Cancelled</span> Booking cancelled by customer or administrator.</li>
+            </ul>
+        </div>
     </section>
 
-
-    <section id="bugUpdate">
+    <!-- WALLET SYSTEM -->
+    <section id="wallet_system">
         <div class="page-header">
-            <h3>Bug Update</h3>
+            <h3>Wallet & Transaction Ledger System</h3>
             <hr class="notop">
         </div>
-        <p>You will see a alert notification if a new bug found. Click there to go bug page.</p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_110.png"></p>
+        <p>The Wallet System allows customers to accumulate promotional credits and redeem them during booking checkout.</p>
 
-        <p>After going the page you will see some info. So click on the update button to action. But before updating, we highly recomended you to keep a backup of your current script and database. </p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_111.png"></p>
-
-        <p>After clicking it takes few time. You have to wait. After completing the update process, it will redirect to you dashboard and a congratulation message will be shown.</p>
-        <p><img alt="" src="public/documentation/assets/images/cartpro_admin/Screenshot_112.png"></p>
-        <p><i><b>[Note: This feature is available from version no - 1.0.7. And when a new version will be released, auto bug update will be turned off for the previous version. Auto Bug update always available for current version.One important things that this feature is tested by only cPanel hosting server and few others. If your server is defferent and not working please let us know.]</b></i></p>
+        <table class="doc-table">
+            <thead>
+                <tr>
+                    <th>Credit Source</th>
+                    <th>Trigger Event</th>
+                    <th>Configuration Setting</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>welcome_bonus</code></td>
+                    <td>Initial customer email verification</td>
+                    <td><code>settings.welcome_bonus_amount</code></td>
+                </tr>
+                <tr>
+                    <td><code>referral_bonus</code></td>
+                    <td>Referred customer completes their first booking</td>
+                    <td><code>settings.referral_reward_amount</code></td>
+                </tr>
+                <tr>
+                    <td><code>review_bonus</code></td>
+                    <td>Admin approves customer Google Review proof</td>
+                    <td><code>settings.google_review_reward</code></td>
+                </tr>
+            </tbody>
+        </table>
     </section>
 
+    <!-- REFERRAL SYSTEM -->
+    <section id="referral_system">
+        <div class="page-header">
+            <h3>Referral System</h3>
+            <hr class="notop">
+        </div>
+        <p>Customers can invite friends using unique referral codes generated on their profile (<code>/customer-referrals</code>).</p>
 
+        <ul>
+            <li><strong>Unique Code:</strong> Auto-generated per user (e.g. <code>REF-IRFAN99</code>).</li>
+            <li><strong>Checkout Redemption:</strong> New customers enter code during booking wizard step 4.</li>
+            <li><strong>Automated Credit:</strong> When referred booking reaches <code>completed</code> status, wallet credits are automatically dispatched to the referrer.</li>
+        </ul>
+    </section>
 
+    <!-- PROMOTIONS & DISCOUNTS -->
+    <section id="promotions_discounts">
+        <div class="page-header">
+            <h3>Promotions & Discount Coupons</h3>
+            <hr class="notop">
+        </div>
+        <p>Administrators create promotional discount codes under <code>/promotions</code>.</p>
+
+        <ul>
+            <li><strong>Discount Types:</strong> Fixed Amount ($ off) or Percentage (% off).</li>
+            <li><strong>Validity Window:</strong> Start date and Expiry date enforcement.</li>
+            <li><strong>Usage Limits:</strong> Maximum usage count system-wide and per user.</li>
+        </ul>
+    </section>
+
+    <!-- GOOGLE REVIEW REWARD -->
+    <section id="google_review_reward">
+        <div class="page-header">
+            <h3>Google Review Reward System</h3>
+            <hr class="notop">
+        </div>
+        <p>Customer incentive feature for Google reviews, guarded by <code>EnsureGoogleReviewEnabled</code> middleware.</p>
+
+        <div class="doc-card">
+            <h4>Workflow & Security Rules</h4>
+            <ol>
+                <li><strong>Setting Feature Guard:</strong> Available only when <code>google_review_enabled</code> setting is set to true.</li>
+                <li><strong>Customer Submission:</strong> Customer requests reward proof via <code>/my-review</code>. Max 1 approved reward per customer.</li>
+                <li><strong>Admin Verification:</strong> Admin inspects review submission at <code>/reviews/{review}/edit</code>.</li>
+                <li><strong>Atomic Approval:</strong> Approving executes a database transaction crediting <code>google_review_reward</code> amount to user wallet and sending instant in-app notification.</li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- NOTIFICATIONS SYSTEM -->
+    <section id="notifications_system">
+        <div class="page-header">
+            <h3>Notifications System</h3>
+            <hr class="notop">
+        </div>
+        <p>In-app notification system accessible to all users via header bell icon or <code>/notifications</code>.</p>
+
+        <ul>
+            <li><strong>Event Triggers:</strong> New booking, status changes, Google review requests, approvals, and wallet credits.</li>
+            <li><strong>Management:</strong> Mark individual notification read, mark all read, or delete notifications.</li>
+        </ul>
+    </section>
+
+    <!-- SYSTEM SETTINGS -->
+    <section id="system_settings">
+        <div class="page-header">
+            <h3>System Settings & Feature Toggles</h3>
+            <hr class="notop">
+        </div>
+        <p>The System Settings page (<code>/settings</code>) allows Administrators to configure core company identity, operational booking rules, currency settings, reward values, and feature toggles in real-time.</p>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <img src="https://snipboard.io/pA9UTb.jpg" alt="System Settings Control Panel" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+            <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">System Settings Control Panel</p>
+        </div>
+
+        <div class="doc-card">
+            <h4>Detailed Settings Configuration Guide</h4>
+
+            <h5>1. Company Identity & Branding</h5>
+            <ul>
+                <li><strong>Company Name:</strong> Official business name displayed on customer receipts, page titles, and email templates.</li>
+                <li><strong>Company Logo:</strong> Upload brand logo (PNG, JPG, WEBP, SVG). Dynamically updates header logo, sidebar, and documentation branding upon upload.</li>
+                <li><strong>Phone & Email:</strong> Primary customer support hotline and contact email address.</li>
+                <li><strong>Address:</strong> Physical address or headquarters location displayed on invoices.</li>
+            </ul>
+
+            <h5>2. System Timezone & Currency</h5>
+            <ul>
+                <li><strong>Timezone:</strong> Sets the runtime PHP and Laravel timezone (e.g. <code>America/New_York</code>, <code>Australia/Sydney</code>). All booking calendar slots, daily schedules, and audit log timestamps evaluate against this setting.</li>
+                <li><strong>Currency:</strong> ISO currency code and symbol (e.g. <code>USD</code>, <code>$</code>) formatted across pricing displays, totals, and wallet credits.</li>
+            </ul>
+
+            <h5>3. Operational Booking Rules</h5>
+            <ul>
+                <li><strong>Minimum Booking Amount ($):</strong> Minimum cart total required before a booking can be placed.</li>
+                <li><strong>Max Wallet Usage ($):</strong> Maximum dollar credit amount a customer can redeem from their wallet balance per single booking.</li>
+                <li><strong>Maximum Advance Booking Days:</strong> Restricts how far into the future (e.g. 30 days) customers can schedule cleanings on the booking calendar.</li>
+                <li><strong>Cancellation Notice (Hours):</strong> Minimum hours notice required (e.g. 24 hours) for free customer cancellations.</li>
+            </ul>
+
+            <h5>4. Rewards & Feature Toggles</h5>
+            <ul>
+                <li><strong>Welcome Credit ($) & Toggle:</strong> Automated wallet bonus awarded to new customers upon completing email verification.</li>
+                <li><strong>Referral Reward ($) & Toggle:</strong> Automated wallet bonus awarded to a referrer when their invited friend completes their first cleaning booking.</li>
+                <li><strong>Google Review Reward ($) & Toggle:</strong> Master toggle and credit amount awarded to customers when an admin approves their Google Review reward request.</li>
+            </ul>
+
+            <h5>5. Promotions & Coupon Restrictions</h5>
+            <ul>
+                <li><strong>Promotion Max Uses:</strong> System-wide default total redemption limit for new promotional codes.</li>
+                <li><strong>Promotion Max Uses Per Customer:</strong> Maximum times an individual customer can redeem the same promotion (default: 1).</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- AUDIT LOGS -->
+    <section id="audit_logs">
+        <div class="page-header">
+            <h3>Audit Logs & Security System</h3>
+            <hr class="notop">
+        </div>
+        <p>The Audit Logs module (<code>/audit-logs</code>) provides an automated security and activity tracking system that records user actions across the platform for complete operational transparency.</p>
+
+        <div class="doc-card">
+            <h4>Audit Logs Operations Overview</h4>
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Feature / Button</th>
+                        <th>Purpose & Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>View Audit Logs</strong></td>
+                        <td>Audit Logs Menu / Table</td>
+                        <td>View a chronological activity log of all user creations, updates, deletions, and status modifications.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Inspect Log Details</strong></td>
+                        <td>View (Eye Icon) Button</td>
+                        <td>Open a detailed modal popup displaying user IP address, browser agent, and line-by-line comparison of modified data.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 1. AUDIT LOGS OVERVIEW LIST PAGE -->
+        <div class="doc-card">
+            <h4>1. Audit Logs Overview List Page</h4>
+            <p>Access <strong>Audit Logs</strong> from the main admin sidebar (<code>/audit-logs</code>) to view recorded activity logs.</p>
+            <ul>
+                <li><strong>Activity Log Columns:</strong> Displays User Name, Action Event (e.g. <em>Created, Updated, Deleted</em>), Target Model (e.g. <em>Booking, Service, SubAdmin</em>), IP Address, Timestamp, and View Details button.</li>
+                <li><strong>Search & Filter:</strong> Live search allows filtering logs by user name, action type, or IP address.</li>
+            </ul>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/Hzs0k7.jpg" alt="Audit Logs Overview Page" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Audit Logs Overview Page</p>
+            </div>
+        </div>
+
+        <!-- 2. AUDIT LOG DETAILS VIEW MODAL -->
+        <div class="doc-card">
+            <h4>2. Audit Log Details View Modal</h4>
+            <p>To inspect full details and attribute changes for any specific activity record:</p>
+            <ol>
+                <li>Click the <strong>View</strong> button (eye icon) on any audit log row.</li>
+                <li>The <strong>Audit Log Details Modal</strong> will open displaying:
+                    <ul>
+                        <li><strong>User Details:</strong> User name and email address who performed the action.</li>
+                        <li><strong>Event Action & Target:</strong> Specific action type (<em>Created, Updated, Deleted</em>) and affected system module.</li>
+                        <li><strong>Network Metadata:</strong> User IP address and Browser User-Agent string.</li>
+                        <li><strong>Old Values vs New Values Comparison:</strong> Side-by-side or line-by-line diff showing original data attributes before the change versus new data attributes after the change.</li>
+                        <li><strong>Timestamp:</strong> Exact date and time the event occurred.</li>
+                    </ul>
+                </li>
+            </ol>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/VfDeQZ.jpg" alt="Audit Log Details Inspection Modal" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Audit Log Details Inspection Modal</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- UTILITY ROUTES -->
+    <section id="utility_routes">
+        <div class="page-header">
+            <h3>Utility Routes & Maintenance</h3>
+            <hr class="notop">
+        </div>
+        <p>Admin-restricted maintenance endpoints for quick server management:</p>
+
+        <ul>
+            <li><code>GET /clear-cache</code> - Clears compiled views and application cache.</li>
+            <li><code>GET /run-migrate</code> - Executes pending database migrations.</li>
+            <li><code>GET /run-seeder/{class}</code> - Runs specific database seeder class.</li>
+            <li><code>GET /documentation</code> - Renders this interactive application documentation.</li>
+        </ul>
+    </section>
+
+    <!-- SUPPORT -->
     <section id="support">
         <div class="page-header">
-            <h3>SUPPORT</h3>
+            <h3>Support & Troubleshooting</h3>
             <hr class="notop">
         </div>
-        <p>
-            We are happy to provide support for any issues within our software. We also provide customization service for as little as $15/hour.
-            So if you have any features in mind or suugestions or face any problem, please feel free to knock us at <a href="https://lion-coders.com/support" target="__blank"><b>Support Link</b></a>.
-            Please note that we don't provide support though any other means (example- whatsapp, comments etc.).
-            So, please refrain from commenting your queries on codecanyon or kocking us elsewhere.
-        </p>
-
-        <p>
-            Also, in case of any errors/bugs/issues on your installation, please contact us with your hosting details (url, username, password), software admin access (url, username, password) and purchase code.
-            If your support period has expired, please renew support on codecanyon before contacting us for support.
-        </p>
-
-        <p>
-            Thanks a lot for using this user friendly software. Hope you found this documentation helpful for using
-            this software. Please support this product by giving your ratings and testimonial.</p>
-        <p>
-            With best wishes - <a href="http://lion-coders.com">LionCoders</a>
-        </p>
+        <p>For technical support or issues regarding system configuration:</p>
+        <ul>
+            <li><strong>Technical Documentation:</strong> Refer to <code>docs/README.md</code> in the project codebase.</li>
+            <li><strong>Test Suite Verification:</strong> Run <code>php artisan test</code> to verify application health.</li>
+        </ul>
     </section>
 
-
-
-
-
-    <!-- End CartPro Documentation -->
 </div>
-<script type="text/javascript">
 
-    $("#documenter_sidebar").mCustomScrollbar({
-        theme: "light",
-        scrollInertia: 200
-    });
-
-
-    var substringMatcher = function (strs) {
+<script>
+    var substringMatcher = function(strs) {
         return function findMatches(q, cb) {
-            var matches, substringRegex;
-
-            // an array that will be populated with substring matches
-            matches = [];
-
-            // regex used to determine if a string contains the substring `q`
-            substrRegex = new RegExp(q, 'i');
-
-            // iterate through the pool of strings and for any string that
-            // contains the substring `q`, add it to the `matches` array
-            $.each(strs, function (i, str) {
+            var matches = [];
+            var substrRegex = new RegExp(q, 'i');
+            $.each(strs, function(i, str) {
                 if (substrRegex.test(str)) {
                     matches.push(str);
                 }
             });
-
             cb(matches);
         };
     };
 
-    var states = ['Start',
+    var states = [
+        'Start Overview',
         'Server Requirements',
-        'Software Update',
-        'Log In',
+        'Installation Setup',
+        'Auth Security',
         'Admin Dashboard',
-        'Empty Database',
-        'Datatable Options',
-        'Location',
-        'Company',
-        'Department',
-        'Designation',
-        'Office Shift',
-        'Account List',
-        'Roles Access',
-        'General Setting',
-        'Mail Server',
-        'Language Setting',
-        'Variable Type',
-        'Variable Method',
-        'Employee List',
-        'Import Employee',
-        'User List',
-        'Assign Role',
-        'User Last Login',
-        'Location',
-        'Award',
-        'Travel',
-        'Transfer',
-        'Resignation',
-        'Complaint',
-        'Warning',
-        'Termination',
-        'Announcement',
-        'Company Policy',
-        'Attendance',
-        'Datewise Attendance',
-        'Monthly Attendance',
-        'Update Attendance',
-        'Import Attendance',
-        'Manage Holiday',
-        'Manage Leave',
-        'Payslip Report',
-        'Attendance Report',
-        'Training Report',
-        'Project Report',
-        'Task Report',
-        'Employee Report',
-        'Account Report',
-        'Expense Report',
-        'Deposit Report',
-        'Transaction Report',
-        'Job Post',
-        'Job Candidate',
-        'Job Interview',
-        'CMS',
-        'New Payment',
-        'Payslip History',
-        'HR Calendar',
-        'Event',
-        'Meeting',
-        'Client',
-        'Tax Type',
-        'Project',
-        'Task',
-        'Invoice',
-        'Support Ticket',
-        'Account Balance',
-        'Payee',
-        'Payer',
-        'Deposit',
-        'Expense',
-        'Transaction',
-        'Transfer',
-        'Asset Category',
-        'Asset',
-        'File Configuration',
-        'File Manager',
-        'Official Document',
-        'Client Dashboard',
-        'Client Project',
-        'Client Task',
-        'Client Invoice',
-        'Client Invoice Paid',
-        'Employee Dashboard',
-        'Support',
-        'General Error'
+        'Customer Dashboard',
+        'Sub Admin Management',
+        'Customer Management',
+        'Service Catalog',
+        'Weekly Schedule',
+        'Holiday Management',
+        'Booking Wizard',
+        'Booking Operations',
+        'Wallet System',
+        'Referral System',
+        'Promotions Discounts',
+        'Google Review Reward',
+        'Notifications System',
+        'System Settings',
+        'Audit Logs',
+        'Utility Routes',
+        'Support'
     ];
 
     $('#the-basics .typeahead').typeahead({
@@ -1523,15 +1129,34 @@
         let a = suggestion.toLowerCase();
         a = a.replace(/\s+/g, "_");
 
-        let site_url = window.location.href;
-
-        site_url = site_url.split("#")[0];
-
-        window.location.href = site_url + '#' + a;
+        let target = $('#' + a);
+        if (target.length) {
+            $('html, body').animate({
+                scrollTop: target.offset().top - 80
+            }, 300);
+            
+            // Highlight matching sidebar link
+            $('#documenter_nav a').removeClass('current');
+            $('#documenter_nav a[href="#' + a + '"]').addClass('current');
+        }
     });
 
-
+    // Sidebar navigation click handler
+    $('#documenter_nav a').on('click', function(e) {
+        var href = $(this).attr('href');
+        if (href && href.startsWith('#')) {
+            var targetId = href.substring(1);
+            var target = $('#' + targetId);
+            if (target.length) {
+                e.preventDefault();
+                $('#documenter_nav a').removeClass('current');
+                $(this).addClass('current');
+                $('html, body').animate({
+                    scrollTop: target.offset().top - 80
+                }, 300);
+            }
+        }
+    });
 </script>
 </body>
-
 </html>

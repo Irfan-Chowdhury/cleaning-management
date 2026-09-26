@@ -4,9 +4,46 @@
 
 Holiday Management lets authenticated admin users create, view, update, and delete public holidays from `/holidays`.
 
-Holidays are stored in the dedicated `holidays` table. The page uses a server-side Yajra DataTables table and a single Bootstrap modal for both create and edit operations. All data mutations are submitted via jQuery AJAX so the page never fully reloads.
+Holidays are stored in the dedicated `holidays` table. Active holidays automatically disable date selection on the customer booking calendar (Step 2: Date & Time) and display a hover tooltip showing the holiday title.
 
-## 2. Functional Flow
+## 2. Visual User Guide & Step-2 Booking Integration
+
+### 1. List of All Holidays (Index View)
+- **URL**: `GET /holidays`
+- **Visual Image Link**: [List of All Holidays](https://snipboard.io/6eAnba.jpg)
+
+![List of All Holidays](https://snipboard.io/6eAnba.jpg)
+
+### 2. Add New Holiday (Create Rule)
+- **URL**: `POST /holidays`
+- **Fields**: Title, Start Date, End Date, Status (Active/Inactive)
+- **Visual Image Link**: [Add Holiday Modal](https://snipboard.io/Yr2w1e.jpg)
+
+![Add Holiday Modal](https://snipboard.io/Yr2w1e.jpg)
+
+### 3. Edit Holiday Details (Update Rule)
+- **URL**: `PUT /holidays/{holiday}`
+- **Visual Image Link**: [Edit Holiday Modal](https://snipboard.io/08W3qU.jpg)
+
+![Edit Holiday Modal](https://snipboard.io/08W3qU.jpg)
+
+### 4. Delete Holiday (Remove Blackout Rule)
+- **URL**: `DELETE /holidays/{holiday}`
+- **Visual Image Link**: [Delete Holiday Confirmation](https://snipboard.io/5tu7Kn.jpg)
+
+![Delete Holiday Confirmation](https://snipboard.io/5tu7Kn.jpg)
+
+### 5. Step 2 Booking Wizard Integration (Disabled Holiday Calendar Dates)
+- **Customer Booking Route**: `GET /booking-service/date-time` (Step 2 of 4: Date & Time)
+- **Behavior**:
+  - Active holiday dates are automatically evaluated against the customer booking calendar.
+  - Holiday dates are visually disabled (muted background, unclickable, disabled cursor).
+  - Hovering over a disabled holiday date displays a tooltip box stating `Holiday: {Holiday Title}` (e.g., `Holiday: Testing Day`).
+- **Visual Image Link**: [Step 2 Calendar Holiday Disabled Date Tooltip](https://snipboard.io/Rqg8Nk.jpg)
+
+![Step 2 Calendar Holiday Disabled Date Tooltip](https://snipboard.io/Rqg8Nk.jpg)
+
+## 3. Functional Flow
 
 ### Holiday List
 
