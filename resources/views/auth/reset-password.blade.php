@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login | Dust2Glow</title>
+    <title>Reset Password | Dust2Glow</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,7 +56,7 @@
         .auth-brand h1 {
             margin: 0;
             color: #13213c;
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 700;
         }
 
@@ -129,14 +129,14 @@
     <main class="auth-page d-flex align-items-center justify-content-center">
         <section class="auth-card">
             <div class="auth-brand">
-                <span class="auth-logo"><i class="fas fa-broom" aria-hidden="true"></i></span>
-                <h1>Welcome back</h1>
-                <p>Login to manage your Dust2Glow cleaning bookings.</p>
+                <span class="auth-logo"><i class="fas fa-key" aria-hidden="true"></i></span>
+                <h1>Reset Password</h1>
+                <p>Create a new password for your Dust2Glow account.</p>
             </div>
 
             <div class="auth-body">
                 @if(session('status'))
-                    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <i class="fas fa-check-circle mr-1"></i> {{ session('status') }}
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
@@ -144,23 +144,15 @@
                     </div>
                 @endif
 
-                @if(session('success'))
-                    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
-                        <i class="fas fa-check-circle mr-1"></i> {{ session('success') }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                @endif
-
-                <form method="POST" action="{{ route('login') }}">
+                <form method="POST" action="{{ route('password.update') }}">
                     @csrf
+                    <input type="hidden" name="token" value="{{ $token }}">
 
                     <div class="form-group">
                         <label for="email">Email Address</label>
                         <div class="input-icon">
                             <i class="far fa-envelope" aria-hidden="true"></i>
-                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="Enter your email">
+                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email', $email) }}" placeholder="Enter your email" required autofocus>
                             @error('email')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -168,73 +160,34 @@
                     </div>
 
                     <div class="form-group">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <label for="password">Password</label>
-                        </div>
+                        <label for="password">New Password</label>
                         <div class="input-icon">
                             <i class="fas fa-lock" aria-hidden="true"></i>
-                            <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Enter your password">
+                            <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Enter new password" required>
                             @error('password')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
 
-                    <div class="form-group d-flex align-items-center justify-content-between">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="remember" name="remember" value="1" {{ old('remember') ? 'checked' : '' }}>
-                            <label class="custom-control-label text-muted" for="remember">Remember me</label>
-                        </div>
-                        <div>
-                            <a href="#" class="auth-link small" data-toggle="modal" data-target="#forgotPasswordModal">Forgot password?</a>
+                    <div class="form-group">
+                        <label for="password_confirmation">Confirm New Password</label>
+                        <div class="input-icon">
+                            <i class="fas fa-lock" aria-hidden="true"></i>
+                            <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Confirm new password" required>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-block auth-btn">Login</button>
+                    <button type="submit" class="btn btn-primary btn-block auth-btn mt-4">Reset Password</button>
 
                     <p class="mt-4 mb-0 text-center text-muted">
-                        New to Dust2Glow?
-                        <a href="{{ route('register') }}" class="auth-link">Create an account</a>
+                        Remember your password?
+                        <a href="{{ route('login') }}" class="auth-link">Back to Login</a>
                     </p>
                 </form>
             </div>
         </section>
     </main>
-
-    <!-- Forgot Password Modal -->
-    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" role="dialog" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content style-modal-card" style="border-radius: 14px; border: 1px solid #e8edf5;">
-                <div class="modal-header border-0 pb-0 pt-4 px-4">
-                    <h5 class="modal-title font-weight-bold" id="forgotPasswordModalLabel" style="color: #13213c;">
-                        <i class="fas fa-unlock-alt text-primary mr-2"></i> Forgot Password
-                    </h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form method="POST" action="{{ route('password.email') }}">
-                    @csrf
-                    <div class="modal-body px-4 py-3">
-                        <p class="text-muted small mb-3">
-                            Enter your registered email address below and we'll send you a password reset link.
-                        </p>
-                        <div class="form-group mb-0">
-                            <label for="forgot_email" style="color: #13213c; font-size: 14px; font-weight: 600;">Email Address</label>
-                            <div class="input-icon">
-                                <i class="far fa-envelope" aria-hidden="true"></i>
-                                <input type="email" class="form-control" id="forgot_email" name="email" placeholder="Enter your registered email" required>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer border-0 px-4 pb-4 pt-0">
-                        <button type="button" class="btn btn-light font-weight-bold px-3" data-dismiss="modal" style="border-radius: 8px;">Cancel</button>
-                        <button type="submit" class="btn btn-primary font-weight-bold px-4" style="background: #0866e8; border-color: #0866e8; border-radius: 8px;">Send Reset Link</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
