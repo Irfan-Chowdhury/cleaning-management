@@ -164,7 +164,7 @@
 
                     <div class="form-group d-flex align-items-center justify-content-between">
                         <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="remember" name="remember">
+                            <input type="checkbox" class="custom-control-input" id="remember" name="remember" value="1" {{ old('remember') ? 'checked' : '' }}>
                             <label class="custom-control-label text-muted" for="remember">Remember me</label>
                         </div>
                         <div>
