@@ -36,5 +36,8 @@ class RegisterController extends Controller
 
         return redirect()->route('verification.notice')
             ->with('success', 'Registration successful! A verification email has been sent to your email address.');
+
+        // $targetRoute = $customer->hasVerifiedEmail() ? 'dashboard' : 'verification.notice';
+        // return redirect()->route('login')->with('success', 'Registration successful!');
     }
 }
