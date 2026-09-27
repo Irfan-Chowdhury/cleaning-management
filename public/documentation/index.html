@@ -194,7 +194,7 @@
 
 <body>
 <div id="documenter_sidebar">
-    <img id="doc-logo" src="public/assets/images/company_logo/brand_logo.png">
+    <img id="doc-logo" src="public/assets/images/company_logo/company-logo-20260908180343-RtCkTnHr.webp">
 
     <ul id="documenter_nav">
         <li><a class="current" href="#documenter_cover">Start & Overview</a></li>
@@ -893,34 +893,76 @@ php artisan storage:link
             <h3>Customer Wallets & Transaction Ledger System</h3>
             <hr class="notop">
         </div>
-        <p>The Customer Wallets System allows customers to accumulate promotional credits and redeem them during booking checkout.</p>
+        <p>The Customer Wallets System provides administrators with complete financial oversight of customer wallet balances, credit rewards, and transaction history. Customers accumulate promotional wallet credits through system events and redeem them during booking checkout.</p>
 
-        <table class="doc-table">
-            <thead>
-                <tr>
-                    <th>Credit Source</th>
-                    <th>Trigger Event</th>
-                    <th>Configuration Setting</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><code>welcome_bonus</code></td>
-                    <td>Initial customer email verification</td>
-                    <td><code>settings.welcome_bonus_amount</code></td>
-                </tr>
-                <tr>
-                    <td><code>referral_bonus</code></td>
-                    <td>Referred customer completes their first booking</td>
-                    <td><code>settings.referral_reward_amount</code></td>
-                </tr>
-                <tr>
-                    <td><code>review_bonus</code></td>
-                    <td>Admin approves customer Google Review proof</td>
-                    <td><code>settings.google_review_reward</code></td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="doc-card">
+            <h4>Automated Wallet Credit Sources</h4>
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Credit Source</th>
+                        <th>Trigger Event</th>
+                        <th>Configuration Setting</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>welcome_bonus</code></td>
+                        <td>Initial customer account registration and email verification</td>
+                        <td><code>settings.welcome_bonus_amount</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>referral_bonus</code></td>
+                        <td>Referred customer completes their first cleaning booking</td>
+                        <td><code>settings.referral_reward_amount</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>review_bonus</code></td>
+                        <td>Administrator approves customer submitted Google Review proof</td>
+                        <td><code>settings.google_review_reward</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 1. CUSTOMER WALLETS LIST PAGE -->
+        <div class="doc-card" style="border-left: 4px solid #0866e8; margin-top: 25px;">
+            <h4>1. Customer Wallets Overview List Page</h4>
+            <p>The Customer Wallets List page displays a real-time summary table of all registered users and their current financial balances.</p>
+            <ul>
+                <li><strong>Name & Email:</strong> Shows customer full name and email address.</li>
+                <li><strong>Total Credit:</strong> Cumulative sum of all bonus credits awarded to the user (+ $X.XX).</li>
+                <li><strong>Total Debit:</strong> Cumulative sum of all wallet credits redeemed by the user during checkout (- $X.XX).</li>
+                <li><strong>Remaining Balance:</strong> Available net balance (Total Credit minus Total Debit) available for future bookings.</li>
+                <li><strong>View Wallet Action:</strong> Click the Eye icon button to view the detailed transaction breakdown for that customer.</li>
+            </ul>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/69MocK.jpg" alt="Customer Wallets List" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Customer Wallets List</p>
+            </div>
+        </div>
+
+        <!-- 2. CUSTOMER WALLET DETAILS VIEW PAGE -->
+        <div class="doc-card" style="border-left: 4px solid #0866e8; margin-top: 25px;">
+            <h4>2. Customer Wallet Details View Page</h4>
+            <p>The Wallet Details page provides an in-depth financial audit for a specific user, featuring user profile attributes and an itemized transaction ledger.</p>
+            <ul>
+                <li><strong>User Profile Card (Left Panel):</strong> Displays customer avatar, full name, email, phone number, and gender.</li>
+                <li><strong>Wallet Summary Card (Right Panel):</strong> Highlights total lifetime credits, total debits, and current remaining wallet balance.</li>
+                <li><strong>Transaction History Table:</strong> Interactive table detailing every credit or debit entry:
+                    <ul>
+                        <li><strong>Credit / Debit Amounts:</strong> Color-coded badges indicating additions (+) or deductions (-).</li>
+                        <li><strong>Source:</strong> Origin of the entry (e.g. welcome bonus, referral bonus, review reward, or booking checkout redemption).</li>
+                        <li><strong>Created At:</strong> Formatted timestamp of when the transaction occurred.</li>
+                        <li><strong>Actions:</strong> Admin control options to edit or manage transaction entries.</li>
+                    </ul>
+                </li>
+            </ul>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/a4ArhY.jpg" alt="Customer Wallet Details View" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Customer Wallet Details View</p>
+            </div>
+        </div>
     </section>
 
     <!-- BOOKING WIZARD FLOW -->
@@ -989,13 +1031,24 @@ php artisan storage:link
             <h3>Referral System</h3>
             <hr class="notop">
         </div>
-        <p>Customers can invite friends using unique referral codes generated on their profile (<code>/customer-referrals</code>).</p>
 
-        <ul>
-            <li><strong>Unique Code:</strong> Auto-generated per user (e.g. <code>REF-IRFAN99</code>).</li>
-            <li><strong>Checkout Redemption:</strong> New customers enter code during booking wizard step 4.</li>
-            <li><strong>Automated Credit:</strong> When referred booking reaches <code>completed</code> status, wallet credits are automatically dispatched to the referrer.</li>
-        </ul>
+        <p>The Referral System is a word-of-mouth growth tool that rewards existing customers for inviting new clients to book cleaning services. It creates a win-win incentive structure by providing discounts to new customers while automatically adding promotional credits to the referrer's wallet.</p>
+
+        <div class="doc-card" style="border-left: 4px solid #0866e8; margin-bottom: 20px;">
+            <h4>Referral Management List Overview</h4>
+            <p>Administrators monitor all referral activity across the platform through the central Referral List table:</p>
+            <ul>
+                <li><strong>Referrer Name & Contact:</strong> Displays the full name, avatar, and contact details of the existing customer who shared their referral code.</li>
+                <li><strong>Referred Customer Name & Contact:</strong> Displays the full name, avatar, and contact details of the new customer who redeemed the code.</li>
+                <li><strong>Referral Code:</strong> Highlights the specific referral code applied to the order.</li>
+                <li><strong>Reward Amount:</strong> Displays the monetary reward bonus credited for the successful referral.</li>
+                <li><strong>Booking Service & Date:</strong> Shows the exact cleaning service selected by the referred customer and the date and time when the referral was recorded.</li>
+            </ul>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/cWqv7n.jpg" alt="Referral Management Overview" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Referral Management Overview</p>
+            </div>
+        </div>
     </section>
 
     <!-- GOOGLE REVIEW REWARD -->
@@ -1004,16 +1057,61 @@ php artisan storage:link
             <h3>Google Review Reward System</h3>
             <hr class="notop">
         </div>
-        <p>Customer incentive feature for Google reviews, guarded by <code>EnsureGoogleReviewEnabled</code> middleware.</p>
+        
+        <p>The Google Review Reward System is a customer feedback incentive program designed to reward customers who post reviews on the business Google profile. The reward bonus amount is configured in System Settings and automatically deposited directly into the customer's wallet upon administrative verification.</p>
 
-        <div class="doc-card">
-            <h4>Workflow & Security Rules</h4>
-            <ol>
-                <li><strong>Setting Feature Guard:</strong> Available only when <code>google_review_enabled</code> setting is set to true.</li>
-                <li><strong>Customer Submission:</strong> Customer requests reward proof via <code>/my-review</code>. Max 1 approved reward per customer.</li>
-                <li><strong>Admin Verification:</strong> Admin inspects review submission at <code>/reviews/{review}/edit</code>.</li>
-                <li><strong>Atomic Approval:</strong> Approving executes a database transaction crediting <code>google_review_reward</code> amount to user wallet and sending instant in-app notification.</li>
-            </ol>
+        <!-- STEP 1: CUSTOMER REWARD REQUEST -->
+        <div class="doc-card" style="border-left: 4px solid #0866e8; margin-bottom: 25px;">
+            <h4>Step 1: Customer Reward Application</h4>
+            <p>Customers navigate to the Google Review page in their portal, view the configured reward bonus amount (e.g. $25.00 Wallet Credit), leave a review on Google, and click <strong>Apply for Review Reward</strong>.</p>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/szthDl.jpg" alt="Customer Google Review Application Page" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Customer Google Review Application Page</p>
+            </div>
+        </div>
+
+        <!-- STEP 2: PENDING VERIFICATION -->
+        <div class="doc-card" style="border-left: 4px solid #0866e8; margin-bottom: 25px;">
+            <h4>Step 2: Verification Pending State</h4>
+            <p>After submitting the application, the customer screen updates to display a pending status indicating that the application has been received and is awaiting administrative verification.</p>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/AXZdEq.jpg" alt="Review Verification Pending State" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Review Verification Pending State</p>
+            </div>
+        </div>
+
+        <!-- STEP 3: ADMIN NOTIFICATION & LIST -->
+        <div class="doc-card" style="border-left: 4px solid #0866e8; margin-bottom: 25px;">
+            <h4>Step 3: Administrative Notification & Review List</h4>
+            <p>The system sends an automated notification to administrators. Administrators open the Google Review Rewards menu to view all customer reward applications and their current verification status.</p>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/oD19qO.jpg" alt="Administrator In-App Notification" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Administrator In-App Notification</p>
+            </div>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/8NWizb.jpg" alt="Google Review Reward Requests List" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Google Review Reward Requests List</p>
+            </div>
+        </div>
+
+        <!-- STEP 4: ADMIN VERIFICATION & ACTIONS -->
+        <div class="doc-card" style="border-left: 4px solid #0866e8; margin-bottom: 25px;">
+            <h4>Step 4: Administrator Approval & Control</h4>
+            <p>Administrators open the specific application details page to view customer information and reward details. After manually confirming the review on Google, the administrator clicks <strong>Approve & Issue Wallet Credit</strong> or <strong>Cancel Request</strong>.</p>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/bT7fE4.jpg" alt="Administrator Review Verification Control Panel" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Administrator Review Verification Control Panel</p>
+            </div>
+        </div>
+
+        <!-- STEP 5: REWARD CLAIMED -->
+        <div class="doc-card" style="border-left: 4px solid #0866e8; margin-bottom: 25px;">
+            <h4>Step 5: Reward Claimed & Customer Notification</h4>
+            <p>Upon approval, the configured dollar amount is automatically deposited into the customer's wallet balance, an instant notification is sent to the customer, and their review page updates to display <strong>Reward Claimed</strong>.</p>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/Chz1RN.jpg" alt="Customer Reward Claimed Confirmation" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Customer Reward Claimed Confirmation</p>
+            </div>
         </div>
     </section>
 
