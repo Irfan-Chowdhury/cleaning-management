@@ -199,7 +199,6 @@
     <ul id="documenter_nav">
         <li><a class="current" href="#documenter_cover">Start & Overview</a></li>
         <li><a href="#server_requirements" title="Server Requirements">Server Requirements</a></li>
-        <li><a href="#installation_setup" title="Installation & Setup">Installation & Setup</a></li>
         <li><a href="#auth_security" title="Authentication & Security">Auth & Security</a></li>
         <li><a href="#profile_settings" title="Profile Settings">Profile Settings</a></li>
         <li><a href="#admin_dashboard" title="Admin Dashboard">Admin Dashboard</a></li>
@@ -286,41 +285,6 @@
                 </tr>
             </tbody>
         </table>
-    </section>
-
-    <!-- INSTALLATION & SETUP -->
-    <section id="installation_setup">
-        <div class="page-header">
-            <h3>Installation & Setup</h3>
-            <hr class="notop">
-        </div>
-        <p>Follow these steps to deploy and initialize the application on your server environment:</p>
-
-        <p><span class="step-number">1</span> <strong>Clone and Install Dependencies</strong></p>
-        <div class="code-block">
-git clone &lt;repository-url&gt;
-cd cleaning-management
-composer install
-npm install && npm run build
-        </div>
-
-        <p><span class="step-number">2</span> <strong>Environment Configuration</strong></p>
-        <p>Copy `.env.example` to `.env` and set your database connection details and application variables:</p>
-        <div class="code-block">
-cp .env.example .env
-php artisan key:generate
-        </div>
-
-        <p><span class="step-number">3</span> <strong>Database Migration & Seeding</strong></p>
-        <p>Execute migrations and seed default administrative accounts and system settings:</p>
-        <div class="code-block">
-php artisan migrate --seed
-        </div>
-
-        <p><span class="step-number">4</span> <strong>Storage Link Creation</strong></p>
-        <div class="code-block">
-php artisan storage:link
-        </div>
     </section>
 
     <!-- AUTHENTICATION & SECURITY -->
@@ -1045,60 +1009,231 @@ php artisan storage:link
     <!-- BOOKING WIZARD FLOW -->
     <section id="booking_wizard">
         <div class="page-header">
-            <h3>Booking Wizard Flow</h3>
+            <h3>Booking Service Working Flow</h3>
             <hr class="notop">
         </div>
-        <p>The 4-Step Booking Wizard (<code>/booking-service/...</code>) guides customers through a seamless, responsive checkout experience.</p>
+        <p>The <strong>Booking Service Working Flow</strong> guides customers through an intuitive, multi-step booking process, seamlessly connected with administrator review, status approval, and final checkout confirmation.</p>
 
-        <table class="doc-table">
-            <thead>
-                <tr>
-                    <th>Step</th>
-                    <th>Route</th>
-                    <th>Title & Key Features</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><strong>Step 1</strong></td>
-                    <td><code>/booking-service/create</code></td>
-                    <td><strong>Service & Frequency:</strong> Select service type, frequency (one-time, weekly, bi-weekly, monthly), and questionnaire options.</td>
-                </tr>
-                <tr>
-                    <td><strong>Step 2</strong></td>
-                    <td><code>/booking-service/date-time</code></td>
-                    <td><strong>Date & Time:</strong> Interactive 7-column calendar, schedule blackout checking, and time slot picker.</td>
-                </tr>
-                <tr>
-                    <td><strong>Step 3</strong></td>
-                    <td><code>/booking-service/your-details</code></td>
-                    <td><strong>Your Details:</strong> Choose saved profile account details or enter manual address, suburb, postcode, and special instructions.</td>
-                </tr>
-                <tr>
-                    <td><strong>Step 4</strong></td>
-                    <td><code>/booking-service/review-confirm</code></td>
-                    <td><strong>Review & Confirm:</strong> Apply referral/promo codes, review line-item cost breakdown, and confirm order placement.</td>
-                </tr>
-            </tbody>
-        </table>
+        <!-- SUMMARY STEPS TABLE -->
+        <div class="doc-card">
+            <h4>Booking Journey Overview</h4>
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Phase / Step</th>
+                        <th>User Action</th>
+                        <th>System State & Functionality</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Step 1</strong></td>
+                        <td>Booking Details & Options</td>
+                        <td>Customer selects cleaning service category, cleaning frequency, room parameters, and additional extra options.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Step 2</strong></td>
+                        <td>Date & Time Selection</td>
+                        <td>Customer chooses an available cleaning date from the calendar and selects an available arrival time window.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Step 3</strong></td>
+                        <td>Review & Request Submission</td>
+                        <td>Customer verifies contact info, address details, and submits booking request. System sets status to <strong>Pending Approval</strong> and notifies Administrator.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Admin Approval</strong></td>
+                        <td>Administrative Verification</td>
+                        <td>Administrator reviews request, checks schedule capacity, and updates booking status to <strong>Approved</strong>. Customer is notified.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Step 4</strong></td>
+                        <td>Final Review, Discounts & Payment</td>
+                        <td>Customer opens Step 4 checkout from <em>My Bookings</em>, applies promo codes or wallet credits, and completes payment confirmation. Status updates to <strong>Confirmed</strong>.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- STEP 1 DETAILS -->
+        <div class="doc-card" style="border-left: 4px solid #0866e8; margin-bottom: 25px;">
+            <h4>Step 1: Booking Details & Service Selection</h4>
+            <p>The customer initiates a booking request by selecting their desired cleaning service, service frequency (one-time, weekly, bi-weekly, or monthly), property layout specifications (bedrooms, bathrooms), and customized extra add-on services.</p>
+            <ul>
+                <li><strong>Service Selection:</strong> Choose primary cleaning package (e.g. Deep Cleaning, Standard Residential Cleaning, Move-In/Out).</li>
+                <li><strong>Frequency Discounting:</strong> Recurring frequencies automatically apply frequency percentage discounts.</li>
+                <li><strong>Property Specifications:</strong> Select number of rooms, bathrooms, and additional living areas.</li>
+                <li><strong>Extra Add-Ons:</strong> Option to select extra services like inside oven cleaning, interior window washing, or carpet steaming.</li>
+            </ul>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/mj8eX5.jpg" alt="Step 1: Service & Extra Options Selection" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Step 1: Service & Extra Options Selection</p>
+            </div>
+        </div>
+
+        <!-- STEP 2 DETAILS -->
+        <div class="doc-card" style="border-left: 4px solid #0866e8; margin-bottom: 25px;">
+            <h4>Step 2: Date & Time Slot Selection</h4>
+            <p>The customer picks a convenient date and arrival time window for their cleaning service appointment.</p>
+            <ul>
+                <li><strong>Interactive Calendar:</strong> View available dates with real-time blackout date and holiday checking.</li>
+                <li><strong>Time Slot Arrival Windows:</strong> Select morning, afternoon, or specific shift time slots based on staff availability.</li>
+                <li><strong>Advance Notice Rules:</strong> Enforces system lead-time rules so bookings cannot be made without sufficient advance notice.</li>
+            </ul>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/PZscHV.jpg" alt="Step 2: Calendar & Time Slot Picker" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Step 2: Calendar & Time Slot Picker</p>
+            </div>
+        </div>
+
+        <!-- STEP 3 DETAILS -->
+        <div class="doc-card" style="border-left: 4px solid #0866e8; margin-bottom: 25px;">
+            <h4>Step 3: Details Verification & Request Submission</h4>
+            <p>The customer verifies their personal contact details, cleaning service address, special access instructions (e.g. key location, gate codes), and reviews the preliminary cost summary before submitting the booking request.</p>
+            <ul>
+                <li><strong>Contact & Address Review:</strong> Uses saved user profile address or allows manual entry of service location.</li>
+                <li><strong>Special Instructions:</strong> Notes field for specific customer requests or entry instructions.</li>
+                <li><strong>Request Submission:</strong> Submitting the form records the booking in the system as <strong>Pending Approval</strong> and triggers an instant notification to the administration team.</li>
+            </ul>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/vpmWi2.jpg" alt="Step 3: Summary Verification & Booking Request Submission" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Step 3: Summary Verification & Booking Request Submission</p>
+            </div>
+        </div>
+
+        <!-- ADMIN NOTIFICATION & APPROVAL -->
+        <div class="doc-card" style="border-left: 4px solid #0866e8; margin-bottom: 25px;">
+            <h4>Administrator Notification & Approval Workflow</h4>
+            <p>When a customer completes Step 3, the system immediately dispatches an administrative alert and enters the verification phase:</p>
+            <ol>
+                <li><strong>Admin Notification Received:</strong> Administrators receive an automated in-app notification indicating a new pending booking request.</li>
+                <li><strong>Schedule Verification:</strong> The administrator reviews requested date, time, address, and team capacity.</li>
+                <li><strong>Approval Action:</strong> The administrator opens the booking management panel and approves the request, updating status to <strong>Approved</strong>.</li>
+            </ol>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/Rheb0r.jpg" alt="Administrator Notification for New Booking Request" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Administrator Notification for New Booking Request</p>
+            </div>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/ZpXyBa.jpg" alt="Administrator Approval & Status Control Panel" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Administrator Approval & Status Control Panel</p>
+            </div>
+        </div>
+
+        <!-- CUSTOMER MY BOOKINGS & STEP 4 PROCEED -->
+        <div class="doc-card" style="border-left: 4px solid #0866e8; margin-bottom: 25px;">
+            <h4>Customer Portal ("My Bookings") & Step 4 Access</h4>
+            <p>Once the administrator approves the request, the customer receives a status update in their <strong>My Bookings</strong> dashboard page:</p>
+            <ul>
+                <li><strong>Status Update:</strong> Booking badge updates to <strong>Approved</strong>.</li>
+                <li><strong>Proceed to Checkout Option:</strong> A green <strong>"Step 4"</strong> button becomes active for the approved booking row.</li>
+                <li><strong>Step 4 Navigation:</strong> Clicking the button opens the final Step 4 checkout page to lock in the reservation.</li>
+            </ul>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/UK01gI.jpg" alt="My Bookings Portal with Step 4 Checkout Action" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">My Bookings Portal with Step 4 Checkout Action</p>
+            </div>
+        </div>
+
+        <!-- STEP 4 DETAILS & CONFIRMED NOTIFICATION -->
+        <div class="doc-card" style="border-left: 4px solid #0866e8; margin-bottom: 25px;">
+            <h4>Step 4: Final Review, Discounts & Payment Confirmation</h4>
+            <p>In Step 4, the customer reviews their final line-item price breakdown, applies discount promotions or wallet balances, and confirms final payment:</p>
+            <ul>
+                <li><strong>Promo Code Redemption:</strong> Enter promotional discount coupons for instant percentage or dollar savings.</li>
+                <li><strong>Wallet Credit Redemption:</strong> Redeem accumulated customer wallet credits to offset total payment.</li>
+                <li><strong>Order Confirmation:</strong> Submitting payment updates booking status to <strong>Confirmed</strong> and locks the appointment.</li>
+                <li><strong>Admin Confirmation Alert:</strong> The administrator receives a confirmation notification verifying that the customer has completed checkout and payment.</li>
+            </ul>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/KBym0q.jpg" alt="Step 4: Final Order Review & Payment Checkout" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Step 4: Final Order Review & Payment Checkout</p>
+            </div>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/ayNoIC.jpg" alt="Administrator Notification for Confirmed Booking" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Administrator Notification for Confirmed Booking</p>
+            </div>
+        </div>
     </section>
 
-    <!-- BOOKING OPERATIONS -->
+    <!-- BOOKING OPERATIONS & CASE SCENARIOS -->
     <section id="booking_operations">
         <div class="page-header">
-            <h3>Booking Operations</h3>
+            <h3>Booking Operations & Operational Scenarios</h3>
             <hr class="notop">
         </div>
-        <p>Manage customer bookings and lifecycle state transitions through the admin panel (<code>/bookings</code>).</p>
+        <p>Administrative management of customer bookings, lifecycle status transitions, and special operational case scenarios.</p>
 
         <div class="doc-card">
             <h4>Booking Lifecycle States</h4>
-            <ul>
-                <li><span class="badge-warning-cust">Pending</span> Initial booking submission awaiting administrative approval.</li>
-                <li><span class="badge-info-cust">Approved</span> Booking verified and dispatched to cleaner schedule.</li>
-                <li><span class="badge-success-cust">Completed</span> Cleaning service completed. Triggers referral rewards if applicable.</li>
-                <li><span class="badge-danger-cust">Cancelled</span> Booking cancelled by customer or administrator.</li>
-            </ul>
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Status Badge</th>
+                        <th>Stage</th>
+                        <th>Description & Action Trigger</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge-warning-cust">Pending</span></td>
+                        <td>Initial Submission</td>
+                        <td>Request submitted by customer (Step 3 completed). Awaiting administrator verification.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-info-cust">Approved</span></td>
+                        <td>Admin Verified</td>
+                        <td>Administrator approved appointment time & team availability. Customer can now proceed to Step 4.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-success-cust">Confirmed</span></td>
+                        <td>Paid / Locked</td>
+                        <td>Customer completed Step 4 checkout & payment. Appointment is locked into cleaner dispatch schedule.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-success-cust">Completed</span></td>
+                        <td>Job Finished</td>
+                        <td>Cleaning service physically performed. Automatically awards referral bonuses if applicable.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-danger-cust">Cancelled</span></td>
+                        <td>Terminated</td>
+                        <td>Booking cancelled by customer or administrator. Releases schedule time slot.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="doc-card">
+            <h4>Operational Case Scenarios</h4>
+
+            <h5>Scenario 1: Standard Approval & Payment Flow (Happy Path)</h5>
+            <ol>
+                <li>Customer creates booking through Step 1, Step 2, and Step 3 -> System records booking as <strong>Pending</strong>.</li>
+                <li>Administrator receives notification -> Inspects request and clicks <strong>Approve</strong> -> Status becomes <strong>Approved</strong>.</li>
+                <li>Customer receives notification -> Opens <strong>My Bookings</strong> -> Clicks <strong>Proceed to Step 4</strong>.</li>
+                <li>Customer completes Step 4 checkout -> Status updates to <strong>Confirmed</strong>.</li>
+                <li>Admin receives confirmation alert -> Cleaning crew is assigned and dispatched.</li>
+            </ol>
+
+            <h5>Scenario 2: Promotional Code & Wallet Credit Application</h5>
+            <ol>
+                <li>Customer earns wallet credits via Welcome Bonus, Referral Rewards, or Google Review Rewards.</li>
+                <li>During Step 4 checkout, customer enters a promotional code (e.g. <code>WELCOME15</code>) and toggles wallet credit redemption.</li>
+                <li>System verifies coupon validity and wallet balances, deducting savings from final cost before payment.</li>
+            </ol>
+
+            <h5>Scenario 3: Schedule Conflict & Admin Cancellation</h5>
+            <ol>
+                <li>If a customer requests a date/time slot that encounters staffing shortages or emergency blackout periods, Administrator updates status to <strong>Cancelled</strong> or contacts customer to adjust timing.</li>
+                <li>Customer receives cancellation notification explaining the update.</li>
+            </ol>
+
+            <h5>Scenario 4: Cleaning Completion & Automated Referral Payout</h5>
+            <ol>
+                <li>Upon completion of the cleaning job, Administrator marks booking as <strong>Completed</strong>.</li>
+                <li>If the customer was referred by an existing user, the system automatically deposits the referral reward bonus into the referrer's wallet.</li>
+            </ol>
         </div>
     </section>
 
@@ -1537,7 +1672,6 @@ php artisan storage:link
     var states = [
         'Start Overview',
         'Server Requirements',
-        'Installation Setup',
         'Auth Security',
         'Profile Settings',
         'Admin Dashboard',
