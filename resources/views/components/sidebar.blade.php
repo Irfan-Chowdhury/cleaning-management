@@ -18,10 +18,6 @@
             <span class="sidebar-link-icon"><i class="fas fa-home" aria-hidden="true"></i></span>
             <span>Dashboard</span>
         </a>
-        <a href="{{ route('services.index') }}" class="sidebar-link {{ request()->is('services*') ? 'active' : '' }}">
-            <span class="sidebar-link-icon"><i class="fas fa-broom" aria-hidden="true"></i></span>
-            <span>Services </span>
-        </a>
 
         <a href="{{ route('sub-admin.index') }}" class="sidebar-link {{ request()->routeIs('sub-admin.*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-user-shield" aria-hidden="true"></i></span>
@@ -33,9 +29,9 @@
             <span>Customers</span>
         </a>
 
-        <a href="{{ route('wallets.index') }}" class="sidebar-link {{ request()->routeIs('wallets.*') ? 'active' : '' }}">
-            <span class="sidebar-link-icon"><i class="fas fa-wallet" aria-hidden="true"></i></span>
-            <span>Wallets</span>
+        <a href="{{ route('services.index') }}" class="sidebar-link {{ request()->is('services*') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="fas fa-broom" aria-hidden="true"></i></span>
+            <span>Services</span>
         </a>
 
         <!-- Availability with collapse -->
@@ -64,6 +60,11 @@
             </a>
         </div>
 
+        <a href="{{ route('wallets.index') }}" class="sidebar-link {{ request()->routeIs('wallets.*') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="fas fa-wallet" aria-hidden="true"></i></span>
+            <span>Customer Wallets</span>
+        </a>
+
         <a href="{{ route('bookings.index') }}" class="sidebar-link {{ request()->routeIs('bookings.*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="far fa-calendar-alt" aria-hidden="true"></i></span>
             <span>Bookings</span>
@@ -72,11 +73,6 @@
         <a href="{{ route('referrals.index') }}" class="sidebar-link {{ request()->routeIs('referrals.*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-user-friends" aria-hidden="true"></i></span>
             <span>Referrals</span>
-        </a>
-
-        <a href="{{ route('promotions.index') }}" class="sidebar-link {{ request()->routeIs('promotions.*') ? 'active' : '' }}">
-            <span class="sidebar-link-icon"><i class="fas fa-tags" aria-hidden="true"></i></span>
-            <span>Promotional Offers</span>
         </a>
 
         @if($sidebarSettings?->google_review_enabled)
@@ -89,6 +85,11 @@
         <a href="{{ route('settings.index') }}" class="sidebar-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-cog" aria-hidden="true"></i></span>
             <span>Settings</span>
+        </a>
+
+        <a href="{{ route('promotions.index') }}" class="sidebar-link {{ request()->routeIs('promotions.*') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="fas fa-tags" aria-hidden="true"></i></span>
+            <span>Promotional Offers</span>
         </a>
 
         @can('view-audit-logs')

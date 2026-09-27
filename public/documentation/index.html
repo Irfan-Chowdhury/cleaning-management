@@ -208,15 +208,15 @@
         <li><a href="#service_catalog" title="Service Catalog">Service Catalog</a></li>
         <li><a href="#weekly_schedule" title="Weekly Schedule & Shifts">Weekly Schedule</a></li>
         <li><a href="#holiday_management" title="Holiday Management">Holiday Management</a></li>
+        <li><a href="#wallet_system" title="Customer Wallets">Customer Wallets</a></li>
         <li><a href="#booking_wizard" title="Booking Wizard Flow">Booking Wizard</a></li>
         <li><a href="#booking_operations" title="Booking Operations">Booking Operations</a></li>
-        <li><a href="#wallet_system" title="Wallet System">Wallet System</a></li>
         <li><a href="#referral_system" title="Referral System">Referral System</a></li>
-        <li><a href="#promotions_discounts" title="Promotions & Discounts">Promotions & Discounts</a></li>
         <li><a href="#google_review_reward" title="Google Review Reward">Google Review Reward</a></li>
-        <li><a href="#notifications_system" title="Notifications System">Notifications System</a></li>
         <li><a href="#system_settings" title="System Settings">System Settings</a></li>
+        <li><a href="#promotions_discounts" title="Promotions & Discounts">Promotional Offers</a></li>
         <li><a href="#audit_logs" title="Audit Logs & Security">Audit Logs</a></li>
+        <li><a href="#notifications_system" title="Notifications System">Notifications System</a></li>
         <li><a href="#utility_routes" title="Utility Routes">Utility Routes</a></li>
         <li><a href="#support" title="Support & Troubleshooting">Support</a></li>
     </ul>
@@ -887,6 +887,42 @@ php artisan storage:link
         </div>
     </section>
 
+    <!-- CUSTOMER WALLETS SYSTEM -->
+    <section id="wallet_system">
+        <div class="page-header">
+            <h3>Customer Wallets & Transaction Ledger System</h3>
+            <hr class="notop">
+        </div>
+        <p>The Customer Wallets System allows customers to accumulate promotional credits and redeem them during booking checkout.</p>
+
+        <table class="doc-table">
+            <thead>
+                <tr>
+                    <th>Credit Source</th>
+                    <th>Trigger Event</th>
+                    <th>Configuration Setting</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>welcome_bonus</code></td>
+                    <td>Initial customer email verification</td>
+                    <td><code>settings.welcome_bonus_amount</code></td>
+                </tr>
+                <tr>
+                    <td><code>referral_bonus</code></td>
+                    <td>Referred customer completes their first booking</td>
+                    <td><code>settings.referral_reward_amount</code></td>
+                </tr>
+                <tr>
+                    <td><code>review_bonus</code></td>
+                    <td>Admin approves customer Google Review proof</td>
+                    <td><code>settings.google_review_reward</code></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
     <!-- BOOKING WIZARD FLOW -->
     <section id="booking_wizard">
         <div class="page-header">
@@ -947,42 +983,6 @@ php artisan storage:link
         </div>
     </section>
 
-    <!-- WALLET SYSTEM -->
-    <section id="wallet_system">
-        <div class="page-header">
-            <h3>Wallet & Transaction Ledger System</h3>
-            <hr class="notop">
-        </div>
-        <p>The Wallet System allows customers to accumulate promotional credits and redeem them during booking checkout.</p>
-
-        <table class="doc-table">
-            <thead>
-                <tr>
-                    <th>Credit Source</th>
-                    <th>Trigger Event</th>
-                    <th>Configuration Setting</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><code>welcome_bonus</code></td>
-                    <td>Initial customer email verification</td>
-                    <td><code>settings.welcome_bonus_amount</code></td>
-                </tr>
-                <tr>
-                    <td><code>referral_bonus</code></td>
-                    <td>Referred customer completes their first booking</td>
-                    <td><code>settings.referral_reward_amount</code></td>
-                </tr>
-                <tr>
-                    <td><code>review_bonus</code></td>
-                    <td>Admin approves customer Google Review proof</td>
-                    <td><code>settings.google_review_reward</code></td>
-                </tr>
-            </tbody>
-        </table>
-    </section>
-
     <!-- REFERRAL SYSTEM -->
     <section id="referral_system">
         <div class="page-header">
@@ -995,21 +995,6 @@ php artisan storage:link
             <li><strong>Unique Code:</strong> Auto-generated per user (e.g. <code>REF-IRFAN99</code>).</li>
             <li><strong>Checkout Redemption:</strong> New customers enter code during booking wizard step 4.</li>
             <li><strong>Automated Credit:</strong> When referred booking reaches <code>completed</code> status, wallet credits are automatically dispatched to the referrer.</li>
-        </ul>
-    </section>
-
-    <!-- PROMOTIONS & DISCOUNTS -->
-    <section id="promotions_discounts">
-        <div class="page-header">
-            <h3>Promotions & Discount Coupons</h3>
-            <hr class="notop">
-        </div>
-        <p>Administrators create promotional discount codes under <code>/promotions</code>.</p>
-
-        <ul>
-            <li><strong>Discount Types:</strong> Fixed Amount ($ off) or Percentage (% off).</li>
-            <li><strong>Validity Window:</strong> Start date and Expiry date enforcement.</li>
-            <li><strong>Usage Limits:</strong> Maximum usage count system-wide and per user.</li>
         </ul>
     </section>
 
@@ -1030,20 +1015,6 @@ php artisan storage:link
                 <li><strong>Atomic Approval:</strong> Approving executes a database transaction crediting <code>google_review_reward</code> amount to user wallet and sending instant in-app notification.</li>
             </ol>
         </div>
-    </section>
-
-    <!-- NOTIFICATIONS SYSTEM -->
-    <section id="notifications_system">
-        <div class="page-header">
-            <h3>Notifications System</h3>
-            <hr class="notop">
-        </div>
-        <p>In-app notification system accessible to all users via header bell icon or <code>/notifications</code>.</p>
-
-        <ul>
-            <li><strong>Event Triggers:</strong> New booking, status changes, Google review requests, approvals, and wallet credits.</li>
-            <li><strong>Management:</strong> Mark individual notification read, mark all read, or delete notifications.</li>
-        </ul>
     </section>
 
     <!-- SYSTEM SETTINGS -->
@@ -1097,6 +1068,35 @@ php artisan storage:link
                 <li><strong>Promotion Max Uses Per Customer:</strong> Maximum times an individual customer can redeem the same promotion (default: 1).</li>
             </ul>
         </div>
+    </section>
+
+    <!-- PROMOTIONS & DISCOUNTS -->
+    <section id="promotions_discounts">
+        <div class="page-header">
+            <h3>Promotions & Discount Coupons</h3>
+            <hr class="notop">
+        </div>
+        <p>Administrators create promotional discount codes under <code>/promotions</code>.</p>
+
+        <ul>
+            <li><strong>Discount Types:</strong> Fixed Amount ($ off) or Percentage (% off).</li>
+            <li><strong>Validity Window:</strong> Start date and Expiry date enforcement.</li>
+            <li><strong>Usage Limits:</strong> Maximum usage count system-wide and per user.</li>
+        </ul>
+    </section>
+
+    <!-- NOTIFICATIONS SYSTEM -->
+    <section id="notifications_system">
+        <div class="page-header">
+            <h3>Notifications System</h3>
+            <hr class="notop">
+        </div>
+        <p>In-app notification system accessible to all users via header bell icon or <code>/notifications</code>.</p>
+
+        <ul>
+            <li><strong>Event Triggers:</strong> New booking, status changes, Google review requests, approvals, and wallet credits.</li>
+            <li><strong>Management:</strong> Mark individual notification read, mark all read, or delete notifications.</li>
+        </ul>
     </section>
 
     <!-- AUDIT LOGS -->
