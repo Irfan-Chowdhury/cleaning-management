@@ -536,15 +536,139 @@ php artisan storage:link
             <h3>Service Catalog Management</h3>
             <hr class="notop">
         </div>
-        <p>Configure cleaning offerings, pricing models, and service questionnaires at <code>/services</code>.</p>
+        <p>The Service Catalog module (<code>/services</code>) allows Administrators to manage all cleaning service offerings, base pricing, duration estimates, active statuses, descriptions, and dynamic "What's Included" feature checklists.</p>
 
         <div class="doc-card">
-            <h4>Service Parameters</h4>
+            <h4>Service Catalog Operations Overview</h4>
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Feature / Button</th>
+                        <th>Purpose & Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>View All Services</strong></td>
+                        <td>Services Menu / Table</td>
+                        <td>View all registered cleaning services, base prices, duration estimates, and active statuses.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Add Service</strong></td>
+                        <td>"+ Add Service" Button</td>
+                        <td>Create a new cleaning service package with custom icon, base price, duration, and feature checklist.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Edit Service</strong></td>
+                        <td>Edit (Pencil Icon) Button</td>
+                        <td>Update service title, base price, duration estimate, description, or active status.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>View Details</strong></td>
+                        <td>View (Eye Icon) Button</td>
+                        <td>Open full service details page displaying complete description and "What's Included" package features.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Delete Service</strong></td>
+                        <td>Delete (Trash Icon) Button</td>
+                        <td>Remove a cleaning service from the catalog.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 1. ALL SERVICES LIST PAGE -->
+        <div class="doc-card">
+            <h4>1. All Services List Page</h4>
+            <p>Access <strong>Services</strong> from the main admin sidebar (<code>/services</code>) to view the complete cleaning service catalog.</p>
             <ul>
-                <li><strong>Base Price & Duration:</strong> Base cost (e.g. $120.00) and estimated completion duration (e.g. 2.5 hours).</li>
-                <li><strong>Status Toggle:</strong> Enable or disable service visibility in the public booking wizard.</li>
-                <li><strong>Dynamic Questionnaire:</strong> Define custom options (e.g. number of bedrooms, bathrooms, deep cleaning add-ons).</li>
+                <li><strong>Catalog Table Columns:</strong> Displays Service Icon & Title, Base Price ($), Estimated Duration, Status (<span class="badge-success-cust">Active</span> / <span class="badge-danger-cust">Inactive</span>), and Action buttons.</li>
+                <li><strong>Search & Filter:</strong> Live search allows filtering services by name, price, or duration.</li>
             </ul>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/UFoi51.jpg" alt="All Services List" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">All Services List</p>
+            </div>
+        </div>
+
+        <!-- 2. CREATE SERVICE MODAL FORM -->
+        <div class="doc-card">
+            <h4>2. Create New Service (Add Service Modal)</h4>
+            <p>To add a new cleaning service to the catalog:</p>
+            <ol>
+                <li>Click the blue <strong>"+ Add Service"</strong> button at the top-right of the Services list page.</li>
+                <li>The <strong>Create Service Modal</strong> will appear on screen.</li>
+                <li>Fill out the required information:
+                    <ul>
+                        <li><strong>Service Name:</strong> Name of the cleaning package (e.g. <em>Regular Home Cleaning</em>, <em>Deep Cleaning</em>).</li>
+                        <li><strong>Service Icon:</strong> Upload or select an icon image representing the service.</li>
+                        <li><strong>Base Price ($):</strong> Standard starting cost for the service.</li>
+                        <li><strong>Duration (Minutes/Hours):</strong> Estimated completion time.</li>
+                        <li><strong>Status:</strong> Set to Active to enable booking visibility.</li>
+                        <li><strong>Description:</strong> Summary of what the cleaning service provides.</li>
+                        <li><strong>What's Included Checklist:</strong> Dynamic list of individual tasks/items included in the package.</li>
+                    </ul>
+                </li>
+                <li>Click <strong>"Save Service"</strong> to create the package.</li>
+            </ol>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/DjFsw4.jpg" alt="Create Service Modal Form" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Create Service Modal Form</p>
+            </div>
+        </div>
+
+        <!-- 3. EDIT SERVICE MODAL FORM -->
+        <div class="doc-card">
+            <h4>3. Edit Service Details (Update Service Modal)</h4>
+            <p>To modify an existing cleaning service package:</p>
+            <ol>
+                <li>In the Services list table, locate the target service row.</li>
+                <li>Click the <strong>Edit</strong> button (pencil icon) under the <em>Action</em> column.</li>
+                <li>The <strong>Edit Service Modal</strong> will open pre-filled with existing package details.</li>
+                <li>Update any necessary fields (Title, Price, Duration, Description, Icon, or Included Features).</li>
+                <li>Click <strong>"Update Service"</strong> to save changes.</li>
+            </ol>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/MFHehN.jpg" alt="Edit Service Modal Form" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Edit Service Modal Form</p>
+            </div>
+        </div>
+
+        <!-- 4. SERVICE DETAILS VIEW PAGE -->
+        <div class="doc-card">
+            <h4>4. Service Details View Page (Single Service Inspection)</h4>
+            <p>To view full comprehensive details of a specific service package (e.g. <code>/services/1</code>):</p>
+            <ol>
+                <li>Click the <strong>View</strong> button (eye icon) on any service row in the list table.</li>
+                <li>The <strong>Service Details Page</strong> displays:
+                    <ul>
+                        <li><strong>Header Card:</strong> Service title, icon, base price, estimated duration, and active status badge.</li>
+                        <li><strong>Detailed Description:</strong> Full explanatory text describing the cleaning package scope.</li>
+                        <li><strong>"What's Included" Feature Checklist:</strong> Bulleted list showing all specific cleaning items and included tasks.</li>
+                    </ul>
+                </li>
+            </ol>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/s5HV98.jpg" alt="Service Details View" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Service Details View</p>
+            </div>
+        </div>
+
+        <!-- 5. EFFECT ON CUSTOMER BOOKING STEP-1 -->
+        <div class="doc-card" style="border-left: 4px solid #0866e8;">
+            <h4>5. Effect on Customer Booking Service Step-1</h4>
+            <p>Active services configured in the Service Catalog directly feed the customer booking experience at <strong>Step 1 of 4: Service Details</strong> (<code>/booking-service/create</code>):</p>
+            <ul>
+                <li><strong>Service Dropdown Selection:</strong> Every active service title automatically populates in the Step-1 Service Selection dropdown menu.</li>
+                <li><strong>Dynamic Questionnaire & Answers:</strong> Selecting a service dynamically loads its specific questionnaire questions and answer options (such as dropdowns, checkboxes, or text fields) configured for that service on the booking page.</li>
+                <li><strong>Service Description:</strong> Dynamically displays the detailed service description and overview tailored to the selected service in the Service Guide card.</li>
+                <li><strong>"What's Included" Feature Box:</strong> Automatically renders the dynamic "What's Included" checklist items configured for that service, giving customers complete clarity before proceeding to Step 2.</li>
+            </ul>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/2PU7RF.jpg" alt="Effect on Customer Booking Service Step-1" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Effect on Customer Booking Service Step-1</p>
+            </div>
         </div>
     </section>
 

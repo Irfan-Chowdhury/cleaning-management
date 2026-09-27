@@ -8,7 +8,42 @@ The feature exists so the booking flow can present customers with available serv
 
 Current users are not restricted by middleware in the implemented routes. The expected production user is likely an admin or staff member, but that permission rule is not yet implemented.
 
-## 2. Functional Flow
+## 2. Visual User Guide & Customer Step-1 Integration
+
+### 1. All Services List Page
+- **URL**: `GET /services`
+- **Visual Image Link**: [All Services List](https://snipboard.io/84ZPBW.jpg)
+
+![All Services List](https://snipboard.io/84ZPBW.jpg)
+
+### 2. Create Service Modal Form
+- **Modal Action**: Click "+ Add Service"
+- **Visual Image Link**: [Create Service Modal Form](https://snipboard.io/DjFsw4.jpg)
+
+![Create Service Modal Form](https://snipboard.io/DjFsw4.jpg)
+
+### 3. Edit Service Modal Form
+- **Modal Action**: Click Edit icon on target service row
+- **Visual Image Link**: [Edit Service Modal Form](https://snipboard.io/MFHehN.jpg)
+
+![Edit Service Modal Form](https://snipboard.io/MFHehN.jpg)
+
+### 4. Service Details View Page
+- **URL**: `GET /services/{id}` (e.g., `/services/1`)
+- **Visual Image Link**: [Service Details View](https://snipboard.io/s5HV98.jpg)
+
+![Service Details View](https://snipboard.io/s5HV98.jpg)
+
+### 5. Effect on Customer Booking Service Step-1
+- **Customer Booking Route**: `GET /booking-service/create` (Step 1 of 4: Service Details)
+- **Integration**: Active services load into the Step-1 dropdown. Selecting a service dynamically loads its specific questionnaire questions and answer options, updates the service description in the guide card, and renders the dynamic "What's Included" feature checklist.
+- **Visual Image Link**: [Effect on Customer Booking Service Step-1](https://snipboard.io/9JDasI.jpg)
+
+![Effect on Customer Booking Service Step-1](https://snipboard.io/9JDasI.jpg)
+
+---
+
+## 3. Functional Flow
 
 ### Service List
 

@@ -24,7 +24,7 @@
                     <span class="service-view-label">Service Title</span>
                     <h2>{{ $service->name }}</h2>
                 </div>
-                <span class="badge service-status-badge {{ $service->status === 'active' ? 'badge-success' : 'badge-secondary' }}">
+                <span class="badge service-status-badge {{ $service->status === 'active' ? 'badge-success' : 'badge-danger' }}">
                     {{ ucfirst($service->status) }}
                 </span>
             </div>

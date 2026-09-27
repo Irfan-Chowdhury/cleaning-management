@@ -49,7 +49,7 @@
                                 </td>
                                 <td>{{ \Illuminate\Support\Str::limit($service->description, 80) ?: '-' }}</td>
                                 <td>
-                                    <span class="badge service-status-badge {{ $service->status === 'active' ? 'badge-success' : 'badge-secondary' }}">
+                                    <span class="badge service-status-badge {{ $service->status === 'active' ? 'badge-success' : 'badge-danger' }}">
                                         {{ ucfirst($service->status) }}
                                     </span>
                                 </td>
