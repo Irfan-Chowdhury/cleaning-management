@@ -201,6 +201,7 @@
         <li><a href="#server_requirements" title="Server Requirements">Server Requirements</a></li>
         <li><a href="#installation_setup" title="Installation & Setup">Installation & Setup</a></li>
         <li><a href="#auth_security" title="Authentication & Security">Auth & Security</a></li>
+        <li><a href="#profile_settings" title="Profile Settings">Profile Settings</a></li>
         <li><a href="#admin_dashboard" title="Admin Dashboard">Admin Dashboard</a></li>
         <li><a href="#customer_dashboard" title="Customer Dashboard">Customer Dashboard</a></li>
         <li><a href="#sub_admin_management" title="Sub-Admin Management">Sub-Admin Management</a></li>
@@ -362,6 +363,82 @@ php artisan storage:link
                 <li><strong>Welcome Credit Bonus:</strong> Verified customers automatically receive welcome wallet credits if enabled in settings.</li>
                 <li><strong>Password Reset Flow:</strong> Secure tokenized email links via <code>/forgot-password</code> and <code>/reset-password/{token}</code>.</li>
             </ul>
+        </div>
+    </section>
+
+    <!-- PROFILE SETTINGS -->
+    <section id="profile_settings">
+        <div class="page-header">
+            <h3>Profile Settings</h3>
+            <hr class="notop">
+        </div>
+        <p>The <strong>Profile Settings</strong> page allows users to view and update their personal account information, avatar photo, contact details, and account security credentials.</p>
+
+        <div class="doc-card" style="border-left: 4px solid #0866e8; background-color: #f8fafc;">
+            <p style="margin: 0; font-size: 14px; color: #1e293b;">
+                <i class="fas fa-info-circle text-primary mr-1"></i> <strong>Shared Feature Access:</strong> This Profile Settings page operates identically for both <strong>Administrators</strong> and <strong>Customers</strong>. Both roles access this page directly to update their personal profile data and security password.
+            </p>
+        </div>
+
+        <div class="doc-card">
+            <h4>Profile Settings Control Panel Overview</h4>
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Setting Category</th>
+                        <th>Options & Inputs</th>
+                        <th>Description & Functionality</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Profile Photo</strong></td>
+                        <td>"Change Photo" Button</td>
+                        <td>Upload a new avatar image (JPG, PNG, WEBP, GIF). Displays an instant preview before saving.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Personal Details</strong></td>
+                        <td>First Name, Last Name, Email Address, Phone Number</td>
+                        <td>Manage your official name, account email address, and direct phone contact details.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Gender Selection</strong></td>
+                        <td>Male / Female / Other (Radio Options)</td>
+                        <td>Select your preferred gender identity for account profile customization.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Address Details</strong></td>
+                        <td>Full Address Field</td>
+                        <td>Enter or update primary physical home/business service address.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Referral Code</strong></td>
+                        <td>Read-Only Code & Copy Button</td>
+                        <td>Displays your unique account referral code with a 1-click copy button for quick sharing.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Security & Password</strong></td>
+                        <td>New Password & Confirm Password</td>
+                        <td>Update account password securely. Leave blank if keeping current password, or enter matching new passwords to update.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div style="text-align: center; margin: 25px 0 10px 0;">
+                <img src="https://snipboard.io/GqpKCh.jpg" alt="Profile Settings Control Panel" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Profile Settings Control Panel</p>
+            </div>
+        </div>
+
+        <div class="doc-card">
+            <h4>Step-by-Step Guide: How to Update Profile Information</h4>
+            <ol>
+                <li>Click on your account name or profile icon at the top-right corner of the page and select <strong>Profile</strong>.</li>
+                <li>To update your profile avatar picture, click <strong>"Change Photo"</strong> and choose an image file from your computer or mobile device.</li>
+                <li>Edit your personal information (First Name, Last Name, Email, Phone, Gender, or Address) as required.</li>
+                <li>To update your account password, enter a new password in <strong>"New Password"</strong> and repeat it in <strong>"Confirm Password"</strong>. If you do not wish to change your password, leave these two fields blank.</li>
+                <li>Click the blue <strong>"Update Profile"</strong> button. A success notification will confirm that your profile details have been saved.</li>
+            </ol>
         </div>
     </section>
 
@@ -1317,6 +1394,7 @@ php artisan storage:link
         'Server Requirements',
         'Installation Setup',
         'Auth Security',
+        'Profile Settings',
         'Admin Dashboard',
         'Customer Dashboard',
         'Sub Admin Management',
