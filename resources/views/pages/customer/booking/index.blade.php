@@ -149,11 +149,6 @@
                 <h1>My Bookings</h1>
                 <p>View, track, and manage all your scheduled cleaning services.</p>
             </div>
-            <div>
-                <a href="#" class="btn customers-primary-btn">
-                    <i class="fas fa-plus mr-1"></i> Book a Service
-                </a>
-            </div>
         </div>
 
         <!-- Filter & Search Toolbar Card -->

@@ -1248,16 +1248,161 @@ php artisan storage:link
     <!-- PROMOTIONS & DISCOUNTS -->
     <section id="promotions_discounts">
         <div class="page-header">
-            <h3>Promotions & Discount Coupons</h3>
+            <h3>Promotions & Discount Offers</h3>
             <hr class="notop">
         </div>
-        <p>Administrators create promotional discount codes under <code>/promotions</code>.</p>
+        <p>The <strong>Promotions & Discount Offers</strong> module allows administrators to create, manage, and track promotional coupon codes that customers can apply during service checkout to receive discounts on their bookings.</p>
 
-        <ul>
-            <li><strong>Discount Types:</strong> Fixed Amount ($ off) or Percentage (% off).</li>
-            <li><strong>Validity Window:</strong> Start date and Expiry date enforcement.</li>
-            <li><strong>Usage Limits:</strong> Maximum usage count system-wide and per user.</li>
-        </ul>
+        <!-- OPERATIONS OVERVIEW TABLE -->
+        <div class="doc-card">
+            <h4>Promotional Offer Operations Overview</h4>
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Feature / Button</th>
+                        <th>Purpose & Functionality</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>View Promotions</strong></td>
+                        <td>Promotions Menu / List Table</td>
+                        <td>View all created promotional codes, discount values, validity periods, customer eligibility rules, and current status.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Add Promotion</strong></td>
+                        <td>"+ Add Promotion" Button</td>
+                        <td>Create a new promotional code with fixed dollar or percentage discounts, validity dates, and customer scope restrictions.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Edit Promotion</strong></td>
+                        <td>Edit (Pencil Icon) Button</td>
+                        <td>Modify existing promotional code details, discount amounts, expiration dates, or eligibility settings.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Delete Promotion</strong></td>
+                        <td>Delete (Trash Icon) Button</td>
+                        <td>Remove a promotional code from the system with an instant confirmation prompt.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Customer Checkout Apply</strong></td>
+                        <td>Step 4 Review & Confirm Page</td>
+                        <td>Customers enter a promo code at checkout to automatically apply eligible discount savings to their booking total.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 1. INDEX LIST PAGE -->
+        <div class="doc-card">
+            <h4>1. Promotions List Interface (Overview)</h4>
+            <p>Access <strong>Promotions</strong> from the main administration sidebar menu to view all active, inactive, and expired promotional codes.</p>
+            <ul>
+                <li><strong>Promo Code & Name:</strong> Highlights the unique uppercase coupon code and descriptive offer title.</li>
+                <li><strong>Discount Details:</strong> Displays fixed dollar amount savings (e.g. <em>$15.00 Off</em>) or percentage discounts (e.g. <em>10% Off</em>).</li>
+                <li><strong>Customer Eligibility Scope:</strong> Indicates whether the coupon applies to <em>All Customers</em>, <em>New Customers Only</em>, or <em>Existing Customers Only</em>.</li>
+                <li><strong>Validity Window:</strong> Shows start date/time and expiration date/time.</li>
+                <li><strong>Status Indicators:</strong> Color-coded badges indicating <strong>Active</strong>, <strong>Inactive</strong>, or <strong>Expired</strong> promo codes.</li>
+            </ul>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/7QYArG.jpg" alt="Promotions Management List Interface" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Promotions Management List Interface</p>
+            </div>
+        </div>
+
+        <!-- 2. ADD PROMOTION - FIXED DISCOUNT -->
+        <div class="doc-card">
+            <h4>2. Add Promotion - Fixed Dollar Discount ($)</h4>
+            <p>To create a new promotional code with a fixed dollar discount:</p>
+            <ol>
+                <li>Click the <strong>"+ Add Promotion"</strong> button at the top-right of the Promotions page.</li>
+                <li>Enter an internal <strong>Promotion Name</strong> and a unique <strong>Promo Code</strong> (e.g. <code>WELCOME15</code>).</li>
+                <li>Select <strong>Fixed</strong> under <em>Discount Type</em>. The discount value field automatically switches to display a dollar sign (<code>$</code>) prefix.</li>
+                <li>Enter the discount amount (e.g. <code>15.00</code>).</li>
+                <li>Set the <strong>Start Date & Time</strong> and <strong>Expiration Date & Time</strong>.</li>
+                <li>Choose the <strong>Customer Eligibility Scope</strong>:
+                    <ul>
+                        <li><strong>All customers:</strong> Open to any registered user.</li>
+                        <li><strong>New customers only:</strong> Restricted to first-time bookings.</li>
+                        <li><strong>Existing customers only:</strong> Restricted to returning clients.</li>
+                    </ul>
+                </li>
+                <li>Click <strong>"Save Promotion"</strong> to create the offer.</li>
+            </ol>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/Qsj4OS.jpg" alt="Add Promotion Modal - Fixed Dollar Discount" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Add Promotion Modal - Fixed Dollar Discount</p>
+            </div>
+        </div>
+
+        <!-- 3. ADD PROMOTION - PERCENTAGE DISCOUNT -->
+        <div class="doc-card">
+            <h4>3. Add Promotion - Percentage Discount (%)</h4>
+            <p>To create a promotional code that calculates a percentage discount based on the booking service total:</p>
+            <ol>
+                <li>Open the <strong>"+ Add Promotion"</strong> modal form.</li>
+                <li>Select <strong>Percentage</strong> under <em>Discount Type</em>. The discount input field dynamically updates to show a percentage sign (<code>%</code>) suffix.</li>
+                <li>Enter the percentage value (e.g. <code>10</code> for a 10% discount off total booking cost).</li>
+                <li>Configure the code name, validity dates, status, and eligibility rules.</li>
+                <li>Click <strong>"Save Promotion"</strong> to finalize.</li>
+            </ol>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/BxjFYT.jpg" alt="Add Promotion Modal - Percentage Discount" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Add Promotion Modal - Percentage Discount</p>
+            </div>
+        </div>
+
+        <!-- 4. EDIT PROMOTION DETAILS -->
+        <div class="doc-card">
+            <h4>4. Edit Promotion Details</h4>
+            <p>To update an existing promotional code:</p>
+            <ol>
+                <li>Find the promo code row in the Promotions list table.</li>
+                <li>Click the <strong>Edit</strong> button (pencil icon) under the <em>Action</em> column.</li>
+                <li>The <strong>Edit Promotion Modal</strong> will appear pre-filled with all existing code settings.</li>
+                <li>Modify any desired values, such as extending the expiration date, adjusting discount amounts, or changing customer eligibility.</li>
+                <li>Click <strong>"Update Promotion"</strong> to save changes.</li>
+            </ol>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/8R4h1C.jpg" alt="Edit Promotion Details Modal" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Edit Promotion Details Modal</p>
+            </div>
+        </div>
+
+        <!-- 5. DELETE PROMOTION -->
+        <div class="doc-card">
+            <h4>5. Delete Promotion</h4>
+            <p>To remove an unnecessary or redundant promotional code:</p>
+            <ol>
+                <li>Click the <strong>Delete</strong> button (trash icon) on the target promotion row.</li>
+                <li>A confirmation alert will prompt: <em>"Are you sure you want to delete this promotion?"</em></li>
+                <li>Confirming the prompt permanently deletes the promotion code record from the system.</li>
+            </ol>
+        </div>
+
+        <!-- 6. BOOKING SERVICE STEP-4 CHECKOUT INTEGRATION -->
+        <div class="doc-card">
+            <h4>6. Booking Checkout Integration (Customer Redemption)</h4>
+            <p>Customers can apply active promo codes during <strong>Step 4: Review & Confirm</strong> of the cleaning booking wizard:</p>
+            <ol>
+                <li>During booking checkout, the customer locates the <strong>Promotions & Discount Code</strong> input box.</li>
+                <li>The customer types their promo code and clicks <strong>Apply</strong>.</li>
+                <li>The system validates the code against all configured rules:
+                    <ul>
+                        <li>Verifies the code exists and is marked as <strong>Active</strong>.</li>
+                        <li>Ensures current date/time is within the <strong>Start Date</strong> and <strong>Expiration Date</strong> window.</li>
+                        <li>Confirms customer eligibility (e.g. checking first-time booking status if code is restricted to <em>New Customers Only</em>).</li>
+                        <li>Checks system minimum booking order thresholds.</li>
+                    </ul>
+                </li>
+                <li>Upon successful validation, the calculated discount (fixed dollar or percentage) is applied immediately, reducing the final total price card on screen.</li>
+            </ol>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/PZdjNL.jpg" alt="Step 4 Checkout Promo Code Application" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Step 4 Checkout Promo Code Application</p>
+            </div>
+        </div>
     </section>
 
     <!-- NOTIFICATIONS SYSTEM -->

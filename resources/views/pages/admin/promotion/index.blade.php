@@ -131,16 +131,22 @@
                     </div>
 
                     <div class="promotion-eligibility-row">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input"
-                                   id="promotion-new-customers-only" name="new_customers_only" value="1">
-                            <label class="custom-control-label" for="promotion-new-customers-only">New customers only</label>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" class="custom-control-input"
+                                   id="promotion-scope-all" name="customer_eligibility" value="all" checked>
+                            <label class="custom-control-label" for="promotion-scope-all">All customers</label>
                         </div>
 
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input"
-                                   id="promotion-existing-customers-only" name="existing_customers_only" value="1">
-                            <label class="custom-control-label" for="promotion-existing-customers-only">Existing customers only</label>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" class="custom-control-input"
+                                   id="promotion-scope-new" name="customer_eligibility" value="new">
+                            <label class="custom-control-label" for="promotion-scope-new">New customers only</label>
+                        </div>
+
+                        <div class="custom-control custom-radio">
+                            <input type="radio" class="custom-control-input"
+                                   id="promotion-scope-existing" name="customer_eligibility" value="existing">
+                            <label class="custom-control-label" for="promotion-scope-existing">Existing customers only</label>
                         </div>
                     </div>
                 </div>
@@ -246,6 +252,7 @@
             $('#promotion-id').val('');
             $('#promotion-form-method').val('POST');
             $('#promotion-status').val(1);
+            $('#promotion-scope-all').prop('checked', true);
             $form.attr('action', promotionsBaseUrl);
             toggleDiscountValueField();
         }
@@ -277,8 +284,17 @@
             $('#promotion-status').val($btn.data('status'));
             $('#promotion-start-at').val($btn.data('start_at'));
             $('#promotion-expires-at').val($btn.data('expires_at'));
-            $('#promotion-new-customers-only').prop('checked', Number($btn.data('new_customers_only')) === 1);
-            $('#promotion-existing-customers-only').prop('checked', Number($btn.data('existing_customers_only')) === 1);
+            
+            var isNew = Number($btn.data('new_customers_only')) === 1;
+            var isExisting = Number($btn.data('existing_customers_only')) === 1;
+
+            if (isNew) {
+                $('#promotion-scope-new').prop('checked', true);
+            } else if (isExisting) {
+                $('#promotion-scope-existing').prop('checked', true);
+            } else {
+                $('#promotion-scope-all').prop('checked', true);
+            }
 
             toggleDiscountValueField();
 
@@ -294,10 +310,15 @@
             var isEdit = $('#promotion-form-method').val() === 'PUT';
             var formData = new FormData(this);
 
-            if (!$('#promotion-new-customers-only').is(':checked')) {
+            var selectedScope = $('input[name="customer_eligibility"]:checked').val();
+            if (selectedScope === 'new') {
+                formData.set('new_customers_only', '1');
+                formData.set('existing_customers_only', '0');
+            } else if (selectedScope === 'existing') {
                 formData.set('new_customers_only', '0');
-            }
-            if (!$('#promotion-existing-customers-only').is(':checked')) {
+                formData.set('existing_customers_only', '1');
+            } else {
+                formData.set('new_customers_only', '0');
                 formData.set('existing_customers_only', '0');
             }
 
