@@ -24,6 +24,7 @@ use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use Illuminate\Support\Facades\File;
 use App\Models\Setting;
@@ -69,6 +70,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/notifications/{id}/read', [NotificationController::class, 'read'])->name('notifications.read');
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
     Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+});
+
+// User Profile Routes (Accessible by all authenticated users: Admin & Customer)
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'index'])->name('customer.profile.index');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('customer.profile.update');
 });
 
 // Booking Wizard Routes (Accessible by both Admin & Customer)

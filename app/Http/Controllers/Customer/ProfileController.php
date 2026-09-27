@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CustomerProfileRequest;
-use App\Services\CustomerProfileService;
+use App\Http\Requests\ProfileRequest;
+use App\Services\ProfileService;
 
 class ProfileController extends Controller
 {
@@ -12,7 +12,7 @@ class ProfileController extends Controller
      * Create a new ProfileController instance.
      */
     public function __construct(
-        protected CustomerProfileService $profileService
+        protected ProfileService $profileService
     ) {}
 
     /**
@@ -28,7 +28,7 @@ class ProfileController extends Controller
     /**
      * Update customer profile details.
      */
-    public function update(CustomerProfileRequest $request)
+    public function update(ProfileRequest $request)
     {
         /** @var \App\Models\User $user */
         $user = auth()->user();

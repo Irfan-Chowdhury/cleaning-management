@@ -161,15 +161,6 @@
             </div>
         </div>
 
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show max-width-860 mx-auto mb-4" role="alert" style="max-width: 860px; border-radius: 10px;">
-                <i class="fas fa-check-circle mr-2"></i> {{ session('success') }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        @endif
-
         @if ($errors->any())
             <div class="alert alert-danger alert-dismissible fade show max-width-860 mx-auto mb-4" role="alert" style="max-width: 860px; border-radius: 10px;">
                 <i class="fas fa-exclamation-triangle mr-2"></i> <strong>Please correct the errors below:</strong>

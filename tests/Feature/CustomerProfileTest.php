@@ -106,3 +106,32 @@ it('uploads and resizes profile photo using intervention image', function () {
         unlink(public_path(Illuminate\Support\Str::after($updatedUser->photo, 'public/')));
     }
 });
+
+it('allows admin users to access and update profile at /profile', function () {
+    $admin = User::create([
+        'first_name' => 'Admin',
+        'last_name' => 'User',
+        'email' => 'admin.profile@example.com',
+        'phone' => '+1555000999',
+        'role' => 1,
+        'is_active' => true,
+        'password' => Hash::make('password123'),
+    ]);
+
+    $this->actingAs($admin)
+        ->get(route('customer.profile.index'))
+        ->assertOk()
+        ->assertSee('Admin');
+
+    $this->actingAs($admin)
+        ->post(route('customer.profile.update'), [
+            'first_name' => 'Super',
+            'last_name' => 'Admin',
+            'email' => 'admin.profile@example.com',
+            'phone' => '+1555000999',
+        ])
+        ->assertRedirect(route('customer.profile.index'))
+        ->assertSessionHas('success');
+
+    expect($admin->fresh()->first_name)->toBe('Super');
+});

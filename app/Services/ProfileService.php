@@ -9,10 +9,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Intervention\Image\Laravel\Facades\Image;
 
-class CustomerProfileService
+class ProfileService
 {
     /**
-     * Update customer profile data and process avatar photo.
+     * Update user profile data and process avatar photo.
      *
      * @param  User  $user
      * @param  array  $data
@@ -52,8 +52,9 @@ class CustomerProfileService
     {
         $destination = public_path('assets/images/user_photos');
 
-        if (! File::isDirectory($destination)) {
-            File::makeDirectory($destination, 0755, true);
+        File::ensureDirectoryExists($destination, 0777, true);
+        if (File::exists($destination) && ! is_writable($destination)) {
+            @chmod($destination, 0777);
         }
 
         $filename = 'user-' . $user->id . '-' . time() . '-' . Str::random(6) . '.' . $file->getClientOriginalExtension();
@@ -61,13 +62,16 @@ class CustomerProfileService
         // Process image using Intervention Image (v3 cover 300x300)
         $image = Image::read($file);
         $image->cover(300, 300);
-        $image->save($destination . '/' . $filename);
+
+        $targetPath = $destination . '/' . $filename;
+        $image->save($targetPath);
+        @chmod($targetPath, 0666);
 
         // Delete old photo file if it exists and is stored locally
         if (! empty($user->photo) && ! filter_var($user->photo, FILTER_VALIDATE_URL)) {
             $oldPath = public_path(Str::after($user->photo, 'public/'));
             if (File::exists($oldPath)) {
-                File::delete($oldPath);
+                @File::delete($oldPath);
             }
         }
 

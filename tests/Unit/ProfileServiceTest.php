@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\User;
-use App\Services\CustomerProfileService;
+use App\Services\ProfileService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
@@ -12,16 +12,16 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
-class CustomerProfileServiceTest extends TestCase
+class ProfileServiceTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected CustomerProfileService $service;
+    protected ProfileService $service;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = new CustomerProfileService();
+        $this->service = new ProfileService();
     }
 
     public function test_it_updates_customer_profile_attributes()

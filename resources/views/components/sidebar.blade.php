@@ -133,7 +133,7 @@
         </a>
         @endif
 
-        <a href="{{ route('customer.profile.index') }}" class="sidebar-link {{ request()->routeIs('customer.profile.*') || request()->is('customer-profile*') ? 'active' : '' }}">
+        <a href="{{ route('customer.profile.index') }}" class="sidebar-link {{ request()->routeIs('customer.profile.*') || request()->is('profile*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="fas fa-cog" aria-hidden="true"></i></span>
             <span>Profile</span>
         </a>
