@@ -158,16 +158,16 @@
             </div>
 
             <div class="d-flex justify-content-end gap-3 pt-3 border-top">
-                <form action="{{ route('reviews.cancel', $review->id) }}" method="POST" class="mr-2">
+                <form id="cancel-review-form" action="{{ route('reviews.cancel', $review->id) }}" method="POST" class="mr-2">
                     @csrf
-                    <button type="submit" class="btn btn-outline-danger px-4" onclick="return confirm('Are you sure you want to cancel this review reward request?')">
+                    <button type="submit" class="btn btn-outline-danger px-4">
                         <i class="fas fa-times mr-1"></i> Cancel Request
                     </button>
                 </form>
 
-                <form action="{{ route('reviews.approve', $review->id) }}" method="POST">
+                <form id="approve-review-form" action="{{ route('reviews.approve', $review->id) }}" method="POST">
                     @csrf
-                    <button type="submit" class="btn btn-success px-4" onclick="return confirm('Confirm approval? This will credit ${{ number_format((float)($review->reward_amount ?? $configuredReward), 2) }} to customer wallet.')">
+                    <button type="submit" class="btn btn-success px-4">
                         <i class="fas fa-check mr-1"></i> Approve & Issue Wallet Credit
                     </button>
                 </form>
@@ -180,3 +180,63 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    (function ($) {
+        'use strict';
+
+        $('#approve-review-form').on('submit', function (e) {
+            e.preventDefault();
+            var form = this;
+
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Approve Review Reward?',
+                    html: 'Are you sure you want to approve this review reward request?<br><br><span class="badge badge-success" style="font-size:14px; padding: 6px 12px;">Credit Amount: ${{ number_format((float)($review->reward_amount ?? $configuredReward), 2) }}</span><br><small class="text-muted mt-2 d-block">This will credit the customer\'s wallet immediately.</small>',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: '<i class="fas fa-check mr-1"></i> Yes, Approve & Issue Credit',
+                    cancelButtonText: 'Cancel'
+                }).then(function (result) {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            } else {
+                if (confirm('Confirm approval? This will credit ${{ number_format((float)($review->reward_amount ?? $configuredReward), 2) }} to customer wallet.')) {
+                    form.submit();
+                }
+            }
+        });
+
+        $('#cancel-review-form').on('submit', function (e) {
+            e.preventDefault();
+            var form = this;
+
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Cancel Request?',
+                    text: 'Are you sure you want to cancel this review reward request?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, Cancel Request',
+                    cancelButtonText: 'No, Keep It'
+                }).then(function (result) {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            } else {
+                if (confirm('Are you sure you want to cancel this review reward request?')) {
+                    form.submit();
+                }
+            }
+        });
+    })(jQuery);
+</script>
+@endpush

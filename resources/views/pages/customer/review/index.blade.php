@@ -69,15 +69,6 @@
 
 @section('content')
 <div class="container-fluid py-4">
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show max-w-800 mx-auto mb-4" role="alert">
-            <i class="fas fa-check-circle mr-2"></i> {{ session('success') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
-
     @if(session('error'))
         <div class="alert alert-danger alert-dismissible fade show max-w-800 mx-auto mb-4" role="alert">
             <i class="fas fa-exclamation-circle mr-2"></i> {{ session('error') }}
@@ -134,10 +125,10 @@
             @endif
 
             <p class="review-reward-text">
-                Go to Google and leave us a review. After submitting your review, apply for your review bonus. Our team will verify your review and approve your request. Once approved, the reward will be added to your wallet.
+                Before applying for your review reward, you must submit a Google review. <a href="https://g.page/r/CYz0nJiMwuhzEBM/review" target="_blank" rel="noopener noreferrer" class="font-weight-bold" style="color: #0866e8; text-decoration: underline;">Click here to leave a review on Google <i class="fas fa-external-link-alt small ml-1"></i></a>. After submitting your review, apply for your review bonus below. Our team will verify your review and approve your request. Once approved, the reward will be added to your wallet.
             </p>
 
-            <form action="{{ route('customer.review.store') }}" method="POST" class="d-inline-block">
+            <form id="apply-review-form" action="{{ route('customer.review.store') }}" method="POST" class="d-inline-block">
                 @csrf
                 <button type="submit" class="btn btn-primary btn-lg px-4 shadow-sm" style="background: #0866e8; border-color: #0866e8;">
                     <i class="fas fa-paper-plane mr-2"></i> Apply for Review Reward
@@ -147,3 +138,36 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    (function ($) {
+        'use strict';
+        $('#apply-review-form').on('submit', function (e) {
+            e.preventDefault();
+            var form = this;
+
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Did you submit your review on Google?',
+                    html: 'Please confirm that you have submitted your review on Google before applying.<br><br><a href="https://g.page/r/CYz0nJiMwuhzEBM/review" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary"><i class="fab fa-google mr-1"></i> Leave Google Review Now</a>',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#0866e8',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, I submitted it!',
+                    cancelButtonText: 'No, not yet'
+                }).then(function (result) {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            } else {
+                if (confirm('Did you submit your review on Google?')) {
+                    form.submit();
+                }
+            }
+        });
+    })(jQuery);
+</script>
+@endpush
