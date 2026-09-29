@@ -260,13 +260,22 @@ class ReferralService
             ];
         });
 
+        $hasCompletedPaidBooking = Booking::where('user_id', $user->id)
+            ->get()
+            ->contains(function ($b) {
+                $status = $b->status instanceof BookingStatus ? $b->status->value : strtolower((string) $b->status);
+                $paymentStatus = strtolower((string) $b->payment_status);
+                return $status === 'completed' && $paymentStatus === 'paid';
+            });
+
         return [
-            'referralCode'     => $referralCode,
-            'referralLink'     => $referralLink,
-            'totalReferrals'   => $totalReferrals,
-            'pendingReferrals' => $pendingReferrals,
-            'totalRewards'     => $totalRewards,
-            'referrals'        => $referrals,
+            'referralCode'            => $referralCode,
+            'referralLink'            => $referralLink,
+            'totalReferrals'          => $totalReferrals,
+            'pendingReferrals'        => $pendingReferrals,
+            'totalRewards'            => $totalRewards,
+            'referrals'               => $referrals,
+            'hasCompletedPaidBooking' => $hasCompletedPaidBooking,
         ];
     }
 

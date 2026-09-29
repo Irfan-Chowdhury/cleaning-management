@@ -126,37 +126,53 @@
 
         <!-- Referral Link & Referral Code Cards Section -->
         <div class="referral-program-card">
-            <div class="row">
-                <!-- Referral Code Box -->
-                <div class="col-lg-6 mb-4 mb-lg-0">
-                    <label for="referral-code-input" class="font-weight-bold text-dark mb-2" style="font-size: 14px;">
-                        <i class="fas fa-ticket-alt text-primary mr-1"></i> Your Referral Code
-                    </label>
-                    <div class="input-group referral-input-group">
-                        <input type="text" id="referral-code-input" class="form-control" value="{{ $referralCode }}" readonly>
-                        <div class="input-group-append">
-                            <button type="button" id="btn-copy-code" class="btn btn-primary btn-copy">
-                                <i class="far fa-copy"></i> Copy
-                            </button>
+            @if(!empty($hasCompletedPaidBooking))
+                <div class="row">
+                    <!-- Referral Code Box -->
+                    <div class="col-lg-6 mb-4 mb-lg-0">
+                        <label for="referral-code-input" class="font-weight-bold text-dark mb-2" style="font-size: 14px;">
+                            <i class="fas fa-ticket-alt text-primary mr-1"></i> Your Referral Code
+                        </label>
+                        <div class="input-group referral-input-group">
+                            <input type="text" id="referral-code-input" class="form-control" value="{{ $referralCode }}" readonly>
+                            <div class="input-group-append">
+                                <button type="button" id="btn-copy-code" class="btn btn-primary btn-copy">
+                                    <i class="far fa-copy"></i> Copy
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Referral Link Box -->
-                <div class="col-lg-6">
-                    <label for="referral-link-input" class="font-weight-bold text-dark mb-2" style="font-size: 14px;">
-                        <i class="fas fa-link text-primary mr-1"></i> Your Referral Link
-                    </label>
-                    <div class="input-group referral-input-group">
-                        <input type="text" id="referral-link-input" class="form-control" value="{{ $referralLink }}" readonly>
-                        <div class="input-group-append">
-                            <button type="button" id="btn-copy-link" class="btn btn-primary btn-copy">
-                                <i class="far fa-copy"></i> Copy
-                            </button>
+                    <!-- Referral Link Box -->
+                    <div class="col-lg-6">
+                        <label for="referral-link-input" class="font-weight-bold text-dark mb-2" style="font-size: 14px;">
+                            <i class="fas fa-link text-primary mr-1"></i> Your Referral Link
+                        </label>
+                        <div class="input-group referral-input-group">
+                            <input type="text" id="referral-link-input" class="form-control" value="{{ $referralLink }}" readonly>
+                            <div class="input-group-append">
+                                <button type="button" id="btn-copy-link" class="btn btn-primary btn-copy">
+                                    <i class="far fa-copy"></i> Copy
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            @else
+                <div class="alert alert-info border-0 shadow-sm rounded-lg mb-0 p-3" style="background-color: #eff6ff; color: #1e40af; border-left: 4px solid #0866e8 !important;">
+                    <div class="d-flex align-items-center">
+                        <div class="mr-3 text-primary" style="font-size: 22px;">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div>
+                            <span class="font-weight-bold d-block mb-1" style="font-size: 14px; color: #1e3a8a;">Referral Code & Link Locked</span>
+                            <span class="small text-muted" style="font-size: 13px;">
+                                <i class="fas fa-sticky-note mr-1 text-primary"></i> <strong>Note:</strong> Your referral code and referral link will be visible after successfully completing at least one booking with payment done.
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            @endif
         </div>
 
         <!-- Summary Metric Cards -->

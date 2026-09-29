@@ -229,7 +229,7 @@
                         <label for="email">
                             <i class="fas fa-envelope text-primary mr-1"></i> Email Address <span class="text-danger">*</span>
                         </label>
-                        <input type="email" id="email" name="email" class="form-control @error('email') is-invalid @enderror"
+                        <input readonly type="email" id="email" name="email" class="form-control @error('email') is-invalid @enderror"
                                value="{{ old('email', $user->email) }}" placeholder="example@domain.com" required>
                         @error('email')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -267,26 +267,6 @@
                                 <input type="radio" name="gender" value="other" {{ $currentGender === 'other' ? 'checked' : '' }}>
                                 <span>Other</span>
                             </label>
-                        </div>
-                    </div>
-
-                    <!-- Referral Code Field (Read Only with Tooltip) -->
-                    <div class="col-md-6 form-group mb-3">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <label for="referral_code" class="mb-0">
-                                <i class="fas fa-ticket-alt text-primary mr-1"></i> Referral Code
-                            </label>
-                            <span class="readonly-tag"><i class="fas fa-lock mr-1"></i> Read Only</span>
-                        </div>
-                        <div class="input-group">
-                            <input type="text" id="referral_code" class="form-control font-weight-bold" value="{{ $user->referral_code }}" readonly>
-                            <div class="input-group-append position-relative">
-                                <button type="button" class="btn referral-copy-btn" id="btn-copy-referral"
-                                        data-toggle="tooltip" data-placement="top" data-trigger="manual" title="Copied!">
-                                    <i class="fas fa-copy"></i>
-                                </button>
-                                <span id="copied-badge" class="copied-badge-popup" style="display: none;">Copied!</span>
-                            </div>
                         </div>
                     </div>
 
