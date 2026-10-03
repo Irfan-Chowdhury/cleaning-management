@@ -145,6 +145,12 @@
             <div class="auth-body">
                 <form method="POST" action="{{ route('register') }}">
                     @csrf
+                    @if(request('ref') || old('referred_by_code'))
+                        <input type="hidden" name="referred_by_code" value="{{ old('referred_by_code', request('ref')) }}">
+                        <div class="alert alert-info py-2 px-3 mb-3 text-center" style="font-size: 13.5px; background-color: #eff6ff; color: #0866e8; border: 1px solid #bfdbfe; border-radius: 8px;">
+                            <i class="fas fa-gift mr-1"></i> Signing up via referral link (Code: <strong>{{ strtoupper(old('referred_by_code', request('ref'))) }}</strong>)
+                        </div>
+                    @endif
 
                     <div class="form-row">
                         <div class="form-group col-md-6">

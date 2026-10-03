@@ -70,28 +70,7 @@ class BookingController extends Controller
                 ];
             });
         } else {
-            $bookings = collect([
-                (object)[
-                    'id'                   => 1,
-                    'booking_id'           => 'BK-001',
-                    'service_name'         => 'Deep Home Cleaning',
-                    'date'                 => '2026-08-20',
-                    'time'                 => '09:00 AM',
-                    'amount'               => 180.00,
-                    'status'               => 'Approved',
-                    'status_raw'           => 'approved',
-                    'payment_status'       => 'Paid',
-                    'payment_method'       => 'Credit Card (Visa **** 4242)',
-                    'paid_amount'          => 180.00,
-                    'wallet_used'          => 0.00,
-                    'credit_used'          => 0.00,
-                    'discount_amount'      => 0.00,
-                    'referal_code'         => null,
-                    'promo_code'           => null,
-                    'cancellation_eligible'=> true,
-                    'questionnaires'       => []
-                ]
-            ]);
+            $bookings = collect();
         }
 
         return view('pages.customer.booking.index', compact('bookings'));

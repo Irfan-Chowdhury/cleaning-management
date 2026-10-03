@@ -67,4 +67,35 @@ class Booking extends Model
     {
         return $this->hasMany(Payment::class);
     }
+
+    protected static function booted(): void
+    {
+        static::saved(function (Booking $booking) {
+            $statusVal = $booking->status instanceof BookingStatus ? $booking->status->value : strtolower((string) $booking->status);
+            $paymentStatus = strtolower((string) $booking->payment_status);
+
+            if ($statusVal === 'completed' && $paymentStatus === 'paid' && !empty($booking->referal_code)) {
+                $referrer = User::where('referral_code', strtoupper($booking->referal_code))->first();
+                if ($referrer && $referrer->id !== $booking->user_id) {
+                    $alreadyRewarded = WalletTransaction::where('source', 'referral_bonus')
+                        ->where('booking_id', $booking->id)
+                        ->exists();
+
+                    if (!$alreadyRewarded) {
+                        $setting = Setting::first();
+                        $rewardAmount = (float) ($setting?->referral_reward > 0 ? $setting->referral_reward : 25.00);
+
+                        WalletTransaction::create([
+                            'user_id'     => $referrer->id,
+                            'booking_id'  => $booking->id,
+                            'type'        => 'credit',
+                            'amount'      => $rewardAmount,
+                            'source'      => 'referral_bonus',
+                            'description' => 'Referral bonus reward for completed Booking #BK-' . sprintf('%03d', $booking->id),
+                        ]);
+                    }
+                }
+            }
+        });
+    }
 }

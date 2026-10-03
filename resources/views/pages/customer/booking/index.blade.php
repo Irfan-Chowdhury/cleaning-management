@@ -216,7 +216,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($bookings as $booking)
+                        @foreach ($bookings as $booking)
                             @php
                                 $statusLower = strtolower($booking->status);
                                 $paymentLower = strtolower($booking->payment_status);
@@ -292,14 +292,7 @@
                                     </div>
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="9" class="text-center py-4 text-muted">
-                                    <i class="far fa-calendar-times fa-2x mb-2 d-block" aria-hidden="true"></i>
-                                    No bookings found.
-                                </td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -450,7 +443,8 @@
                     { orderable: false, targets: [7] }
                 ],
                 language: {
-                    zeroRecords: 'No matching bookings found.',
+                    emptyTable: '<div class="text-center py-4 text-muted"><i class="far fa-calendar-times fa-2x mb-2 d-block" aria-hidden="true"></i>No bookings recorded yet.</div>',
+                    zeroRecords: '<div class="text-center py-4 text-muted"><i class="fas fa-search fa-2x mb-2 d-block" aria-hidden="true"></i>No matching bookings found.</div>',
                     info: 'Showing _START_ to _END_ of _TOTAL_ bookings',
                     infoEmpty: 'Showing 0 to 0 of 0 bookings',
                     infoFiltered: '(filtered from _MAX_ total bookings)',

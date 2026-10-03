@@ -16,7 +16,7 @@
     $minBookingAmount = (float) ($settings?->minimum_booking_amount ?? 0);
     $maxWalletUsage = (float) ($settings?->max_wallet_usage ?? 0);
     $subtotalAmount = (float) (isset($latestBooking) && $latestBooking->subtotal > 0 ? $latestBooking->subtotal : ($latestBooking->total_amount ?? 0));
-    $isMinAmountValid = ($subtotalAmount >= $minBookingAmount);
+    $isMinAmountValid = ($minBookingAmount <= 0 || $subtotalAmount >= $minBookingAmount);
 
     $appliedCode = isset($latestBooking) && ($latestBooking->referal_code || $latestBooking->promo_code)
         ? ($latestBooking->referal_code ?: $latestBooking->promo_code)
@@ -33,13 +33,19 @@
 
     $hasActiveCode = !empty($appliedCode) && $appliedDiscount > 0;
 
+    $isRegisteredReferralCode = $user && !empty($user->referred_by_code);
+    $isRegisteredReferralApplied = $isRegisteredReferralCode && $hasActiveCode && ($appliedCode === $user->referred_by_code);
+
     $hasCompletedReferralBooking = false;
     if ($user) {
         $hasCompletedReferralBooking = \App\Models\Booking::where('user_id', $user->id)
             ->whereNotNull('referal_code')
             ->where('referal_code', '!=', '')
-            ->where('status', 'completed')
             ->exists();
+    }
+
+    if ($hasCompletedReferralBooking && $appliedOfferType === 'referral') {
+        $appliedOfferType = 'wallet';
     }
 @endphp
 
@@ -62,10 +68,17 @@
     </div>
 
     @if ($minBookingAmount > 0)
-        <div class="alert alert-info p-2 mb-3" style="font-size: 11.5px; border-radius: 8px; line-height: 1.4; background-color: #f0f9ff; border-color: #bae6fd; color: #0369a1;">
-            <i class="fas fa-info-circle mr-1 text-info"></i>
-            <strong>Note:</strong> Minimum total booking amount to apply offer is <strong>${{ number_format($minBookingAmount, 2) }}</strong>.
-        </div>
+        @if (!$isMinAmountValid)
+            <div class="alert alert-warning p-2.5 mb-3" style="font-size: 11.5px; border-radius: 8px; line-height: 1.4; background-color: #fffbebfb; border-color: #fde68a; color: #b45309;">
+                <i class="fas fa-exclamation-triangle mr-1 text-warning"></i>
+                <strong>Notice:</strong> Discount options are disabled because your booking amount (<strong>${{ number_format($subtotalAmount, 2) }}</strong>) is less than minimum required amount of <strong>${{ number_format($minBookingAmount, 2) }}</strong>.
+            </div>
+        @else
+            <div class="alert alert-info p-2 mb-3" style="font-size: 11.5px; border-radius: 8px; line-height: 1.4; background-color: #f0f9ff; border-color: #bae6fd; color: #0369a1;">
+                <i class="fas fa-info-circle mr-1 text-info"></i>
+                <strong>Note:</strong> Minimum total booking amount to apply offer is <strong>${{ number_format($minBookingAmount, 2) }}</strong>.
+            </div>
+        @endif
     @endif
 
     <!-- Discount Type Section -->
@@ -75,8 +88,8 @@
         </label>
 
         <div class="discount-radios d-flex flex-column" style="gap: 10px;">
-            <label class="discount-radio-card {{ $appliedOfferType === 'wallet' ? 'active' : '' }} p-3 border rounded-lg d-flex align-items-start m-0" for="offer-type-wallet" style="cursor: pointer;">
-                <input type="radio" name="offer_type" value="wallet" id="offer-type-wallet" class="discount-radio-input mt-1" {{ $appliedOfferType === 'wallet' ? 'checked' : '' }} style="accent-color: #2563eb; width: 16px; height: 16px; flex-shrink: 0; margin-right: 14px;">
+            <label class="discount-radio-card {{ $appliedOfferType === 'wallet' ? 'active' : '' }} p-3 border rounded-lg d-flex align-items-start m-0" for="offer-type-wallet" style="cursor: {{ $isMinAmountValid ? 'pointer' : 'not-allowed' }}; {{ !$isMinAmountValid ? 'opacity: 0.55; pointer-events: none; background-color: #f8fafc;' : '' }}">
+                <input type="radio" name="offer_type" value="wallet" id="offer-type-wallet" class="discount-radio-input mt-1" {{ $appliedOfferType === 'wallet' ? 'checked' : '' }} {{ !$isMinAmountValid ? 'disabled' : '' }} style="accent-color: #2563eb; width: 16px; height: 16px; flex-shrink: 0; margin-right: 14px;">
                 <div class="discount-card-body d-flex align-items-start">
                     <span class="discount-card-icon text-primary mr-2" style="font-size: 15px; margin-top: 1px; flex-shrink: 0; margin-left: 4px;">
                         <i class="fas fa-wallet" aria-hidden="true"></i>
@@ -88,8 +101,9 @@
                 </div>
             </label>
 
-            <label class="discount-radio-card {{ $appliedOfferType === 'referral' ? 'active' : '' }} p-3 border rounded-lg d-flex align-items-start m-0" for="offer-type-referral" style="cursor: pointer;">
-                <input type="radio" name="offer_type" value="referral" id="offer-type-referral" class="discount-radio-input mt-1" {{ $appliedOfferType === 'referral' ? 'checked' : '' }} style="accent-color: #2563eb; width: 16px; height: 16px; flex-shrink: 0; margin-right: 14px;">
+            @if (!$hasCompletedReferralBooking)
+            <label class="discount-radio-card {{ $appliedOfferType === 'referral' ? 'active' : '' }} p-3 border rounded-lg d-flex align-items-start m-0" for="offer-type-referral" style="cursor: {{ $isMinAmountValid ? 'pointer' : 'not-allowed' }}; {{ !$isMinAmountValid ? 'opacity: 0.55; pointer-events: none; background-color: #f8fafc;' : '' }}">
+                <input type="radio" name="offer_type" value="referral" id="offer-type-referral" class="discount-radio-input mt-1" {{ $appliedOfferType === 'referral' ? 'checked' : '' }} {{ !$isMinAmountValid ? 'disabled' : '' }} style="accent-color: #2563eb; width: 16px; height: 16px; flex-shrink: 0; margin-right: 14px;">
                 <div class="discount-card-body d-flex align-items-start">
                     <span class="discount-card-icon text-primary mr-2" style="font-size: 15px; margin-top: 1px; flex-shrink: 0; margin-left: 4px;">
                         <i class="fas fa-users" aria-hidden="true"></i>
@@ -100,9 +114,10 @@
                     </div>
                 </div>
             </label>
+            @endif
 
-            <label class="discount-radio-card {{ $appliedOfferType === 'promo' ? 'active' : '' }} p-3 border rounded-lg d-flex align-items-start m-0" for="offer-type-promo" style="cursor: pointer;">
-                <input type="radio" name="offer_type" value="promo" id="offer-type-promo" class="discount-radio-input mt-1" {{ $appliedOfferType === 'promo' ? 'checked' : '' }} style="accent-color: #2563eb; width: 16px; height: 16px; flex-shrink: 0; margin-right: 14px;">
+            <label class="discount-radio-card {{ $appliedOfferType === 'promo' ? 'active' : '' }} p-3 border rounded-lg d-flex align-items-start m-0" for="offer-type-promo" style="cursor: {{ $isMinAmountValid ? 'pointer' : 'not-allowed' }}; {{ !$isMinAmountValid ? 'opacity: 0.55; pointer-events: none; background-color: #f8fafc;' : '' }}">
+                <input type="radio" name="offer_type" value="promo" id="offer-type-promo" class="discount-radio-input mt-1" {{ $appliedOfferType === 'promo' ? 'checked' : '' }} {{ !$isMinAmountValid ? 'disabled' : '' }} style="accent-color: #2563eb; width: 16px; height: 16px; flex-shrink: 0; margin-right: 14px;">
                 <div class="discount-card-body d-flex align-items-start">
                     <span class="discount-card-icon text-primary mr-2" style="font-size: 15px; margin-top: 1px; flex-shrink: 0; margin-left: 4px;">
                         <i class="fas fa-tag" aria-hidden="true"></i>
@@ -135,7 +150,7 @@
         </div>
 
         <!-- Amount Input Section -->
-        <div class="form-group mb-2">
+        <div class="form-group mb-2" id="wallet-amount-section" style="{{ !$isMinAmountValid ? 'display: none;' : '' }}">
             <label for="wallet-amount-input" class="d-block mb-1.5 font-weight-bold" style="font-size: 12px; color: #0f172a;">Amount to use</label>
             <div class="input-group">
                 <div class="input-group-prepend">
@@ -148,7 +163,13 @@
                        min="0"
                        max="{{ min($userWalletBalance, $maxWalletUsage > 0 ? $maxWalletUsage : $userWalletBalance) }}"
                        placeholder="0.00"
-                       style="font-size: 14px; height: 44px; border-color: #cbd5e1; border-top-right-radius: 8px; border-bottom-right-radius: 8px; color: #0f172a; font-weight: 600;">
+                       {{ !$isMinAmountValid ? 'disabled' : '' }}
+                       style="font-size: 14px; height: 44px; border-color: #cbd5e1; color: #0f172a; font-weight: 600;">
+                <div class="input-group-append" id="wallet-clear-addon" style="display: none;">
+                    <button type="button" class="btn btn-outline-danger" id="btn-clear-wallet" title="Clear Wallet Credit" style="border-top-right-radius: 8px; border-bottom-right-radius: 8px;">
+                        <i class="fas fa-times-circle"></i>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -156,7 +177,7 @@
     </div>
 
     <!-- Option 2 & 3: Referral / Promo Code Panel -->
-    <div id="promo-offer-panel" class="discount-panel-section" style="{{ $appliedOfferType !== 'wallet' ? 'display: block;' : 'display: none;' }}">
+    <div id="promo-offer-panel" class="discount-panel-section" style="{{ ($appliedOfferType !== 'wallet' && $isMinAmountValid) ? 'display: block;' : 'display: none;' }}">
         <h3 class="mb-2 font-weight-bold text-dark" id="code-section-title" style="font-size: 13px;">
             {{ $appliedOfferType === 'promo' ? 'Have a Promotional Code?' : 'Have a Referral Code?' }}
         </h3>
@@ -168,14 +189,33 @@
             </div>
         @endif
 
+        @if ($user && !empty($user->referred_by_code))
+            <div id="registered-referral-banner" class="p-3 rounded border border-info mt-2" style="background-color: #eff6ff; border-color: #bfdbfe !important; border-radius: 10px; {{ ($appliedOfferType === 'referral' && $isRegisteredReferralApplied) ? 'display: block;' : 'display: none;' }}">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="d-flex align-items-center mb-1">
+                            <i class="fas fa-gift text-primary mr-2" style="font-size: 18px;"></i>
+                            <strong class="text-dark" style="font-size: 13.5px;">Referral Code: <span class="text-primary font-weight-bold">{{ $user->referred_by_code }}</span></strong>
+                        </div>
+                        <p class="mb-0 text-muted" style="font-size: 12px; line-height: 1.4;">
+                            Registered referral discount of <strong>${{ number_format($appliedDiscount > 0 ? $appliedDiscount : (float)($settings?->referral_reward > 0 ? $settings->referral_reward : 10.00), 2) }}</strong> applied.
+                        </p>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-link text-danger p-1 m-0 js-remove-registered-referral" id="btn-remove-registered-referral" title="Remove Code" style="text-decoration: none;">
+                        <i class="fas fa-times-circle" style="font-size: 19px;"></i>
+                    </button>
+                </div>
+            </div>
+        @endif
+
         <!-- Input Wrapper (Visible when no code applied) -->
         <div id="promo-input-wrapper" style="{{ $hasActiveCode ? 'display: none;' : 'display: block;' }}">
             <div class="booking-promo-row">
                 <div class="booking-input-icon">
                     <i class="fas fa-tag" aria-hidden="true"></i>
-                    <input type="text" id="promo-code-input" class="form-control" placeholder="{{ $appliedOfferType === 'promo' ? 'Enter promo code' : 'Enter referral code' }}">
+                    <input type="text" id="promo-code-input" class="form-control" {{ !$isMinAmountValid ? 'disabled' : '' }} placeholder="{{ $appliedOfferType === 'promo' ? 'Enter promo code' : 'Enter referral code' }}">
                 </div>
-                <button type="button" class="btn btn-primary" id="btn-apply-promo">Apply</button>
+                <button type="button" class="btn btn-primary" id="btn-apply-promo" {{ !$isMinAmountValid ? 'disabled' : '' }}>Apply</button>
             </div>
             <div id="promo-feedback-msg" class="small mt-1.5 text-danger font-weight-semibold" style="display: none; font-size: 12px; color: #dc2626;"></div>
             <div class="booking-promo-note mt-2" id="promo-default-note">
@@ -186,8 +226,8 @@
             </div>
         </div>
 
-        <!-- Applied Success Wrapper (Visible when code applied) -->
-        <div id="promo-applied-wrapper" class="p-2.5 rounded border border-success mt-2" style="background-color: #f0fdf4; border-color: #bbf7d0 !important; {{ $hasActiveCode ? 'display: block;' : 'display: none;' }}">
+        <!-- Applied Success Wrapper (Visible when code applied manually or after removing registered referral) -->
+        <div id="promo-applied-wrapper" class="p-2.5 rounded border border-success mt-2" style="background-color: #f0fdf4; border-color: #bbf7d0 !important; {{ ($hasActiveCode && !$isRegisteredReferralApplied) ? 'display: block;' : 'display: none;' }}">
             <div class="d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
                     <i class="fas fa-check-circle text-success mr-2" style="font-size: 18px;"></i>

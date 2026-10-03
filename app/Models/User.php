@@ -32,6 +32,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'created_by',
         'referral_code',
+        'referred_by_code',
     ];
 
     /**

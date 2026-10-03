@@ -179,8 +179,74 @@
     <script src="{{ asset('public/assets/js/booking_service.js') }}"></script>
     <script>
         $(document).ready(function () {
+            // Function to disable/enable radio options when an offer is applied or removed
+            function setDiscountOptionsLock(isLocked, activeType) {
+                var $card = $('#discount-offer-card');
+                var subtotal = parseFloat($card.attr('data-subtotal')) || 0;
+                var minAmount = parseFloat($card.attr('data-min-amount')) || 0;
+                var isMinAmountValid = (minAmount <= 0 || subtotal >= minAmount);
+
+                if (!isMinAmountValid) {
+                    $('input[name="offer_type"]').prop('disabled', true);
+                    $('.discount-radio-card').css({
+                        'opacity': '0.55',
+                        'pointer-events': 'none',
+                        'background-color': '#f8fafc',
+                        'cursor': 'not-allowed'
+                    });
+                    $('#wallet-amount-section').hide();
+                    $('#promo-offer-panel').hide();
+                    return;
+                }
+
+                if (isLocked) {
+                    $('input[name="offer_type"]').each(function () {
+                        var val = $(this).val();
+                        var $rCard = $(this).closest('.discount-radio-card');
+                        if (val !== activeType) {
+                            $(this).prop('disabled', true);
+                            $rCard.css({
+                                'opacity': '0.5',
+                                'pointer-events': 'none',
+                                'background-color': '#f8fafc',
+                                'cursor': 'not-allowed'
+                            });
+                        } else {
+                            $(this).prop('disabled', false);
+                            $rCard.css({
+                                'opacity': '1',
+                                'pointer-events': 'auto',
+                                'background-color': '#ffffff',
+                                'cursor': 'pointer'
+                            });
+                        }
+                    });
+                } else {
+                    $('input[name="offer_type"]').prop('disabled', false);
+                    $('.discount-radio-card').css({
+                        'opacity': '1',
+                        'pointer-events': 'auto',
+                        'background-color': '#ffffff',
+                        'cursor': 'pointer'
+                    });
+                    $('#wallet-amount-section').show();
+                    $('#wallet-amount-input, #promo-code-input, #btn-apply-promo').prop('disabled', false);
+                }
+            }
+
             // Radio button toggle logic
             $('input[name="offer_type"]').on('change', function () {
+                var $card = $('#discount-offer-card');
+                var subtotal = parseFloat($card.attr('data-subtotal')) || 0;
+                var minAmount = parseFloat($card.attr('data-min-amount')) || 0;
+                var isMinAmountValid = (minAmount <= 0 || subtotal >= minAmount);
+
+                if (!isMinAmountValid) {
+                    $('#wallet-amount-section').hide();
+                    $('#promo-offer-panel').hide();
+                    return;
+                }
+
                 var val = $(this).val();
                 $('.discount-radio-card').removeClass('active');
                 $(this).closest('.discount-radio-card').addClass('active');
@@ -192,7 +258,6 @@
                 } else {
                     $('#wallet-offer-panel').slideUp(200);
                     $('#promo-offer-panel').slideDown(200);
-                    // Reset wallet deduction when switching to promo/referral
                     $('#wallet-amount-input').val('').trigger('input');
 
                     if (val === 'promo') {
@@ -201,12 +266,31 @@
                         $('#promo-code-input').attr('placeholder', 'Enter promo code');
                         $('#promo-note-text').text('Use a promotional code to save on your booking!');
                         $('#referral-block-alert').hide();
+                        if ($('#registered-referral-banner').length) {
+                            $('#registered-referral-banner').hide();
+                        }
+                        if ($('#promo-applied-wrapper').is(':visible')) {
+                            $('#promo-applied-wrapper').show();
+                            $('#promo-input-wrapper').hide();
+                        } else {
+                            $('#promo-input-wrapper').show();
+                        }
                     } else {
                         $('#main-discount-label').text('Discount (Referral)');
-                        $('#code-section-title').text('Have a Referral Code?');
+                        $('#code-section-title').text('Referral Code');
                         $('#promo-code-input').attr('placeholder', 'Enter referral code');
                         $('#promo-note-text').text('Use a referral code and get credit when you book!');
                         $('#referral-block-alert').show();
+                        if ($('#registered-referral-banner').length) {
+                            $('#registered-referral-banner').show();
+                            $('#promo-input-wrapper').hide();
+                            $('#promo-applied-wrapper').hide();
+                        } else if ($('#promo-applied-wrapper').is(':visible')) {
+                            $('#promo-applied-wrapper').show();
+                            $('#promo-input-wrapper').hide();
+                        } else {
+                            $('#promo-input-wrapper').show();
+                        }
                     }
                 }
             });
@@ -225,37 +309,57 @@
 
                 if (!rawVal || inputVal <= 0) {
                     $feedback.hide().html('');
+                    $('#wallet-clear-addon').hide();
                     updateLivePricing(subtotal, 0);
+                    setDiscountOptionsLock(false);
                     return;
                 }
 
                 if (subtotal < minAmount) {
                     $feedback.show().html('<span class="text-danger"><i class="fas fa-times-circle"></i> The total amount ($' + subtotal.toFixed(2) + ') is less than minimum booking amount ($' + minAmount.toFixed(2) + '), wallet cannot be used.</span>');
+                    $('#wallet-clear-addon').hide();
                     updateLivePricing(subtotal, 0);
+                    setDiscountOptionsLock(false);
                     return;
                 }
 
                 if (inputVal > walletBalance) {
                     $feedback.show().html('<span class="text-danger"><i class="fas fa-times-circle"></i> Insufficient balance. Remaining wallet balance is $' + walletBalance.toFixed(2) + '.</span>');
+                    $('#wallet-clear-addon').hide();
                     updateLivePricing(subtotal, 0);
+                    setDiscountOptionsLock(false);
                     return;
                 }
 
                 if (maxWalletUsage > 0 && inputVal > maxWalletUsage) {
                     $feedback.show().html('<span class="text-danger"><i class="fas fa-times-circle"></i> Maximum wallet usage allowed per booking is $' + maxWalletUsage.toFixed(2) + '.</span>');
+                    $('#wallet-clear-addon').hide();
                     updateLivePricing(subtotal, 0);
+                    setDiscountOptionsLock(false);
                     return;
                 }
 
                 if (inputVal > subtotal) {
                     $feedback.show().html('<span class="text-danger"><i class="fas fa-times-circle"></i> Wallet amount cannot exceed the booking subtotal ($' + subtotal.toFixed(2) + ').</span>');
+                    $('#wallet-clear-addon').hide();
                     updateLivePricing(subtotal, 0);
+                    setDiscountOptionsLock(false);
                     return;
                 }
 
                 // Valid amount!
                 $feedback.show().html('<span class="text-success"><i class="fas fa-check-circle"></i> Wallet credit of $' + inputVal.toFixed(2) + ' applied!</span>');
+                $('#wallet-clear-addon').show();
                 updateLivePricing(subtotal, inputVal);
+                setDiscountOptionsLock(true, 'wallet');
+            });
+
+            // Clear Wallet Button Handler
+            $('#btn-clear-wallet').on('click', function (e) {
+                e.preventDefault();
+                $('#wallet-amount-input').val('').trigger('input');
+                $('#wallet-clear-addon').hide();
+                setDiscountOptionsLock(false);
             });
 
             // Apply Referral or Promo Code via AJAX
@@ -300,6 +404,7 @@
                             $('#promo-applied-wrapper').slideDown(200);
 
                             updateLivePricing(res.subtotal, res.discount_amount);
+                            setDiscountOptionsLock(true, offerType);
 
                             if (typeof Swal !== 'undefined') {
                                 Swal.fire({
@@ -332,7 +437,7 @@
             });
 
             // Remove Referral or Promo Code via AJAX with SweetAlert Confirmation
-            $(document).on('click', '#btn-remove-promo', function (e) {
+            $(document).on('click', '#btn-remove-promo, #btn-remove-registered-referral', function (e) {
                 e.preventDefault();
                 var bookingId = $('input[name="booking_id"]').val();
 
@@ -347,10 +452,12 @@
                         success: function (res) {
                             $('#promo-code-input').val('');
                             $('#promo-feedback-msg').hide().text('');
+                            $('#registered-referral-banner').remove();
                             $('#promo-applied-wrapper').hide();
                             $('#promo-input-wrapper').slideDown(200);
 
                             updateLivePricing(res.subtotal, 0);
+                            setDiscountOptionsLock(false);
 
                             if (typeof Swal !== 'undefined') {
                                 Swal.fire({
@@ -385,6 +492,20 @@
                     }
                 }
             });
+
+            // Initial Load Lock Check
+            var initialOfferType = $('input[name="offer_type"]:checked').val() || 'wallet';
+            var initialDiscount = parseFloat($('#main-discount-row').is(':visible') ? $('#main-discount-val').text().replace(/[^0-9.]/g, '') : 0) || 0;
+            var isPromoApplied = $('#promo-applied-wrapper').is(':visible') || $('#registered-referral-banner').is(':visible');
+
+            if (initialOfferType === 'wallet' && initialDiscount > 0) {
+                $('#wallet-clear-addon').show();
+                setDiscountOptionsLock(true, 'wallet');
+            } else if (isPromoApplied && initialDiscount > 0) {
+                setDiscountOptionsLock(true, initialOfferType);
+            } else {
+                setDiscountOptionsLock(false);
+            }
 
             function updateLivePricing(subtotal, discount) {
                 var finalTotal = Math.max(0, subtotal - discount);

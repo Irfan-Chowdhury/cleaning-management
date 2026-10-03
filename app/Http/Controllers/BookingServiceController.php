@@ -380,6 +380,25 @@ class BookingServiceController extends Controller
         });
 
         $user = auth()->user();
+
+        // Auto-apply referral code if customer registered via referral link and code is not yet applied
+        if ($user && !empty($user->referred_by_code) && empty($booking->referal_code) && empty($booking->promo_code)) {
+            $hasCompletedReferralBooking = Booking::where('user_id', $user->id)
+                ->whereNotNull('referal_code')
+                ->where('referal_code', '!=', '')
+                ->where('status', 'completed')
+                ->exists();
+
+            if (!$hasCompletedReferralBooking) {
+                try {
+                    app(\App\Services\ReferralService::class)->applyCodeToBooking($booking, $user->referred_by_code, $user);
+                    $booking->refresh();
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::error('Failed to auto-apply registered referral code: ' . $e->getMessage());
+                }
+            }
+        }
+
         $dbTransactions = \App\Models\WalletTransaction::where('user_id', $user->id ?? 0)->get();
         $totalCredit = (float) $dbTransactions->where('type', 'credit')->sum('amount');
         $totalDebit = (float) $dbTransactions->where('type', 'debit')->sum('amount');

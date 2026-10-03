@@ -18,15 +18,24 @@ class RegistrationService
      */
     public function register(array $data): User
     {
+        $refCode = !empty($data['referred_by_code']) ? strtoupper(trim($data['referred_by_code'])) : null;
+        if ($refCode) {
+            $referrerExists = User::where('referral_code', $refCode)->exists();
+            if (!$referrerExists) {
+                $refCode = null;
+            }
+        }
+
         $user = User::create([
-            'first_name' => $data['first_name'],
-            'last_name'  => $data['last_name'] ?? null,
-            'email'      => $data['email'],
-            'phone'      => $data['phone'] ?? null,
-            'gender'     => $data['gender'] ?? null,
-            'address'    => $data['address'] ?? null,
-            'role'       => 2, // 2 = Customer
-            'password'   => Hash::make($data['password']),
+            'first_name'       => $data['first_name'],
+            'last_name'        => $data['last_name'] ?? null,
+            'email'            => $data['email'],
+            'phone'            => $data['phone'] ?? null,
+            'gender'           => $data['gender'] ?? null,
+            'address'          => $data['address'] ?? null,
+            'role'             => 2, // 2 = Customer
+            'password'         => Hash::make($data['password']),
+            'referred_by_code' => $refCode,
         ]);
 
         $user->update([
