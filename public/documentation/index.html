@@ -1135,16 +1135,51 @@
             </div>
         </div>
 
-        <!-- STEP 4 DETAILS & CONFIRMED NOTIFICATION -->
+        <!-- STEP 4 DETAILS & DISCOUNT RULES -->
         <div class="doc-card" style="border-left: 4px solid #0866e8; margin-bottom: 25px;">
-            <h4>Step 4: Final Review, Discounts & Payment Confirmation</h4>
-            <p>In Step 4, the customer reviews their final line-item price breakdown, applies discount promotions or wallet balances, and confirms final payment:</p>
+            <h4>Step 4: Final Review, Discount Rules & Payment Confirmation</h4>
+            <p>During <strong>Step 4: Review & Confirm</strong>, customers review their service line-item breakdown, select an eligible discount option, and confirm final payment to lock in their booking.</p>
+
+            <h5>Available Discount Options</h5>
+            <p>The system offers three distinct discount channels at checkout:</p>
             <ul>
-                <li><strong>Promo Code Redemption:</strong> Enter promotional discount coupons for instant percentage or dollar savings.</li>
-                <li><strong>Wallet Credit Redemption:</strong> Redeem accumulated customer wallet credits to offset total payment.</li>
-                <li><strong>Order Confirmation:</strong> Submitting payment updates booking status to <strong>Confirmed</strong> and locks the appointment.</li>
-                <li><strong>Admin Confirmation Alert:</strong> The administrator receives a confirmation notification verifying that the customer has completed checkout and payment.</li>
+                <li><strong>Wallet Credits:</strong> Redeem accumulated wallet credit balances earned via welcome bonuses, referrals, or Google Review rewards.</li>
+                <li><strong>Referral Code Discount:</strong> Redeem a friend's referral code to unlock a one-time promotional discount.</li>
+                <li><strong>Promotional Offer (Coupons):</strong> Apply active promotional coupon codes for fixed dollar or percentage savings.</li>
             </ul>
+
+            <h5 class="mt-4">Discount Policy & Operational Rules</h5>
+            <ol>
+                <li>
+                    <strong>Single Option Mutual Exclusivity:</strong>
+                    <br>Only one discount method can be applied per booking. When a customer selects a discount option and clicks the <strong>Apply</strong> button, the remaining two discount options are automatically disabled. To switch to a different discount method, the customer must first click the red <strong>"X" (Cancel/Remove)</strong> icon on the currently applied discount.
+                </li>
+                <li>
+                    <strong>Pre-Filled Referral Code via Registration Link:</strong>
+                    <br>If a customer registered their account using a referral link, their referrer's unique code is pre-filled and pre-selected by default under the <em>Referral Code</em> discount option during Step 4 checkout.
+                    <div style="text-align: center; margin: 15px 0;">
+                        <img src="https://snipboard.io/enI0Eo.jpg" alt="Pre-Filled Referral Code Discount Option" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                        <p style="margin-top: 6px; font-size: 13px; color: #667085; font-weight: 600;">Pre-Filled Referral Code Discount Option</p>
+                    </div>
+                </li>
+                <li>
+                    <strong>Manual Referral Code Entry:</strong>
+                    <br>If a customer did not register using a referral link, they can manually enter and apply a valid referral code during Step 4 checkout.
+                </li>
+                <li>
+                    <strong>One-Time Lifetime Referral Rule:</strong>
+                    <br>Referral code discounts are strictly limited to <strong>one redemption per customer lifetime</strong>. Once a customer has successfully used a referral code on any booking, the <em>Referral Code</em> discount option is permanently hidden from their Step 4 checkout screen for all future bookings.
+                </li>
+                <li>
+                    <strong>Minimum Booking Amount Threshold:</strong>
+                    <br>If the booking <em>Total Amount</em> is less than the system-configured <em>Minimum Booking Amount</em>, all discount radio button options are disabled automatically until the cart total meets or exceeds the required threshold.
+                    <div style="text-align: center; margin: 15px 0;">
+                        <img src="https://snipboard.io/fOWPFK.jpg" alt="Disabled Discount Options Below Minimum Booking Amount" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                        <p style="margin-top: 6px; font-size: 13px; color: #667085; font-weight: 600;">Disabled Discount Options Below Minimum Booking Amount</p>
+                    </div>
+                </li>
+            </ol>
+
             <div style="text-align: center; margin: 20px 0;">
                 <img src="https://snipboard.io/KBym0q.jpg" alt="Step 4: Final Order Review & Payment Checkout" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
                 <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Step 4: Final Order Review & Payment Checkout</p>
