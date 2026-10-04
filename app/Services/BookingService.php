@@ -11,7 +11,9 @@ use App\Models\User;
 use App\Models\WalletTransaction;
 use App\Notifications\BookingApprovedNotification;
 use App\Notifications\BookingCancelledNotification;
+use App\Notifications\BookingCompletedNotification;
 use App\Notifications\BookingConfirmedNotification;
+use App\Notifications\BookingProcessingNotification;
 use App\Notifications\NewBookingPendingNotification;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -184,16 +186,20 @@ class BookingService
             Log::error('Failed to sync payment record: ' . $e->getMessage());
         }
 
-        // If status changed to Approved, notify customer
-        if ($oldStatus !== BookingStatus::APPROVED->value && $newStatusEnum === BookingStatus::APPROVED) {
-            $customer = $booking->user ?? User::where('email', $booking->customer_email)->first();
+        // Notify customer on status changes (Approved, Processing, Completed)
+        $customer = $booking->user ?? User::where('email', $booking->customer_email)->first();
 
-            if ($customer) {
-                try {
+        if ($customer) {
+            try {
+                if ($oldStatus !== BookingStatus::APPROVED->value && $newStatusEnum === BookingStatus::APPROVED) {
                     $customer->notify(new BookingApprovedNotification($booking));
-                } catch (\Throwable $e) {
-                    Log::error('Failed to send customer approval notification: ' . $e->getMessage());
+                } elseif ($oldStatus !== BookingStatus::PROCESSING->value && $newStatusEnum === BookingStatus::PROCESSING) {
+                    $customer->notify(new BookingProcessingNotification($booking));
+                } elseif ($oldStatus !== BookingStatus::COMPLETED->value && $newStatusEnum === BookingStatus::COMPLETED) {
+                    $customer->notify(new BookingCompletedNotification($booking));
                 }
+            } catch (\Throwable $e) {
+                Log::error('Failed to send customer booking status update notification: ' . $e->getMessage());
             }
         }
 

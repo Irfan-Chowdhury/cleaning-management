@@ -498,7 +498,7 @@
             });
 
             // Initial Load Lock Check
-            var initialOfferType = $('input[name="offer_type"]:checked').val() || 'wallet';
+            var initialOfferType = $('input[name="offer_type"]:checked').val() || null;
             var initialDiscount = parseFloat($('#main-discount-row').is(':visible') ? $('#main-discount-val').text().replace(/[^0-9.]/g, '') : 0) || 0;
             var isPromoApplied = $('#promo-applied-wrapper').is(':visible') || $('#registered-referral-banner').is(':visible');
 
@@ -516,9 +516,11 @@
 
                 $('#applied-wallet-amount-hidden').val(discount);
 
-                var selectedOfferType = $('input[name="offer_type"]:checked').val() || 'wallet';
-                var labelText = 'Discount (Wallet)';
-                if (selectedOfferType === 'referral') {
+                var selectedOfferType = $('input[name="offer_type"]:checked').val() || null;
+                var labelText = 'Discount';
+                if (selectedOfferType === 'wallet') {
+                    labelText = 'Discount (Wallet)';
+                } else if (selectedOfferType === 'referral') {
                     labelText = 'Discount (Referral)';
                 } else if (selectedOfferType === 'promo') {
                     labelText = 'Discount (Promo)';

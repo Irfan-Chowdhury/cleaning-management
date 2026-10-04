@@ -29,7 +29,9 @@
         ? 'promo'
         : (isset($latestBooking) && $latestBooking->referal_code
             ? 'referral'
-            : session('booking_wizard.offer.type', 'wallet'));
+            : (isset($latestBooking) && (float)$latestBooking->credit_used > 0
+                ? 'wallet'
+                : session('booking_wizard.offer.type', null)));
 
     $hasActiveCode = !empty($appliedCode) && $appliedDiscount > 0;
 
@@ -45,7 +47,7 @@
     }
 
     if ($hasCompletedReferralBooking && $appliedOfferType === 'referral') {
-        $appliedOfferType = 'wallet';
+        $appliedOfferType = null;
     }
 @endphp
 
@@ -177,7 +179,7 @@
     </div>
 
     <!-- Option 2 & 3: Referral / Promo Code Panel -->
-    <div id="promo-offer-panel" class="discount-panel-section" style="{{ ($appliedOfferType !== 'wallet' && $isMinAmountValid) ? 'display: block;' : 'display: none;' }}">
+    <div id="promo-offer-panel" class="discount-panel-section" style="{{ (($appliedOfferType === 'promo' || $appliedOfferType === 'referral') && $isMinAmountValid) ? 'display: block;' : 'display: none;' }}">
         <h3 class="mb-2 font-weight-bold text-dark" id="code-section-title" style="font-size: 13px;">
             {{ $appliedOfferType === 'promo' ? 'Have a Promotional Code?' : 'Have a Referral Code?' }}
         </h3>

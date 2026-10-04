@@ -6,7 +6,7 @@ use App\Models\Booking;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
-class BookingApprovedNotification extends Notification
+class BookingProcessingNotification extends Notification
 {
     use Queueable;
 
@@ -25,11 +25,11 @@ class BookingApprovedNotification extends Notification
         $serviceName = $this->booking->service?->name ?? 'Cleaning Service';
 
         return [
-            'type'       => 'booking_approved',
-            'title'      => "Booking #{$this->booking->id} Approved!",
-            'message'    => "Your booking for {$serviceName} has been approved. Click to view details and proceed to confirmation.",
+            'type'       => 'booking_processing',
+            'title'      => "Booking #{$this->booking->id} In Processing!",
+            'message'    => "Your booking for {$serviceName} is now in processing. Our cleaning team is preparing your service.",
             'link'       => route('customer.bookings.show', $this->booking->id),
-            'icon'       => 'fas fa-check-circle',
+            'icon'       => 'fas fa-spinner',
             'booking_id' => $this->booking->id,
         ];
     }

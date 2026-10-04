@@ -275,12 +275,11 @@
                                 </td>
                                 <td>
                                     <div class="customer-actions justify-content-center d-flex align-items-center">
-                                        <button type="button" 
-                                                class="btn btn-sm btn-outline-primary customer-action-btn view-booking-btn mr-1" 
-                                                title="View Details"
-                                                data-booking="{{ json_encode($booking) }}">
+                                        <a href="{{ route('customer.bookings.show', $booking->id) }}" 
+                                           class="btn btn-sm btn-outline-primary customer-action-btn mr-1" 
+                                           title="View Details">
                                             <i class="fas fa-eye" aria-hidden="true"></i>
-                                        </button>
+                                        </a>
                                         @if ($statusLower === 'approved' || ($booking->status_raw ?? '') === 'approved')
                                             <a href="{{ route('booking-service.review-confirm', ['booking' => $booking->id]) }}"
                                                class="btn btn-sm btn-success px-2 py-1"
