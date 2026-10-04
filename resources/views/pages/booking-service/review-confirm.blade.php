@@ -52,7 +52,11 @@
                             <span class="badge badge-info">Booking #BK-{{ sprintf('%03d', $latestBooking->id) }}</span>
                         </div>
                         <div class="review-service-grid">
-                            <img src="https://picsum.photos/seed/dust2glow-review/240/160" alt="{{ $serviceName }}" class="review-image">
+                            @php
+                                $firstBookingImage = (isset($latestBooking->images) && $latestBooking->images->isNotEmpty()) ? $latestBooking->images->first() : null;
+                                $displayImageUrl = $firstBookingImage ? asset('public/' . $firstBookingImage->image_path) : 'https://picsum.photos/seed/dust2glow-review/240/160';
+                            @endphp
+                            <img src="{{ $displayImageUrl }}" alt="{{ $serviceName }}" class="review-image" style="object-fit: cover;">
                             <div>
                                 <h4>{{ $serviceName }}</h4>
                                 <span class="booking-badge">{{ $frequencyLabel }}</span>

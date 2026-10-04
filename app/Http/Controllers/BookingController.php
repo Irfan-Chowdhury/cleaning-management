@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BookingStatus;
 use App\Http\Requests\AdminBookingUpdateRequest;
 use App\Models\Booking;
 use App\Models\Service;
@@ -30,7 +31,7 @@ class BookingController extends Controller
                     'date'            => $b->booking_date ?? $b->created_at->format('Y-m-d'),
                     'slot'            => $b->start_time ?? '09:00 AM',
                     'amount'          => (float) $b->total_amount,
-                    'status'          => $b->status instanceof \App\Enums\BookingStatus ? $b->status->value : (string) $b->status,
+                    'status'          => $b->status instanceof BookingStatus ? $b->status->value : (string) $b->status,
                     'payment_status'  => strtolower($b->payment_status ?? $b->payment?->payment_status ?? 'pending'),
                     'payment_method'  => $b->payment_method ?? $b->payment?->payment_method ?? 'pending',
                 ];
@@ -87,7 +88,7 @@ class BookingController extends Controller
                 'amount'               => (float) $bookingModel->total_amount,
                 'referal_code'         => $bookingModel->referal_code,
                 'promo_code'           => $bookingModel->promo_code,
-                'status'               => $bookingModel->status instanceof \App\Enums\BookingStatus ? $bookingModel->status->value : (string) $bookingModel->status,
+                'status'               => $bookingModel->status instanceof BookingStatus ? $bookingModel->status->value : (string) $bookingModel->status,
                 'payment_status'       => strtolower($bookingModel->payment_status ?? $bookingModel->payment?->payment_status ?? 'pending'),
                 'payment_method'       => $bookingModel->payment_method ?? $bookingModel->payment?->payment_method ?? 'pending',
                 'answers'              => is_array($bookingModel->answers) ? $bookingModel->answers : [],
@@ -159,7 +160,7 @@ class BookingController extends Controller
                 'date'                 => $bookingModel->booking_date ?? $bookingModel->created_at->format('Y-m-d'),
                 'slot'                 => $bookingModel->start_time ?? '09:00 AM',
                 'amount'               => (float) $bookingModel->total_amount,
-                'status'               => $bookingModel->status instanceof \App\Enums\BookingStatus ? $bookingModel->status->value : (string) $bookingModel->status,
+                'status'               => $bookingModel->status instanceof BookingStatus ? $bookingModel->status->value : (string) $bookingModel->status,
                 'payment_status'       => strtolower($bookingModel->payment_status ?? $bookingModel->payment?->payment_status ?? 'pending'),
                 'payment_method'       => $bookingModel->payment_method ?? $bookingModel->payment?->payment_method ?? 'pending',
                 'answers'              => is_array($bookingModel->answers) ? $bookingModel->answers : [],

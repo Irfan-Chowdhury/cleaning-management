@@ -58,6 +58,11 @@ class Booking extends Model
         return $this->belongsTo(Service::class);
     }
 
+    public function images(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(BookingImage::class);
+    }
+
     public function payment(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Payment::class);

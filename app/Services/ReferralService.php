@@ -6,6 +6,7 @@ use App\Enums\BookingStatus;
 use App\Models\Booking;
 use App\Models\Setting;
 use App\Models\User;
+use App\Models\WalletTransaction;
 use Illuminate\Support\Facades\Cache;
 
 class ReferralService
@@ -211,7 +212,7 @@ class ReferralService
         })->count();
 
         // Wallet rewards credited for referral bonuses
-        $totalRewards = (float) \App\Models\WalletTransaction::where('user_id', $user->id)
+        $totalRewards = (float) WalletTransaction::where('user_id', $user->id)
             ->where('source', 'referral_bonus')
             ->sum('amount');
 

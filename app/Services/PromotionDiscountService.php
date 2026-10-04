@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\BookingStatus;
+use App\Enums\PromotionStatus;
 use App\Models\Booking;
 use App\Models\Promotion;
 use App\Models\Setting;
@@ -58,10 +59,10 @@ class PromotionDiscountService
         }
 
         // 3. Status check: must be active (1)
-        $statusVal = \App\Enums\PromotionStatus::fromValue($promotion->status)->value;
+        $statusVal = PromotionStatus::fromValue($promotion->status)->value;
 
-        if ($statusVal !== \App\Enums\PromotionStatus::ACTIVE->value) {
-            if ($statusVal === \App\Enums\PromotionStatus::EXPIRED->value) {
+        if ($statusVal !== PromotionStatus::ACTIVE->value) {
+            if ($statusVal === PromotionStatus::EXPIRED->value) {
                 return [
                     'valid'   => false,
                     'message' => 'This promotional code has expired.',

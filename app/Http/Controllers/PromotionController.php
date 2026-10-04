@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PromotionStatus;
 use App\Http\Requests\Admin\StorePromotionRequest;
 use App\Http\Requests\Admin\UpdatePromotionRequest;
 use App\Models\Promotion;
@@ -113,7 +114,7 @@ class PromotionController extends Controller
 
     private function statusBadge(Promotion $promotion): string
     {
-        $status = \App\Enums\PromotionStatus::fromValue($promotion->status);
+        $status = PromotionStatus::fromValue($promotion->status);
 
         return '<span class="badge ' . $status->badgeClass() . '" style="padding: 6px 8px; font-weight: 700; border-radius: 999px; min-width: 68px;">'
             . e($status->label())
@@ -122,7 +123,7 @@ class PromotionController extends Controller
 
     private function actionColumn(Promotion $promotion): string
     {
-        $statusVal = \App\Enums\PromotionStatus::fromValue($promotion->status)->value;
+        $statusVal = PromotionStatus::fromValue($promotion->status)->value;
 
         return '<div class="promotion-actions">'
             . '<button type="button"'

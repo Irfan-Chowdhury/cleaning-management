@@ -331,5 +331,29 @@
                 </div>
             @endif
         </div>
+
+        <!-- Row 4: Customer Home Photos (Full-Width Card) -->
+        <div class="details-card mb-4">
+            <h3>
+                <span><i class="fas fa-images text-primary mr-2"></i> Uploaded Home Photos</span>
+                <span class="badge badge-light border text-muted px-2 py-1" style="font-size: 11px;">{{ $booking->images->count() }} Photos</span>
+            </h3>
+
+            @if ($booking->images->isNotEmpty())
+                <div class="row">
+                    @foreach ($booking->images as $img)
+                        <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-3">
+                            <a href="{{ asset('public/' . $img->image_path) }}" target="_blank" class="d-block border rounded overflow-hidden position-relative shadow-sm" style="height: 120px; background: #f8fafc;">
+                                <img src="{{ asset('public/' . $img->image_path) }}" alt="{{ $img->image_name ?? 'Home Image' }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="text-muted py-2" style="font-size: 13.5px;">
+                    <i class="far fa-image mr-1"></i> No home photos were uploaded for this booking.
+                </div>
+            @endif
+        </div>
     </div>
 @endsection

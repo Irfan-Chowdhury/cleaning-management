@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProfileRequest;
+use App\Models\User;
 use App\Services\ProfileService;
 
 class ProfileController extends Controller
@@ -30,7 +31,7 @@ class ProfileController extends Controller
      */
     public function update(ProfileRequest $request)
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = auth()->user();
 
         $updatedUser = $this->profileService->updateProfile(

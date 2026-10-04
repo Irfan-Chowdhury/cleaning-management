@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BookingStatus;
 use App\Http\Requests\ApplyReferralRequest;
 use App\Http\Requests\BookingConfirmRequest;
 use App\Http\Requests\BookingStep1Request;
@@ -13,29 +14,37 @@ use App\Models\Holiday;
 use App\Models\Promotion;
 use App\Models\ScheduleSlot;
 use App\Models\Service;
+use App\Models\Setting;
 use App\Models\User;
 use App\Models\WalletTransaction;
 use App\Models\WeeklySchedule;
 use App\Services\BookingService;
 use App\Services\BookingSessionService;
+use App\Services\ImageService;
 use App\Services\PromotionDiscountService;
 use App\Services\ReferralService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class BookingServiceController extends Controller
 {
     protected BookingSessionService $bookingSessionService;
     protected BookingService $bookingService;
+    protected ImageService $imageService;
 
     public function __construct(
         BookingSessionService $bookingSessionService,
-        BookingService $bookingService
+        BookingService $bookingService,
+        ImageService $imageService
     ) {
         $this->bookingSessionService = $bookingSessionService;
         $this->bookingService = $bookingService;
+        $this->imageService = $imageService;
     }
 
     public function create()
@@ -48,7 +57,16 @@ class BookingServiceController extends Controller
 
     public function storeStep1(BookingStep1Request $request): RedirectResponse
     {
-        $this->bookingSessionService->saveStep1($request->validated());
+        $validated = $request->validated();
+        $existingStep1 = $this->bookingSessionService->getStep1Data();
+        $existingImages = $existingStep1['images'] ?? [];
+
+        $validated['images'] = $this->imageService->uploadTemporaryBookingImages(
+            $request->file('images'),
+            $existingImages
+        );
+
+        $this->bookingSessionService->saveStep1($validated);
 
         return redirect()->route('booking-service.date-time');
     }
@@ -192,7 +210,7 @@ class BookingServiceController extends Controller
                 $bookedTimes = Booking::where('booking_date', $formattedDate)
                     ->get()
                     ->filter(function ($b) {
-                        $st = $b->status instanceof \App\Enums\BookingStatus ? $b->status->value : strtolower((string)$b->status);
+                        $st = $b->status instanceof BookingStatus ? $b->status->value : strtolower((string)$b->status);
                         return $st !== 'cancelled';
                     })
                     ->pluck('start_time')
@@ -334,7 +352,7 @@ class BookingServiceController extends Controller
                 ->with('error', 'You are not authorized to view this booking.');
         }
 
-        $statusValue = $booking->status instanceof \App\Enums\BookingStatus
+        $statusValue = $booking->status instanceof BookingStatus
             ? $booking->status->value
             : strtolower((string) $booking->status);
 
@@ -375,8 +393,8 @@ class BookingServiceController extends Controller
             'promo_code'      => $booking->promo_code,
         ];
 
-        $settings = \Illuminate\Support\Facades\Cache::rememberForever('app_settings', function () {
-            return \App\Models\Setting::latest()->first();
+        $settings = Cache::rememberForever('app_settings', function () {
+            return Setting::latest()->first();
         });
 
         $user = auth()->user();
@@ -391,15 +409,15 @@ class BookingServiceController extends Controller
 
             if (!$hasCompletedReferralBooking) {
                 try {
-                    app(\App\Services\ReferralService::class)->applyCodeToBooking($booking, $user->referred_by_code, $user);
+                    app(ReferralService::class)->applyCodeToBooking($booking, $user->referred_by_code, $user);
                     $booking->refresh();
                 } catch (\Throwable $e) {
-                    \Illuminate\Support\Facades\Log::error('Failed to auto-apply registered referral code: ' . $e->getMessage());
+                    Log::error('Failed to auto-apply registered referral code: ' . $e->getMessage());
                 }
             }
         }
 
-        $dbTransactions = \App\Models\WalletTransaction::where('user_id', $user->id ?? 0)->get();
+        $dbTransactions = WalletTransaction::where('user_id', $user->id ?? 0)->get();
         $totalCredit = (float) $dbTransactions->where('type', 'credit')->sum('amount');
         $totalDebit = (float) $dbTransactions->where('type', 'debit')->sum('amount');
         $userWalletBalance = max(0, $totalCredit - $totalDebit);
@@ -448,7 +466,7 @@ class BookingServiceController extends Controller
         } elseif ($type === 'promo') {
             $result = $promotionDiscountService->applyPromotionToBooking($booking, $code, auth()->user());
         } else {
-            $promoExists = \App\Models\Promotion::where('code', \Illuminate\Support\Str::upper($code))->exists();
+            $promoExists = Promotion::where('code', Str::upper($code))->exists();
             if ($promoExists) {
                 $result = $promotionDiscountService->applyPromotionToBooking($booking, $code, auth()->user());
             } else {

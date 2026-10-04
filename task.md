@@ -246,3 +246,38 @@ Use `booking_service.js`; preserve existing JS.
   `/booking-service/your-details`
   `/booking-service/review-confirm`
   Verify all Back/Continue/progress links navigate correctly, each step is a separate Blade file, active/completed progress states are correct, responsive design works at 1440/1200/992/768/430/375px, no horizontal overflow and no console errors. After implementation reply only with a concise summary of files created/modified. Do not implement actual booking storage or payment yet.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+================================
+Promotions.
+Quetions
+Referal Code Change
+Multiple Image
+Including Feature
+
+
+
+
+
+* step-1 url is : /booking-service/create.
+
+* Modify: Customer and navigate to /my-bookings , view path: pages.customer.booking.index. There Exiting View Details which is popupinto a modal, have to change it. When click the view icon, it redirect into a dedicated page /my-bookings/{id}  here id will be bookings.id. And redesign the page page incuding latest Image feature also.
+*  app/Http/Controllers/Customer/BookingController.php move the business logic into Relevant BookingService Class and must mention Customer Section Part with comments.
+ 
+
+
+
+agentic ai, microprocessor vs microcontroler,32 bit microprocessor, function overloading,array sorting code, grade range calculate and return grade, training data set 90 % accuracy but test data set 70%..  what is the problem. 

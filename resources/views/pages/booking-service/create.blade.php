@@ -19,7 +19,7 @@
                         <p>Tell us what you need and how often.</p>
                     </div>
 
-                    <form action="{{ route('booking-service.store-step-1') }}" method="POST">
+                    <form action="{{ route('booking-service.store-step-1') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <div class="form-group booking-field">
@@ -53,6 +53,52 @@
                             <div class="booking-questionnaire-empty">
                                 <i class="far fa-list-alt" aria-hidden="true"></i>
                                 <span>Select a service to load related questions.</span>
+                            </div>
+                        </div>
+
+                        <!-- Upload Home Images Section -->
+                        <div class="form-group booking-field booking-images-field">
+                            <label for="booking-images" class="font-weight-bold" style="font-size: 13.5px; color: #0f172a;">
+                                Upload Photos of Your Space <span class="text-muted font-weight-normal">(Optional, max 10 photos)</span>
+                            </label>
+                            <div class="custom-file-upload-wrapper p-3 text-center border rounded-lg" style="border: 2px dashed #cbd5e1 !important; background-color: #f8fafc; border-radius: 12px; cursor: pointer;">
+                                <label for="booking-images" class="m-0 d-block" style="cursor: pointer;">
+                                    <i class="fas fa-cloud-upload-alt text-primary mb-2" style="font-size: 28px;"></i>
+                                    <strong class="d-block text-dark" style="font-size: 13.5px;">Click to select photos of your home/space</strong>
+                                    <span class="text-muted d-block mt-1" style="font-size: 11.5px;">Supported formats: JPG, PNG, WEBP (Max 5MB per file)</span>
+                                    <input type="file" 
+                                           id="booking-images" 
+                                           name="images[]" 
+                                           multiple 
+                                           accept="image/jpeg,image/png,image/jpg,image/webp" 
+                                           class="d-none">
+                                </label>
+                            </div>
+                            @error('images')
+                                <span class="invalid-feedback d-block" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                            @error('images.*')
+                                <span class="invalid-feedback d-block" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+
+                            <!-- Preview Grid -->
+                            <div id="booking-images-preview-grid" class="d-flex flex-wrap mt-3" style="gap: 10px;">
+                                @if (!empty($step1Data['images']) && is_array($step1Data['images']))
+                                    @foreach ($step1Data['images'] as $img)
+                                        @php
+                                            $imgPath = is_array($img) ? ($img['path'] ?? '') : $img;
+                                        @endphp
+                                        @if (!empty($imgPath))
+                                            <div class="image-preview-item position-relative border rounded p-1" style="width: 80px; height: 80px; overflow: hidden; background: #ffffff; border-color: #cbd5e1 !important; border-radius: 8px;">
+                                                <img src="{{ asset('public/' . $imgPath) }}" alt="Home Image" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                @endif
                             </div>
                         </div>
 
@@ -102,6 +148,25 @@
 @push('scripts')
     <script>
         window.bookingServicesData = @json($servicesData);
+        $(document).ready(function () {
+            $('#booking-images').on('change', function () {
+                var files = this.files;
+                var $grid = $('#booking-images-preview-grid');
+                $grid.empty();
+                if (files && files.length > 0) {
+                    $.each(files, function (i, file) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            var $item = $('<div class="image-preview-item position-relative border rounded p-1" style="width: 80px; height: 80px; overflow: hidden; background: #ffffff; border-color: #cbd5e1 !important; border-radius: 8px;">' +
+                                '<img src="' + e.target.result + '" alt="Preview" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">' +
+                                '</div>');
+                            $grid.append($item);
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+            });
+        });
     </script>
     <script src="{{ asset('public/assets/js/booking_service.js') }}"></script>
 @endpush

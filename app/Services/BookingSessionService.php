@@ -23,9 +23,10 @@ class BookingSessionService
     {
         $sessionData = $this->getBookingSession();
         $sessionData['step1'] = [
-            'service_id' => $data['service_id'] ?? null,
-            'questions' => $data['questions'] ?? [],
+            'service_id'    => $data['service_id'] ?? null,
+            'questions'     => $data['questions'] ?? [],
             'service_notes' => $data['service_notes'] ?? null,
+            'images'        => $data['images'] ?? [],
         ];
 
         Session::put($this->sessionKey, $sessionData);

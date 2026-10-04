@@ -10,6 +10,7 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Models\WalletTransaction;
 use App\Notifications\BookingApprovedNotification;
+use App\Notifications\BookingCancelledNotification;
 use App\Notifications\BookingConfirmedNotification;
 use App\Notifications\NewBookingPendingNotification;
 use Illuminate\Support\Facades\Cache;
@@ -18,7 +19,8 @@ use Illuminate\Support\Facades\Log;
 class BookingService
 {
     public function __construct(
-        protected BookingSessionService $bookingSessionService
+        protected BookingSessionService $bookingSessionService,
+        protected ImageService $imageService
     ) {
     }
 
@@ -97,6 +99,11 @@ class BookingService
             'referal_code'         => ($offer['type'] ?? '') === 'referral' ? ($offer['code'] ?? null) : null,
             'promo_code'           => ($offer['type'] ?? '') === 'promo' ? ($offer['code'] ?? null) : null,
         ]);
+
+        // Process & store booking images if provided in step 1
+        if (!empty($step1['images']) && is_array($step1['images'])) {
+            $this->imageService->persistBookingImages($booking->id, $step1['images']);
+        }
 
         // Create initial Payment record with status 'pending'
         try {
@@ -284,5 +291,126 @@ class BookingService
         }
 
         return $booking;
+    }
+
+    /* ========================================================================= */
+    /* CUSTOMER SECTION PART                                                     */
+    /* ========================================================================= */
+
+    /**
+     * Get list of formatted bookings for customer dashboard / my-bookings.
+     */
+    public function getCustomerBookings(int $userId): \Illuminate\Support\Collection
+    {
+        $dbBookings = Booking::with(['service', 'payment', 'images'])
+            ->where('user_id', $userId)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        if ($dbBookings->isEmpty()) {
+            return collect();
+        }
+
+        return $dbBookings->map(function ($b) {
+            $statusVal = $b->status instanceof BookingStatus ? $b->status->value : (string) $b->status;
+            $paymentStatusRaw = strtolower($b->payment?->payment_status ?? $b->payment_status ?? 'pending');
+            $paymentStatus = ucfirst($paymentStatusRaw);
+            $paymentMethod = $b->payment?->payment_method ?? $b->payment_method ?? 'Pending Payment';
+
+            $questionnaires = [];
+            if (!empty($b->answers) && is_array($b->answers)) {
+                $questionnaires = $b->answers;
+            }
+            if (!empty($b->service_notes)) {
+                $questionnaires[] = [
+                    'question' => 'Service Notes',
+                    'answer'   => $b->service_notes,
+                ];
+            }
+            if (!empty($b->special_instructions)) {
+                $questionnaires[] = [
+                    'question' => 'Special Instructions',
+                    'answer'   => $b->special_instructions,
+                ];
+            }
+
+            return (object)[
+                'id'                   => $b->id,
+                'booking_id'           => 'BK-' . sprintf('%03d', $b->id),
+                'service_name'         => $b->service?->name ?? 'Cleaning Service',
+                'date'                 => $b->booking_date ?? $b->created_at->format('Y-m-d'),
+                'time'                 => $b->start_time ? \Carbon\Carbon::parse($b->start_time)->format('g:i A') : '09:00 AM',
+                'amount'               => (float) $b->total_amount,
+                'status'               => ucfirst($statusVal),
+                'status_raw'           => strtolower($statusVal),
+                'payment_status'       => $paymentStatus,
+                'payment_method'       => $paymentMethod === 'pending' ? 'Pending Payment' : $paymentMethod,
+                'paid_amount'          => $paymentStatusRaw === 'paid' ? (float) $b->total_amount : 0.00,
+                'wallet_used'          => (float) $b->credit_used,
+                'credit_used'          => (float) $b->credit_used,
+                'discount_amount'      => (float) $b->discount_amount,
+                'referal_code'         => $b->referal_code,
+                'promo_code'           => $b->promo_code,
+                'images'               => $b->images,
+                'cancellation_eligible'=> (strtolower($statusVal) === 'approved'),
+                'questionnaires'       => $questionnaires,
+            ];
+        });
+    }
+
+    /**
+     * Get dedicated booking details model for customer /my-bookings/{id}.
+     */
+    public function getCustomerBookingDetails(int $bookingId, int $userId): Booking
+    {
+        return Booking::with(['service', 'payment', 'images'])
+            ->where('id', $bookingId)
+            ->where('user_id', $userId)
+            ->firstOrFail();
+    }
+
+    /**
+     * Cancel an approved booking by customer and notify admin.
+     */
+    public function cancelCustomerBooking(Booking $booking, int $userId): array
+    {
+        if ((int) $booking->user_id !== (int) $userId) {
+            return [
+                'success' => false,
+                'code'    => 403,
+                'message' => 'Unauthorized action.',
+            ];
+        }
+
+        $statusVal = $booking->status instanceof BookingStatus ? $booking->status->value : (string) $booking->status;
+
+        if (strtolower($statusVal) !== 'approved') {
+            return [
+                'success' => false,
+                'code'    => 422,
+                'message' => 'Only approved bookings can be cancelled schedule.',
+            ];
+        }
+
+        $booking->status = BookingStatus::CANCELLED;
+        $booking->save();
+
+        // Send app notification to all Admins
+        try {
+            $admins = User::where('role', 1)->get();
+            foreach ($admins as $admin) {
+                $admin->notify(new BookingCancelledNotification($booking));
+            }
+        } catch (\Throwable $e) {
+            Log::error('Failed to send admin booking cancellation notification: ' . $e->getMessage());
+        }
+
+        return [
+            'success'    => true,
+            'code'       => 200,
+            'message'    => 'Booking schedule has been cancelled successfully.',
+            'status'     => 'Cancelled',
+            'status_raw' => 'cancelled',
+        ];
     }
 }
