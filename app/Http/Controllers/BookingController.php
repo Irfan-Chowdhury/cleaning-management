@@ -59,7 +59,7 @@ class BookingController extends Controller
 
     public function show(int $id)
     {
-        $bookingModel = Booking::with(['user', 'service', 'payment'])->find($id);
+        $bookingModel = Booking::with(['user', 'service', 'payment', 'images'])->find($id);
 
         if ($bookingModel) {
             $booking = (object)[
@@ -92,6 +92,7 @@ class BookingController extends Controller
                 'payment_status'       => strtolower($bookingModel->payment_status ?? $bookingModel->payment?->payment_status ?? 'pending'),
                 'payment_method'       => $bookingModel->payment_method ?? $bookingModel->payment?->payment_method ?? 'pending',
                 'answers'              => is_array($bookingModel->answers) ? $bookingModel->answers : [],
+                'images'               => $bookingModel->images ?? collect([]),
                 'created_at'           => $bookingModel->created_at ? $bookingModel->created_at->format('M d, Y g:i A') : 'N/A',
                 'model'                => $bookingModel,
             ];
@@ -126,6 +127,7 @@ class BookingController extends Controller
                 'payment_status'       => 'pending',
                 'payment_method'       => 'pending',
                 'answers'              => [],
+                'images'               => collect([]),
                 'created_at'           => 'Aug 20, 2026 07:00 AM',
                 'model'                => null,
             ];
@@ -138,7 +140,7 @@ class BookingController extends Controller
     {
         $services = Service::where('status', 'active')->orderBy('name')->get();
 
-        $bookingModel = Booking::with(['user', 'service', 'payment'])->find($id);
+        $bookingModel = Booking::with(['user', 'service', 'payment', 'images'])->find($id);
 
         if ($bookingModel) {
             $booking = (object)[
@@ -164,6 +166,7 @@ class BookingController extends Controller
                 'payment_status'       => strtolower($bookingModel->payment_status ?? $bookingModel->payment?->payment_status ?? 'pending'),
                 'payment_method'       => $bookingModel->payment_method ?? $bookingModel->payment?->payment_method ?? 'pending',
                 'answers'              => is_array($bookingModel->answers) ? $bookingModel->answers : [],
+                'images'               => $bookingModel->images ?? collect([]),
                 'model'                => $bookingModel,
             ];
         } else {
@@ -189,6 +192,7 @@ class BookingController extends Controller
                 'status'               => 'pending',
                 'payment_status'       => 'pending',
                 'payment_method'       => 'pending',
+                'images'               => collect([]),
                 'model'                => null,
             ];
         }

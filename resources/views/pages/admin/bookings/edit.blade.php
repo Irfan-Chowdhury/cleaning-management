@@ -6,7 +6,32 @@
     <link rel="stylesheet" href="{{ asset('public/assets/css/customer.css') }}">
     <link rel="stylesheet" href="{{ asset('public/assets/css/booking.css') }}">
     <link rel="stylesheet" href="{{ asset('public/assets/css/wallet.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
     <style>
+        .photo-preview-card {
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .photo-preview-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12) !important;
+            border-color: #3b82f6 !important;
+        }
+        .photo-preview-card .overlay-icon {
+            opacity: 0;
+            transition: opacity 0.25s ease;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(2px);
+        }
+        .photo-preview-card:hover .overlay-icon {
+            opacity: 1;
+        }
+        .mfp-close,
+        .mfp-title {
+            display: none !important;
+        }
         .booking-edit-card {
             background: #ffffff;
             border: 1px solid #e8edf5;
@@ -160,8 +185,36 @@
                             </tr>
                         </tbody>
                     </table>
-                </div>
             </div>
+        </div>
+
+        <!-- Customer Uploaded Home Photos Card -->
+        <div class="customer-details-card mb-4">
+            <h3>
+                <span><i class="fas fa-images text-primary mr-2"></i> Uploaded Home Photos</span>
+                <span class="badge badge-light border text-muted px-2 py-1" style="font-size: 11px;">{{ !empty($booking->images) ? count($booking->images) : 0 }} Photos</span>
+            </h3>
+
+            @if (!empty($booking->images) && count($booking->images) > 0)
+                <div class="row image-gallery-popup">
+                    @foreach ($booking->images as $img)
+                        <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-3">
+                            <a href="{{ asset('public/' . $img->image_path) }}" class="gallery-photo-link d-block photo-preview-card position-relative shadow-sm" style="height: 120px; background: #f8fafc;" title="{{ $img->image_name ?? 'Uploaded Home Photo' }}">
+                                <img src="{{ asset('public/' . $img->image_path) }}" alt="{{ $img->image_name ?? 'Home Image' }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                <div class="overlay-icon position-absolute w-100 h-100 d-flex align-items-center justify-content-center text-white" style="top:0; left:0;">
+                                    <i class="fas fa-search-plus" style="font-size: 20px;"></i>
+                                </div>
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="text-muted py-2" style="font-size: 13.5px;">
+                    <i class="far fa-image mr-1"></i> No home photos were uploaded for this booking.
+                </div>
+            @endif
+        </div>
+
         <!-- Service Questionnaire Answers Card -->
         @php
             $answersList = $booking->answers ?? [];
@@ -313,8 +366,32 @@
 
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
     <script>
         $(document).ready(function () {
+            $('.image-gallery-popup').magnificPopup({
+                delegate: 'a.gallery-photo-link',
+                type: 'image',
+                showCloseBtn: false,
+                gallery: {
+                    enabled: true,
+                    navigateByImgClick: true,
+                    preload: [0, 1]
+                },
+                image: {
+                    titleSrc: function() {
+                        return '';
+                    }
+                },
+                zoom: {
+                    enabled: true,
+                    duration: 300,
+                    easing: 'ease-in-out',
+                    opener: function(openerElement) {
+                        return openerElement.is('img') ? openerElement : openerElement.find('img');
+                    }
+                }
+            });
             var slotsUrl = @json(route('booking-service.slots-for-date'));
             var initialSlot = @json(old('slot', $booking->slot ?? ''));
 
