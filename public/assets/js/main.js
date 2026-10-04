@@ -86,9 +86,36 @@
             event.preventDefault();
             event.stopPropagation();
 
-            var $dropdown = $(this).closest('.notification-dropdown');
-            $dropdown.find('.notification-item').removeClass('unread');
-            $dropdown.find('.notification-badge').text('0').hide();
+            var $btn = $(this);
+            var $form = $btn.closest('form');
+            var actionUrl = $form.attr('action');
+            var token = $form.find('input[name="_token"]').val();
+            var $dropdown = $btn.closest('.notification-dropdown');
+
+            if (actionUrl) {
+                $.ajax({
+                    url: actionUrl,
+                    type: 'POST',
+                    data: {
+                        _token: token
+                    },
+                    success: function () {
+                        $dropdown.find('.notification-item').removeClass('unread');
+                        $dropdown.find('.notification-badge').text('0').hide();
+                        $form.fadeOut(200, function () {
+                            $(this).remove();
+                        });
+                    },
+                    error: function () {
+                        if ($form.length) {
+                            $form.off('submit').submit();
+                        }
+                    }
+                });
+            } else {
+                $dropdown.find('.notification-item').removeClass('unread');
+                $dropdown.find('.notification-badge').text('0').hide();
+            }
         });
     }
 
