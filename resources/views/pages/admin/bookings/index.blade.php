@@ -104,9 +104,6 @@
                                         <a href="{{ route('bookings.edit', $booking->id) }}" class="btn btn-sm btn-outline-primary customer-action-btn" title="Edit Booking">
                                             <i class="fas fa-edit" aria-hidden="true"></i>
                                         </a>
-                                        <button type="button" class="btn btn-sm btn-outline-danger customer-action-btn" title="Delete Booking">
-                                            <i class="fas fa-trash-alt" aria-hidden="true"></i>
-                                        </button>
                                     </div>
                                 </td>
                             </tr>

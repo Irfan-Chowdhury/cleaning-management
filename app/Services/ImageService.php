@@ -4,11 +4,13 @@ namespace App\Services;
 
 use App\Models\BookingImage;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
+use Intervention\Image\Laravel\Facades\Image;
 
 class ImageService
 {
     /**
-     * Upload temporary booking images for Step 1 wizard submission.
+     * Upload and optimize temporary booking images for Step 1 wizard submission using Intervention Image.
      *
      * @param array|null $files Array of UploadedFile instances
      * @param array $existingImages Existing image records in session
@@ -26,12 +28,35 @@ class ImageService
 
             foreach ($files as $file) {
                 if ($file instanceof UploadedFile && $file->isValid()) {
-                    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                    $file->move($destinationPath, $filename);
-                    $uploadedImages[] = [
-                        'path' => 'uploads/booking_images/temp/' . $filename,
-                        'name' => $file->getClientOriginalName(),
-                    ];
+                    try {
+                        $extension = strtolower($file->getClientOriginalExtension() ?: 'jpg');
+                        $filename = time() . '_' . uniqid() . '.' . $extension;
+                        $fullPath = $destinationPath . '/' . $filename;
+
+                        // Process and optimize image using Intervention Image facade
+                        $image = Image::read($file);
+                        $image->scaleDown(width: 1920, height: 1080);
+                        $image->save($fullPath);
+
+                        $uploadedImages[] = [
+                            'path' => 'uploads/booking_images/temp/' . $filename,
+                            'name' => $file->getClientOriginalName(),
+                        ];
+                    } catch (\Throwable $e) {
+                        Log::error('Failed to process temporary booking image via Intervention Image: ' . $e->getMessage());
+
+                        // Fallback: move file directly if Intervention Image fails
+                        try {
+                            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                            $file->move($destinationPath, $filename);
+                            $uploadedImages[] = [
+                                'path' => 'uploads/booking_images/temp/' . $filename,
+                                'name' => $file->getClientOriginalName(),
+                            ];
+                        } catch (\Throwable $ex) {
+                            Log::error('Fallback file upload failed: ' . $ex->getMessage());
+                        }
+                    }
                 }
             }
         }
@@ -44,7 +69,7 @@ class ImageService
     }
 
     /**
-     * Move temporary images to permanent storage and create BookingImage records.
+     * Move and process temporary images to permanent storage using Intervention Image and create BookingImage records.
      *
      * @param int $bookingId
      * @param array $images
@@ -65,10 +90,27 @@ class ImageService
             $rawPath = is_array($imgData) ? ($imgData['path'] ?? '') : (string) $imgData;
             $rawName = is_array($imgData) ? ($imgData['name'] ?? '') : basename($rawPath);
 
-            if (!empty($rawPath) && file_exists(public_path($rawPath))) {
+            $fullTempPath = public_path($rawPath);
+
+            if (!empty($rawPath) && file_exists($fullTempPath)) {
                 $filename = basename($rawPath);
                 $permPath = 'uploads/booking_images/' . $filename;
-                rename(public_path($rawPath), public_path($permPath));
+                $fullPermPath = public_path($permPath);
+
+                try {
+                    // Optimize and save permanent image using Intervention Image facade
+                    $image = Image::read($fullTempPath);
+                    $image->scaleDown(width: 1600, height: 1200);
+                    $image->save($fullPermPath);
+
+                    // Remove temporary file
+                    if ($fullTempPath !== $fullPermPath && file_exists($fullTempPath)) {
+                        @unlink($fullTempPath);
+                    }
+                } catch (\Throwable $e) {
+                    Log::error('Failed to persist image via Intervention Image, falling back to rename: ' . $e->getMessage());
+                    rename($fullTempPath, $fullPermPath);
+                }
 
                 BookingImage::create([
                     'booking_id' => $bookingId,

@@ -319,8 +319,16 @@ class BookingService
 
         return $dbBookings->map(function ($b) {
             $statusVal = $b->status instanceof BookingStatus ? $b->status->value : (string) $b->status;
+            $statusEnum = BookingStatus::tryFrom(strtolower($statusVal)) ?? BookingStatus::PENDING;
+            $statusBadgeClass = $statusEnum->badgeClass() . ($statusEnum === BookingStatus::PENDING ? ' text-dark' : '');
+
             $paymentStatusRaw = strtolower($b->payment?->payment_status ?? $b->payment_status ?? 'pending');
             $paymentStatus = ucfirst($paymentStatusRaw);
+            $paymentBadgeClass = match ($paymentStatusRaw) {
+                'paid'    => 'badge-payment-paid',
+                'unpaid'  => 'badge-payment-unpaid',
+                default   => 'badge-payment-refunded',
+            };
             $paymentMethod = $b->payment?->payment_method ?? $b->payment_method ?? 'Pending Payment';
 
             $questionnaires = [];
@@ -347,9 +355,12 @@ class BookingService
                 'date'                 => $b->booking_date ?? $b->created_at->format('Y-m-d'),
                 'time'                 => $b->start_time ? \Carbon\Carbon::parse($b->start_time)->format('g:i A') : '09:00 AM',
                 'amount'               => (float) $b->total_amount,
-                'status'               => ucfirst($statusVal),
+                'status'               => $statusEnum->label(),
                 'status_raw'           => strtolower($statusVal),
+                'status_label'         => $statusEnum->label(),
+                'status_badge_class'   => $statusBadgeClass,
                 'payment_status'       => $paymentStatus,
+                'payment_badge_class'  => $paymentBadgeClass,
                 'payment_method'       => $paymentMethod === 'pending' ? 'Pending Payment' : $paymentMethod,
                 'paid_amount'          => $paymentStatusRaw === 'paid' ? (float) $b->total_amount : 0.00,
                 'wallet_used'          => (float) $b->credit_used,
@@ -369,10 +380,19 @@ class BookingService
      */
     public function getCustomerBookingDetails(int $bookingId, int $userId): Booking
     {
-        return Booking::with(['service', 'payment', 'images'])
+        $booking = Booking::with(['service', 'payment', 'images'])
             ->where('id', $bookingId)
             ->where('user_id', $userId)
             ->firstOrFail();
+
+        $statusVal = $booking->status instanceof BookingStatus ? $booking->status->value : (string) $booking->status;
+        $statusEnum = BookingStatus::tryFrom(strtolower($statusVal)) ?? BookingStatus::PENDING;
+
+        $booking->status_raw = strtolower($statusVal);
+        $booking->status_label = $statusEnum->label();
+        $booking->status_badge_class = $statusEnum->badgeClass() . ($statusEnum === BookingStatus::PENDING ? ' text-dark' : '');
+
+        return $booking;
     }
 
     /**

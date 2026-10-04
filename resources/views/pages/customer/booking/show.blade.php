@@ -135,23 +135,11 @@
                 <p class="text-muted mt-1 mb-0" style="font-size: 12.5px;">Submitted on {{ $booking->created_at ? $booking->created_at->format('F d, Y \a\t g:i A') : 'N/A' }}</p>
             </div>
             <div class="d-flex align-items-center gap-2">
-                @php
-                    $statusVal = $booking->status instanceof \App\Enums\BookingStatus ? $booking->status->value : strtolower((string) $booking->status);
-                    $statusLabel = ucfirst($statusVal);
-                    $statusBadgeClass = 'badge-warning text-dark';
-                    if (in_array($statusVal, ['approved', 'confirmed'])) {
-                        $statusBadgeClass = 'badge-success';
-                    } elseif ($statusVal === 'completed') {
-                        $statusBadgeClass = 'badge-primary';
-                    } elseif (in_array($statusVal, ['cancelled', 'rejected'])) {
-                        $statusBadgeClass = 'badge-danger';
-                    }
-                @endphp
-                <span class="badge {{ $statusBadgeClass }} font-weight-bold px-3 py-2 mr-2" style="font-size: 14px; border-radius: 999px;">
-                    <i class="fas fa-info-circle mr-1"></i> Status: {{ $statusLabel }}
+                <span class="badge {{ $booking->status_badge_class }} font-weight-bold px-3 py-2 mr-2" style="font-size: 14px; border-radius: 999px;">
+                    <i class="fas fa-info-circle mr-1"></i> Status: {{ $booking->status_label }}
                 </span>
 
-                @if ($statusVal === 'approved')
+                @if ($booking->status_raw === 'approved')
                     <a href="{{ route('booking-service.review-confirm', ['booking' => $booking->id]) }}" class="btn btn-success font-weight-bold px-3 py-2" style="border-radius: 8px; font-size: 13.5px;">
                         <i class="fas fa-calendar-check mr-1"></i> Proceed to Step 4 (Review &amp; Confirm)
                     </a>

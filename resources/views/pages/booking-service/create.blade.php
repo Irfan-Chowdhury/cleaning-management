@@ -4,6 +4,50 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('public/assets/css/booking_service.css') }}">
+    <style>
+        .image-preview-item {
+            position: relative;
+            width: 86px;
+            height: 86px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .image-preview-item:hover {
+            border-color: #ef4444 !important;
+        }
+        .image-preview-item .remove-img-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(220, 38, 38, 0.9);
+            color: #ffffff;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 10;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .image-preview-item:hover .remove-img-btn {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+        .image-preview-item .remove-img-btn:hover {
+            background: #b91c1c;
+            transform: scale(1.15);
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -93,8 +137,11 @@
                                             $imgPath = is_array($img) ? ($img['path'] ?? '') : $img;
                                         @endphp
                                         @if (!empty($imgPath))
-                                            <div class="image-preview-item position-relative border rounded p-1" style="width: 80px; height: 80px; overflow: hidden; background: #ffffff; border-color: #cbd5e1 !important; border-radius: 8px;">
+                                            <div class="image-preview-item position-relative border rounded p-1">
                                                 <img src="{{ asset('public/' . $imgPath) }}" alt="Home Image" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
+                                                <button type="button" class="remove-img-btn js-remove-file" title="Remove image">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
                                             </div>
                                         @endif
                                     @endforeach
@@ -149,21 +196,61 @@
     <script>
         window.bookingServicesData = @json($servicesData);
         $(document).ready(function () {
-            $('#booking-images').on('change', function () {
-                var files = this.files;
+            var dt = new DataTransfer();
+
+            function renderPreviews() {
                 var $grid = $('#booking-images-preview-grid');
-                $grid.empty();
-                if (files && files.length > 0) {
-                    $.each(files, function (i, file) {
+                $grid.find('.new-preview-item').remove();
+
+                if (dt.files && dt.files.length > 0) {
+                    $.each(dt.files, function (index, file) {
                         var reader = new FileReader();
                         reader.onload = function (e) {
-                            var $item = $('<div class="image-preview-item position-relative border rounded p-1" style="width: 80px; height: 80px; overflow: hidden; background: #ffffff; border-color: #cbd5e1 !important; border-radius: 8px;">' +
+                            var $item = $('<div class="image-preview-item new-preview-item position-relative border rounded p-1" data-index="' + index + '">' +
                                 '<img src="' + e.target.result + '" alt="Preview" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">' +
-                                '</div>');
+                                '<button type="button" class="remove-img-btn js-remove-file" title="Remove image">' +
+                                    '<i class="fas fa-times"></i>' +
+                                '</button>' +
+                            '</div>');
                             $grid.append($item);
                         };
                         reader.readAsDataURL(file);
                     });
+                }
+            }
+
+            $('#booking-images').on('change', function () {
+                var newFiles = this.files;
+                if (newFiles && newFiles.length > 0) {
+                    for (var i = 0; i < newFiles.length; i++) {
+                        dt.items.add(newFiles[i]);
+                    }
+                    this.files = dt.files;
+                    renderPreviews();
+                }
+            });
+
+            $(document).on('click', '.js-remove-file', function (e) {
+                e.preventDefault();
+                var $item = $(this).closest('.image-preview-item');
+                var indexToRemove = $item.attr('data-index');
+
+                if (typeof indexToRemove !== 'undefined' && indexToRemove !== false && indexToRemove !== '') {
+                    var targetIdx = parseInt(indexToRemove, 10);
+                    var newDt = new DataTransfer();
+                    for (var i = 0; i < dt.files.length; i++) {
+                        if (i !== targetIdx) {
+                            newDt.items.add(dt.files[i]);
+                        }
+                    }
+                    dt = newDt;
+                    var fileInput = document.getElementById('booking-images');
+                    if (fileInput) {
+                        fileInput.files = dt.files;
+                    }
+                    renderPreviews();
+                } else {
+                    $item.fadeOut(200, function() { $(this).remove(); });
                 }
             });
         });

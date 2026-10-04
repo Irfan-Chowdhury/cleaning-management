@@ -217,33 +217,7 @@
                     </thead>
                     <tbody>
                         @foreach ($bookings as $booking)
-                            @php
-                                $statusLower = strtolower($booking->status);
-                                $paymentLower = strtolower($booking->payment_status);
-
-                                if ($statusLower === 'confirmed') {
-                                    $statusBadgeClass = 'badge-status-confirmed';
-                                } elseif ($statusLower === 'approved') {
-                                    $statusBadgeClass = 'badge-status-approved';
-                                } elseif ($statusLower === 'processing') {
-                                    $statusBadgeClass = 'badge-status-processing';
-                                } elseif ($statusLower === 'pending') {
-                                    $statusBadgeClass = 'badge-status-pending';
-                                } elseif ($statusLower === 'completed') {
-                                    $statusBadgeClass = 'badge-status-completed';
-                                } else {
-                                    $statusBadgeClass = 'badge-status-cancelled';
-                                }
-
-                                if ($paymentLower === 'paid') {
-                                    $paymentBadgeClass = 'badge-payment-paid';
-                                } elseif ($paymentLower === 'unpaid') {
-                                    $paymentBadgeClass = 'badge-payment-unpaid';
-                                } else {
-                                    $paymentBadgeClass = 'badge-payment-refunded';
-                                }
-                            @endphp
-                            <tr data-status="{{ $statusLower }}" data-date="{{ $booking->date }}">
+                            <tr data-status="{{ $booking->status_raw }}" data-date="{{ $booking->date }}">
                                 <td>
                                     <span class="booking-id-tag">{{ $booking->booking_id }}</span>
                                 </td>
@@ -264,13 +238,13 @@
                                     <strong>${{ number_format($booking->amount, 2) }}</strong>
                                 </td>
                                 <td>
-                                    <span class="badge {{ $statusBadgeClass }}" style="padding: 6px 12px; font-weight: 700; border-radius: 999px;">
-                                        {{ ucfirst($booking->status) }}
+                                    <span class="badge {{ $booking->status_badge_class }}" style="padding: 6px 12px; font-weight: 700; border-radius: 999px;">
+                                        {{ $booking->status }}
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="badge {{ $paymentBadgeClass }}" style="padding: 6px 12px; font-weight: 700; border-radius: 999px;">
-                                        {{ ucfirst($booking->payment_status) }}
+                                    <span class="badge {{ $booking->payment_badge_class }}" style="padding: 6px 12px; font-weight: 700; border-radius: 999px;">
+                                        {{ $booking->payment_status }}
                                     </span>
                                 </td>
                                 <td>
@@ -280,7 +254,7 @@
                                            title="View Details">
                                             <i class="fas fa-eye" aria-hidden="true"></i>
                                         </a>
-                                        @if ($statusLower === 'approved' || ($booking->status_raw ?? '') === 'approved')
+                                        @if ($booking->status_raw === 'approved')
                                             <a href="{{ route('booking-service.review-confirm', ['booking' => $booking->id]) }}"
                                                class="btn btn-sm btn-success px-2 py-1"
                                                title="Proceed to Step 4 (Review & Confirm)"
