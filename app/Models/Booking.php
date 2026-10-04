@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use App\Enums\BookingStatus;
+use App\Events\BookingCompletedAndPaid;
 use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Log;
 
 class Booking extends Model
 {
@@ -80,26 +82,7 @@ class Booking extends Model
             $paymentStatus = strtolower((string) $booking->payment_status);
 
             if ($statusVal === 'completed' && $paymentStatus === 'paid' && !empty($booking->referal_code)) {
-                $referrer = User::where('referral_code', strtoupper($booking->referal_code))->first();
-                if ($referrer && $referrer->id !== $booking->user_id) {
-                    $alreadyRewarded = WalletTransaction::where('source', 'referral_bonus')
-                        ->where('booking_id', $booking->id)
-                        ->exists();
-
-                    if (!$alreadyRewarded) {
-                        $setting = Setting::first();
-                        $rewardAmount = (float) ($setting?->referral_reward > 0 ? $setting->referral_reward : 25.00);
-
-                        WalletTransaction::create([
-                            'user_id'     => $referrer->id,
-                            'booking_id'  => $booking->id,
-                            'type'        => 'credit',
-                            'amount'      => $rewardAmount,
-                            'source'      => 'referral_bonus',
-                            'description' => 'Referral bonus reward for completed Booking #BK-' . sprintf('%03d', $booking->id),
-                        ]);
-                    }
-                }
+                BookingCompletedAndPaid::dispatch($booking);
             }
         });
     }
