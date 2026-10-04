@@ -18,25 +18,31 @@
     $subtotalAmount = (float) (isset($latestBooking) && $latestBooking->subtotal > 0 ? $latestBooking->subtotal : ($latestBooking->total_amount ?? 0));
     $isMinAmountValid = ($minBookingAmount <= 0 || $subtotalAmount >= $minBookingAmount);
 
+    $previewCode = $previewOffer['code'] ?? null;
+    $previewDiscount = (float) ($previewOffer['discount_amount'] ?? 0);
+    $previewType = $previewOffer['type'] ?? null;
+
     $appliedCode = isset($latestBooking) && ($latestBooking->referal_code || $latestBooking->promo_code)
         ? ($latestBooking->referal_code ?: $latestBooking->promo_code)
-        : session('booking_wizard.offer.code');
+        : ($previewCode ?: session('booking_wizard.offer.code'));
     $appliedDiscount = (float) (isset($latestBooking) && $latestBooking->discount_amount > 0
         ? $latestBooking->discount_amount
-        : session('booking_wizard.offer.discount_amount', 0));
+        : ($previewDiscount > 0 ? $previewDiscount : session('booking_wizard.offer.discount_amount', 0)));
 
     $appliedOfferType = isset($latestBooking) && $latestBooking->promo_code
         ? 'promo'
         : (isset($latestBooking) && $latestBooking->referal_code
             ? 'referral'
-            : (isset($latestBooking) && (float)$latestBooking->credit_used > 0
-                ? 'wallet'
-                : session('booking_wizard.offer.type', null)));
+            : ($previewType
+                ? $previewType
+                : (isset($latestBooking) && (float)$latestBooking->credit_used > 0
+                    ? 'wallet'
+                    : session('booking_wizard.offer.type', null))));
 
     $hasActiveCode = !empty($appliedCode) && $appliedDiscount > 0;
 
     $isRegisteredReferralCode = $user && !empty($user->referred_by_code);
-    $isRegisteredReferralApplied = $isRegisteredReferralCode && $hasActiveCode && ($appliedCode === $user->referred_by_code);
+    $isRegisteredReferralApplied = $isRegisteredReferralCode && ($appliedOfferType === 'referral') && ($appliedCode === $user->referred_by_code);
 
     $hasCompletedReferralBooking = false;
     if ($user) {

@@ -314,10 +314,8 @@ class BookingServiceController extends Controller
         $validated = $request->validated();
         $this->bookingSessionService->saveStep3($validated);
 
-        $offer = $this->bookingSessionService->getOfferData();
         $user = auth()->user();
-
-        $booking = $this->bookingService->createBookingFromWizard($user, $step1, $step2, $validated, $offer);
+        $booking = $this->bookingService->createBookingFromWizard($user, $step1, $step2, $validated);
 
         // Clear wizard session after creation
         $this->bookingSessionService->clearSession();
@@ -386,36 +384,44 @@ class BookingServiceController extends Controller
             'special_instructions' => $booking->special_instructions,
         ];
 
-        $offerData = [
-            'discount_amount' => $booking->discount_amount,
-            'credit_used'     => $booking->credit_used,
-            'referal_code'    => $booking->referal_code,
-            'promo_code'      => $booking->promo_code,
-        ];
-
         $settings = Cache::rememberForever('app_settings', function () {
             return Setting::latest()->first();
         });
 
         $user = auth()->user();
 
-        // Auto-apply referral code if customer registered via referral link and code is not yet applied
+        // Calculate preview referral discount without mutating DB on page load
+        $previewOffer = null;
         if ($user && !empty($user->referred_by_code) && empty($booking->referal_code) && empty($booking->promo_code)) {
             $hasCompletedReferralBooking = Booking::where('user_id', $user->id)
                 ->whereNotNull('referal_code')
                 ->where('referal_code', '!=', '')
-                ->where('status', 'completed')
                 ->exists();
 
             if (!$hasCompletedReferralBooking) {
                 try {
-                    app(ReferralService::class)->applyCodeToBooking($booking, $user->referred_by_code, $user);
-                    $booking->refresh();
+                    $subtotal = (float) ($booking->subtotal > 0 ? $booking->subtotal : $booking->total_amount);
+                    $valResult = app(ReferralService::class)->validateCode($user->referred_by_code, $user, $subtotal, $booking->id);
+                    if ($valResult['valid']) {
+                        $previewOffer = [
+                            'type'            => 'referral',
+                            'code'            => $valResult['code'],
+                            'discount_amount' => (float) $valResult['discount_amount'],
+                        ];
+                    }
                 } catch (\Throwable $e) {
-                    Log::error('Failed to auto-apply registered referral code: ' . $e->getMessage());
+                    Log::error('Failed to preview registered referral code: ' . $e->getMessage());
                 }
             }
         }
+
+        $offerData = [
+            'discount_amount' => $booking->discount_amount > 0 ? $booking->discount_amount : ($previewOffer['discount_amount'] ?? 0),
+            'credit_used'     => $booking->credit_used,
+            'referal_code'    => $booking->referal_code ?: ($previewOffer['code'] ?? null),
+            'promo_code'      => $booking->promo_code,
+            'preview_offer'   => $previewOffer,
+        ];
 
         $dbTransactions = WalletTransaction::where('user_id', $user->id ?? 0)->get();
         $totalCredit = (float) $dbTransactions->where('type', 'credit')->sum('amount');
@@ -424,7 +430,7 @@ class BookingServiceController extends Controller
 
         $latestBooking = $booking;
 
-        return view('pages.booking-service.review-confirm', compact('step1Data', 'step2Data', 'step3Data', 'offerData', 'latestBooking', 'settings', 'userWalletBalance'));
+        return view('pages.booking-service.review-confirm', compact('step1Data', 'step2Data', 'step3Data', 'offerData', 'latestBooking', 'settings', 'userWalletBalance', 'previewOffer'));
     }
 
     public function confirmBooking(BookingConfirmRequest $request): RedirectResponse
@@ -432,10 +438,12 @@ class BookingServiceController extends Controller
         $validated = $request->validated();
         $bookingId = (int) $validated['booking_id'];
         $walletAmount = (float) ($request->input('wallet_amount') ?? 0);
+        $offerType = $request->input('offer_type');
+        $offerCode = $request->input('offer_code');
 
         $booking = Booking::findOrFail($bookingId);
 
-        $this->bookingService->confirmBookingByCustomer($booking, auth()->user(), $walletAmount);
+        $this->bookingService->confirmBookingByCustomer($booking, auth()->user(), $walletAmount, $offerType, $offerCode);
 
         // Destroy referral related session data for this user
         session()->forget('booking_wizard.offer');

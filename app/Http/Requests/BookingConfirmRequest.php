@@ -16,6 +16,8 @@ class BookingConfirmRequest extends FormRequest
         return [
             'booking_id'    => ['required', 'integer', 'exists:bookings,id'],
             'wallet_amount' => ['nullable', 'numeric', 'min:0'],
+            'offer_type'    => ['nullable', 'string', 'in:wallet,referral,promo'],
+            'offer_code'    => ['nullable', 'string', 'max:50'],
         ];
     }
 

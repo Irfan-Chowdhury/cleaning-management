@@ -14,11 +14,7 @@ class BookingController extends Controller
         protected BookingService $bookingService
     ) {
     }
-
-    /* ========================================================================= */
-    /* CUSTOMER SECTION PART                                                     */
-    /* ========================================================================= */
-
+    
     /**
      * Display a listing of the customer's bookings.
      */

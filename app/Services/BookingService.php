@@ -29,10 +29,9 @@ class BookingService
     /**
      * Create a new booking from wizard step submission, notify admins, and return the booking.
      */
-    public function createBookingFromWizard(User $user, array $step1, array $step2, array $step3, array $offer = []): Booking
+    public function createBookingFromWizard(User $user, array $step1, array $step2, array $step3): Booking
     {
         $subtotal = 0.00;
-        $discountAmount = (float) ($offer['discount_amount'] ?? 0.00);
         $totalAmount = 0.00;
 
         // Process questionnaire questions & answers into JSON format
@@ -95,11 +94,11 @@ class BookingService
             'payment_status'       => 'pending',
             'payment_method'       => 'pending',
             'subtotal'             => $subtotal,
-            'discount_amount'      => $discountAmount,
-            'credit_used'          => ($offer['type'] ?? '') === 'wallet' ? $discountAmount : 0.00,
+            'discount_amount'      => 0.00,
+            'credit_used'          => 0.00,
             'total_amount'         => $totalAmount,
-            'referal_code'         => ($offer['type'] ?? '') === 'referral' ? ($offer['code'] ?? null) : null,
-            'promo_code'           => ($offer['type'] ?? '') === 'promo' ? ($offer['code'] ?? null) : null,
+            'referal_code'         => null,
+            'promo_code'           => null,
         ]);
 
         // Process & store booking images if provided in step 1
@@ -153,6 +152,9 @@ class BookingService
 
         if (isset($data['amount'])) {
             $updateData['total_amount'] = (float) $data['amount'];
+            if ($data['status']=='approved') {
+                $updateData['subtotal'] = (float) $data['amount'];
+            }
         }
 
         if (!empty($data['date'])) {
@@ -209,8 +211,13 @@ class BookingService
     /**
      * Confirm an approved booking by Customer, update status to confirmed, and notify admins.
      */
-    public function confirmBookingByCustomer(Booking $booking, User $user, float $walletAmount = 0.0): Booking
-    {
+    public function confirmBookingByCustomer(
+        Booking $booking,
+        User $user,
+        float $walletAmount = 0.0,
+        ?string $offerType = null,
+        ?string $offerCode = null
+    ): Booking {
         $statusValue = $booking->status instanceof BookingStatus
             ? $booking->status->value
             : strtolower((string) $booking->status);
@@ -226,8 +233,25 @@ class BookingService
 
         $subtotal = (float) ($booking->subtotal > 0 ? $booking->subtotal : $booking->total_amount);
 
-        // Process wallet deduction if requested and customer has sufficient balance
-        if ($walletAmount > 0) {
+        // Apply offer (Referral code, Promo code, or Wallet credit) if selected upon confirmation
+        if ($offerType === 'referral' || (!empty($offerCode) && empty($offerType))) {
+            $codeToApply = $offerCode ?: $user->referred_by_code;
+            if (!empty($codeToApply)) {
+                try {
+                    app(ReferralService::class)->applyCodeToBooking($booking, $codeToApply, $user);
+                    $booking->refresh();
+                } catch (\Throwable $e) {
+                    Log::error('Failed to apply referral code on confirmation: ' . $e->getMessage());
+                }
+            }
+        } elseif ($offerType === 'promo' && !empty($offerCode)) {
+            try {
+                app(PromotionDiscountService::class)->applyPromotionToBooking($booking, $offerCode, $user);
+                $booking->refresh();
+            } catch (\Throwable $e) {
+                Log::error('Failed to apply promo code on confirmation: ' . $e->getMessage());
+            }
+        } elseif (($offerType === 'wallet' || $walletAmount > 0) && $walletAmount > 0) {
             $dbTx = WalletTransaction::where('user_id', $user->id)->get();
             $availableBalance = max(0, (float) $dbTx->where('type', 'credit')->sum('amount') - (float) $dbTx->where('type', 'debit')->sum('amount'));
 

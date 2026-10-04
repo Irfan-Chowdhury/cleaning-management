@@ -16,21 +16,31 @@
         $formattedTime = $latestBooking->start_time
             ? (\Carbon\Carbon::parse($latestBooking->start_time)->format('g:i A') . ($latestBooking->end_time ? ' - ' . \Carbon\Carbon::parse($latestBooking->end_time)->format('g:i A') : ''))
             : '09:00 AM';
-        $appliedCode = $latestBooking->referal_code ?: ($latestBooking->promo_code ?: null);
+
+        $previewCode = $previewOffer['code'] ?? null;
+        $previewDiscount = (float) ($previewOffer['discount_amount'] ?? 0);
+        $previewType = $previewOffer['type'] ?? null;
+
+        $appliedCode = $latestBooking->referal_code ?: ($latestBooking->promo_code ?: $previewCode);
+        $appliedDiscount = (float) ($latestBooking->discount_amount > 0 ? $latestBooking->discount_amount : $previewDiscount);
+
         $answers = is_array($latestBooking->answers) ? $latestBooking->answers : [];
 
         $initialOfferType = isset($latestBooking) && $latestBooking->promo_code
             ? 'promo'
             : (isset($latestBooking) && $latestBooking->referal_code
                 ? 'referral'
-                : session('booking_wizard.offer.type', 'wallet'));
+                : ($previewType ?: session('booking_wizard.offer.type', 'referral')));
 
         $discountLabelText = match ($initialOfferType) {
             'wallet' => 'Discount (Wallet)',
             'referral' => 'Discount (Referral)',
             'promo' => 'Discount (Promo)',
-            default => 'Discount (Wallet)',
+            default => 'Discount (Referral)',
         };
+
+        $subtotal = (float) ($latestBooking->subtotal > 0 ? $latestBooking->subtotal : $latestBooking->total_amount);
+        $displayTotal = max(0, $subtotal - $appliedDiscount);
     @endphp
 
     <div class="booking-page">
@@ -68,7 +78,7 @@
                             </div>
                             <div class="estimated-price-box">
                                 <span>Total Price</span>
-                                <strong id="main-estimated-total">${{ number_format((float) $latestBooking->total_amount, 2) }}</strong>
+                                <strong id="main-estimated-total">${{ number_format($displayTotal, 2) }}</strong>
                             </div>
                         </div>
                     </div>
@@ -117,11 +127,11 @@
                             <h3><i class="fas fa-tag" aria-hidden="true"></i> Payment &amp; Offers</h3>
                         </div>
                         <div class="payment-review-grid">
-                            @if (!empty($latestBooking->referal_code))
+                            @if (!empty($appliedCode))
                                 <div class="applied-promo-panel">
-                                    <span>Referral Code</span>
-                                    <strong>{{ $latestBooking->referal_code }} <em>Applied</em></strong>
-                                    <p>Discount: ${{ number_format((float) $latestBooking->discount_amount, 2) }}</p>
+                                    <span>{{ $initialOfferType === 'promo' ? 'Promo Code' : 'Referral Code' }}</span>
+                                    <strong>{{ $appliedCode }} <em>{{ !empty($latestBooking->referal_code) || !empty($latestBooking->promo_code) ? 'Applied' : 'Previewed' }}</em></strong>
+                                    <p>Discount: ${{ number_format($appliedDiscount, 2) }}</p>
                                 </div>
                             @else
                                 <div class="applied-promo-panel">
@@ -130,13 +140,13 @@
                                 </div>
                             @endif
                             <div class="payment-total-panel">
-                                <div><span>Subtotal</span><strong id="main-subtotal-val">${{ number_format((float) ($latestBooking->subtotal > 0 ? $latestBooking->subtotal : $latestBooking->total_amount), 2) }}</strong></div>
-                                <div id="main-discount-row" style="{{ (float) $latestBooking->discount_amount > 0 ? '' : 'display: none;' }}">
+                                <div><span>Subtotal</span><strong id="main-subtotal-val">${{ number_format($subtotal, 2) }}</strong></div>
+                                <div id="main-discount-row" style="{{ $appliedDiscount > 0 ? '' : 'display: none;' }}">
                                     <span id="main-discount-label">{{ $discountLabelText }}</span>
-                                    <strong id="main-discount-val" class="text-success">- ${{ number_format((float) $latestBooking->discount_amount, 2) }}</strong>
+                                    <strong id="main-discount-val" class="text-success">- ${{ number_format($appliedDiscount, 2) }}</strong>
                                 </div>
                                 <hr>
-                                <div class="grand-total"><span>Total</span><strong id="main-grand-total-val">${{ number_format((float) $latestBooking->total_amount, 2) }}</strong></div>
+                                <div class="grand-total"><span>Total</span><strong id="main-grand-total-val">${{ number_format($displayTotal, 2) }}</strong></div>
                             </div>
                         </div>
                     </div>
@@ -145,7 +155,9 @@
                     <form action="{{ route('booking-service.confirm') }}" method="POST" id="confirm-booking-form">
                         @csrf
                         <input type="hidden" name="booking_id" value="{{ $latestBooking->id }}">
-                        <input type="hidden" name="wallet_amount" id="applied-wallet-amount-hidden" value="0">
+                        <input type="hidden" name="wallet_amount" id="applied-wallet-amount-hidden" value="{{ $initialOfferType === 'wallet' ? $appliedDiscount : 0 }}">
+                        <input type="hidden" name="offer_type" id="applied-offer-type-hidden" value="{{ $appliedDiscount > 0 ? $initialOfferType : '' }}">
+                        <input type="hidden" name="offer_code" id="applied-offer-code-hidden" value="{{ $appliedDiscount > 0 ? $appliedCode : '' }}">
                         <div class="booking-step-actions review-actions">
                             <a href="{{ route('customer.bookings.index') }}" class="btn btn-outline-primary">
                                 <i class="fas fa-arrow-left" aria-hidden="true"></i> Back to My Bookings
@@ -513,10 +525,26 @@
 
             function updateLivePricing(subtotal, discount) {
                 var finalTotal = Math.max(0, subtotal - discount);
-
-                $('#applied-wallet-amount-hidden').val(discount);
-
                 var selectedOfferType = $('input[name="offer_type"]:checked').val() || null;
+
+                $('#applied-offer-type-hidden').val(discount > 0 ? selectedOfferType : '');
+
+                if (selectedOfferType === 'wallet') {
+                    $('#applied-wallet-amount-hidden').val(discount);
+                    $('#applied-offer-code-hidden').val('');
+                } else if (selectedOfferType === 'referral') {
+                    $('#applied-wallet-amount-hidden').val(0);
+                    var refCode = $('#applied-code-text').text() || '{{ $appliedCode ?? '' }}';
+                    $('#applied-offer-code-hidden').val(refCode);
+                } else if (selectedOfferType === 'promo') {
+                    $('#applied-wallet-amount-hidden').val(0);
+                    var promoCode = $('#applied-code-text').text() || $('#promo-code-input').val();
+                    $('#applied-offer-code-hidden').val(promoCode);
+                } else {
+                    $('#applied-wallet-amount-hidden').val(0);
+                    $('#applied-offer-code-hidden').val('');
+                }
+
                 var labelText = 'Discount';
                 if (selectedOfferType === 'wallet') {
                     labelText = 'Discount (Wallet)';
