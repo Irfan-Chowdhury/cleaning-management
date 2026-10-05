@@ -31,6 +31,15 @@ class SendReferralBonusNotification
         $setting = Setting::first();
         $rewardAmount = $transaction ? (float) $transaction->amount : (float) ($setting?->referral_reward > 0 ? $setting->referral_reward : 25.00);
 
+        $alreadyNotified = $referrer->notifications()
+            ->where('data->booking_id', $booking->id)
+            ->where('type', ReferralBonusEarnedNotification::class)
+            ->exists();
+
+        if ($alreadyNotified) {
+            return;
+        }
+
         try {
             $referrer->notify(new ReferralBonusEarnedNotification($booking, $rewardAmount));
         } catch (\Throwable $e) {

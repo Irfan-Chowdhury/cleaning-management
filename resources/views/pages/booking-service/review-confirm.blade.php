@@ -274,7 +274,14 @@
                 } else {
                     $('#wallet-offer-panel').slideUp(200);
                     $('#promo-offer-panel').slideDown(200);
-                    $('#wallet-amount-input').val('').trigger('input');
+                    if ($('#btn-clear-wallet').is(':visible')) {
+                        $('#btn-clear-wallet').trigger('click');
+                    } else {
+                        $('#wallet-amount-input').val('').prop('readonly', false);
+                        $('#wallet-feedback-msg').hide().html('');
+                        $('#btn-clear-wallet').hide();
+                        $('#btn-apply-wallet').show();
+                    }
 
                     if (val === 'promo') {
                         $('#main-discount-label').text('Discount (Promo)');
@@ -311,70 +318,75 @@
                 }
             });
 
-            // Live Wallet Calculation
-            $('#wallet-amount-input').on('input keyup change', function () {
+            // Apply Wallet Credit Handler
+            function applyWalletCredit() {
                 var $card = $('#discount-offer-card');
                 var subtotal = parseFloat($card.attr('data-subtotal')) || 0;
                 var minAmount = parseFloat($card.attr('data-min-amount')) || 0;
                 var maxWalletUsage = parseFloat($card.attr('data-max-wallet-usage')) || 0;
                 var walletBalance = parseFloat($card.attr('data-wallet-balance')) || 0;
 
-                var rawVal = $(this).val();
+                var rawVal = $('#wallet-amount-input').val();
                 var inputVal = parseFloat(rawVal) || 0;
                 var $feedback = $('#wallet-feedback-msg');
 
                 if (!rawVal || inputVal <= 0) {
-                    $feedback.hide().html('');
-                    $('#wallet-clear-addon').hide();
-                    updateLivePricing(subtotal, 0);
-                    setDiscountOptionsLock(false);
+                    $feedback.show().html('<span class="text-danger"><i class="fas fa-exclamation-circle"></i> Please enter a valid wallet credit amount.</span>');
                     return;
                 }
 
                 if (subtotal < minAmount) {
                     $feedback.show().html('<span class="text-danger"><i class="fas fa-times-circle"></i> The total amount ($' + subtotal.toFixed(2) + ') is less than minimum booking amount ($' + minAmount.toFixed(2) + '), wallet cannot be used.</span>');
-                    $('#wallet-clear-addon').hide();
-                    updateLivePricing(subtotal, 0);
-                    setDiscountOptionsLock(false);
                     return;
                 }
 
                 if (inputVal > walletBalance) {
                     $feedback.show().html('<span class="text-danger"><i class="fas fa-times-circle"></i> Insufficient balance. Remaining wallet balance is $' + walletBalance.toFixed(2) + '.</span>');
-                    $('#wallet-clear-addon').hide();
-                    updateLivePricing(subtotal, 0);
-                    setDiscountOptionsLock(false);
                     return;
                 }
 
                 if (maxWalletUsage > 0 && inputVal > maxWalletUsage) {
                     $feedback.show().html('<span class="text-danger"><i class="fas fa-times-circle"></i> Maximum wallet usage allowed per booking is $' + maxWalletUsage.toFixed(2) + '.</span>');
-                    $('#wallet-clear-addon').hide();
-                    updateLivePricing(subtotal, 0);
-                    setDiscountOptionsLock(false);
                     return;
                 }
 
                 if (inputVal > subtotal) {
                     $feedback.show().html('<span class="text-danger"><i class="fas fa-times-circle"></i> Wallet amount cannot exceed the booking subtotal ($' + subtotal.toFixed(2) + ').</span>');
-                    $('#wallet-clear-addon').hide();
-                    updateLivePricing(subtotal, 0);
-                    setDiscountOptionsLock(false);
                     return;
                 }
 
                 // Valid amount!
                 $feedback.show().html('<span class="text-success"><i class="fas fa-check-circle"></i> Wallet credit of $' + inputVal.toFixed(2) + ' applied!</span>');
-                $('#wallet-clear-addon').show();
+                $('#btn-apply-wallet').hide();
+                $('#btn-clear-wallet').show();
+                $('#wallet-amount-input').prop('readonly', true);
                 updateLivePricing(subtotal, inputVal);
                 setDiscountOptionsLock(true, 'wallet');
+            }
+
+            $('#btn-apply-wallet').on('click', function (e) {
+                e.preventDefault();
+                applyWalletCredit();
+            });
+
+            $('#wallet-amount-input').on('keypress', function (e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    applyWalletCredit();
+                }
             });
 
             // Clear Wallet Button Handler
             $('#btn-clear-wallet').on('click', function (e) {
                 e.preventDefault();
-                $('#wallet-amount-input').val('').trigger('input');
-                $('#wallet-clear-addon').hide();
+                var $card = $('#discount-offer-card');
+                var subtotal = parseFloat($card.attr('data-subtotal')) || 0;
+
+                $('#wallet-amount-input').val('').prop('readonly', false);
+                $('#wallet-feedback-msg').hide().html('');
+                $('#btn-clear-wallet').hide();
+                $('#btn-apply-wallet').show();
+                updateLivePricing(subtotal, 0);
                 setDiscountOptionsLock(false);
             });
 
@@ -515,7 +527,10 @@
             var isPromoApplied = $('#promo-applied-wrapper').is(':visible') || $('#registered-referral-banner').is(':visible');
 
             if (initialOfferType === 'wallet' && initialDiscount > 0) {
-                $('#wallet-clear-addon').show();
+                $('#wallet-amount-input').val(initialDiscount.toFixed(2)).prop('readonly', true);
+                $('#btn-apply-wallet').hide();
+                $('#btn-clear-wallet').show();
+                $('#wallet-feedback-msg').show().html('<span class="text-success"><i class="fas fa-check-circle"></i> Wallet credit of $' + initialDiscount.toFixed(2) + ' applied!</span>');
                 setDiscountOptionsLock(true, 'wallet');
             } else if (isPromoApplied && initialDiscount > 0) {
                 setDiscountOptionsLock(true, initialOfferType);

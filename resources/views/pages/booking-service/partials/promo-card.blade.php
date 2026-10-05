@@ -173,8 +173,9 @@
                        placeholder="0.00"
                        {{ !$isMinAmountValid ? 'disabled' : '' }}
                        style="font-size: 14px; height: 44px; border-color: #cbd5e1; color: #0f172a; font-weight: 600;">
-                <div class="input-group-append" id="wallet-clear-addon" style="display: none;">
-                    <button type="button" class="btn btn-outline-danger" id="btn-clear-wallet" title="Clear Wallet Credit" style="border-top-right-radius: 8px; border-bottom-right-radius: 8px;">
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-primary" id="btn-apply-wallet" {{ !$isMinAmountValid ? 'disabled' : '' }} style="border-top-right-radius: 8px; border-bottom-right-radius: 8px; height: 44px; padding: 0 16px; font-weight: 600;">Apply</button>
+                    <button type="button" class="btn btn-outline-danger" id="btn-clear-wallet" title="Clear Wallet Credit" style="display: none; border-top-right-radius: 8px; border-bottom-right-radius: 8px; height: 44px; padding: 0 14px;">
                         <i class="fas fa-times-circle"></i>
                     </button>
                 </div>

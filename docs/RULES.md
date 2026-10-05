@@ -1,3 +1,10 @@
+# Step-2: Date Schedule
+
+* Step-2: If booking status != completed && Current Date > Booking Date Then Automatic status will be expired. Can not access this date booking in step-4.
+* Step-2: If booking is canceled, then can book same slot again by anyone 
+
+
+
 # Step-4: Discount Offer Rules & Scenarios
 
 This document explains the simple rules and scenarios for using discounts on **Step-4 (Review & Confirm Booking)**.
