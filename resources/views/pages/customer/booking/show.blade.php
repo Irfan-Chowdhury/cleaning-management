@@ -135,6 +135,10 @@
                 <p class="text-muted mt-1 mb-0" style="font-size: 12.5px;">Submitted on {{ $booking->created_at ? $booking->created_at->format('F d, Y \a\t g:i A') : 'N/A' }}</p>
             </div>
             <div class="d-flex align-items-center gap-2">
+                <a href="{{ route('customer.bookings.downloadPdf', $booking->id) }}" class="btn btn-primary font-weight-bold px-3 py-2 mr-2" style="border-radius: 8px; font-size: 13.5px;" target="_blank">
+                    <i class="fas fa-file-pdf mr-1"></i> Download PDF Invoice
+                </a>
+
                 <span class="badge {{ $booking->status_badge_class }} font-weight-bold px-3 py-2 mr-2" style="font-size: 14px; border-radius: 999px;">
                     <i class="fas fa-info-circle mr-1"></i> Status: {{ $booking->status_label }}
                 </span>

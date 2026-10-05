@@ -34,6 +34,22 @@ class BookingController extends Controller
     }
 
     /**
+     * Download booking invoice PDF for customer.
+     */
+    public function downloadPdf(int $id)
+    {
+        $booking = $this->bookingService->getCustomerBookingDetails($id, (int) Auth::id());
+        $setting = \App\Models\Setting::first();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.booking-invoice', compact('booking', 'setting'))
+            ->setPaper('a4', 'portrait');
+
+        $fileName = 'Booking-BK-' . sprintf('%03d', $booking->id) . '.pdf';
+
+        return $pdf->download($fileName);
+    }
+
+    /**
      * Cancel an approved booking by customer and notify admin.
      */
     public function cancel(Booking $booking): JsonResponse
