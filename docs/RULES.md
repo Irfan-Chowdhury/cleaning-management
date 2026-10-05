@@ -1,5 +1,5 @@
 # Full Bookings: /my-bookings, /bookings, /dashboard, /admin-dashboard
-- Check the expire. If Current Date > Booking Date then status will be expired.
+- Check the booking status expire. If Current Date > Booking Date then status will be expired and have to update. Then set the URL (/booking-service/review-confirm?booking={id}) 403 forbidden | "Booking Expired"
 
 
 # Step-2: Date Schedule

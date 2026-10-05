@@ -203,6 +203,7 @@
         <li><a href="#profile_settings" title="Profile Settings">Profile Settings</a></li>
         <li><a href="#admin_dashboard" title="Admin Dashboard">Admin Dashboard</a></li>
         <li><a href="#customer_dashboard" title="Customer Dashboard">Customer Dashboard</a></li>
+        <li><a href="#customer_my_bookings" title="Customer - My Bookings">Customer - My Bookings</a></li>
         <li><a href="#sub_admin_management" title="Sub-Admin Management">Sub-Admin Management</a></li>
         <li><a href="#customer_management" title="Customer Management">Customer Management</a></li>
         <li><a href="#service_catalog" title="Service Catalog">Service Catalog</a></li>
@@ -437,6 +438,70 @@
             <li><strong>Quick Booking Action:</strong> One-click navigation to start a new 4-step cleaning request.</li>
             <li><strong>Wallet & Referral Balance:</strong> Live snapshot of wallet credits and personal referral code.</li>
         </ul>
+    </section>
+
+    <!-- CUSTOMER MY BOOKINGS -->
+    <section id="customer_my_bookings">
+        <div class="page-header">
+            <h3>Customer - My Bookings</h3>
+            <hr class="notop">
+        </div>
+        <p>The <strong>My Bookings</strong> section in the Customer Portal provides customers with a central management hub to view, track, and manage all their cleaning service appointments and order histories.</p>
+
+        <div class="doc-card">
+            <h4>My Bookings Overview & Key Capabilities</h4>
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Page / View</th>
+                        <th>URL Structure</th>
+                        <th>Functionality & Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>All Bookings List</strong></td>
+                        <td><code>/my-bookings</code></td>
+                        <td>Displays the complete list of all past and upcoming cleaning service bookings, status badges, appointment dates, and total prices.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Booking Details View</strong></td>
+                        <td><code>/my-bookings/29</code> (or <code>/my-bookings/{id}</code>)</td>
+                        <td>Displays full service specifications, cleaning address, schedule details, line-item price breakdown, and active checkout actions.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 1. ALL BOOKINGS LIST VIEW -->
+        <div class="doc-card" style="border-left: 4px solid #0866e8; margin-bottom: 25px;">
+            <h4>1. All Bookings List Page</h4>
+            <p>Navigating to <code>/my-bookings</code> displays the complete list of all cleaning bookings placed by the customer:</p>
+            <ul>
+                <li><strong>Booking History Table:</strong> View all service reservations with booking IDs, service package names, scheduled dates, and total amounts.</li>
+                <li><strong>Status Badges:</strong> Track real-time status indicators (<strong>Pending Approval</strong>, <strong>Approved</strong>, <strong>Confirmed</strong>, <strong>Completed</strong>, or <strong>Cancelled</strong>).</li>
+                <li><strong>Action Controls:</strong> Quick links to view details or cancel eligible bookings.</li>
+            </ul>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/oRadfI.jpg" alt="Customer My Bookings List Page" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Customer My Bookings List Page</p>
+            </div>
+        </div>
+
+        <!-- 2. SPECIFIC BOOKING DETAILS VIEW -->
+        <div class="doc-card" style="border-left: 4px solid #0866e8; margin-bottom: 25px;">
+            <h4>2. Specific Booking Details View & Step 4 Checkout</h4>
+            <p>Opening a specific booking record (such as <code>/my-bookings/29</code> or clicking a notification redirect) displays the comprehensive Booking Details page:</p>
+            <ul>
+                <li><strong>Complete Booking Information:</strong> View detailed service package rules, cleaning address, arrival time window, and line-item charges.</li>
+                <li><strong>Step 4 Checkout Access:</strong> Once an administrator approves the booking request, a green <strong>"Step 4"</strong> button becomes active on this page.</li>
+                <li><strong>Proceed to Payment:</strong> Clicking the green button redirects the customer directly to Step 4 checkout to complete payment confirmation.</li>
+            </ul>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/GR5zP3.jpg" alt="Customer Booking Details View with Step 4 Action Button" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Customer Booking Details View with Step 4 Action Button</p>
+            </div>
+        </div>
     </section>
 
     <!-- SUB-ADMIN MANAGEMENT -->
@@ -1066,7 +1131,7 @@
                 <li><strong>Extra Add-Ons:</strong> Option to select extra services like inside oven cleaning, interior window washing, or carpet steaming.</li>
             </ul>
             <div style="text-align: center; margin: 20px 0;">
-                <img src="https://snipboard.io/mj8eX5.jpg" alt="Step 1: Service & Extra Options Selection" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <img src="https://snipboard.io/JiI1Fj.jpg" alt="Step 1: Service & Extra Options Selection" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
                 <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Step 1: Service & Extra Options Selection</p>
             </div>
         </div>
@@ -1123,15 +1188,15 @@
         <!-- CUSTOMER MY BOOKINGS & STEP 4 PROCEED -->
         <div class="doc-card" style="border-left: 4px solid #0866e8; margin-bottom: 25px;">
             <h4>Customer Portal ("My Bookings") & Step 4 Access</h4>
-            <p>Once the administrator approves the request, the customer receives a status update in their <strong>My Bookings</strong> dashboard page:</p>
+            <p>Once the administrator approves a booking request, the customer receives an automated notification alert. Clicking the notification redirects the customer directly to their specific <strong>Booking Details</strong> page (<code>/my-bookings/{id}</code>):</p>
             <ul>
-                <li><strong>Status Update:</strong> Booking badge updates to <strong>Approved</strong>.</li>
-                <li><strong>Proceed to Checkout Option:</strong> A green <strong>"Step 4"</strong> button becomes active for the approved booking row.</li>
-                <li><strong>Step 4 Navigation:</strong> Clicking the button opens the final Step 4 checkout page to lock in the reservation.</li>
+                <li><strong>Status Update Notification:</strong> The customer receives an in-app notification informing them that their booking request has been approved.</li>
+                <li><strong>Direct Detail Page Access:</strong> Clicking the notification redirects directly to the specific booking details view (<code>/my-bookings/{id}</code>) displaying full service details, address, schedule, and itemized costs.</li>
+                <li><strong>Proceed to Step 4 Checkout:</strong> A prominent green <strong>"Step 4"</strong> button becomes active on the booking details page. Clicking this button redirects the customer to the Step 4 checkout screen to complete final payment and confirm their reservation.</li>
             </ul>
             <div style="text-align: center; margin: 20px 0;">
-                <img src="https://snipboard.io/UK01gI.jpg" alt="My Bookings Portal with Step 4 Checkout Action" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">My Bookings Portal with Step 4 Checkout Action</p>
+                <img src="https://snipboard.io/GR5zP3.jpg" alt="Customer Booking Details View with Step 4 Action Button" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Customer Booking Details View with Step 4 Action Button</p>
             </div>
         </div>
 
@@ -1198,6 +1263,23 @@
             <hr class="notop">
         </div>
         <p>Administrative management of customer bookings, lifecycle status transitions, and special operational case scenarios.</p>
+
+        <!-- ADMIN BOOKINGS LIST TABLE -->
+        <div class="doc-card">
+            <h4>Admin Bookings Management Table Overview</h4>
+            <p>Administrators manage all customer service reservations from the central <strong>Bookings</strong> control panel (<code>/bookings</code>). The interface provides real-time search, status filtering, customer information, assigned pricing, and direct status modification controls.</p>
+            <ul>
+                <li><strong>Booking Reference & Customer Details:</strong> Displays booking ID, customer avatar, full name, email address, and direct phone contact.</li>
+                <li><strong>Service Package & Frequency:</strong> Shows the selected cleaning service package and schedule frequency (one-time, weekly, bi-weekly, or monthly).</li>
+                <li><strong>Appointment Schedule:</strong> Displays requested cleaning date and arrival time window.</li>
+                <li><strong>Total Price & Payment Status:</strong> Displays final calculated booking price, discount applied, and payment state.</li>
+                <li><strong>Status Control & Actions:</strong> Instant status change buttons (Approve, Confirm, Complete, Cancel) and detail inspection options.</li>
+            </ul>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://snipboard.io/SIwbQg.jpg" alt="Admin Bookings Management Table Interface" style="max-width: 100%; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <p style="margin-top: 8px; font-size: 13px; color: #667085; font-weight: 600;">Admin Bookings Management Table Interface</p>
+            </div>
+        </div>
 
         <div class="doc-card">
             <h4>Booking Lifecycle States</h4>
@@ -1720,6 +1802,7 @@
         'Profile Settings',
         'Admin Dashboard',
         'Customer Dashboard',
+        'Customer My Bookings',
         'Sub Admin Management',
         'Customer Management',
         'Service Catalog',
@@ -1748,20 +1831,31 @@
             source: substringMatcher(states)
         });
 
-    $('.typeahead').bind('typeahead:select', function (ev, suggestion) {
-        let a = suggestion.toLowerCase();
-        a = a.replace(/\s+/g, "_");
-
-        let target = $('#' + a);
+    function navigateToTab(targetId, updateHistory) {
+        var target = $('#' + targetId);
         if (target.length) {
+            $('#documenter_nav a').removeClass('current');
+            var matchingLink = $('#documenter_nav a[href="#' + targetId + '"]');
+            if (matchingLink.length) {
+                matchingLink.addClass('current');
+            }
             $('html, body').animate({
                 scrollTop: target.offset().top - 80
             }, 300);
-            
-            // Highlight matching sidebar link
-            $('#documenter_nav a').removeClass('current');
-            $('#documenter_nav a[href="#' + a + '"]').addClass('current');
+
+            if (updateHistory !== false) {
+                if (window.history && window.history.pushState) {
+                    window.history.pushState(null, null, '#' + targetId);
+                } else {
+                    window.location.hash = '#' + targetId;
+                }
+            }
         }
+    }
+
+    $('.typeahead').bind('typeahead:select', function (ev, suggestion) {
+        let a = suggestion.toLowerCase().replace(/\s+/g, "_");
+        navigateToTab(a, true);
     });
 
     // Sidebar navigation click handler
@@ -1769,15 +1863,20 @@
         var href = $(this).attr('href');
         if (href && href.startsWith('#')) {
             var targetId = href.substring(1);
-            var target = $('#' + targetId);
-            if (target.length) {
+            if ($('#' + targetId).length) {
                 e.preventDefault();
-                $('#documenter_nav a').removeClass('current');
-                $(this).addClass('current');
-                $('html, body').animate({
-                    scrollTop: target.offset().top - 80
-                }, 300);
+                navigateToTab(targetId, true);
             }
+        }
+    });
+
+    // Handle direct page load or hash change with tab format (/documentation#tab-id)
+    $(document).ready(function() {
+        if (window.location.hash) {
+            var initialHash = window.location.hash.substring(1);
+            setTimeout(function() {
+                navigateToTab(initialHash, false);
+            }, 200);
         }
     });
 </script>
