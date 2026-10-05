@@ -192,7 +192,7 @@ class ReferralService
 
         $referralLink = url('/register?ref=' . $referralCode);
         $setting = Setting::first();
-        $configuredReward = (float) ($setting?->referral_reward > 0 ? $setting->referral_reward : 25.00);
+        $configuredReward = (float) ($setting?->referral_reward > 0 ? $setting->referral_reward : 00.00);
 
         // Fetch bookings where this user's referral code was used
         $referralBookings = Booking::with('user')
@@ -208,6 +208,12 @@ class ReferralService
 
         $pendingReferrals = $referralBookings->filter(function ($b) {
             $status = strtolower((string) ($b->status->value ?? $b->status));
+            $paymentStatus = strtolower((string) ($b->payment_status ?? 'pending'));
+
+            if (in_array($status, ['completed'])) {
+                return $paymentStatus !== 'paid';
+            }
+
             return in_array($status, ['pending', 'confirmed', 'processing', 'approved']);
         })->count();
 
@@ -216,13 +222,13 @@ class ReferralService
             ->where('source', 'referral_bonus')
             ->sum('amount');
 
-        if ($totalRewards == 0) {
-            $completedCount = $referralBookings->filter(function ($b) {
-                $status = strtolower((string) ($b->status->value ?? $b->status));
-                return in_array($status, ['completed', 'rewarded', 'paid']);
-            })->count();
-            $totalRewards = $completedCount * $configuredReward;
-        }
+        // if ($totalRewards == 0) {
+        //     $completedCount = $referralBookings->filter(function ($b) {
+        //         $status = strtolower((string) ($b->status->value ?? $b->status));
+        //         return in_array($status, ['completed', 'rewarded', 'paid']);
+        //     })->count();
+        //     $totalRewards = $completedCount * $configuredReward;
+        // }
 
         // Map referral items for view
         $referrals = $referralBookings->map(function ($booking) use ($configuredReward) {
@@ -235,19 +241,16 @@ class ReferralService
             $avatar = $referredUser?->photo_url ?? "https://ui-avatars.com/api/?name=" . urlencode($name) . "&background=0866e8&color=fff";
             $joinedDate = $referredUser?->created_at ? $referredUser->created_at->format('Y-m-d') : $booking->created_at->format('Y-m-d');
             $statusRaw = strtolower((string) ($booking->status->value ?? $booking->status));
+            $paymentStatusRaw = strtolower((string) ($booking->payment_status ?? 'pending'));
 
-            if (in_array($statusRaw, ['completed', 'rewarded'])) {
+            $status = 'Pending';
+            $rewardAmount = 0.00;
+
+            if ($statusRaw === 'completed' && $paymentStatusRaw === 'paid') {
                 $status = 'Rewarded';
-                $rewardAmount = (float) ($booking->discount_amount > 0 ? $booking->discount_amount : $configuredReward);
-            } elseif (in_array($statusRaw, ['confirmed', 'approved'])) {
-                $status = 'Approved';
-                $rewardAmount = 0.00;
-            } elseif (in_array($statusRaw, ['cancelled', 'rejected'])) {
-                $status = 'Rejected';
-                $rewardAmount = 0.00;
-            } else {
-                $status = 'Pending';
-                $rewardAmount = 0.00;
+                $rewardAmount = (float) (
+                    $booking->discount_amount > 0 ? $booking->discount_amount : $configuredReward
+                );
             }
 
             return (object) [
@@ -256,7 +259,7 @@ class ReferralService
                 'customer_avatar' => $avatar,
                 'joined_date'     => $joinedDate,
                 'status'          => $status,
-                'booking_id'      => '#CL-' . $booking->id,
+                'booking_id'      => '#BK-' . $booking->id,
                 'reward_amount'   => $rewardAmount,
             ];
         });

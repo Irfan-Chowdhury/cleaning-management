@@ -232,7 +232,7 @@
                         <tr>
                             <th>#</th>
                             <th>Referred Customer</th>
-                            <th>Joined Date</th>
+                            <th>Created At</th>
                             <th>Status</th>
                             <th>Booking</th>
                             <th>Reward Amount</th>
