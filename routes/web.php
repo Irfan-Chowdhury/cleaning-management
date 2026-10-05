@@ -88,7 +88,7 @@ Route::middleware('auth')->prefix('booking-service')->group(function () {
     Route::get('/slots-for-date', [BookingServiceController::class, 'slotsForDate'])->name('booking-service.slots-for-date');
     Route::get('/your-details', [BookingServiceController::class, 'yourDetails'])->name('booking-service.your-details');
     Route::post('/step-3', [BookingServiceController::class, 'storeStep3'])->name('booking-service.store-step-3');
-    Route::get('/review-confirm', [BookingServiceController::class, 'reviewConfirm'])->name('booking-service.review-confirm');
+    Route::get('/review-confirm', [BookingServiceController::class, 'step4ReviewConfirm'])->name('booking-service.review-confirm');
     Route::post('/confirm', [BookingServiceController::class, 'confirmBooking'])->name('booking-service.confirm');
     Route::post('/apply-promo', [BookingServiceController::class, 'applyPromo'])->name('booking-service.apply-promo');
     Route::post('/remove-promo', [BookingServiceController::class, 'removePromo'])->name('booking-service.remove-promo');

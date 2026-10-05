@@ -326,7 +326,7 @@ class BookingServiceController extends Controller
             ->with('success', "Booking #{$booking->id} submitted! Status is Pending while Admin reviews.");
     }
 
-    public function reviewConfirm(Request $request)
+    public function step4ReviewConfirm(Request $request)
     {
         $bookingId = $request->query('booking') ?? $request->query('booking_id');
 
@@ -348,6 +348,11 @@ class BookingServiceController extends Controller
         if ((int) auth()->user()->role !== 1 && $booking->user_id != auth()->id()) {
             return redirect()->route('customer.bookings.index')
                 ->with('error', 'You are not authorized to view this booking.');
+        }
+
+        // Check if current date > booking date
+        if ($booking->booking_date && Carbon::today()->greaterThan(Carbon::parse($booking->booking_date)->startOfDay())) {
+            abort(403, 'Booking Expired');
         }
 
         $statusValue = $booking->status instanceof BookingStatus
@@ -442,6 +447,11 @@ class BookingServiceController extends Controller
         $offerCode = $request->input('offer_code');
 
         $booking = Booking::findOrFail($bookingId);
+
+        // // Check if current date > booking date
+        // if ($booking->booking_date && Carbon::today()->greaterThan(Carbon::parse($booking->booking_date)->startOfDay())) {
+        //     abort(403, 'Booking Expired');
+        // }
 
         $this->bookingService->confirmBookingByCustomer($booking, auth()->user(), $walletAmount, $offerType, $offerCode);
 
