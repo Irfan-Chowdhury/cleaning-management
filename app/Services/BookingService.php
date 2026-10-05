@@ -6,6 +6,7 @@ use App\Enums\BookingStatus;
 use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\QuestionOption;
+use App\Models\ServiceQuestion;
 use App\Models\Setting;
 use App\Models\User;
 use App\Models\WalletTransaction;
@@ -36,12 +37,24 @@ class BookingService
 
         // Process questionnaire questions & answers into JSON format
         $answers = [];
-        if (!empty($step1['answers']) && is_array($step1['answers'])) {
-            foreach ($step1['answers'] as $questionId => $val) {
+        $rawAnswers = $step1['answers'] ?? $step1['questions'] ?? [];
+        if (!empty($rawAnswers) && is_array($rawAnswers)) {
+            foreach ($rawAnswers as $questionId => $val) {
                 if ($val === null || $val === '') {
                     continue;
                 }
-                $questionTitle = $step1['question_titles'][$questionId] ?? "Question #{$questionId}";
+
+                $questionTitle = $step1['question_titles'][$questionId] ?? null;
+                if (!$questionTitle && is_numeric($questionId)) {
+                    $qModel = ServiceQuestion::find($questionId);
+                    if ($qModel) {
+                        $questionTitle = $qModel->title;
+                    }
+                }
+                if (!$questionTitle) {
+                    $questionTitle = "Question #{$questionId}";
+                }
+
                 $answerStr = '';
 
                 if (is_array($val)) {
@@ -49,14 +62,12 @@ class BookingService
                     foreach ($val as $subVal) {
                         if (is_numeric($subVal)) {
                             $opt = QuestionOption::find($subVal);
-                            if ($opt) {
-                                $optionLabels[] = $opt->label;
-                            }
+                            $optionLabels[] = $opt ? $opt->label : (string) $subVal;
                         } else {
-                            $optionLabels[] = $subVal;
+                            $optionLabels[] = (string) $subVal;
                         }
                     }
-                    $answerStr = implode(', ', $optionLabels);
+                    $answerStr = implode(', ', array_filter($optionLabels, fn($item) => $item !== ''));
                 } elseif (is_numeric($val)) {
                     $opt = QuestionOption::find($val);
                     $answerStr = $opt ? $opt->label : (string) $val;
@@ -64,7 +75,7 @@ class BookingService
                     $answerStr = (string) $val;
                 }
 
-                if (!empty($answerStr)) {
+                if ($answerStr !== '') {
                     $answers[] = [
                         'question' => $questionTitle,
                         'answer'   => $answerStr,
