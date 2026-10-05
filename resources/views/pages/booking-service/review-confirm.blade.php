@@ -376,18 +376,44 @@
                 }
             });
 
+            function deselectAllOfferOptions() {
+                $('input[name="offer_type"]').prop('checked', false).prop('disabled', false);
+                $('.discount-radio-card').removeClass('active').css({
+                    'opacity': '1',
+                    'pointer-events': 'auto',
+                    'background-color': '#ffffff',
+                    'cursor': 'pointer'
+                });
+
+                $('#wallet-offer-panel').slideUp(200);
+                $('#promo-offer-panel').slideUp(200);
+
+                $('#wallet-amount-input').val('').prop('readonly', false);
+                $('#wallet-feedback-msg').hide().html('');
+                $('#btn-clear-wallet').hide();
+                $('#btn-apply-wallet').show();
+
+                $('#promo-code-input').val('');
+                $('#promo-feedback-msg').hide().text('');
+                if ($('#registered-referral-banner').length) {
+                    $('#registered-referral-banner').remove();
+                }
+                $('#promo-applied-wrapper').hide();
+                $('#promo-input-wrapper').show();
+
+                $('#applied-wallet-amount-hidden').val('0');
+                $('#applied-offer-type-hidden').val('');
+                $('#applied-offer-code-hidden').val('');
+            }
+
             // Clear Wallet Button Handler
             $('#btn-clear-wallet').on('click', function (e) {
                 e.preventDefault();
                 var $card = $('#discount-offer-card');
                 var subtotal = parseFloat($card.attr('data-subtotal')) || 0;
 
-                $('#wallet-amount-input').val('').prop('readonly', false);
-                $('#wallet-feedback-msg').hide().html('');
-                $('#btn-clear-wallet').hide();
-                $('#btn-apply-wallet').show();
+                deselectAllOfferOptions();
                 updateLivePricing(subtotal, 0);
-                setDiscountOptionsLock(false);
             });
 
             // Apply Referral or Promo Code via AJAX
@@ -478,14 +504,8 @@
                             booking_id: bookingId
                         },
                         success: function (res) {
-                            $('#promo-code-input').val('');
-                            $('#promo-feedback-msg').hide().text('');
-                            $('#registered-referral-banner').remove();
-                            $('#promo-applied-wrapper').hide();
-                            $('#promo-input-wrapper').slideDown(200);
-
+                            deselectAllOfferOptions();
                             updateLivePricing(res.subtotal, 0);
-                            setDiscountOptionsLock(false);
 
                             if (typeof Swal !== 'undefined') {
                                 Swal.fire({

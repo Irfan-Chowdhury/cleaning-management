@@ -1,3 +1,7 @@
+# Full Bookings: /my-bookings, /bookings, /dashboard, /admin-dashboard
+- Check the expire. If Current Date > Booking Date then status will be expired.
+
+
 # Step-2: Date Schedule
 
 * Step-2: If booking status != completed && Current Date > Booking Date Then Automatic status will be expired. Can not access this date booking in step-4.
@@ -11,7 +15,7 @@ This document explains the simple rules and scenarios for using discounts on **S
 
 ---
 
-## Scenario 1: Register with Referral Link (Step-4)
+## CASE 1: Register with Referral Link (Step-4)
 
 - **a) Default Auto-Application**:
   - If you registered your account using a referral link, your registered referral code is **automatically applied as a default preview** on Step-4.
@@ -22,7 +26,7 @@ This document explains the simple rules and scenarios for using discounts on **S
 
 ---
 
-## Scenario 2: Using Your Wallet (Step-4)
+## CASE 2: Using Your Wallet (Step-4)
 
 - **Applying Wallet Credit**:
   - You can choose "Use Wallet" to apply your available wallet balance toward your booking price.
@@ -33,11 +37,17 @@ This document explains the simple rules and scenarios for using discounts on **S
 
 ---
 
-## Scenario 3: Using a Promotional Offer Code (Step-4)
+## CASE 3: Using a Promotional Offer Code (Step-4)
 
 - **Applying a Promo Code**:
   - You can choose "Promotional Offer", type in your promo code, and click "Apply" to get a discount.
-  - You can use the code of Promotional Once. Second time can not use the same code. But you can apply for another new code.
+  - You can use the code of Promotional Once. Second time can not use the "Same Code". But you can apply for another new code.
 
-## Senerio - 4: 
+## CASE - 5: 
 To Use Discount Offer, Total Amount of Service > Minimum Booking Amount (Which is come from settings.minimum_booking_amount)
+
+## CASE - 6: Promotional Offer
+1. Check The Offer Expired or Not. 
+
+## CASE - 7 :
+Step-4: When Click on "Clear Wallet Credit" or "Remove Code" for cancel the Wallet/Refferal/Promotional by radio button then all radio button will Deselect.

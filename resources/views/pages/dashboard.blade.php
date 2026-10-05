@@ -231,14 +231,6 @@
                             <span id="referralLink">callthecleaners.com/ref/Jahedul</span>
                             <button type="button" class="btn btn-primary btn-sm copy-referral-btn">Copy</button>
                         </div>
-
-                        <div class="share-via">Share via</div>
-                        <div class="social-buttons">
-                            <a href="#" aria-label="Email"><i class="far fa-envelope" aria-hidden="true"></i></a>
-                            <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
-                            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
-                            <a href="#" aria-label="More"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></a>
-                        </div>
                     </div>
 
                     <div class="referral-subcard">
