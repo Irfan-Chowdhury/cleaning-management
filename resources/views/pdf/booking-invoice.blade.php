@@ -35,8 +35,15 @@
             vertical-align: top;
         }
 
+        .company-logo-img {
+            max-height: 55px;
+            width: auto;
+            margin-bottom: 8px;
+            display: block;
+        }
+
         .company-name {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 800;
             color: #2563eb;
             text-transform: uppercase;
@@ -224,12 +231,30 @@
         $companyPhone = $setting?->phone ?: '+61 (0) 400 000 000';
         $companyAddress = $setting?->address ?: 'Sydney, NSW, Australia';
 
+        // Base64 Logo Encoding
+        $logoPath = null;
+        if (!empty($setting?->company_logo)) {
+            if (file_exists(public_path('assets/images/company_logo/' . $setting->company_logo))) {
+                $logoPath = public_path('assets/images/company_logo/' . $setting->company_logo);
+            } elseif (file_exists(public_path($setting->company_logo))) {
+                $logoPath = public_path($setting->company_logo);
+            }
+        }
+        if (!$logoPath && file_exists(public_path('assets/images/company_logo/brand_logo.png'))) {
+            $logoPath = public_path('assets/images/company_logo/brand_logo.png');
+        }
+
+        $logoBase64 = null;
+        if ($logoPath && file_exists($logoPath)) {
+            $mime = mime_content_type($logoPath) ?: 'image/png';
+            $logoBase64 = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($logoPath));
+        }
+
         $bookingIdFormatted = 'BK-' . sprintf('%03d', $booking->id);
         $bookingDateFormatted = $booking->booking_date ? \Carbon\Carbon::parse($booking->booking_date)->format('d M Y (D)') : 'N/A';
         $bookingTimeFormatted = $booking->start_time
             ? (\Carbon\Carbon::parse($booking->start_time)->format('g:i A') . ($booking->end_time ? ' - ' . \Carbon\Carbon::parse($booking->end_time)->format('g:i A') : ''))
             : 'N/A';
-        $frequencyLabel = ucfirst(str_replace('_', ' ', $booking->frequency ?? 'one_time'));
 
         $subtotal = (float) ($booking->subtotal > 0 ? $booking->subtotal : $booking->total_amount);
         $discountAmount = (float) ($booking->discount_amount ?? 0);
@@ -241,15 +266,17 @@
     @endphp
 
     <div class="invoice-box">
-        <!-- Header -->
+        <!-- Header Table -->
         <table class="header-table">
             <tr>
-                <td>
-                    <div class="company-name">{{ $companyName }}</div>
+                <td style="width: 55%;">
+                    @if (!empty($logoBase64))
+                        <img src="{{ $logoBase64 }}" class="company-logo-img" alt="Company Logo">
+                    @endif
                     <div class="company-sub">{{ $companyAddress }}</div>
                     <div class="company-sub">Phone: {{ $companyPhone }} | Email: {{ $companyEmail }}</div>
                 </td>
-                <td>
+                <td style="width: 45%; text-align: right;">
                     <div class="invoice-title">INVOICE</div>
                     <div class="invoice-meta"><strong>Invoice #:</strong> {{ $bookingIdFormatted }}</div>
                     <div class="invoice-meta"><strong>Date:</strong> {{ $booking->created_at ? $booking->created_at->format('d M Y') : date('d M Y') }}</div>
@@ -286,7 +313,6 @@
                     <div class="section-heading">Service &amp; Schedule</div>
                     <div class="info-list">
                         <p><strong>Service:</strong> {{ $booking->service?->name ?? 'Cleaning Service' }}</p>
-                        <p><strong>Frequency:</strong> {{ $frequencyLabel }}</p>
                         <p><strong>Scheduled Date:</strong> {{ $bookingDateFormatted }}</p>
                         <p><strong>Time Slot:</strong> {{ $bookingTimeFormatted }}</p>
                         <p><strong>Booking Status:</strong> {{ ucfirst($booking->status_label ?? 'Pending') }}</p>
@@ -300,7 +326,6 @@
             <thead>
                 <tr>
                     <th>Description</th>
-                    <th>Frequency</th>
                     <th>Scheduled Time</th>
                     <th style="text-align: right;">Amount</th>
                 </tr>
@@ -313,12 +338,84 @@
                             <br><small style="color: #64748b;">Notes: {{ $booking->special_instructions }}</small>
                         @endif
                     </td>
-                    <td>{{ $frequencyLabel }}</td>
                     <td>{{ $bookingDateFormatted }} ({{ $bookingTimeFormatted }})</td>
                     <td style="text-align: right;">${{ number_format($subtotal, 2) }}</td>
                 </tr>
             </tbody>
         </table>
+
+        <!-- Service Questionnaire Section -->
+        @if (!empty($booking->answers) && is_array($booking->answers))
+            <div style="margin-top: 20px; margin-bottom: 25px;">
+                <div class="section-heading" style="font-size: 12px; font-weight: 700; color: #2563eb; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">
+                    Service Questionnaire &amp; Details
+                </div>
+                <table class="data-table" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%; background-color: #1e293b; color: #ffffff; padding: 8px 12px; font-size: 11px;">Question</th>
+                            <th style="width: 60%; background-color: #1e293b; color: #ffffff; padding: 8px 12px; font-size: 11px;">Answer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($booking->answers as $ans)
+                            @if (!empty($ans['question']) && !empty($ans['answer']))
+                                <tr>
+                                    <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600; font-size: 12px; color: #0f172a;">{{ $ans['question'] }}</td>
+                                    <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; font-size: 12px; color: #334155;">{{ $ans['answer'] }}</td>
+                                </tr>
+                            @endif
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+
+        <!-- Space Photos / Uploaded Images Section -->
+        {{--
+            @if (!empty($booking->images) && $booking->images->count() > 0)
+                <div style="margin-top: 20px; margin-bottom: 25px;">
+                    <div class="section-heading" style="font-size: 12px; font-weight: 700; color: #2563eb; text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">
+                        Space Photos / Uploaded Images ({{ $booking->images->count() }})
+                    </div>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            @foreach ($booking->images as $index => $img)
+                                @php
+                                    $rawImgPath = $img->image_path;
+                                    $fullPath = public_path('public/' . $rawImgPath);
+
+                                    if (!file_exists($fullPath)) {
+                                        $fullPath = public_path($rawImgPath);
+                                    }
+
+                                    $imgBase64 = null;
+
+                                    if (file_exists($fullPath) && is_file($fullPath)) {
+                                        $mime = mime_content_type($fullPath) ?: 'image/jpeg';
+                                        $imgBase64 = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($fullPath));
+                                    }
+                                @endphp
+
+                                @if ($imgBase64)
+                                    <td style="width: 33.33%; padding: 6px; text-align: center; vertical-align: top;">
+                                        <div style="border: 1px solid #cbd5e1; padding: 4px; background: #ffffff; border-radius: 6px;">
+                                            <img src="{{ $imgBase64 }}"
+                                                style="max-width: 100%; max-height: 120px; object-fit: cover; border-radius: 4px;"
+                                                alt="Uploaded Photo">
+                                        </div>
+                                    </td>
+
+                                    @if (($index + 1) % 3 === 0 && !$loop->last)
+                                        </tr><tr>
+                                    @endif
+                                @endif
+                            @endforeach
+                        </tr>
+                    </table>
+                </div>
+            @endif
+        --}}
 
         <!-- Summary & Totals -->
         <div class="summary-wrapper">

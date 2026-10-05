@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\Setting;
 use App\Services\BookingService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
@@ -39,9 +41,9 @@ class BookingController extends Controller
     public function downloadPdf(int $id)
     {
         $booking = $this->bookingService->getCustomerBookingDetails($id, (int) Auth::id());
-        $setting = \App\Models\Setting::first();
+        $setting = Setting::first();
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.booking-invoice', compact('booking', 'setting'))
+        $pdf = Pdf::loadView('pdf.booking-invoice', compact('booking', 'setting'))
             ->setPaper('a4', 'portrait');
 
         $fileName = 'Booking-BK-' . sprintf('%03d', $booking->id) . '.pdf';
