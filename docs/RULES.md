@@ -1,3 +1,11 @@
+## Customer Dashboard (/dashboard)
+
+### Next Cleaning
+
+
+
+
+
 # Full Bookings: /my-bookings, /bookings, /dashboard, /admin-dashboard, /booking-service/review-confirm?booking={id}
 - Check the booking status expire. If Current Date > Booking Date then status will be expired and have to update (Not Implement Yet for Not confirmation) . 
 Then set the URL (/booking-service/review-confirm?booking={id}) 403 forbidden | "Booking Expired"

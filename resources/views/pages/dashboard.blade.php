@@ -23,44 +23,63 @@
 
     <div class="customer-dashboard">
         <section class="dashboard-section dashboard-section-top">
-            <div class="dashboard-card next-cleaning-card">
-                <div class="dashboard-card-header">
-                    <h2 class="section-title">Next Cleaning</h2>
-                    <span class="status-pill status-confirmed">Confirmed</span>
-                </div>
+            @if ($nextCleaning)
+                <div class="dashboard-card next-cleaning-card">
+                    <div class="dashboard-card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <h2 class="section-title mb-0">Next Cleaning</h2>
+                            <span class="ml-2 font-weight-bold" style="font-family: monospace; font-size: 13px; color: #2563eb; background: #eff6ff; padding: 3px 10px; border-radius: 6px; border: 1px solid #dbeafe;">
+                                {{ $nextCleaning->booking_id_formatted }}
+                            </span>
+                        </div>
+                        <span class="status-pill {{ $nextCleaning->status_badge_class }}">
+                            {{ $nextCleaning->status_label }}
+                        </span>
+                    </div>
 
-                <div class="next-cleaning-body">
-                    <img src="https://picsum.photos/seed/cleaning1/400/260" alt="Regular home cleaning service" class="next-cleaning-image">
+                    <div class="next-cleaning-body">
+                        <img src="{{ $nextCleaning->image_url }}" alt="{{ $nextCleaning->service_name }}" class="next-cleaning-image">
 
-                    <div class="next-cleaning-details">
-                        <h3>Regular Home Cleaning</h3>
+                        <div class="next-cleaning-details">
+                            <h3>{{ $nextCleaning->service_name }}</h3>
 
-                        <ul class="cleaning-meta">
-                            <li><i class="far fa-calendar-alt" aria-hidden="true"></i> Fri, 15 Aug 2025</li>
-                            <li><i class="far fa-clock" aria-hidden="true"></i> 09:00 AM - 01:00 PM</li>
-                            <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> 25 King St, Sydney NSW 2000</li>
-                            <li><i class="fas fa-user-check" aria-hidden="true"></i> Cleaner: Sarah Johnson</li>
-                        </ul>
-
-                        <div class="cleaner-rating">
-                            <i class="fas fa-star" aria-hidden="true"></i>
-                            <span>4.9</span>
+                            <ul class="cleaning-meta">
+                                <li><i class="far fa-calendar-alt" aria-hidden="true"></i> {{ $nextCleaning->booking_date_formatted }}</li>
+                                <li><i class="far fa-clock" aria-hidden="true"></i> {{ $nextCleaning->time_slot_formatted }}</li>
+                                <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> {{ $nextCleaning->full_address }}</li>
+                            </ul>
                         </div>
                     </div>
-                </div>
 
-                <div class="next-cleaning-actions">
-                    <a href="#" class="btn btn-primary btn-sm dashboard-action-btn">Manage Booking</a>
-                    <a href="#" class="btn btn-outline-primary btn-sm dashboard-action-btn">Reschedule</a>
-                    <a href="#" class="btn btn-outline-danger btn-sm dashboard-action-btn">Cancel Booking</a>
+                    <div class="next-cleaning-actions">
+                        <a href="{{ $nextCleaning->details_url }}" class="btn btn-primary btn-sm dashboard-action-btn">
+                            <i class="fas fa-eye mr-1"></i> View Details
+                        </a>
+                        @if ($nextCleaning->is_approved)
+                            <a href="{{ $nextCleaning->step4_url }}" class="btn btn-success btn-sm dashboard-action-btn">
+                                <i class="fas fa-calendar-check mr-1"></i> Proceed to Step 4
+                            </a>
+                        @endif
+                    </div>
                 </div>
-            </div>
+            @else
+                <div class="dashboard-card next-cleaning-card p-4 text-center">
+                    <div class="py-3">
+                        <i class="far fa-calendar-check text-primary mb-3" style="font-size: 38px;"></i>
+                        <h3 class="h6 font-weight-bold text-dark mb-1">No Upcoming Cleanings</h3>
+                        <p class="text-muted small mb-3">You don't have any active cleaning sessions scheduled right now.</p>
+                        <a href="{{ route('booking-service.create') }}" class="btn btn-primary btn-sm px-3" style="border-radius: 8px;">
+                            <i class="fas fa-plus mr-1"></i> Book a Cleaning
+                        </a>
+                    </div>
+                </div>
+            @endif
 
             <div class="dashboard-stats-grid">
                 <div class="dashboard-card stat-card">
                     <div class="stat-icon stat-icon-blue"><i class="far fa-calendar-alt" aria-hidden="true"></i></div>
                     <div>
-                        <h2 class="section-title">Upcoming Bookings</h2>
+                        <h2 class="section-title">Upcoming Confirm Bookings</h2>
                         <div class="stat-value">2</div>
                         <p>Bookings</p>
                         <a href="#">View all bookings</a>

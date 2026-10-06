@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="260" viewBox="0 0 400 260" fill="none">
+    <rect width="400" height="260" fill="#f1f5f9"/>
+    <rect x="20" y="20" width="360" height="220" rx="12" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="6 6"/>
+    <g transform="translate(160, 80)">
+        <circle cx="40" cy="40" r="36" fill="#3b82f6" opacity="0.1"/>
+        <path d="M40 16V40M40 40L56 56M40 40L24 56M24 24L56 56" stroke="#2563eb" stroke-width="4" stroke-linecap="round"/>
+        <path d="M20 64H60" stroke="#2563eb" stroke-width="4" stroke-linecap="round"/>
+    </g>
+    <text x="200" y="180" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600" fill="#64748b" text-anchor="middle">Dust2Glow Cleaning Service</text>
+</svg>
