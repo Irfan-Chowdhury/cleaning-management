@@ -1,12 +1,21 @@
 ## Customer Dashboard (/dashboard)
 
 ### Next Cleaning
+- **Business Logic & Conditions**:
+  1. **Active Status Filter**: Selects active bookings where status is `Pending`, `Approved`, `Confirmed`, or `Processing` (excludes `Completed` or `Cancelled` bookings).
+  2. **Upcoming Date & Time Filter**:
+     - Includes bookings scheduled for a **future date** (`booking_date > TODAY`), OR
+     - Includes bookings scheduled for **today** whose start time has not passed yet (`booking_date = TODAY` AND `start_time > CURRENT_TIME`).
+  3. **Sorting**: Sorts by earliest date and time (`booking_date ASC, start_time ASC`) to return the very next upcoming cleaning session.
+  4. **Image Handling**: If space photos are uploaded, displays the 1st photo otherwise, displays the default placeholder image.
+  5. **Actions & Fallback**: Displays the Booking ID (e.g. `BK-01`), service info, formatted date/time slot, address, and a "View Details" link (`/my-bookings/{id}`). If no upcoming session meets the criteria, displays the "No Upcoming Cleanings" empty state card with a "Book a Cleaning" button.
+
+
+<h2 align="center">─────── ✧ END ✧ ───────</h2> <br>
 
 
 
-
-
-# Full Bookings: /my-bookings, /bookings, /dashboard, /admin-dashboard, /booking-service/review-confirm?booking={id}
+### Full Bookings: /my-bookings, /bookings, /dashboard, /admin-dashboard, /booking-service/review-confirm?booking={id}
 - Check the booking status expire. If Current Date > Booking Date then status will be expired and have to update (Not Implement Yet for Not confirmation) . 
 Then set the URL (/booking-service/review-confirm?booking={id}) 403 forbidden | "Booking Expired"
 
