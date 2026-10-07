@@ -10,6 +10,33 @@
   4. **Image Handling**: If space photos are uploaded, displays the 1st photo otherwise, displays the default placeholder image.
   5. **Actions & Fallback**: Displays the Booking ID (e.g. `BK-01`), service info, formatted date/time slot, address, and a "View Details" link (`/my-bookings/{id}`). If no upcoming session meets the criteria, displays the "No Upcoming Cleanings" empty state card with a "Book a Cleaning" button.
 
+### Dashboard Stats (4 Cards)
+
+#### 1. Upcoming Cleanings
+- **Business Logic & Conditions**:
+  1. **Active Status Filter**: Counts bookings where status is `Pending`, `Approved`, `Confirmed`, or `Processing`.
+  2. **Upcoming Date & Time Filter**:
+     - Includes bookings scheduled for a **future date** (`booking_date > TODAY`), OR
+     - Includes bookings scheduled for **today** whose start time has not passed yet (`booking_date = TODAY` AND `start_time > CURRENT_TIME`).
+  3. **Tooltip & Action**: Displays title tooltip `"Total count based on pending, approved, confirmed, and processing bookings."` on the `fas fa-exclamation-circle` icon. Clicking "View all bookings" navigates to `/my-bookings`.
+
+#### 2. Total Completed Bookings
+- **Business Logic & Conditions**:
+  1. **Completion & Payment Filter**: Counts bookings where booking status is `Completed` (`status = 'completed'`) AND payment status is `Paid` (`payment_status = 'paid'`).
+  2. **Tooltip & Action**: Displays title tooltip `"Total count based on completed bookings with paid payment status."` on the `fas fa-exclamation-circle` icon. Clicking "View history" navigates to `/my-bookings`.
+
+#### 3. Remaining Credits
+- **Business Logic & Conditions**:
+  1. **Wallet Balance Calculation**: Calculates total available credit balance by subtracting total wallet debits from total wallet credits (`sum(credit) - sum(debit)`).
+  2. **Format**: Formatted as currency string (e.g. `$25.00`).
+  3. **Tooltip & Action**: Displays title tooltip `"Available wallet credit balance for future bookings."` on the `fas fa-exclamation-circle` icon. Clicking "View details" navigates to `/my-wallet`.
+
+#### 4. Total Spent
+- **Business Logic & Conditions**:
+  1. **Spending Filter**: Sums the total amount (`total_amount`) where booking status is `Completed` (`status = 'completed'`) AND payment status is `Paid` (`payment_status = 'paid'`).
+  2. **Format**: Formatted as currency string (e.g. `$150.00`).
+  3. **Tooltip & Action**: Displays title tooltip `"Total amount spent on completed bookings with paid payment status."` on the `fas fa-exclamation-circle` icon. Clicking "View invoices" navigates to `/my-bookings`.
+
 
 <h2 align="center">─────── ✧ END ✧ ───────</h2> <br>
 

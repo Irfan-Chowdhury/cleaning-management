@@ -32,7 +32,7 @@
                                 {{ $nextCleaning->booking_id_formatted }}
                             </span>
                         </div>
-                        <span class="status-pill {{ $nextCleaning->status_badge_class }}">
+                        <span class="badge {{ $nextCleaning->status_badge_class }}" style="padding: 6px 12px; font-weight: 700; border-radius: 999px;">
                             {{ $nextCleaning->status_label }}
                         </span>
                     </div>

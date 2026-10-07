@@ -99,12 +99,7 @@ class CustomerDashboardService
             $booking->full_address = !empty($fullAddress) ? $fullAddress : 'Address not specified';
             $booking->status_raw = strtolower($statusVal);
             $booking->status_label = $statusEnum->label();
-            $booking->status_badge_class = match (strtolower($statusVal)) {
-                'confirmed'  => 'status-confirmed',
-                'approved'   => 'status-approved',
-                'processing' => 'status-processing',
-                default      => 'status-pending',
-            };
+            $booking->status_badge_class = $statusEnum->badgeClass() . ($statusEnum === BookingStatus::PENDING ? ' text-dark' : '');
             $booking->details_url = route('customer.bookings.show', $booking->id);
             $booking->is_approved = (strtolower($statusVal) === 'approved');
             $booking->step4_url = route('booking-service.review-confirm', ['booking' => $booking->id]);
