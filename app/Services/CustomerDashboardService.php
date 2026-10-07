@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\BookingStatus;
 use App\Models\Booking;
+use App\Models\WalletTransaction;
 use Carbon\Carbon;
 
 class CustomerDashboardService
@@ -56,7 +57,6 @@ class CustomerDashboardService
             ->orderBy('booking_date', 'asc')
             ->orderBy('start_time', 'asc')
             ->first();
-
 
         // -------------------------------------------------------------------------
         // 2. Presentation Data Preparation Block:
@@ -111,5 +111,76 @@ class CustomerDashboardService
         }
 
         return $booking;
+    }
+
+    /**
+     * Calculate and format customer dashboard stat card metrics.
+     *
+     * @param int $userId ID of the logged-in customer
+     * @return object Formatted metrics object with pre-computed counts, values, tooltips, and URLs
+     */
+    public function getDashboardStats(int $userId): object
+    {
+        $now = Carbon::now();
+        $todayDate = $now->format('Y-m-d');
+        $currentTime = $now->format('H:i:s');
+        // dd($currentTime);
+
+        $activeStatuses = [
+            BookingStatus::PENDING,
+            BookingStatus::APPROVED,
+            BookingStatus::CONFIRMED,
+            BookingStatus::PROCESSING,
+        ];
+
+        // 1. Upcoming active bookings count (pending, approved, confirmed, processing)
+        $upcomingCount = Booking::where('user_id', $userId)
+            ->whereIn('status', $activeStatuses)
+            ->where(function ($query) use ($todayDate, $currentTime) {
+                $query->where('booking_date', '>', $todayDate)
+                      ->orWhere(function ($qToday) use ($todayDate, $currentTime) {
+                          $qToday->where('booking_date', '=', $todayDate)
+                                 ->where('start_time', '>', $currentTime);
+                      });
+            })
+            ->count();
+
+        // 2. Total Completed Bookings count (status = 'completed' AND payment_status = 'paid')
+        $completedCount = Booking::where('user_id', $userId)
+            ->where('status', BookingStatus::COMPLETED->value)
+            ->where('payment_status', 'paid')
+            ->count();
+
+        // 3. Remaining Credits (Available Wallet Balance: Credits minus Debits)
+        $walletTxs = WalletTransaction::where('user_id', $userId)->get();
+        $credits = (float) $walletTxs->where('type', 'credit')->sum('amount');
+        $debits  = (float) $walletTxs->where('type', 'debit')->sum('amount');
+        $remainingCredits = max(0.00, $credits - $debits);
+
+        // 4. Total Spent (status = 'completed' AND payment_status = 'paid')
+        $totalSpent = (float) Booking::where('user_id', $userId)
+            ->where('status', BookingStatus::COMPLETED->value)
+            ->where('payment_status', 'paid')
+            ->sum('total_amount');
+
+        return (object) [
+            'upcoming_count'              => $upcomingCount,
+            'upcoming_tooltip'            => 'Total count based on pending, approved, confirmed, and processing bookings.',
+            'upcoming_url'                => route('customer.bookings.index'),
+
+            'completed_count'             => $completedCount,
+            'completed_tooltip'           => 'Total count based on completed bookings with paid payment status.',
+            'completed_url'               => route('customer.bookings.index'),
+
+            'remaining_credits'           => $remainingCredits,
+            'remaining_credits_formatted' => '$' . number_format($remainingCredits, 2),
+            'remaining_credits_tooltip'   => 'Available wallet credit balance for future bookings.',
+            'remaining_credits_url'       => route('customer.wallet.index'),
+
+            'total_spent'                 => $totalSpent,
+            'total_spent_formatted'       => '$' . number_format($totalSpent, 2),
+            'total_spent_tooltip'         => 'Total amount spent on completed bookings with paid payment status.',
+            'total_spent_url'             => route('customer.bookings.index'),
+        ];
     }
 }

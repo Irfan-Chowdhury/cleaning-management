@@ -76,43 +76,79 @@
             @endif
 
             <div class="dashboard-stats-grid">
+                <!-- Card 1: Upcoming Cleanings -->
                 <div class="dashboard-card stat-card">
                     <div class="stat-icon stat-icon-blue"><i class="far fa-calendar-alt" aria-hidden="true"></i></div>
                     <div>
-                        <h2 class="section-title">Upcoming Confirm Bookings</h2>
-                        <div class="stat-value">2</div>
+                        <div class="d-flex align-items-center mb-1">
+                            <h2 class="section-title mb-0">Upcoming Cleanings</h2>
+                            <i class="fas fa-exclamation-circle text-muted ml-2" 
+                               data-toggle="tooltip" 
+                               data-placement="top" 
+                               title="{{ $stats->upcoming_tooltip }}" 
+                               style="font-size: 13px; cursor: pointer;" 
+                               aria-hidden="true"></i>
+                        </div>
+                        <div class="stat-value">{{ $stats->upcoming_count }}</div>
                         <p>Bookings</p>
-                        <a href="#">View all bookings</a>
+                        <a href="{{ $stats->upcoming_url }}">View all bookings</a>
                     </div>
                 </div>
 
+                <!-- Card 2: Total Completed Bookings -->
                 <div class="dashboard-card stat-card">
-                    <div class="stat-icon stat-icon-green"><i class="fas fa-shopping-bag" aria-hidden="true"></i></div>
+                    <div class="stat-icon stat-icon-green"><i class="fas fa-check-double" aria-hidden="true"></i></div>
                     <div>
-                        <h2 class="section-title">Lifetime Bookings</h2>
-                        <div class="stat-value">18</div>
-                        <p>Total Bookings</p>
-                        <a href="#">View history</a>
+                        <div class="d-flex align-items-center mb-1">
+                            <h2 class="section-title mb-0">Total Completed Bookings</h2>
+                            <i class="fas fa-exclamation-circle text-muted ml-2" 
+                               data-toggle="tooltip" 
+                               data-placement="top" 
+                               title="{{ $stats->completed_tooltip }}" 
+                               style="font-size: 13px; cursor: pointer;" 
+                               aria-hidden="true"></i>
+                        </div>
+                        <div class="stat-value">{{ $stats->completed_count }}</div>
+                        <p>Completed Bookings</p>
+                        <a href="{{ $stats->completed_url }}">View history</a>
                     </div>
                 </div>
 
+                <!-- Card 3: Remaining Credits -->
                 <div class="dashboard-card stat-card">
                     <div class="stat-icon stat-icon-yellow"><i class="far fa-star" aria-hidden="true"></i></div>
                     <div>
-                        <h2 class="section-title">Earned Credits</h2>
-                        <div class="stat-value">$45.00</div>
+                        <div class="d-flex align-items-center mb-1">
+                            <h2 class="section-title mb-0">Remaining Credits</h2>
+                            <i class="fas fa-exclamation-circle text-muted ml-2" 
+                               data-toggle="tooltip" 
+                               data-placement="top" 
+                               title="{{ $stats->remaining_credits_tooltip }}" 
+                               style="font-size: 13px; cursor: pointer;" 
+                               aria-hidden="true"></i>
+                        </div>
+                        <div class="stat-value">{{ $stats->remaining_credits_formatted }}</div>
                         <p>Available Credits</p>
-                        <a href="#">View details</a>
+                        <a href="{{ $stats->remaining_credits_url }}">View details</a>
                     </div>
                 </div>
 
+                <!-- Card 4: Total Spent -->
                 <div class="dashboard-card stat-card">
                     <div class="stat-icon stat-icon-purple"><i class="fas fa-wallet" aria-hidden="true"></i></div>
                     <div>
-                        <h2 class="section-title">Total Spent</h2>
-                        <div class="stat-value">$1,260.00</div>
+                        <div class="d-flex align-items-center mb-1">
+                            <h2 class="section-title mb-0">Total Spent</h2>
+                            <i class="fas fa-exclamation-circle text-muted ml-2" 
+                               data-toggle="tooltip" 
+                               data-placement="top" 
+                               title="{{ $stats->total_spent_tooltip }}" 
+                               style="font-size: 13px; cursor: pointer;" 
+                               aria-hidden="true"></i>
+                        </div>
+                        <div class="stat-value">{{ $stats->total_spent_formatted }}</div>
                         <p>Total Spent</p>
-                        <a href="#">View invoices</a>
+                        <a href="{{ $stats->total_spent_url }}">View invoices</a>
                     </div>
                 </div>
             </div>

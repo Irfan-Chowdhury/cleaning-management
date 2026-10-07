@@ -16,7 +16,8 @@ class DashboardController extends Controller
     {
         $userId = (int) Auth::id();
         $nextCleaning = $this->dashboardService->getNextCleaning($userId);
+        $stats = $this->dashboardService->getDashboardStats($userId);
 
-        return view('pages.dashboard', compact('nextCleaning'));
+        return view('pages.dashboard', compact('nextCleaning', 'stats'));
     }
 }
