@@ -815,3 +815,44 @@
         flex: 1 1 120px;
     }
 }
+
+/* =========================================
+   Stat Cards Tooltip Styling
+========================================= */
+.stat-card > div:last-child {
+    flex: 1;
+    min-width: 0;
+}
+
+.stat-tooltip-icon {
+    font-size: 13.5px;
+    color: #9ca3af;
+    cursor: pointer;
+    margin-left: auto;
+    transition: color 0.2s ease, transform 0.2s ease;
+    vertical-align: middle;
+}
+
+.stat-tooltip-icon:hover {
+    color: #c68a00;
+    transform: scale(1.15);
+}
+
+/* Professional Custom Bootstrap Tooltip */
+.tooltip .tooltip-inner {
+    background-color: #0f172a;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.45;
+    padding: 7px 12px;
+    border-radius: 6px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18);
+    max-width: 250px;
+    text-align: center;
+}
+
+.tooltip.bs-tooltip-top .arrow::before,
+.tooltip.bs-tooltip-auto[x-placement^="top"] .arrow::before {
+    border-top-color: #0f172a;
+}

@@ -82,11 +82,10 @@
                     <div>
                         <div class="d-flex align-items-center mb-1">
                             <h2 class="section-title mb-0">Upcoming Cleanings</h2>
-                            <i class="fas fa-exclamation-circle text-muted ml-2" 
+                            <i class="fas fa-exclamation-circle stat-tooltip-icon" 
                                data-toggle="tooltip" 
                                data-placement="top" 
                                title="{{ $stats->upcoming_tooltip }}" 
-                               style="font-size: 13px; cursor: pointer;" 
                                aria-hidden="true"></i>
                         </div>
                         <div class="stat-value">{{ $stats->upcoming_count }}</div>
@@ -101,11 +100,10 @@
                     <div>
                         <div class="d-flex align-items-center mb-1">
                             <h2 class="section-title mb-0">Total Completed Bookings</h2>
-                            <i class="fas fa-exclamation-circle text-muted ml-2" 
+                            <i class="fas fa-exclamation-circle stat-tooltip-icon" 
                                data-toggle="tooltip" 
                                data-placement="top" 
                                title="{{ $stats->completed_tooltip }}" 
-                               style="font-size: 13px; cursor: pointer;" 
                                aria-hidden="true"></i>
                         </div>
                         <div class="stat-value">{{ $stats->completed_count }}</div>
@@ -120,11 +118,10 @@
                     <div>
                         <div class="d-flex align-items-center mb-1">
                             <h2 class="section-title mb-0">Remaining Credits</h2>
-                            <i class="fas fa-exclamation-circle text-muted ml-2" 
+                            <i class="fas fa-exclamation-circle stat-tooltip-icon" 
                                data-toggle="tooltip" 
                                data-placement="top" 
                                title="{{ $stats->remaining_credits_tooltip }}" 
-                               style="font-size: 13px; cursor: pointer;" 
                                aria-hidden="true"></i>
                         </div>
                         <div class="stat-value">{{ $stats->remaining_credits_formatted }}</div>
@@ -139,11 +136,10 @@
                     <div>
                         <div class="d-flex align-items-center mb-1">
                             <h2 class="section-title mb-0">Total Spent</h2>
-                            <i class="fas fa-exclamation-circle text-muted ml-2" 
+                            <i class="fas fa-exclamation-circle stat-tooltip-icon" 
                                data-toggle="tooltip" 
                                data-placement="top" 
                                title="{{ $stats->total_spent_tooltip }}" 
-                               style="font-size: 13px; cursor: pointer;" 
                                aria-hidden="true"></i>
                         </div>
                         <div class="stat-value">{{ $stats->total_spent_formatted }}</div>
@@ -344,4 +340,9 @@
 
 @push('scripts')
     <script src="{{ asset('public/assets/js/dashboard.js') }}"></script>
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
 @endpush
