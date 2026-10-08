@@ -37,6 +37,16 @@
   2. **Format**: Formatted as currency string (e.g. `$150.00`).
   3. **Tooltip & Action**: Displays title tooltip `"Total amount spent on completed bookings with paid payment status."` on the `fas fa-exclamation-circle` icon. Clicking "View invoices" navigates to `/my-bookings`.
 
+### Recent Bookings
+- **Business Logic & Conditions**:
+  1. **Query Limit & Ordering**: Fetches the 3 most recent bookings for the logged-in customer ordered by ID (`id DESC`).
+  2. **Formatted Fields**:
+     - Pre-formats booking image (uploaded primary photo or default placeholder SVG).
+     - Formats service name, booking date (`d M Y`), time slot (`g:i A`), and total amount.
+     - Resolves status label and status color indicator (`Completed`, `Confirmed`, `Approved`, `Processing`, `Pending`, `Cancelled`).
+  3. **Actions**: Single "View Details" button linking directly to the booking detail page (`/my-bookings/{id}`). Header "View all" link navigates to `/my-bookings`.
+  4. **Fallback**: If no bookings exist, displays a clean empty state message.
+
 
 <h2 align="center">─────── ✧ END ✧ ───────</h2> <br>
 

@@ -15,9 +15,9 @@
                 <h1>Services</h1>
                 <p>Manage cleaning services, pricing, duration and availability status.</p>
             </div>
-            <button type="button" class="btn btn-primary services-primary-btn js-service-add" data-toggle="modal" data-target="#service-form-modal" data-action="{{ route('services.store') }}">
+            <!-- <button type="button" class="btn btn-primary services-primary-btn js-service-add" data-toggle="modal" data-target="#service-form-modal" data-action="{{ route('services.store') }}">
                 <i class="fas fa-plus" aria-hidden="true"></i> Add Service
-            </button>
+            </button> -->
         </div>
 
         <div class="services-table-card">

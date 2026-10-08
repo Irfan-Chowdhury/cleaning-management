@@ -178,4 +178,68 @@ class CustomerDashboardService
             'total_spent_url'             => route('customer.bookings.index'),
         ];
     }
+
+    /**
+     * Get the latest recent bookings for the logged-in customer's dashboard.
+     *
+     * @param int $userId ID of the logged-in customer
+     * @param int $limit Number of recent records to return
+     * @return \Illuminate\Support\Collection Formatted collection of recent bookings
+     */
+    public function getRecentBookings(int $userId, int $limit = 3): \Illuminate\Support\Collection
+    {
+        $bookings = Booking::with(['service', 'images'])
+            ->where('user_id', $userId)
+            ->orderBy('id', 'desc')
+            ->take($limit)
+            ->get();
+
+        return $bookings->map(function ($booking) {
+            $statusVal = $booking->status instanceof BookingStatus ? $booking->status->value : (string) $booking->status;
+            $statusEnum = BookingStatus::tryFrom(strtolower($statusVal)) ?? BookingStatus::PENDING;
+
+            // Resolve 1st image URL
+            $firstImage = $booking->images?->first();
+            $imgPath = $firstImage?->image_path;
+            if (!empty($imgPath)) {
+                $imageUrl = str_starts_with($imgPath, 'public/') ? asset($imgPath) : asset('public/' . $imgPath);
+            } else {
+                $imageUrl = asset('public/assets/images/default-cleaning-placeholder.svg');
+            }
+
+            $statusClass = match (strtolower($statusVal)) {
+                'completed'  => 'status-completed',
+                'confirmed'  => 'status-confirmed',
+                'approved'   => 'status-approved',
+                'processing' => 'status-processing',
+                'cancelled'  => 'status-cancelled',
+                default      => 'status-pending',
+            };
+
+            $statusIcon = match (strtolower($statusVal)) {
+                'completed', 'confirmed', 'approved' => 'fas fa-check-circle',
+                'processing' => 'fas fa-spinner',
+                'cancelled'  => 'fas fa-times-circle',
+                default      => 'fas fa-clock',
+            };
+
+            return (object) [
+                'id'                     => $booking->id,
+                'booking_id_formatted' => 'BK-' . sprintf('%02d', $booking->id),
+                'service_name'           => $booking->service?->name ?? 'Cleaning Service',
+                'booking_date_formatted' => $booking->booking_date
+                    ? Carbon::parse($booking->booking_date)->format('j M Y')
+                    : 'Date pending',
+                'time_slot_formatted'    => $booking->start_time
+                    ? Carbon::parse($booking->start_time)->format('g:i A')
+                    : '09:00 AM',
+                'total_amount_formatted' => '$' . number_format((float) $booking->total_amount, 2),
+                'status_label'           => $statusEnum->label(),
+                'status_class'           => $statusClass,
+                'status_icon'            => $statusIcon,
+                'image_url'              => $imageUrl,
+                'details_url'            => route('customer.bookings.show', $booking->id),
+            ];
+        });
+    }
 }

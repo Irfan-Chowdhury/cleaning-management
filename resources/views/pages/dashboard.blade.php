@@ -154,50 +154,37 @@
             <div class="dashboard-card recent-bookings-card">
                 <div class="dashboard-card-header">
                     <h2 class="section-title">Recent Bookings</h2>
-                    <a href="#" class="card-link">View all</a>
+                    <a href="{{ route('customer.bookings.index') }}" class="card-link">View all</a>
                 </div>
 
-                <div class="booking-row">
-                    <img src="https://picsum.photos/seed/cleaning2/120/90" alt="House cleaning" class="booking-thumb">
-                    <div class="booking-info">
-                        <h3>House Cleaning</h3>
-                        <p>1 Aug 2025 &bull; 09:00 AM</p>
-                        <span class="booking-price">$180.00</span>
+                @forelse ($recentBookings as $booking)
+                    <div class="booking-row">
+                        <img src="{{ $booking->image_url }}" alt="{{ $booking->service_name }}" class="booking-thumb">
+                        <div class="booking-info">
+                            <div class="d-flex align-items-center mb-1 flex-wrap" style="gap: 6px;">
+                                <h3 class="mb-0">{{ $booking->service_name }}</h3>
+                                <span class="font-weight-bold" style="font-family: monospace; font-size: 11.5px; color: #0866e8; background: #f0f6fe; padding: 2px 7px; border-radius: 5px; border: 1px solid #dbeafe;">
+                                    {{ $booking->booking_id_formatted }}
+                                </span>
+                            </div>
+                            <p>{{ $booking->booking_date_formatted }} &bull; {{ $booking->time_slot_formatted }}</p>
+                            <span class="booking-price">{{ $booking->total_amount_formatted }}</span>
+                        </div>
+                        <div class="booking-status {{ $booking->status_class }}">
+                            <i class="{{ $booking->status_icon }}" aria-hidden="true"></i> {{ $booking->status_label }}
+                        </div>
+                        <div class="booking-actions">
+                            <a href="{{ $booking->details_url }}" class="btn btn-outline-primary btn-sm booking-btn">
+                                View Details
+                            </a>
+                        </div>
                     </div>
-                    <div class="booking-status status-completed"><i class="fas fa-check-circle" aria-hidden="true"></i> Completed</div>
-                    <div class="booking-actions">
-                        <a href="#" class="btn btn-outline-primary btn-sm booking-btn">Invoice</a>
-                        <a href="#" class="btn btn-primary btn-sm booking-btn">Book Again</a>
+                @empty
+                    <div class="text-center py-4">
+                        <i class="far fa-calendar-times text-muted mb-2" style="font-size: 28px;"></i>
+                        <p class="text-muted small mb-0">No recent bookings found.</p>
                     </div>
-                </div>
-
-                <div class="booking-row">
-                    <img src="https://picsum.photos/seed/cleaning3/120/90" alt="Deep cleaning" class="booking-thumb">
-                    <div class="booking-info">
-                        <h3>Deep Cleaning</h3>
-                        <p>15 Jul 2025 &bull; 09:00 AM</p>
-                        <span class="booking-price">$260.00</span>
-                    </div>
-                    <div class="booking-status status-completed"><i class="fas fa-check-circle" aria-hidden="true"></i> Completed</div>
-                    <div class="booking-actions">
-                        <a href="#" class="btn btn-outline-primary btn-sm booking-btn">Invoice</a>
-                        <a href="#" class="btn btn-primary btn-sm booking-btn">Book Again</a>
-                    </div>
-                </div>
-
-                <div class="booking-row">
-                    <img src="https://picsum.photos/seed/cleaning4/120/90" alt="End of lease cleaning" class="booking-thumb">
-                    <div class="booking-info">
-                        <h3>End of Lease Cleaning</h3>
-                        <p>2 Jul 2025 &bull; 09:00 AM</p>
-                        <span class="booking-price">$320.00</span>
-                    </div>
-                    <div class="booking-status status-cancelled"><i class="fas fa-times-circle" aria-hidden="true"></i> Cancelled</div>
-                    <div class="booking-actions">
-                        <a href="#" class="btn btn-outline-primary btn-sm booking-btn">Invoice</a>
-                        <a href="#" class="btn btn-primary btn-sm booking-btn">Book Again</a>
-                    </div>
-                </div>
+                @endforelse
             </div>
 
             <div class="dashboard-card quick-book-card">
