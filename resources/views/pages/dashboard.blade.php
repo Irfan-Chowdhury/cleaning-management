@@ -235,6 +235,21 @@
             <div class="dashboard-card referral-card">
                 <h2 class="section-title">Referral Program</h2>
 
+                @if (!$referralData->has_completed_paid_booking)
+                    <div class="mt-2 alert alert-info border-0 shadow-sm rounded-lg mb-3 p-3" style="background-color: #eff6ff; color: #1e40af; border-left: 4px solid #0866e8 !important;">
+                        <div class="d-flex align-items-center">
+                            <div class="mr-3 text-primary" style="font-size: 22px;">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <div>
+                                <span class="small text-muted" style="font-size: 13px;">
+                                    <strong>Note:</strong> The referral link will become visible and you will be able to send email invitations after successfully completing at least one paid booking.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <div class="referral-grid">
                     <div class="referral-subcard">
                         <h3>Share Your Referral Link</h3>
@@ -248,13 +263,6 @@
                                 <button type="button" class="btn btn-secondary btn-sm copy-referral-btn" disabled style="cursor: not-allowed; opacity: 0.65;">Copy</button>
                             @endif
                         </div>
-
-                        @if (!$referralData->has_completed_paid_booking)
-                            <div class="mt-2 text-primary font-weight-bold" style="font-size: 12px; color: #0866e8 !important;">
-                                <i class="fas fa-exclamation-circle mr-1" aria-hidden="true"></i>
-                                Referral link will be visible after successfully completing at least one booking with payment done.
-                            </div>
-                        @endif
                     </div>
 
                     <div class="referral-subcard">
@@ -300,10 +308,6 @@
                                 <button type="button" class="btn btn-secondary btn-block send-invite-btn" disabled style="cursor: not-allowed; opacity: 0.65;">
                                     <i class="fas fa-paper-plane mr-1" aria-hidden="true"></i> Send Invitation
                                 </button>
-                                <div class="mt-2 text-primary font-weight-bold" style="font-size: 12px; color: #0866e8 !important;">
-                                    <i class="fas fa-exclamation-circle mr-1" aria-hidden="true"></i>
-                                    You will be able to send email invitations after completing at least one booking with payment done.
-                                </div>
                             @endif
                         </form>
                     </div>

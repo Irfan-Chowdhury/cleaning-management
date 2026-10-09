@@ -340,11 +340,7 @@ class CustomerDashboardService
             ->exists();
 
         $referralCode = $user?->referral_code;
-        // if (empty($referralCode) && $user) {
-        //     $referralCode = strtoupper(($user->first_name ?: 'REF') . $user->id);
-        //     $user->update(['referral_code' => $referralCode]);
-        // }
-
+        
         $referralLink = $hasCompletedPaidBooking ? url('/register?ref=' . $referralCode) : '';
 
         return (object) [
