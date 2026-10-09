@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreCustomerRequest;
 use App\Http\Requests\Admin\UpdateCustomerRequest;
+use App\Models\Booking;
 use App\Models\User;
+use App\Models\WalletTransaction;
 use App\Services\CustomerService;
 use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\Facades\DataTables;
@@ -73,12 +75,32 @@ class CustomerController extends Controller
             ->addColumn('contact', fn (User $customer) => e($customer->phone ?: '-'))
             ->addColumn('referral', fn (User $customer) => $this->referralColumn($customer))
             ->addColumn('is_active_badge', fn (User $customer) => $this->activeColumn($customer))
-            ->addColumn('bookings_count', fn () => 0)
-            ->addColumn('wallet_balance', fn () => '$0.00')
+            ->addColumn('bookings_count', fn (User $customer) => $this->getCompletedPaidBookingsCount($customer))
+            ->addColumn('wallet_balance', fn (User $customer) => $this->getRemainingCredit($customer))
             ->addColumn('referred_count', fn () => 0)
             ->addColumn('action', fn (User $customer) => $this->actionColumn($customer))
             ->rawColumns(['customer', 'referral', 'is_active_badge', 'action'])
             ->toJson();
+    }
+
+    private function getCompletedPaidBookingsCount(User $customer): int
+    {
+        return Booking::where('user_id', $customer->id)
+            ->where(function ($q) {
+                $q->where('status', 'completed')
+                  ->orWhere('status', \App\Enums\BookingStatus::COMPLETED);
+            })
+            ->where('payment_status', 'paid')
+            ->count();
+    }
+
+    private function getRemainingCredit(User $customer): string
+    {
+        $credits = (float) WalletTransaction::where('user_id', $customer->id)->where('type', 'credit')->sum('amount');
+        $debits  = (float) WalletTransaction::where('user_id', $customer->id)->where('type', 'debit')->sum('amount');
+        $remaining = max(0, $credits - $debits);
+
+        return '$' . number_format($remaining, 2);
     }
 
     private function customerColumn(User $customer): string
