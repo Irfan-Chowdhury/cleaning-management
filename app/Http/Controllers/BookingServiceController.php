@@ -323,7 +323,8 @@ class BookingServiceController extends Controller
         $targetRoute = (int) $user->role === 1 ? 'bookings.index' : 'customer.bookings.index';
 
         return redirect()->route($targetRoute)
-            ->with('success', "Booking #{$booking->id} submitted! Status is Pending while Admin reviews.");
+            // ->with('success', "Booking #{$booking->id} submitted! Status is Pending while Admin reviews.");
+            ->with('success', "Quote Request #{$booking->id} Received submitted! We’ll call you with the final price for your review and confirmation.");
     }
 
     public function step4ReviewConfirm(Request $request)

@@ -157,12 +157,13 @@
                             <div class="booking-counter"><span id="special-instructions-count">0</span> / 250</div>
                         </div>
 
+                        <small><i class="fas fa-exclamation-circle mr-1" style="color: #ffc107;" aria-hidden="true"></i>Once you submit your request, our team will call you to discuss the details and provide your final price before you confirm the booking.</small>
                         <div class="booking-step-actions">
                             <a href="{{ route('booking-service.date-time') }}" class="btn btn-outline-primary">
                                 <i class="fas fa-arrow-left" aria-hidden="true"></i> Back to Date &amp; Time
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                Submit Booking <i class="fas fa-paper-plane" aria-hidden="true"></i>
+                                Request a Quote <i class="fas fa-paper-plane" aria-hidden="true"></i>
                             </button>
                         </div>
                     </form>
