@@ -188,36 +188,30 @@
             </div>
 
             <div class="dashboard-card quick-book-card">
-                <h2 class="section-title">Quick Book Again</h2>
+                <div class="d-flex align-items-center mb-2">
+                    <h2 class="section-title mb-0">Quick Book Again</h2>
+                    <!-- <i class="fas fa-exclamation-circle stat-tooltip-icon" 
+                       data-toggle="tooltip" 
+                       data-placement="top" 
+                       title="Top 5 most booked services based on your completed bookings." 
+                       aria-hidden="true"></i> -->
+                </div>
 
-                <a href="#" class="service-row service-blue">
-                    <span class="service-icon"><i class="fas fa-home" aria-hidden="true"></i></span>
-                    <span>Regular Home Cleaning</span>
-                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                </a>
-                <a href="#" class="service-row service-green">
-                    <span class="service-icon"><i class="fas fa-broom" aria-hidden="true"></i></span>
-                    <span>Deep Cleaning</span>
-                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                </a>
-                <a href="#" class="service-row service-purple">
-                    <span class="service-icon"><i class="fas fa-key" aria-hidden="true"></i></span>
-                    <span>End of Lease Cleaning</span>
-                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                </a>
-                <a href="#" class="service-row service-orange">
-                    <span class="service-icon"><i class="fas fa-building" aria-hidden="true"></i></span>
-                    <span>Office Cleaning</span>
-                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                </a>
-                <a href="#" class="service-row service-cyan">
-                    <span class="service-icon"><i class="far fa-window-maximize" aria-hidden="true"></i></span>
-                    <span>Window Cleaning</span>
-                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                </a>
+                @forelse ($quickBookServices as $service)
+                    <a href="{{ $service->booking_url }}" class="service-row {{ $service->color_class }}">
+                        <span class="service-icon"><i class="{{ $service->icon_class }}" aria-hidden="true"></i></span>
+                        <span>{{ $service->name }}</span>
+                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                    </a>
+                @empty
+                    <div class="text-center py-3">
+                        <i class="far fa-calendar-check text-muted mb-2" style="font-size: 24px;"></i>
+                        <p class="text-muted small mb-0">You haven't completed any service bookings yet.</p>
+                    </div>
+                @endforelse
             </div>
 
-            <div class="dashboard-card rewards-card">
+            <!-- <div class="dashboard-card rewards-card">
                 <div class="dashboard-card-header">
                     <h2 class="section-title">Credits &amp; Rewards</h2>
                     <a href="#" class="card-link">View details</a>
@@ -234,26 +228,7 @@
                         <strong>$26.00</strong>
                     </div>
                 </div>
-
-                <div class="member-row">
-                    <span class="member-icon"><i class="far fa-star" aria-hidden="true"></i></span>
-                    <div>
-                        <h3>Silver Member</h3>
-                        <p>You're $80 away from Gold</p>
-                    </div>
-                </div>
-
-                <div class="reward-progress">
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" aria-valuenow="49" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                </div>
-
-                <div class="reward-footer">
-                    <span>15 Cleanings Completed</span>
-                    <strong><i class="fas fa-gift" aria-hidden="true"></i> Next Reward: 10% OFF</strong>
-                </div>
-            </div>
+            </div> -->
         </section>
 
         <section class="dashboard-section dashboard-section-bottom">

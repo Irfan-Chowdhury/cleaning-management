@@ -47,10 +47,14 @@ class BookingServiceController extends Controller
         $this->imageService = $imageService;
     }
 
-    public function create()
+    public function create(\Illuminate\Http\Request $request)
     {
         $services = Service::where('status', 'active')->orderBy('name')->get();
         $step1Data = $this->bookingSessionService->getStep1Data();
+
+        if ($request->has('service_id') && empty($step1Data['service_id'])) {
+            $step1Data['service_id'] = $request->input('service_id');
+        }
 
         return view('pages.booking-service.create', compact('services', 'step1Data'));
     }

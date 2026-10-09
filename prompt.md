@@ -358,3 +358,14 @@ Discount Amount (Wallet or Referal Or Promo Code)
 if booking.credit_used data existis then = Wallet
 if booking.referal_code existis then = Referal
 if booking.promo_code existis then = Promo Code
+
+
+
+
+## Dashboard
+### Quick Book Again
+again have to query change,
+* if $topServiceIds total count is 0 then display regular 5 services asc from services table.
+* if topServiceIds total count  1, then add 4 service data to display.
+continue topServiceIds=5
+* if topServiceIds count 5, no need to add data from service table 

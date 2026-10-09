@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\BookingStatus;
 use App\Models\Booking;
+use App\Models\Service;
 use App\Models\WalletTransaction;
 use Carbon\Carbon;
 
@@ -241,5 +242,84 @@ class CustomerDashboardService
                 'details_url'            => route('customer.bookings.show', $booking->id),
             ];
         });
+    }
+
+    /**
+     * Get top 5 active cleaning services for Quick Book Again section.
+     * Ranks most booked services (completed) first, then pads with active services (id ASC) to ensure 5 items.
+     *
+     * @param int $userId ID of the logged-in customer
+     * @return \Illuminate\Support\Collection Formatted list of 5 quick book services
+     */
+    public function getQuickBookServices(int $userId): \Illuminate\Support\Collection
+    {
+        // 1. Query top completed service IDs for this customer
+        $topServiceRecords = Booking::where('user_id', $userId)
+            ->where('status', BookingStatus::COMPLETED->value)
+            ->whereNotNull('service_id')
+            ->selectRaw('service_id, COUNT(id) as total_completed')
+            ->groupBy('service_id')
+            ->orderByDesc('total_completed')
+            ->take(7)
+            ->get();
+
+        $orderedServiceIds = $topServiceRecords->pluck('service_id')->toArray();
+
+        // 2. Filter orderedServiceIds to include only currently active services
+        if (!empty($orderedServiceIds)) {
+            $activeTopIds = Service::whereIn('id', $orderedServiceIds)
+                ->where('status', 'active')
+                ->pluck('id')
+                ->toArray();
+
+            // Retain original completed count ranking order
+            $orderedServiceIds = array_values(array_intersect($orderedServiceIds, $activeTopIds));
+        }
+
+        // 3. If under 5, pad with remaining active services ordered by id ASC
+        $needed = 7 - count($orderedServiceIds);
+        if ($needed > 0) {
+            $fallbackIds = Service::where('status', 'active')
+                ->when(!empty($orderedServiceIds), function ($query) use ($orderedServiceIds) {
+                    $query->whereNotIn('id', $orderedServiceIds);
+                })
+                ->orderBy('id', 'asc')
+                ->take($needed)
+                ->pluck('id')
+                ->toArray();
+
+            $orderedServiceIds = array_merge($orderedServiceIds, $fallbackIds);
+        }
+
+        if (empty($orderedServiceIds)) {
+            return collect();
+        }
+
+        // 4. Fetch service models and preserve exact ranking order
+        $serviceMap = Service::whereIn('id', $orderedServiceIds)
+            ->where('status', 'active')
+            ->get()
+            ->keyBy('id');
+
+        $result = collect();
+        $colorClasses = ['service-blue', 'service-green', 'service-purple', 'service-orange', 'service-cyan'];
+        $iconClasses  = ['fas fa-home', 'fas fa-broom', 'fas fa-key', 'fas fa-building', 'far fa-window-maximize'];
+
+        $index = 0;
+        foreach ($orderedServiceIds as $serviceId) {
+            $service = $serviceMap->get($serviceId);
+            if ($service) {
+                $result->push((object) [
+                    'id'          => $service->id,
+                    'name'        => $service->name,
+                    'color_class' => $colorClasses[$index % count($colorClasses)],
+                    'icon_class'  => $iconClasses[$index % count($iconClasses)],
+                    'booking_url' => route('booking-service.create', ['service_id' => $service->id]),
+                ]);
+                $index++;
+            }
+        }
+
+        return $result;
     }
 }

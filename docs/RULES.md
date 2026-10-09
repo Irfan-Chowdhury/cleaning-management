@@ -47,6 +47,17 @@
   3. **Actions**: Single "View Details" button linking directly to the booking detail page (`/my-bookings/{id}`). Header "View all" link navigates to `/my-bookings`.
   4. **Fallback**: If no bookings exist, displays a clean empty state message.
 
+### Quick Book Again
+- **Business Logic & Conditions**:
+  1. **Most Booked & Fallback Query**:
+     - Queries active services based on the logged-in customer's completed bookings (`status = 'completed'`), ranked by booking count descending (`COUNT(id) DESC`). Most used service is ranked 1st.
+     - If completed services count is 0, displays the top 5 active services from the `services` table ordered by ID ascending (`id ASC`).
+     - If completed services count is less than 5 (e.g. 1 completed service), appends default active services (`id ASC`) to pad the list up to 5 total services.
+     - If completed services count is 5, no default services are added.
+  2. **Tooltip & Icon**: Displays tooltip icon (`fas fa-exclamation-circle`) next to title with text `"Top 5 most booked services based on your completed bookings."`.
+  3. **Presentation Mapping**: Cycles curated color classes (`service-blue`, `service-green`, `service-purple`, `service-orange`, `service-cyan`) and FontAwesome category icons for each row.
+  4. **Direct Navigation**: Clicking any service row opens Step 1 of the booking wizard pre-selecting that service (`/booking-service/create?service_id={id}`).
+
 
 <h2 align="center">─────── ✧ END ✧ ───────</h2> <br>
 
