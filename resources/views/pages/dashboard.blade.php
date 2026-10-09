@@ -241,9 +241,20 @@
                         <p>Invite your friends and earn $25 credit when they book!</p>
 
                         <div class="referral-link-box">
-                            <span id="referralLink">callthecleaners.com/ref/Jahedul</span>
-                            <button type="button" class="btn btn-primary btn-sm copy-referral-btn">Copy</button>
+                            <span id="referralLink">{{ $referralData->referral_link }}</span>
+                            @if ($referralData->has_completed_paid_booking)
+                                <button type="button" class="btn btn-primary btn-sm copy-referral-btn">Copy</button>
+                            @else
+                                <button type="button" class="btn btn-secondary btn-sm copy-referral-btn" disabled style="cursor: not-allowed; opacity: 0.65;">Copy</button>
+                            @endif
                         </div>
+
+                        @if (!$referralData->has_completed_paid_booking)
+                            <div class="mt-2 text-primary font-weight-bold" style="font-size: 12px; color: #0866e8 !important;">
+                                <i class="fas fa-exclamation-circle mr-1" aria-hidden="true"></i>
+                                Referral link will be visible after successfully completing at least one booking with payment done.
+                            </div>
+                        @endif
                     </div>
 
                     <div class="referral-subcard">

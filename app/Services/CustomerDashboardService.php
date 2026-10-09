@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\BookingStatus;
 use App\Models\Booking;
 use App\Models\Service;
+use App\Models\User;
 use App\Models\WalletTransaction;
 use Carbon\Carbon;
 
@@ -321,5 +322,34 @@ class CustomerDashboardService
         }
 
         return $result;
+    }
+
+    /**
+     * Get referral program link and status data for customer dashboard.
+     *
+     * @param int $userId ID of the logged-in customer
+     * @return object Referral program status object
+     */
+    public function getReferralProgramData(int $userId): object
+    {
+        $user = User::find($userId);
+
+        $hasCompletedPaidBooking = Booking::where('user_id', $userId)
+            ->where('status', BookingStatus::COMPLETED->value)
+            ->where('payment_status', 'paid')
+            ->exists();
+
+        $referralCode = $user?->referral_code;
+        // if (empty($referralCode) && $user) {
+        //     $referralCode = strtoupper(($user->first_name ?: 'REF') . $user->id);
+        //     $user->update(['referral_code' => $referralCode]);
+        // }
+
+        $referralLink = $hasCompletedPaidBooking ? url('/register?ref=' . $referralCode) : '';
+
+        return (object) [
+            'has_completed_paid_booking' => $hasCompletedPaidBooking,
+            'referral_link'              => $referralLink,
+        ];
     }
 }

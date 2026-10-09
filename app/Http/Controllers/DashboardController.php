@@ -19,7 +19,8 @@ class DashboardController extends Controller
         $stats = $this->dashboardService->getDashboardStats($userId);
         $recentBookings = $this->dashboardService->getRecentBookings($userId, 3);
         $quickBookServices = $this->dashboardService->getQuickBookServices($userId);
+        $referralData = $this->dashboardService->getReferralProgramData($userId);
 
-        return view('pages.dashboard', compact('nextCleaning', 'stats', 'recentBookings', 'quickBookServices'));
+        return view('pages.dashboard', compact('nextCleaning', 'stats', 'recentBookings', 'quickBookServices', 'referralData'));
     }
 }
