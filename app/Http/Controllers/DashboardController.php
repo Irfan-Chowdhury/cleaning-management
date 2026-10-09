@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SendReferralInviteRequest;
 use App\Services\CustomerDashboardService;
+use App\Services\ReferralService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     public function __construct(
-        protected CustomerDashboardService $dashboardService
+        protected CustomerDashboardService $dashboardService,
+        protected ReferralService $referralService
     ) {
     }
 
@@ -22,5 +26,25 @@ class DashboardController extends Controller
         $referralData = $this->dashboardService->getReferralProgramData($userId);
 
         return view('pages.dashboard', compact('nextCleaning', 'stats', 'recentBookings', 'quickBookServices', 'referralData'));
+    }
+
+    /**
+     * Handle referral email invitation submission from customer dashboard.
+     */
+    public function sendInvite(SendReferralInviteRequest $request): RedirectResponse
+    {
+        $user = Auth::user();
+        $recipientEmail = $request->validated('email');
+        $customMessage = $request->validated('message');
+
+        $result = $this->referralService->sendEmailInvitation($user, $recipientEmail, $customMessage);
+
+        if ($result['success']) {
+            return redirect()->route('dashboard')
+                ->with('success', $result['message']);
+        }
+
+        return redirect()->route('dashboard')
+            ->with('error', $result['message']);
     }
 }

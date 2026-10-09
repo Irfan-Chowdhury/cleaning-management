@@ -53,5 +53,13 @@
                 $button.text(originalText);
             }, 1400);
         }
+
+        $(document).on('submit', '#referralInviteForm', function () {
+            var $btn = $('#sendInviteBtn');
+            if ($btn.length && !$btn.prop('disabled')) {
+                $btn.html('<i class="fas fa-spinner fa-spin mr-1"></i> Sending...');
+                $btn.addClass('disabled').css('pointer-events', 'none');
+            }
+        });
     });
 })(jQuery);

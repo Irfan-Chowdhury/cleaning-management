@@ -7,7 +7,10 @@ use App\Models\Booking;
 use App\Models\Setting;
 use App\Models\User;
 use App\Models\WalletTransaction;
+use App\Notifications\ReferralInviteNotification;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Log;
 
 class ReferralService
 {
@@ -338,5 +341,52 @@ class ReferralService
                 'created_at'      => $booking->created_at ? $booking->created_at->format('Y-m-d H:i:s') : now()->toDateTimeString(),
             ];
         });
+    }
+
+    /**
+     * Refer to docs/DeveloperNote.md (Line 3: "Customer Dashboard: Invite Via Email Feature")
+     * for full technical specifications, rules, and developer documentation.
+     */
+    public function sendEmailInvitation(User $sender, string $recipientEmail, ?string $customMessage = null): array
+    {
+        // 1. Verify customer has at least 1 completed paid booking
+        $hasCompletedPaidBooking = Booking::where('user_id', $sender->id)
+            ->where('status', BookingStatus::COMPLETED->value)
+            ->where('payment_status', 'paid')
+            ->exists();
+
+        if (!$hasCompletedPaidBooking) {
+            return [
+                'success' => false,
+                'message' => 'Your referral link and invitation features are locked until you successfully complete at least one booking with payment done.',
+            ];
+        }
+
+        // 2. Check if email already exists in users table
+        if (User::where('email', trim($recipientEmail))->exists()) {
+            return [
+                'success' => false,
+                'message' => 'This email address is already registered as an existing account.',
+            ];
+        }
+
+        // 3. Dispatch professional referral email notification to the recipient
+        try {
+            
+            Notification::route('mail', trim($recipientEmail))
+                ->notify(new ReferralInviteNotification($sender, $customMessage));
+
+            return [
+                'success' => true,
+                'message' => 'Referral invitation sent successfully to ' . trim($recipientEmail) . '!',
+            ];
+        } catch (\Throwable $e) {
+            Log::error('Failed to send referral email invitation: ' . $e->getMessage());
+
+            return [
+                'success' => false,
+                'message' => 'Could not send invitation email at this time. Please try again later.',
+            ];
+        }
     }
 }

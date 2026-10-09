@@ -261,9 +261,51 @@
                         <h3>Invite Via Email</h3>
                         <p>Send invitation to your friends via email</p>
 
-                        <input type="email" class="form-control referral-input" placeholder="Enter friend's email">
-                        <textarea class="form-control referral-input referral-message" rows="3" placeholder="Add a personal message (optional)"></textarea>
-                        <button type="button" class="btn btn-primary btn-block send-invite-btn"><i class="fas fa-paper-plane" aria-hidden="true"></i> Send Invitation</button>
+                        <form action="{{ route('customer.dashboard.send-invite') }}" method="POST" id="referralInviteForm">
+                            @csrf
+
+                            <div class="form-group mb-2">
+                                <input type="email" 
+                                       name="email" 
+                                       class="form-control referral-input @error('email') is-invalid @enderror" 
+                                       placeholder="Enter friend's email"
+                                       value="{{ old('email') }}"
+                                       @if (!$referralData->has_completed_paid_booking) disabled style="background-color: #f8fafc; cursor: not-allowed;" @endif
+                                       required>
+                                @error('email')
+                                    <span class="invalid-feedback d-block" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <textarea name="message" 
+                                          class="form-control referral-input referral-message @error('message') is-invalid @enderror" 
+                                          rows="3" 
+                                          placeholder="Add a personal message (optional)"
+                                          @if (!$referralData->has_completed_paid_booking) disabled style="background-color: #f8fafc; cursor: not-allowed;" @endif>{{ old('message') }}</textarea>
+                                @error('message')
+                                    <span class="invalid-feedback d-block" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
+                            @if ($referralData->has_completed_paid_booking)
+                                <button type="submit" class="btn btn-primary btn-block send-invite-btn" id="sendInviteBtn">
+                                    <i class="fas fa-paper-plane mr-1" aria-hidden="true"></i> Send Invitation
+                                </button>
+                            @else
+                                <button type="button" class="btn btn-secondary btn-block send-invite-btn" disabled style="cursor: not-allowed; opacity: 0.65;">
+                                    <i class="fas fa-paper-plane mr-1" aria-hidden="true"></i> Send Invitation
+                                </button>
+                                <div class="mt-2 text-primary font-weight-bold" style="font-size: 12px; color: #0866e8 !important;">
+                                    <i class="fas fa-exclamation-circle mr-1" aria-hidden="true"></i>
+                                    You will be able to send email invitations after completing at least one booking with payment done.
+                                </div>
+                            @endif
+                        </form>
                     </div>
                 </div>
             </div>

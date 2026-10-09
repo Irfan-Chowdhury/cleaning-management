@@ -4,6 +4,7 @@
     var sidebarOpenClass = 'sidebar-open';
     var desktopWidth = 992;
     var successToastShown = false;
+    var errorToastShown = false;
 
     function openSidebar() {
         $('body').addClass(sidebarOpenClass);
@@ -46,6 +47,37 @@
             }
         }).fire({
             icon: "success",
+            title: message
+        });
+    }
+
+    function showErrorToast() {
+        var $message = $('#global-error-message');
+        var message = window.AppFlash && window.AppFlash.error ? window.AppFlash.error : $message.attr('data-message');
+
+        if (errorToastShown || !message) {
+            return;
+        }
+
+        if (typeof Swal === 'undefined') {
+            window.setTimeout(showErrorToast, 150);
+            return;
+        }
+
+        errorToastShown = true;
+
+        Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 4000,
+            timerProgressBar: true,
+            didOpen: function (toast) {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        }).fire({
+            icon: "error",
             title: message
         });
     }
@@ -196,6 +228,7 @@
     }
 
     window.showSuccessToast = showSuccessToast;
+    window.showErrorToast = showErrorToast;
 
     $(function () {
         $('.sidebar-toggle').on('click', openSidebar);
@@ -213,5 +246,6 @@
         bindFullscreenToggle();
         cleanDesktopState();
         showSuccessToast();
+        showErrorToast();
     });
 })(jQuery);
