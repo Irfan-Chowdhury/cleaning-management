@@ -321,9 +321,9 @@
                 </div>
 
                 <div class="referral-metrics">
-                    <div><strong>12</strong><span>Invited</span></div>
-                    <div><strong>5</strong><span>Successful</span></div>
-                    <div><strong>$125</strong><span>Earned Credits</span></div>
+                    <div><strong>{{ $yourReferrals->total_invited ?? 0 }}</strong><span>Invited</span></div>
+                    <div><strong>{{ $yourReferrals->successful_referrals ?? 0 }}</strong><span>Successful</span></div>
+                    <div><strong>{{ $yourReferrals->total_rewards_formatted ?? '$0.00' }}</strong><span>Earned Credits</span></div>
                 </div>
 
                 <div class="referral-table-wrap">
@@ -335,18 +335,33 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><i class="far fa-user-circle" aria-hidden="true"></i> salimau@gmail.com</td>
-                                <td><span class="referral-badge badge-invited">Invited</span></td>
-                            </tr>
-                            <tr>
-                                <td><i class="far fa-user-circle" aria-hidden="true"></i> ritu.sarkar@hotmail.com</td>
-                                <td><span class="referral-badge badge-success">Signed Up</span> <strong class="credit-plus">+ $25</strong></td>
-                            </tr>
-                            <tr>
-                                <td><i class="far fa-user-circle" aria-hidden="true"></i> nahid.khan@gmail.com</td>
-                                <td><span class="referral-badge badge-success">Completed</span> <strong class="credit-plus">+ $25</strong></td>
-                            </tr>
+                            @forelse (($yourReferrals->recent_referrals ?? []) as $ref)
+                                <tr>
+                                    <td><i class="far fa-user-circle" aria-hidden="true"></i> {{ $ref->customer_email }}</td>
+                                    <td>
+                                        @php
+                                            $stKey = strtolower(str_replace([' ', '-'], '_', $ref->status_raw ?? $ref->status));
+                                        @endphp
+                                        @if (in_array($stKey, ['signed_up', 'signed up']))
+                                            <span class="referral-badge badge-signed-up">Signed Up</span>
+                                        @elseif ($stKey === 'rewarded')
+                                            <span class="referral-badge badge-success">Rewarded</span>
+                                        @elseif ($stKey === 'cancelled')
+                                            <span class="referral-badge badge-pending">Cancelled</span>
+                                        @else
+                                            <span class="referral-badge badge-invited">Invited</span>
+                                        @endif
+
+                                        @if (isset($ref->reward_amount) && $ref->reward_amount > 0)
+                                            <strong class="credit-plus">+ ${{ number_format($ref->reward_amount, 2) }}</strong>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="2" class="text-center text-muted py-3">No referrals recorded yet.</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

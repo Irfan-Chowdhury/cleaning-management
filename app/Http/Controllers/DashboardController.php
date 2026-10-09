@@ -18,14 +18,26 @@ class DashboardController extends Controller
 
     public function index()
     {
-        $userId = (int) Auth::id();
+        $user = Auth::user();
+        $userId = (int) $user->id;
+
         $nextCleaning = $this->dashboardService->getNextCleaning($userId);
         $stats = $this->dashboardService->getDashboardStats($userId);
         $recentBookings = $this->dashboardService->getRecentBookings($userId, 3);
         $quickBookServices = $this->dashboardService->getQuickBookServices($userId);
         $referralData = $this->dashboardService->getReferralProgramData($userId);
 
-        return view('pages.dashboard', compact('nextCleaning', 'stats', 'recentBookings', 'quickBookServices', 'referralData'));
+        // Fetch "Your Referrals" feature data using injected ReferralService instance
+        $yourReferrals = $this->referralService->getYourReferralsDashboardData($user);
+
+        return view('pages.dashboard', compact(
+            'nextCleaning',
+            'stats',
+            'recentBookings',
+            'quickBookServices',
+            'referralData',
+            'yourReferrals'
+        ));
     }
 
     /**

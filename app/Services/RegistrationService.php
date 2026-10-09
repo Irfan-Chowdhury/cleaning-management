@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Referral;
 use App\Models\Setting;
 use App\Models\User;
 use App\Models\WalletTransaction;
@@ -10,6 +11,8 @@ use App\Notifications\WelcomeBonusNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class RegistrationService
 {
@@ -41,6 +44,9 @@ class RegistrationService
         $user->update([
             'referral_code' => strtoupper($user->first_name . $user->id),
         ]);
+
+        // Link registration to pending referral record or code in referrals table
+        $this->linkReferralOnRegistration($user);
 
         // Notify admins about new customer registration
         $admins = User::where('role', 1)->get();
@@ -93,5 +99,38 @@ class RegistrationService
         $user->notify(new WelcomeBonusNotification($bonusAmount));
 
         return true;
+    }
+
+    /**
+     * Link newly registered user to pending invitation or referrer code in referrals table.
+     */
+    protected function linkReferralOnRegistration(User $user): void
+    {
+        try {
+            $userEmail = strtolower(trim($user->email));
+            $invitedReferral = Referral::where('recipient_email', $userEmail)
+                ->where('status', 'invited')
+                ->first();
+
+            if ($invitedReferral) {
+                $invitedReferral->update([
+                    'referred_user_id' => $user->id,
+                    'status'           => 'signed_up',
+                ]);
+            } elseif (!empty($user->referred_by_code)) {
+                $referrer = User::where('referral_code', $user->referred_by_code)->first();
+                if ($referrer && $referrer->id !== $user->id) {
+                    Referral::create([
+                        'referrer_user_id' => $referrer->id,
+                        'referral_code'    => $referrer->referral_code,
+                        'recipient_email'  => $userEmail,
+                        'referred_user_id' => $user->id,
+                        'status'           => 'signed_up',
+                    ]);
+                }
+            }
+        } catch (Throwable $e) {
+            Log::error('Failed to link referral in referrals table on registration: ' . $e->getMessage());
+        }
     }
 }
