@@ -505,8 +505,9 @@
                     }
 
                     if (!res.is_day_active) {
-                        $container.html('<div class="alert alert-secondary text-center small mb-0"><i class="fas fa-calendar-times mr-1"></i> Cleaning services are not available on ' + escapeHtml(res.day_of_week) + 's.</div>');
-                        $('#calendar-info-text').text('Service unavailable on ' + res.day_of_week + 's');
+                        var displayMsg = res.error_message || ('Cleaning services are not available on ' + escapeHtml(res.day_of_week) + 's.');
+                        $container.html('<div class="alert alert-secondary text-center small mb-0"><i class="fas fa-calendar-times mr-1"></i> ' + escapeHtml(displayMsg) + '</div>');
+                        $('#calendar-info-text').text(res.error_message || ('Service unavailable on ' + res.day_of_week + 's'));
                         return;
                     }
 

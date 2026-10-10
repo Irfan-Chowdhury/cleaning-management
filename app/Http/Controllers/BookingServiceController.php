@@ -139,6 +139,20 @@ class BookingServiceController extends Controller
             $formattedDate = $date->format('Y-m-d');
             $dayName = $date->format('l'); // e.g. 'Monday'
 
+            // Check minimum & maximum advance booking date restrictions
+            $advanceDateError = (new BookingStep2Request())->validateAdvanceBookingDate($formattedDate);
+            if ($advanceDateError) {
+                return response()->json([
+                    'date'          => $formattedDate,
+                    'day_of_week'   => $dayName,
+                    'is_holiday'    => false,
+                    'holiday_title' => null,
+                    'is_day_active' => false,
+                    'error_message' => $advanceDateError,
+                    'slots'         => [],
+                ]);
+            }
+
             // Check if date is a holiday
             try {
                 $holiday = Holiday::where('is_active', true)

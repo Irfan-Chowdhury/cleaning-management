@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('currency', 3)->nullable();
             $table->decimal('minimum_booking_amount', 12, 2)->nullable();
             $table->decimal('max_wallet_usage', 12, 2)->nullable();
+            $table->unsignedInteger('minimum_advance_booking_days')->nullable();
             $table->unsignedInteger('maximum_advance_booking_days')->nullable();
             $table->unsignedInteger('cancellation_notice_hours')->nullable();
             $table->decimal('welcome_credit', 12, 2)->nullable();
