@@ -24,6 +24,7 @@ class SettingRequest extends FormRequest
             'currency' => ['nullable', 'string', 'size:3', 'regex:/^[A-Z]{3}$/'],
             'minimum_booking_amount' => ['nullable', 'numeric', 'min:0', 'decimal:0,2'],
             'max_wallet_usage' => ['nullable', 'numeric', 'min:0', 'decimal:0,2'],
+            'minimum_advance_booking_days' => ['nullable', 'integer', 'min:0'],
             'maximum_advance_booking_days' => ['nullable', 'integer', 'min:1'],
             'cancellation_notice_hours' => ['nullable', 'integer', 'min:0'],
             'welcome_credit' => ['nullable', 'numeric', 'min:0'],

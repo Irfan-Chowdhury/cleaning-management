@@ -18,6 +18,7 @@ class Setting extends Model
         'currency',
         'minimum_booking_amount',
         'max_wallet_usage',
+        'minimum_advance_booking_days',
         'maximum_advance_booking_days',
         'cancellation_notice_hours',
         'welcome_credit',
@@ -35,6 +36,7 @@ class Setting extends Model
         return [
             'minimum_booking_amount' => 'decimal:2',
             'max_wallet_usage' => 'decimal:2',
+            'minimum_advance_booking_days' => 'integer',
             'maximum_advance_booking_days' => 'integer',
             'cancellation_notice_hours' => 'integer',
             'welcome_credit' => 'decimal:2',

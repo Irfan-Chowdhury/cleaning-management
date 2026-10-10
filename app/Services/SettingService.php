@@ -54,6 +54,7 @@ class SettingService
             'currency',
             'minimum_booking_amount',
             'max_wallet_usage',
+            'minimum_advance_booking_days',
             'maximum_advance_booking_days',
             'cancellation_notice_hours',
             'welcome_credit',

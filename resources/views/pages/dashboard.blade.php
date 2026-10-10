@@ -7,7 +7,7 @@
 @endpush
 
 @section('content')
-    <div class="alert alert-warning d-flex align-items-center mb-4 p-3 shadow-sm rounded-lg" style="background-color: #fff8e6; border: 1px solid #ffe0b2; border-left: 5px solid #ff9800; color: #8c5400;" role="alert">
+    <!-- <div class="alert alert-warning d-flex align-items-center mb-4 p-3 shadow-sm rounded-lg" style="background-color: #fff8e6; border: 1px solid #ffe0b2; border-left: 5px solid #ff9800; color: #8c5400;" role="alert">
         <div class="mr-3" style="font-size: 24px;">
             <i class="fas fa-tools text-warning"></i>
         </div>
@@ -19,81 +19,132 @@
                 We are actively working on enhancing this dashboard with exciting features. Stay tuned!
             </p>
         </div>
-    </div>
+    </div> -->
 
     <div class="customer-dashboard">
         <section class="dashboard-section dashboard-section-top">
-            <div class="dashboard-card next-cleaning-card">
-                <div class="dashboard-card-header">
-                    <h2 class="section-title">Next Cleaning</h2>
-                    <span class="status-pill status-confirmed">Confirmed</span>
-                </div>
+            @if ($nextCleaning)
+                <div class="dashboard-card next-cleaning-card">
+                    <div class="dashboard-card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <h2 class="section-title mb-0">Next Cleaning</h2>
+                            <span class="ml-2 font-weight-bold" style="font-family: monospace; font-size: 13px; color: #2563eb; background: #eff6ff; padding: 3px 10px; border-radius: 6px; border: 1px solid #dbeafe;">
+                                {{ $nextCleaning->booking_id_formatted }}
+                            </span>
+                        </div>
+                        <span class="badge {{ $nextCleaning->status_badge_class }}" style="padding: 6px 12px; font-weight: 700; border-radius: 999px;">
+                            {{ $nextCleaning->status_label }}
+                        </span>
+                    </div>
 
-                <div class="next-cleaning-body">
-                    <img src="https://picsum.photos/seed/cleaning1/400/260" alt="Regular home cleaning service" class="next-cleaning-image">
+                    <div class="next-cleaning-body">
+                        <img src="{{ $nextCleaning->image_url }}" alt="{{ $nextCleaning->service_name }}" class="next-cleaning-image">
 
-                    <div class="next-cleaning-details">
-                        <h3>Regular Home Cleaning</h3>
+                        <div class="next-cleaning-details">
+                            <h3>{{ $nextCleaning->service_name }}</h3>
 
-                        <ul class="cleaning-meta">
-                            <li><i class="far fa-calendar-alt" aria-hidden="true"></i> Fri, 15 Aug 2025</li>
-                            <li><i class="far fa-clock" aria-hidden="true"></i> 09:00 AM - 01:00 PM</li>
-                            <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> 25 King St, Sydney NSW 2000</li>
-                            <li><i class="fas fa-user-check" aria-hidden="true"></i> Cleaner: Sarah Johnson</li>
-                        </ul>
-
-                        <div class="cleaner-rating">
-                            <i class="fas fa-star" aria-hidden="true"></i>
-                            <span>4.9</span>
+                            <ul class="cleaning-meta">
+                                <li><i class="far fa-calendar-alt" aria-hidden="true"></i> {{ $nextCleaning->booking_date_formatted }}</li>
+                                <li><i class="far fa-clock" aria-hidden="true"></i> {{ $nextCleaning->time_slot_formatted }}</li>
+                                <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> {{ $nextCleaning->full_address }}</li>
+                            </ul>
                         </div>
                     </div>
-                </div>
 
-                <div class="next-cleaning-actions">
-                    <a href="#" class="btn btn-primary btn-sm dashboard-action-btn">Manage Booking</a>
-                    <a href="#" class="btn btn-outline-primary btn-sm dashboard-action-btn">Reschedule</a>
-                    <a href="#" class="btn btn-outline-danger btn-sm dashboard-action-btn">Cancel Booking</a>
+                    <div class="next-cleaning-actions">
+                        <a href="{{ $nextCleaning->details_url }}" class="btn btn-primary btn-sm dashboard-action-btn">
+                            <i class="fas fa-eye mr-1"></i> View Details
+                        </a>
+                        @if ($nextCleaning->is_approved)
+                            <a href="{{ $nextCleaning->step4_url }}" class="btn btn-success btn-sm dashboard-action-btn">
+                                <i class="fas fa-calendar-check mr-1"></i> Proceed to Step 4
+                            </a>
+                        @endif
+                    </div>
                 </div>
-            </div>
+            @else
+                <div class="dashboard-card next-cleaning-card p-4 text-center">
+                    <div class="py-3">
+                        <i class="far fa-calendar-check text-primary mb-3" style="font-size: 38px;"></i>
+                        <h3 class="h6 font-weight-bold text-dark mb-1">No Upcoming Cleanings</h3>
+                        <p class="text-muted small mb-3">You don't have any active cleaning sessions scheduled right now.</p>
+                        <a href="{{ route('booking-service.create') }}" class="btn btn-primary btn-sm px-3" style="border-radius: 8px;">
+                            <i class="fas fa-plus mr-1"></i> Book a Cleaning
+                        </a>
+                    </div>
+                </div>
+            @endif
 
             <div class="dashboard-stats-grid">
+                <!-- Card 1: Upcoming Cleanings -->
                 <div class="dashboard-card stat-card">
                     <div class="stat-icon stat-icon-blue"><i class="far fa-calendar-alt" aria-hidden="true"></i></div>
                     <div>
-                        <h2 class="section-title">Upcoming Bookings</h2>
-                        <div class="stat-value">2</div>
+                        <div class="d-flex align-items-center mb-1">
+                            <h2 class="section-title mb-0">Upcoming Cleanings</h2>
+                            <i class="fas fa-exclamation-circle stat-tooltip-icon" 
+                               data-toggle="tooltip" 
+                               data-placement="top" 
+                               title="{{ $stats->upcoming_tooltip }}" 
+                               aria-hidden="true"></i>
+                        </div>
+                        <div class="stat-value">{{ $stats->upcoming_count }}</div>
                         <p>Bookings</p>
-                        <a href="#">View all bookings</a>
+                        <a href="{{ $stats->upcoming_url }}">View all bookings</a>
                     </div>
                 </div>
 
+                <!-- Card 2: Total Completed Bookings -->
                 <div class="dashboard-card stat-card">
-                    <div class="stat-icon stat-icon-green"><i class="fas fa-shopping-bag" aria-hidden="true"></i></div>
+                    <div class="stat-icon stat-icon-green"><i class="fas fa-check-double" aria-hidden="true"></i></div>
                     <div>
-                        <h2 class="section-title">Lifetime Bookings</h2>
-                        <div class="stat-value">18</div>
-                        <p>Total Bookings</p>
-                        <a href="#">View history</a>
+                        <div class="d-flex align-items-center mb-1">
+                            <h2 class="section-title mb-0">Total Completed Bookings</h2>
+                            <i class="fas fa-exclamation-circle stat-tooltip-icon" 
+                               data-toggle="tooltip" 
+                               data-placement="top" 
+                               title="{{ $stats->completed_tooltip }}" 
+                               aria-hidden="true"></i>
+                        </div>
+                        <div class="stat-value">{{ $stats->completed_count }}</div>
+                        <p>Completed Bookings</p>
+                        <a href="{{ $stats->completed_url }}">View history</a>
                     </div>
                 </div>
 
+                <!-- Card 3: Remaining Credits -->
                 <div class="dashboard-card stat-card">
                     <div class="stat-icon stat-icon-yellow"><i class="far fa-star" aria-hidden="true"></i></div>
                     <div>
-                        <h2 class="section-title">Earned Credits</h2>
-                        <div class="stat-value">$45.00</div>
+                        <div class="d-flex align-items-center mb-1">
+                            <h2 class="section-title mb-0">Remaining Credits</h2>
+                            <i class="fas fa-exclamation-circle stat-tooltip-icon" 
+                               data-toggle="tooltip" 
+                               data-placement="top" 
+                               title="{{ $stats->remaining_credits_tooltip }}" 
+                               aria-hidden="true"></i>
+                        </div>
+                        <div class="stat-value">{{ $stats->remaining_credits_formatted }}</div>
                         <p>Available Credits</p>
-                        <a href="#">View details</a>
+                        <a href="{{ $stats->remaining_credits_url }}">View details</a>
                     </div>
                 </div>
 
+                <!-- Card 4: Total Spent -->
                 <div class="dashboard-card stat-card">
                     <div class="stat-icon stat-icon-purple"><i class="fas fa-wallet" aria-hidden="true"></i></div>
                     <div>
-                        <h2 class="section-title">Total Spent</h2>
-                        <div class="stat-value">$1,260.00</div>
+                        <div class="d-flex align-items-center mb-1">
+                            <h2 class="section-title mb-0">Total Spent</h2>
+                            <i class="fas fa-exclamation-circle stat-tooltip-icon" 
+                               data-toggle="tooltip" 
+                               data-placement="top" 
+                               title="{{ $stats->total_spent_tooltip }}" 
+                               aria-hidden="true"></i>
+                        </div>
+                        <div class="stat-value">{{ $stats->total_spent_formatted }}</div>
                         <p>Total Spent</p>
-                        <a href="#">View invoices</a>
+                    <a href="{{ $stats->total_spent_url }}">View invoices</a>
                     </div>
                 </div>
             </div>
@@ -103,118 +154,114 @@
             <div class="dashboard-card recent-bookings-card">
                 <div class="dashboard-card-header">
                     <h2 class="section-title">Recent Bookings</h2>
-                    <a href="#" class="card-link">View all</a>
+                    <a href="{{ route('customer.bookings.index') }}" class="card-link">View all</a>
                 </div>
 
-                <div class="booking-row">
-                    <img src="https://picsum.photos/seed/cleaning2/120/90" alt="House cleaning" class="booking-thumb">
-                    <div class="booking-info">
-                        <h3>House Cleaning</h3>
-                        <p>1 Aug 2025 &bull; 09:00 AM</p>
-                        <span class="booking-price">$180.00</span>
+                @forelse ($recentBookings as $booking)
+                    <div class="booking-row">
+                        <img src="{{ $booking->image_url }}" alt="{{ $booking->service_name }}" class="booking-thumb">
+                        <div class="booking-info">
+                            <div class="d-flex align-items-center mb-1 flex-wrap" style="gap: 6px;">
+                                <h3 class="mb-0">{{ $booking->service_name }}</h3>
+                                <span class="font-weight-bold" style="font-family: monospace; font-size: 11.5px; color: #0866e8; background: #f0f6fe; padding: 2px 7px; border-radius: 5px; border: 1px solid #dbeafe;">
+                                    {{ $booking->booking_id_formatted }}
+                                </span>
+                            </div>
+                            <p>{{ $booking->booking_date_formatted }} &bull; {{ $booking->time_slot_formatted }}</p>
+                            <span class="booking-price">{{ $booking->total_amount_formatted }}</span>
+                        </div>
+                        <div class="booking-status {{ $booking->status_class }}">
+                            <i class="{{ $booking->status_icon }}" aria-hidden="true"></i> {{ $booking->status_label }}
+                        </div>
+                        <div class="booking-actions">
+                            <a href="{{ $booking->details_url }}" class="btn btn-outline-primary btn-sm booking-btn">
+                                View Details
+                            </a>
+                        </div>
                     </div>
-                    <div class="booking-status status-completed"><i class="fas fa-check-circle" aria-hidden="true"></i> Completed</div>
-                    <div class="booking-actions">
-                        <a href="#" class="btn btn-outline-primary btn-sm booking-btn">Invoice</a>
-                        <a href="#" class="btn btn-primary btn-sm booking-btn">Book Again</a>
+                @empty
+                    <div class="text-center py-4">
+                        <i class="far fa-calendar-times text-muted mb-2" style="font-size: 28px;"></i>
+                        <p class="text-muted small mb-0">No recent bookings found.</p>
                     </div>
-                </div>
-
-                <div class="booking-row">
-                    <img src="https://picsum.photos/seed/cleaning3/120/90" alt="Deep cleaning" class="booking-thumb">
-                    <div class="booking-info">
-                        <h3>Deep Cleaning</h3>
-                        <p>15 Jul 2025 &bull; 09:00 AM</p>
-                        <span class="booking-price">$260.00</span>
-                    </div>
-                    <div class="booking-status status-completed"><i class="fas fa-check-circle" aria-hidden="true"></i> Completed</div>
-                    <div class="booking-actions">
-                        <a href="#" class="btn btn-outline-primary btn-sm booking-btn">Invoice</a>
-                        <a href="#" class="btn btn-primary btn-sm booking-btn">Book Again</a>
-                    </div>
-                </div>
-
-                <div class="booking-row">
-                    <img src="https://picsum.photos/seed/cleaning4/120/90" alt="End of lease cleaning" class="booking-thumb">
-                    <div class="booking-info">
-                        <h3>End of Lease Cleaning</h3>
-                        <p>2 Jul 2025 &bull; 09:00 AM</p>
-                        <span class="booking-price">$320.00</span>
-                    </div>
-                    <div class="booking-status status-cancelled"><i class="fas fa-times-circle" aria-hidden="true"></i> Cancelled</div>
-                    <div class="booking-actions">
-                        <a href="#" class="btn btn-outline-primary btn-sm booking-btn">Invoice</a>
-                        <a href="#" class="btn btn-primary btn-sm booking-btn">Book Again</a>
-                    </div>
-                </div>
+                @endforelse
             </div>
 
             <div class="dashboard-card quick-book-card">
-                <h2 class="section-title">Quick Book Again</h2>
+                <div class="d-flex align-items-center mb-2">
+                    <h2 class="section-title mb-0">Quick Book Again</h2>
+                    <!-- <i class="fas fa-exclamation-circle stat-tooltip-icon" 
+                       data-toggle="tooltip" 
+                       data-placement="top" 
+                       title="Top 5 most booked services based on your completed bookings." 
+                       aria-hidden="true"></i> -->
+                </div>
 
-                <a href="#" class="service-row service-blue">
-                    <span class="service-icon"><i class="fas fa-home" aria-hidden="true"></i></span>
-                    <span>Regular Home Cleaning</span>
-                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                </a>
-                <a href="#" class="service-row service-green">
-                    <span class="service-icon"><i class="fas fa-broom" aria-hidden="true"></i></span>
-                    <span>Deep Cleaning</span>
-                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                </a>
-                <a href="#" class="service-row service-purple">
-                    <span class="service-icon"><i class="fas fa-key" aria-hidden="true"></i></span>
-                    <span>End of Lease Cleaning</span>
-                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                </a>
-                <a href="#" class="service-row service-orange">
-                    <span class="service-icon"><i class="fas fa-building" aria-hidden="true"></i></span>
-                    <span>Office Cleaning</span>
-                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                </a>
-                <a href="#" class="service-row service-cyan">
-                    <span class="service-icon"><i class="far fa-window-maximize" aria-hidden="true"></i></span>
-                    <span>Window Cleaning</span>
-                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                </a>
+                @forelse ($quickBookServices as $service)
+                    <a href="{{ $service->booking_url }}" class="service-row {{ $service->color_class }}">
+                        <span class="service-icon"><i class="{{ $service->icon_class }}" aria-hidden="true"></i></span>
+                        <span>{{ $service->name }}</span>
+                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                    </a>
+                @empty
+                    <div class="text-center py-3">
+                        <i class="far fa-calendar-check text-muted mb-2" style="font-size: 24px;"></i>
+                        <p class="text-muted small mb-0">You haven't completed any service bookings yet.</p>
+                    </div>
+                @endforelse
             </div>
 
-            <div class="dashboard-card rewards-card">
-                <div class="dashboard-card-header">
-                    <h2 class="section-title">Credits &amp; Rewards</h2>
-                    <a href="#" class="card-link">View details</a>
+            <div class="dashboard-card google-review-card">
+                <div class="dashboard-card-header d-flex align-items-center justify-content-between">
+                    <h2 class="section-title mb-0">Google Review Reward</h2>
+                    <a href="{{ route('customer.review.index') }}" class="card-link">View details</a>
                 </div>
 
-                <div class="credit-summary">
-                    <div>
-                        <span>Available Credits</span>
-                        <strong class="credit-green">$45.00</strong>
+                @if(!empty($googleReviewData['eligible']))
+                    <div class="google-review-body text-center py-2">
+                        <div class="d-inline-flex align-items-center justify-content-center mb-2" style="width: 44px; height: 44px; background: rgba(8, 102, 232, 0.1); color: #0866e8; border-radius: 50%; font-size: 20px;">
+                            <i class="fab fa-google"></i>
+                        </div>
+                        <h3 class="h6 font-weight-bold text-dark mb-1">Earn ${{ number_format((float)($googleReviewData['reward_amount'] ?? 0), 2) }} Wallet Credit</h3>
+                        <p class="text-muted small mb-3">Leave a review on Google &amp; apply for your review reward bonus!</p>
+                        <a href="{{ route('customer.review.index') }}" class="btn btn-primary btn-sm btn-block shadow-sm">
+                            <i class="fab fa-google mr-1"></i> Claim Review Reward
+                        </a>
                     </div>
-                    <div class="credit-separator"></div>
-                    <div>
-                        <span>Pending Credits</span>
-                        <strong>$26.00</strong>
+                @elseif(($googleReviewData['reason'] ?? '') === 'pending')
+                    <div class="google-review-body text-center py-2">
+                        <div class="d-inline-flex align-items-center justify-content-center mb-2" style="width: 44px; height: 44px; background: rgba(255, 193, 7, 0.15); color: #ff9800; border-radius: 50%; font-size: 20px;">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3 class="h6 font-weight-bold text-dark mb-1">Verification Pending</h3>
+                        <p class="text-muted small mb-3">Your Google Review request is currently under review by our team.</p>
+                        <a href="{{ route('customer.review.index') }}" class="btn btn-outline-warning btn-sm btn-block">
+                            <i class="fas fa-eye mr-1"></i> View Status
+                        </a>
                     </div>
-                </div>
-
-                <div class="member-row">
-                    <span class="member-icon"><i class="far fa-star" aria-hidden="true"></i></span>
-                    <div>
-                        <h3>Silver Member</h3>
-                        <p>You're $80 away from Gold</p>
+                @elseif(($googleReviewData['reason'] ?? '') === 'already_approved')
+                    <div class="google-review-body text-center py-2">
+                        <div class="d-inline-flex align-items-center justify-content-center mb-2" style="width: 44px; height: 44px; background: rgba(40, 167, 69, 0.1); color: #28a745; border-radius: 50%; font-size: 20px;">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <h3 class="h6 font-weight-bold text-dark mb-1">Reward Claimed!</h3>
+                        <p class="text-muted small mb-3">You earned ${{ number_format((float)($googleReviewData['reward_amount'] ?? 0), 2) }} credit for reviewing us on Google.</p>
+                        <a href="{{ route('customer.review.index') }}" class="btn btn-outline-success btn-sm btn-block">
+                            <i class="fas fa-check-circle mr-1"></i> View Reward
+                        </a>
                     </div>
-                </div>
-
-                <div class="reward-progress">
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" aria-valuenow="49" aria-valuemin="0" aria-valuemax="100"></div>
+                @else
+                    <div class="google-review-body text-center py-2">
+                        <div class="d-inline-flex align-items-center justify-content-center mb-2" style="width: 44px; height: 44px; background: rgba(8, 102, 232, 0.1); color: #0866e8; border-radius: 50%; font-size: 20px;">
+                            <i class="fab fa-google"></i>
+                        </div>
+                        <h3 class="h6 font-weight-bold text-dark mb-1">Rate Us on Google</h3>
+                        <p class="text-muted small mb-3">Share your feedback and experience with our cleaning services on Google.</p>
+                        <a href="https://g.page/r/CYz0nJiMwuhzEBM/review" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm btn-block">
+                            <i class="fas fa-external-link-alt mr-1"></i> Review on Google
+                        </a>
                     </div>
-                </div>
-
-                <div class="reward-footer">
-                    <span>15 Cleanings Completed</span>
-                    <strong><i class="fas fa-gift" aria-hidden="true"></i> Next Reward: 10% OFF</strong>
-                </div>
+                @endif
             </div>
         </section>
 
@@ -222,14 +269,33 @@
             <div class="dashboard-card referral-card">
                 <h2 class="section-title">Referral Program</h2>
 
+                @if (!$referralData->has_completed_paid_booking)
+                    <div class="mt-2 alert alert-info border-0 shadow-sm rounded-lg mb-3 p-3" style="background-color: #eff6ff; color: #1e40af; border-left: 4px solid #0866e8 !important;">
+                        <div class="d-flex align-items-center">
+                            <div class="mr-3 text-primary" style="font-size: 22px;">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <div>
+                                <span class="small text-muted" style="font-size: 13px;">
+                                    <strong>Note:</strong> The referral link will become visible and you will be able to send email invitations after successfully completing at least one paid booking.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <div class="referral-grid">
                     <div class="referral-subcard">
                         <h3>Share Your Referral Link</h3>
                         <p>Invite your friends and earn $25 credit when they book!</p>
 
                         <div class="referral-link-box">
-                            <span id="referralLink">callthecleaners.com/ref/Jahedul</span>
-                            <button type="button" class="btn btn-primary btn-sm copy-referral-btn">Copy</button>
+                            <span id="referralLink">{{ $referralData->referral_link }}</span>
+                            @if ($referralData->has_completed_paid_booking)
+                                <button type="button" class="btn btn-primary btn-sm copy-referral-btn">Copy</button>
+                            @else
+                                <button type="button" class="btn btn-secondary btn-sm copy-referral-btn" disabled style="cursor: not-allowed; opacity: 0.65;">Copy</button>
+                            @endif
                         </div>
                     </div>
 
@@ -237,9 +303,47 @@
                         <h3>Invite Via Email</h3>
                         <p>Send invitation to your friends via email</p>
 
-                        <input type="email" class="form-control referral-input" placeholder="Enter friend's email">
-                        <textarea class="form-control referral-input referral-message" rows="3" placeholder="Add a personal message (optional)"></textarea>
-                        <button type="button" class="btn btn-primary btn-block send-invite-btn"><i class="fas fa-paper-plane" aria-hidden="true"></i> Send Invitation</button>
+                        <form action="{{ route('customer.dashboard.send-invite') }}" method="POST" id="referralInviteForm">
+                            @csrf
+
+                            <div class="form-group mb-2">
+                                <input type="email" 
+                                       name="email" 
+                                       class="form-control referral-input @error('email') is-invalid @enderror" 
+                                       placeholder="Enter friend's email"
+                                       value="{{ old('email') }}"
+                                       @if (!$referralData->has_completed_paid_booking) disabled style="background-color: #f8fafc; cursor: not-allowed;" @endif
+                                       required>
+                                @error('email')
+                                    <span class="invalid-feedback d-block" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <textarea name="message" 
+                                          class="form-control referral-input referral-message @error('message') is-invalid @enderror" 
+                                          rows="3" 
+                                          placeholder="Add a personal message (optional)"
+                                          @if (!$referralData->has_completed_paid_booking) disabled style="background-color: #f8fafc; cursor: not-allowed;" @endif>{{ old('message') }}</textarea>
+                                @error('message')
+                                    <span class="invalid-feedback d-block" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
+                            @if ($referralData->has_completed_paid_booking)
+                                <button type="submit" class="btn btn-primary btn-block send-invite-btn" id="sendInviteBtn">
+                                    <i class="fas fa-paper-plane mr-1" aria-hidden="true"></i> Send Invitation
+                                </button>
+                            @else
+                                <button type="button" class="btn btn-secondary btn-block send-invite-btn" disabled style="cursor: not-allowed; opacity: 0.65;">
+                                    <i class="fas fa-paper-plane mr-1" aria-hidden="true"></i> Send Invitation
+                                </button>
+                            @endif
+                        </form>
                     </div>
                 </div>
             </div>
@@ -247,13 +351,14 @@
             <div class="dashboard-card referrals-card">
                 <div class="dashboard-card-header">
                     <h2 class="section-title">Your Referrals</h2>
-                    <a href="#" class="card-link">View all</a>
+                    <a href="{{route('customer.referrals.index')}}" class="card-link">View all</a>
                 </div>
 
                 <div class="referral-metrics">
-                    <div><strong>12</strong><span>Invited</span></div>
-                    <div><strong>5</strong><span>Successful</span></div>
-                    <div><strong>$125</strong><span>Earned Credits</span></div>
+                    <div><strong>{{ $yourReferrals->total_invited ?? 0 }}</strong><span>Invited</span></div>
+                    <!-- <div><strong>{{ $yourReferrals->successful_referrals ?? 0 }}</strong><span>Successful</span></div> -->
+                    <div><strong>{{ $yourReferrals->completedBookingCount ?? 0 }}</strong><span>Completed</span></div>
+                    <div><strong>{{ $yourReferrals->total_rewards_formatted ?? '$0.00' }}</strong><span>Earned Credits</span></div>
                 </div>
 
                 <div class="referral-table-wrap">
@@ -265,23 +370,37 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><i class="far fa-user-circle" aria-hidden="true"></i> salimau@gmail.com</td>
-                                <td><span class="referral-badge badge-invited">Invited</span></td>
-                            </tr>
-                            <tr>
-                                <td><i class="far fa-user-circle" aria-hidden="true"></i> ritu.sarkar@hotmail.com</td>
-                                <td><span class="referral-badge badge-success">Signed Up</span> <strong class="credit-plus">+ $25</strong></td>
-                            </tr>
-                            <tr>
-                                <td><i class="far fa-user-circle" aria-hidden="true"></i> nahid.khan@gmail.com</td>
-                                <td><span class="referral-badge badge-success">Completed</span> <strong class="credit-plus">+ $25</strong></td>
-                            </tr>
+                            @forelse (($yourReferrals->recent_referrals ?? []) as $ref)
+                                <tr>
+                                    <td><i class="far fa-user-circle" aria-hidden="true"></i> {{ $ref->customer_email }}</td>
+                                    <td>
+                                        @php
+                                            $stKey = strtolower(str_replace([' ', '-'], '_', $ref->status_raw ?? $ref->status));
+                                        @endphp
+                                        @if (in_array($stKey, ['signed_up', 'signed up']))
+                                            <span class="referral-badge badge-signed-up">Signed Up</span>
+                                        @elseif ($stKey === 'rewarded')
+                                            <span class="referral-badge badge-success">Rewarded</span>
+                                        @elseif ($stKey === 'cancelled')
+                                            <span class="referral-badge badge-pending">Cancelled</span>
+                                        @else
+                                            <span class="referral-badge badge-invited">Invited</span>
+                                        @endif
+
+                                        @if (isset($ref->reward_amount) && $ref->reward_amount > 0)
+                                            <strong class="credit-plus">+ ${{ number_format($ref->reward_amount, 2) }}</strong>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="2" class="text-center text-muted py-3">No referrals recorded yet.</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
 
-                <a href="#" class="view-referrals-link">View all referrals</a>
             </div>
         </section>
     </div>
@@ -289,4 +408,9 @@
 
 @push('scripts')
     <script src="{{ asset('public/assets/js/dashboard.js') }}"></script>
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
 @endpush

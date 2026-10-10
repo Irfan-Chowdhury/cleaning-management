@@ -117,6 +117,12 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="minimum_advance_booking_days">Minimum Advance Booking Days</label>
+                        <input type="number" step="1" min="0" class="form-control" id="minimum_advance_booking_days"
+                               name="minimum_advance_booking_days" value="{{ old('minimum_advance_booking_days', $settings->minimum_advance_booking_days) }}" placeholder="0">
+                    </div>
+
+                    <div class="form-group">
                         <label for="maximum_advance_booking_days">Maximum Advance Booking Days</label>
                         <input type="number" step="1" min="1" class="form-control" id="maximum_advance_booking_days"
                                name="maximum_advance_booking_days" value="{{ old('maximum_advance_booking_days', $settings->maximum_advance_booking_days) }}" placeholder="30">

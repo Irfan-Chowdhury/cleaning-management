@@ -11,6 +11,7 @@ use App\Http\Middleware\EnsureGoogleReviewEnabled;
 
 Route::middleware(['auth', 'can:customer', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/dashboard/send-invite', [DashboardController::class, 'sendInvite'])->name('customer.dashboard.send-invite');
     Route::get('/my-bookings', [BookingController::class, 'index'])->name('customer.bookings.index');
     Route::get('/my-bookings/{id}', [BookingController::class, 'show'])->name('customer.bookings.show');
     Route::get('/my-bookings/{id}/download-pdf', [BookingController::class, 'downloadPdf'])->name('customer.bookings.downloadPdf');

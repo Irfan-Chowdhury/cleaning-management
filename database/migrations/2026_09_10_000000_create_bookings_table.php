@@ -18,8 +18,8 @@ return new class extends Migration
             $table->json('answers')->nullable();
             $table->string('frequency')->default('one_time');
 
-            $table->date('booking_date')->nullable();
-            $table->time('start_time')->nullable();
+            $table->date('booking_date');
+            $table->time('start_time');
             $table->time('end_time')->nullable();
 
             $table->string('customer_name')->nullable();

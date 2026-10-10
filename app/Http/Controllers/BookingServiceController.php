@@ -47,10 +47,14 @@ class BookingServiceController extends Controller
         $this->imageService = $imageService;
     }
 
-    public function create()
+    public function create(\Illuminate\Http\Request $request)
     {
         $services = Service::where('status', 'active')->orderBy('name')->get();
         $step1Data = $this->bookingSessionService->getStep1Data();
+
+        if ($request->has('service_id') && empty($step1Data['service_id'])) {
+            $step1Data['service_id'] = $request->input('service_id');
+        }
 
         return view('pages.booking-service.create', compact('services', 'step1Data'));
     }
@@ -134,6 +138,20 @@ class BookingServiceController extends Controller
 
             $formattedDate = $date->format('Y-m-d');
             $dayName = $date->format('l'); // e.g. 'Monday'
+
+            // Check minimum & maximum advance booking date restrictions
+            $advanceDateError = (new BookingStep2Request())->validateAdvanceBookingDate($formattedDate);
+            if ($advanceDateError) {
+                return response()->json([
+                    'date'          => $formattedDate,
+                    'day_of_week'   => $dayName,
+                    'is_holiday'    => false,
+                    'holiday_title' => null,
+                    'is_day_active' => false,
+                    'error_message' => $advanceDateError,
+                    'slots'         => [],
+                ]);
+            }
 
             // Check if date is a holiday
             try {
@@ -323,7 +341,8 @@ class BookingServiceController extends Controller
         $targetRoute = (int) $user->role === 1 ? 'bookings.index' : 'customer.bookings.index';
 
         return redirect()->route($targetRoute)
-            ->with('success', "Booking #{$booking->id} submitted! Status is Pending while Admin reviews.");
+            // ->with('success', "Booking #{$booking->id} submitted! Status is Pending while Admin reviews.");
+            ->with('success', "Quote Request #{$booking->id} Received submitted! We’ll call you with the final price for your review and confirmation.");
     }
 
     public function step4ReviewConfirm(Request $request)

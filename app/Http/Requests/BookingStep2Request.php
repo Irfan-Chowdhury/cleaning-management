@@ -5,9 +5,11 @@ namespace App\Http\Requests;
 use App\Models\Booking;
 use App\Models\Holiday;
 use App\Models\ScheduleSlot;
+use App\Models\Setting;
 use App\Models\WeeklySchedule;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Validator;
 
 class BookingStep2Request extends FormRequest
@@ -48,6 +50,49 @@ class BookingStep2Request extends FormRequest
     }
 
     /**
+     * Validate advance booking date against minimum and maximum setting restrictions.
+     *
+     * @param string|\Carbon\Carbon $dateInput
+     * @return string|null Error message if invalid, null if valid.
+     */
+    public function validateAdvanceBookingDate(string|\Carbon\Carbon $dateInput): ?string
+    {
+        try {
+            $selectedDate = ($dateInput instanceof Carbon) ? $dateInput->copy()->startOfDay() : Carbon::parse($dateInput)->startOfDay();
+        } catch (\Exception $e) {
+            return 'Invalid booking date format.';
+        }
+
+        $settings = Cache::rememberForever('app_settings', function () {
+            return Setting::latest()->first();
+        }) ?? Setting::latest()->first();
+
+        $minDays = (int) ($settings?->minimum_advance_booking_days ?? 0);
+        $maxDays = $settings?->maximum_advance_booking_days !== null && $settings?->maximum_advance_booking_days !== ''
+            ? (int) $settings->maximum_advance_booking_days
+            : null;
+
+        $today = Carbon::today();
+        $earliestDate = $today->copy()->addDays($minDays)->startOfDay();
+
+        if ($selectedDate->lt($earliestDate)) {
+            if ($minDays === 0) {
+                return 'Past dates cannot be selected.';
+            }
+            return "Bookings must be placed at least {$minDays} day(s) in advance. Earliest available date is " . $earliestDate->format('M j, Y') . ".";
+        }
+
+        if ($maxDays !== null && $maxDays > 0) {
+            $latestDate = $today->copy()->addDays($maxDays)->startOfDay();
+            if ($selectedDate->gt($latestDate)) {
+                return "Bookings can only be scheduled up to {$maxDays} day(s) in advance. Latest available date is " . $latestDate->format('M j, Y') . ".";
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Configure the validator instance.
      */
     public function withValidator(Validator $validator): void
@@ -63,6 +108,12 @@ class BookingStep2Request extends FormRequest
             try {
                 $date = Carbon::parse($dateStr);
             } catch (\Exception $e) {
+                return;
+            }
+
+            // 0. Check minimum and maximum advance booking date restrictions
+            if ($advanceDateError = $this->validateAdvanceBookingDate($dateStr)) {
+                $validator->errors()->add('booking_date', $advanceDateError);
                 return;
             }
 

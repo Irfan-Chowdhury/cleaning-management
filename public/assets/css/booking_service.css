@@ -744,6 +744,98 @@
     margin-top: 24px;
 }
 
+/* Slot Status Notice Cards */
+.slot-notice-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+    border-radius: 12px;
+    margin-bottom: 0;
+    transition: all 0.25s ease-in-out;
+}
+
+.slot-notice-card .slot-notice-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-radius: 10px;
+    font-size: 17px;
+}
+
+.slot-notice-card .slot-notice-content {
+    flex: 1;
+}
+
+.slot-notice-card .slot-notice-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    line-height: 1.3;
+}
+
+.slot-notice-card .slot-notice-text {
+    font-size: 13px;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Variant: Restricted / Advance Notice */
+.slot-notice-card.slot-notice-restricted {
+    background: #fffdf5;
+    border: 1px solid #fcd34d;
+    box-shadow: 0 2px 10px rgba(245, 158, 11, 0.08);
+}
+.slot-notice-card.slot-notice-restricted .slot-notice-icon-wrapper {
+    background: #fef3c7;
+    color: #d97706;
+}
+.slot-notice-card.slot-notice-restricted .slot-notice-title {
+    color: #92400e;
+}
+.slot-notice-card.slot-notice-restricted .slot-notice-text {
+    color: #b45309;
+}
+
+/* Variant: Holiday */
+.slot-notice-card.slot-notice-holiday {
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    box-shadow: 0 2px 10px rgba(34, 197, 94, 0.08);
+}
+.slot-notice-card.slot-notice-holiday .slot-notice-icon-wrapper {
+    background: #dcfce7;
+    color: #16a34a;
+}
+.slot-notice-card.slot-notice-holiday .slot-notice-title {
+    color: #15803d;
+}
+.slot-notice-card.slot-notice-holiday .slot-notice-text {
+    color: #166534;
+}
+
+/* Variant: Unavailable / Inactive Day */
+.slot-notice-card.slot-notice-unavailable {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 2px 10px rgba(100, 116, 139, 0.06);
+}
+.slot-notice-card.slot-notice-unavailable .slot-notice-icon-wrapper {
+    background: #e2e8f0;
+    color: #475569;
+}
+.slot-notice-card.slot-notice-unavailable .slot-notice-title {
+    color: #1e293b;
+}
+.slot-notice-card.slot-notice-unavailable .slot-notice-text {
+    color: #475569;
+}
+
+
 .booking-step-actions .btn {
     display: inline-flex;
     min-height: 44px;

@@ -6,6 +6,7 @@ use App\Enums\BookingStatus;
 use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\QuestionOption;
+use App\Models\Referral;
 use App\Models\ServiceQuestion;
 use App\Models\Setting;
 use App\Models\User;
@@ -18,6 +19,7 @@ use App\Notifications\BookingProcessingNotification;
 use App\Notifications\NewBookingPendingNotification;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class BookingService
 {
@@ -184,11 +186,12 @@ class BookingService
             $updateData['payment_method'] = $data['payment_method'];
         }
 
-        // Auditable trait automatically logs this update in audit_logs
-        $booking->update($updateData);
 
         // Sync or create Payment model record
         try {
+            // Auditable trait automatically logs this update in audit_logs
+            $booking->update($updateData);
+
             $payment = Payment::firstOrNew(['booking_id' => $booking->id]);
             $payment->user_id = $booking->user_id;
             $payment->amount = isset($data['amount']) ? (float) $data['amount'] : (float) $booking->total_amount;
@@ -209,6 +212,8 @@ class BookingService
                 } elseif ($oldStatus !== BookingStatus::PROCESSING->value && $newStatusEnum === BookingStatus::PROCESSING) {
                     $customer->notify(new BookingProcessingNotification($booking));
                 } elseif ($oldStatus !== BookingStatus::COMPLETED->value && $newStatusEnum === BookingStatus::COMPLETED) {
+                    // Process referral reward in referrals table & credit wallet if payment is paid
+                    $this->processReferralRewardOnBookingCompletion($booking);
                     $customer->notify(new BookingCompletedNotification($booking));
                 }
             } catch (\Throwable $e) {
@@ -473,5 +478,63 @@ class BookingService
             'status'     => 'Cancelled',
             'status_raw' => 'cancelled',
         ];
+    }
+
+    /**
+     * Process referral reward in referrals table and credit referrer wallet when a booking is completed and paid.
+     */
+    protected function processReferralRewardOnBookingCompletion(Booking $booking): void
+    {
+        try {
+            $paymentStatusVal = strtolower((string) ($booking->payment_status ?? ''));
+            if ($booking->user_id && $paymentStatusVal === 'paid') {
+                $referralRecord = Referral::where('referred_user_id', $booking->user_id)
+                    ->whereIn('status', ['signed_up', 'invited'])
+                    ->latest()
+                    ->first();
+
+                if (!$referralRecord && !empty($booking->referal_code)) {
+                    $referrer = User::where('referral_code', $booking->referal_code)->first();
+                    if ($referrer && $referrer->id !== $booking->user_id) {
+                        $referralRecord = Referral::create([
+                            'referrer_user_id' => $referrer->id,
+                            'referral_code'    => $referrer->referral_code,
+                            'recipient_email'  => $booking->customer_email ?: $booking->user?->email,
+                            'referred_user_id' => $booking->user_id,
+                            'status'           => 'rewarded',
+                        ]);
+                    }
+                }
+
+                if ($referralRecord) {
+                    $setting = Setting::first();
+                    $rewardAmt = (float) ($setting?->referral_reward > 0 ? $setting->referral_reward : 25.00);
+
+                    $referralRecord->update([
+                        'booking_id'    => $booking->id,
+                        'reward_amount' => $rewardAmt,
+                        'status'        => 'rewarded',
+                    ]);
+
+                    $alreadyCredited = WalletTransaction::where('user_id', $referralRecord->referrer_user_id)
+                        ->where('booking_id', $booking->id)
+                        ->where('source', 'referral_bonus')
+                        ->exists();
+
+                    if (!$alreadyCredited) {
+                        WalletTransaction::create([
+                            'user_id'     => $referralRecord->referrer_user_id,
+                            'booking_id'  => $booking->id,
+                            'type'        => 'credit',
+                            'amount'      => $rewardAmt,
+                            'source'      => 'referral_bonus',
+                            'description' => 'Referral Reward Bonus for referred booking #' . $booking->id,
+                        ]);
+                    }
+                }
+            }
+        } catch (Throwable $e) {
+            Log::error('Failed to process referral reward in referrals table on booking completion: ' . $e->getMessage());
+        }
     }
 }

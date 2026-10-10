@@ -38,8 +38,8 @@
                             <th>Referral Code</th>
                             <th>Active</th>
                             <th>Bookings</th>
-                            <th>Wallet</th>
-                            <th>Referred</th>
+                            <th>Remaining Credit</th>
+                            <!-- <th>Referred</th> -->
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -183,11 +183,11 @@
                     { data: 'is_active_badge', name: 'is_active' },
                     { data: 'bookings_count', name: 'bookings_count', searchable: false },
                     { data: 'wallet_balance', name: 'wallet_balance', searchable: false },
-                    { data: 'referred_count', name: 'referred_count', searchable: false },
+                    // { data: 'referred_count', name: 'referred_count', searchable: false },
                     { data: 'action', name: 'action', searchable: false }
                 ],
                 columnDefs: [
-                    { orderable: false, targets: [5, 6, 7, 8] }
+                    { orderable: false, targets: [5, 6, 7] }
                 ],
                 language: {
                     search: '',

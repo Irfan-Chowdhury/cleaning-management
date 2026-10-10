@@ -4,10 +4,16 @@ namespace App\Services;
 
 use App\Enums\BookingStatus;
 use App\Models\Booking;
+use App\Models\Referral;
 use App\Models\Setting;
 use App\Models\User;
 use App\Models\WalletTransaction;
+use App\Notifications\ReferralInviteNotification;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class ReferralService
 {
@@ -185,10 +191,10 @@ class ReferralService
     {
         // 1. Ensure referral code exists for customer
         $referralCode = $user->referral_code;
-        if (empty($referralCode)) {
-            $referralCode = strtoupper(($user->first_name ?: 'REF') . $user->id);
-            $user->update(['referral_code' => $referralCode]);
-        }
+        // if (empty($referralCode)) {
+        //     $referralCode = strtoupper(($user->first_name ?: 'REF') . $user->id);
+        //     $user->update(['referral_code' => $referralCode]);
+        // }
 
         $referralLink = url('/register?ref=' . $referralCode);
         $setting = Setting::first();
@@ -197,6 +203,8 @@ class ReferralService
         // Fetch bookings where this user's referral code was used
         $referralBookings = Booking::with('user')
             ->where('referal_code', $referralCode)
+            ->where('status', 'completed')
+            ->where('payment_status', 'paid')
             ->latest()
             ->get();
 
@@ -222,6 +230,10 @@ class ReferralService
             ->where('source', 'referral_bonus')
             ->sum('amount');
 
+        $completedBookingCount = WalletTransaction::where('user_id', $user->id)
+            ->where('source', 'referral_bonus')
+            ->count();
+
         // if ($totalRewards == 0) {
         //     $completedCount = $referralBookings->filter(function ($b) {
         //         $status = strtolower((string) ($b->status->value ?? $b->status));
@@ -231,7 +243,7 @@ class ReferralService
         // }
 
         // Map referral items for view
-        $referrals = $referralBookings->map(function ($booking) use ($configuredReward) {
+        $bookingReferralsList = $referralBookings->map(function ($booking) use ($configuredReward) {
             $referredUser = $booking->user;
             $name = trim(($referredUser?->first_name ?? '') . ' ' . ($referredUser?->last_name ?? ''));
             if (empty($name)) {
@@ -253,9 +265,12 @@ class ReferralService
                 );
             }
 
+            $email = $referredUser?->email ?: $booking->customer_email ?: 'N/A';
+
             return (object) [
                 'id'              => $booking->id,
                 'customer_name'   => $name,
+                'customer_email'  => $email,
                 'customer_avatar' => $avatar,
                 'joined_date'     => $joinedDate,
                 'status'          => $status,
@@ -263,6 +278,15 @@ class ReferralService
                 'reward_amount'   => $rewardAmount,
             ];
         });
+
+        // Merge invited or signed_up records from referrals table using dedicated method
+        $referrals = $this->mergeReferralsTableData($user, $bookingReferralsList);
+
+        $totalReferrals = $referrals->count();
+        $pendingReferrals = $referrals->filter(function ($item) {
+            $st = strtolower((string) $item->status);
+            return in_array($st, ['pending', 'invited', 'signed_up','signed up']);
+        })->count();
 
         $hasCompletedPaidBooking = Booking::where('user_id', $user->id)
             ->get()
@@ -277,10 +301,65 @@ class ReferralService
             'referralLink'            => $referralLink,
             'totalReferrals'          => $totalReferrals,
             'pendingReferrals'        => $pendingReferrals,
+            'completedBookingCount' => $completedBookingCount,
             'totalRewards'            => $totalRewards,
             'referrals'               => $referrals,
             'hasCompletedPaidBooking' => $hasCompletedPaidBooking,
         ];
+    }
+
+    /**
+     * Helper method to merge referrals table records (status: invited, signed_up) into customer referral history.
+     */
+    protected function mergeReferralsTableData(User $user, Collection $existingReferrals): Collection
+    {
+        $referralRecords = Referral::with(['referredUser'])
+            ->where('referrer_user_id', $user->id)
+            ->whereIn('status', ['invited', 'signed_up'])
+            ->latest()
+            ->get();
+
+        if ($referralRecords->isEmpty()) {
+            return $existingReferrals;
+        }
+
+        $existingEmails = $existingReferrals->pluck('customer_email')->filter()->map(fn($e) => strtolower(trim($e)))->toArray();
+
+        $tableItems = $referralRecords->reject(function ($ref) use ($existingEmails) {
+            $emailToCompare = strtolower(trim((string) ($ref->recipient_email ?: $ref->referredUser?->email)));
+            return !empty($emailToCompare) && in_array($emailToCompare, $existingEmails);
+        })->map(function ($ref) {
+            $referredUser = $ref->referredUser;
+            
+            // Explicitly fetch recipient_email for invited and signed_up statuses
+            $email = !empty($ref->recipient_email) ? trim($ref->recipient_email) : ($referredUser?->email ?: '');
+
+            $name = $referredUser ? trim($referredUser->first_name . ' ' . ($referredUser->last_name ?? '')) : '';
+            if (empty($name)) {
+                $name = $email ?: 'Invited Friend';
+            }
+
+            $avatar = $referredUser?->photo_url ?? "https://ui-avatars.com/api/?name=" . urlencode($name) . "&background=0866e8&color=fff";
+            $joinedDate = $ref->created_at ? $ref->created_at->format('Y-m-d') : now()->format('Y-m-d');
+            $statusRaw = strtolower(trim((string) $ref->status));
+            $status = match ($statusRaw) {
+                'signed_up', 'signed up' => 'Signed Up',
+                default                  => 'Invited',
+            };
+
+            return (object) [
+                'id'              => 'ref_' . $ref->id,
+                'customer_name'   => $name,
+                'customer_email'  => $email,
+                'customer_avatar' => $avatar,
+                'joined_date'     => $joinedDate,
+                'status'          => $status,
+                'booking_id'      => null, // Blank booking column for invited / signed_up
+                'reward_amount'   => 0.00, // Amount is 0
+            ];
+        });
+
+        return $existingReferrals->concat($tableItems);
     }
 
     /**
@@ -338,5 +417,140 @@ class ReferralService
                 'created_at'      => $booking->created_at ? $booking->created_at->format('Y-m-d H:i:s') : now()->toDateTimeString(),
             ];
         });
+    }
+
+    /**
+     * Refer to docs/DeveloperNote.md (Line 3: "Customer Dashboard: Invite Via Email Feature")
+     * for full technical specifications, rules, and developer documentation.
+     */
+    public function sendEmailInvitation(User $sender, string $recipientEmail, ?string $customMessage = null): array
+    {
+        // 1. Verify customer has at least 1 completed paid booking
+        $hasCompletedPaidBooking = Booking::where('user_id', $sender->id)
+            ->where('status', BookingStatus::COMPLETED->value)
+            ->where('payment_status', 'paid')
+            ->exists();
+
+        if (!$hasCompletedPaidBooking) {
+            return [
+                'success' => false,
+                'message' => 'Your referral link and invitation features are locked until you successfully complete at least one booking with payment done.',
+            ];
+        }
+
+        // 2. Check if email already exists in users table
+        if (User::where('email', trim($recipientEmail))->exists()) {
+            return [
+                'success' => false,
+                'message' => 'This email address is already registered as an existing account.',
+            ];
+        }
+
+        // 3. Save invitation record in referrals table
+        try {
+            $senderCode = $sender->referral_code ?: strtoupper(($sender->first_name ?: 'REF') . $sender->id);
+            Referral::updateOrCreate(
+                [
+                    'referrer_user_id' => $sender->id,
+                    'recipient_email'  => strtolower(trim($recipientEmail)),
+                ],
+                [
+                    'referral_code'   => $senderCode,
+                    'custom_message'  => $customMessage,
+                    'status'          => 'invited',
+                ]
+            );
+        } catch (Throwable $e) {
+            Log::error('Failed to save referral invitation record: ' . $e->getMessage());
+        }
+
+        // 4. Dispatch professional referral email notification to the recipient
+        try {
+            Notification::route('mail', trim($recipientEmail))
+                ->notify(new ReferralInviteNotification($sender, $customMessage));
+
+            return [
+                'success' => true,
+                'message' => 'Referral invitation sent successfully to ' . trim($recipientEmail) . '!',
+            ];
+        } catch (Throwable $e) {
+            Log::error('Failed to send referral email invitation: ' . $e->getMessage());
+
+            return [
+                'success' => false,
+                'message' => 'Could not send invitation email at this time. Please try again later.',
+            ];
+        }
+    }
+
+    /**
+     * Get dynamic dashboard data specifically for 'Your Referrals' feature from referrals table.
+     *
+     * @param User $user Logged in customer user
+     * @return object
+     */
+    public function getYourReferralsDashboardData(User $user): object
+    {
+        $setting = Setting::first();
+        $configuredReward = (float) ($setting?->referral_reward > 0 ? $setting->referral_reward : 25.00);
+
+        $referralRecords = Referral::with(['referredUser', 'booking'])
+            ->where('referrer_user_id', $user->id)
+            ->latest()
+            ->get();
+
+        $totalInvited = $referralRecords->count();
+        // $successfulReferrals = $referralRecords->whereIn('status', ['signed_up', 'rewarded'])->count();
+
+        $completedBookingCount = WalletTransaction::where('user_id', $user->id)
+            ->where('source', 'referral_bonus')
+            ->count();
+        
+        $totalRewards = (float) WalletTransaction::where('user_id', $user->id)
+            ->where('source', 'referral_bonus')
+            ->sum('amount');
+
+        if ($totalRewards == 0 && $referralRecords->where('status', 'rewarded')->count() > 0) {
+            $totalRewards = (float) $referralRecords->where('status', 'rewarded')->sum('reward_amount');
+        }
+
+        $recentReferrals = $referralRecords->take(5)->map(function ($ref) use ($configuredReward) {
+            $referredUser = $ref->referredUser;
+            $name = $referredUser ? trim($referredUser->first_name . ' ' . ($referredUser->last_name ?? '')) : '';
+            if (empty($name)) {
+                $name = $ref->recipient_email ?: 'Invited Friend';
+            }
+
+            $emailDisplay = $ref->recipient_email ?: ($referredUser?->email ?: $name);
+            $rawStatus = strtolower(trim((string) $ref->status));
+
+            $statusLabel = match ($rawStatus) {
+                'rewarded'               => 'Rewarded',
+                'signed_up', 'signed up' => 'Signed Up',
+                'cancelled'              => 'Cancelled',
+                default                  => 'Invited',
+            };
+
+            $rewardAmt = (float) ($ref->reward_amount > 0 ? $ref->reward_amount : ($rawStatus === 'rewarded' ? $configuredReward : 0.00));
+
+            return (object) [
+                'id'             => $ref->id,
+                'customer_name'  => $name,
+                'customer_email' => $emailDisplay,
+                'status'         => $statusLabel,
+                'status_raw'     => $rawStatus,
+                'reward_amount'  => $rewardAmt,
+                'created_at'     => $ref->created_at ? $ref->created_at->format('M d, Y') : now()->format('M d, Y'),
+            ];
+        });
+
+        return (object) [
+            'total_invited'           => $totalInvited,
+            // 'successful_referrals'    => $successfulReferrals,
+            'total_rewards'           => $totalRewards,
+            'total_rewards_formatted' => '$' . number_format($totalRewards, 2),
+            'recent_referrals'        => $recentReferrals,
+            'completedBookingCount' => $completedBookingCount
+        ];
     }
 }
