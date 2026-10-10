@@ -79,6 +79,10 @@ class CustomerService
 
         $normalized['is_active'] = (bool) ($data['is_active'] ?? false);
 
+        if ($normalized['is_active']) {
+            $normalized['email_verified_at'] = now();
+        }
+
         if ($updating && empty($normalized['password'])) {
             unset($normalized['password']);
         }

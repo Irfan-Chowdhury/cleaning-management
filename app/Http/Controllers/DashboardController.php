@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SendReferralInviteRequest;
 use App\Services\CustomerDashboardService;
+use App\Services\GoogleReviewService;
 use App\Services\ReferralService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +13,8 @@ class DashboardController extends Controller
 {
     public function __construct(
         protected CustomerDashboardService $dashboardService,
-        protected ReferralService $referralService
+        protected ReferralService $referralService,
+        protected GoogleReviewService $reviewService
     ) {
     }
 
@@ -30,13 +32,17 @@ class DashboardController extends Controller
         // Fetch "Your Referrals" feature data using injected ReferralService instance
         $yourReferrals = $this->referralService->getYourReferralsDashboardData($user);
 
+        // Fetch Google Review eligibility/data following /my-review workflow
+        $googleReviewData = $this->reviewService->getEligibilityForUser($user);
+
         return view('pages.dashboard', compact(
             'nextCleaning',
             'stats',
             'recentBookings',
             'quickBookServices',
             'referralData',
-            'yourReferrals'
+            'yourReferrals',
+            'googleReviewData'
         ));
     }
 

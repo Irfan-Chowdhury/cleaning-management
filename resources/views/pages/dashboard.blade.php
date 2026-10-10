@@ -211,24 +211,58 @@
                 @endforelse
             </div>
 
-            <!-- <div class="dashboard-card rewards-card">
-                <div class="dashboard-card-header">
-                    <h2 class="section-title">Credits &amp; Rewards</h2>
-                    <a href="#" class="card-link">View details</a>
+            <div class="dashboard-card google-review-card">
+                <div class="dashboard-card-header d-flex align-items-center justify-content-between">
+                    <h2 class="section-title mb-0">Google Review Reward</h2>
+                    <a href="{{ route('customer.review.index') }}" class="card-link">View details</a>
                 </div>
 
-                <div class="credit-summary">
-                    <div>
-                        <span>Available Credits</span>
-                        <strong class="credit-green">$45.00</strong>
+                @if(!empty($googleReviewData['eligible']))
+                    <div class="google-review-body text-center py-2">
+                        <div class="d-inline-flex align-items-center justify-content-center mb-2" style="width: 44px; height: 44px; background: rgba(8, 102, 232, 0.1); color: #0866e8; border-radius: 50%; font-size: 20px;">
+                            <i class="fab fa-google"></i>
+                        </div>
+                        <h3 class="h6 font-weight-bold text-dark mb-1">Earn ${{ number_format((float)($googleReviewData['reward_amount'] ?? 0), 2) }} Wallet Credit</h3>
+                        <p class="text-muted small mb-3">Leave a review on Google &amp; apply for your review reward bonus!</p>
+                        <a href="{{ route('customer.review.index') }}" class="btn btn-primary btn-sm btn-block shadow-sm">
+                            <i class="fab fa-google mr-1"></i> Claim Review Reward
+                        </a>
                     </div>
-                    <div class="credit-separator"></div>
-                    <div>
-                        <span>Pending Credits</span>
-                        <strong>$26.00</strong>
+                @elseif(($googleReviewData['reason'] ?? '') === 'pending')
+                    <div class="google-review-body text-center py-2">
+                        <div class="d-inline-flex align-items-center justify-content-center mb-2" style="width: 44px; height: 44px; background: rgba(255, 193, 7, 0.15); color: #ff9800; border-radius: 50%; font-size: 20px;">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3 class="h6 font-weight-bold text-dark mb-1">Verification Pending</h3>
+                        <p class="text-muted small mb-3">Your Google Review request is currently under review by our team.</p>
+                        <a href="{{ route('customer.review.index') }}" class="btn btn-outline-warning btn-sm btn-block">
+                            <i class="fas fa-eye mr-1"></i> View Status
+                        </a>
                     </div>
-                </div>
-            </div> -->
+                @elseif(($googleReviewData['reason'] ?? '') === 'already_approved')
+                    <div class="google-review-body text-center py-2">
+                        <div class="d-inline-flex align-items-center justify-content-center mb-2" style="width: 44px; height: 44px; background: rgba(40, 167, 69, 0.1); color: #28a745; border-radius: 50%; font-size: 20px;">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <h3 class="h6 font-weight-bold text-dark mb-1">Reward Claimed!</h3>
+                        <p class="text-muted small mb-3">You earned ${{ number_format((float)($googleReviewData['reward_amount'] ?? 0), 2) }} credit for reviewing us on Google.</p>
+                        <a href="{{ route('customer.review.index') }}" class="btn btn-outline-success btn-sm btn-block">
+                            <i class="fas fa-check-circle mr-1"></i> View Reward
+                        </a>
+                    </div>
+                @else
+                    <div class="google-review-body text-center py-2">
+                        <div class="d-inline-flex align-items-center justify-content-center mb-2" style="width: 44px; height: 44px; background: rgba(8, 102, 232, 0.1); color: #0866e8; border-radius: 50%; font-size: 20px;">
+                            <i class="fab fa-google"></i>
+                        </div>
+                        <h3 class="h6 font-weight-bold text-dark mb-1">Rate Us on Google</h3>
+                        <p class="text-muted small mb-3">Share your feedback and experience with our cleaning services on Google.</p>
+                        <a href="https://g.page/r/CYz0nJiMwuhzEBM/review" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm btn-block">
+                            <i class="fas fa-external-link-alt mr-1"></i> Review on Google
+                        </a>
+                    </div>
+                @endif
+            </div>
         </section>
 
         <section class="dashboard-section dashboard-section-bottom">
