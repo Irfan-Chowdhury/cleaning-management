@@ -486,7 +486,7 @@
 
             function fetchTimeSlots(dateStr) {
                 var $container = $('#time-slots-container');
-                $container.html('<div class="text-muted p-3 text-center"><i class="fas fa-spinner fa-spin mr-1"></i> Loading available times...</div>');
+                $container.html('<div class="text-muted p-3 text-center" style="grid-column: 1 / -1;"><i class="fas fa-spinner fa-spin mr-1"></i> Loading available times...</div>');
 
                 var currentSelectedSlot = $('#selected-start-time').val();
 
@@ -499,21 +499,70 @@
                     $container.empty();
 
                     if (res.is_holiday) {
-                        $container.html('<div class="alert alert-warning text-center small mb-0"><i class="fas fa-umbrella-beach mr-1"></i> Selected date is a holiday (' + escapeHtml(res.holiday_title) + '). No slots available.</div>');
+                        var holidayTitle = escapeHtml(res.holiday_title || 'Public Holiday');
+                        $container.html(
+                            '<div class="card border-0 shadow-sm mb-0 w-100" style="grid-column: 1 / -1; border-left: 4px solid #10b981 !important; background: #f0fdf4;">' +
+                                '<div class="card-body p-3">' +
+                                    '<div class="d-flex align-items-start">' +
+                                        '<div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center mr-3 mt-1" style="width: 32px; height: 32px; min-width: 32px; font-size: 14px;">' +
+                                            '<i class="fas fa-umbrella-beach" aria-hidden="true"></i>' +
+                                        '</div>' +
+                                        '<div>' +
+                                            '<h6 class="font-weight-bold text-dark mb-1" style="font-size: 13px;">Public Holiday</h6>' +
+                                            '<p class="text-muted mb-0" style="font-size: 12px; line-height: 1.45;">Selected date falls on a holiday (' + holidayTitle + '). Service is closed on this date.</p>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>'
+                        );
                         $('#calendar-info-text').text('Holiday: ' + res.holiday_title);
                         return;
                     }
 
                     if (!res.is_day_active) {
+                        var isRestricted = !!res.error_message;
                         var displayMsg = res.error_message || ('Cleaning services are not available on ' + escapeHtml(res.day_of_week) + 's.');
-                        $container.html('<div class="alert alert-secondary text-center small mb-0"><i class="fas fa-calendar-times mr-1"></i> ' + escapeHtml(displayMsg) + '</div>');
-                        $('#calendar-info-text').text(res.error_message || ('Service unavailable on ' + res.day_of_week + 's'));
+                        var borderAccent = isRestricted ? '#f59e0b' : '#64748b';
+                        var iconBgClass = isRestricted ? 'bg-warning text-dark' : 'bg-secondary text-white';
+                        var iconClass = isRestricted ? 'fa-calendar-minus' : 'fa-calendar-times';
+                        var titleText = isRestricted ? 'Advance Notice Required' : 'Service Unavailable';
+
+                        $container.html(
+                            '<div class="card border-0 shadow-sm mb-0 w-100" style="grid-column: 1 / -1; border-left: 4px solid ' + borderAccent + ' !important; background: #fafbfc;">' +
+                                '<div class="card-body p-3">' +
+                                    '<div class="d-flex align-items-start">' +
+                                        '<div class="rounded-circle ' + iconBgClass + ' d-flex align-items-center justify-content-center mr-3 mt-1" style="width: 32px; height: 32px; min-width: 32px; font-size: 14px;">' +
+                                            '<i class="fas ' + iconClass + '" aria-hidden="true"></i>' +
+                                        '</div>' +
+                                        '<div>' +
+                                            '<h6 class="font-weight-bold text-dark mb-1" style="font-size: 13px;">' + escapeHtml(titleText) + '</h6>' +
+                                            '<p class="text-muted mb-0" style="font-size: 12px; line-height: 1.45;">' + escapeHtml(displayMsg) + '</p>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>'
+                        );
+                        $('#calendar-info-text').text('Showing available dates');
                         return;
                     }
 
                     if (!res.slots || !res.slots.length) {
-                        $container.html('<div class="alert alert-secondary text-center small mb-0"><i class="fas fa-clock mr-1"></i> No time slots configured for ' + escapeHtml(res.day_of_week) + 's.</div>');
-                        $('#calendar-info-text').text('No slots configured for ' + res.day_of_week);
+                        $container.html(
+                            '<div class="card border-0 shadow-sm mb-0 w-100" style="grid-column: 1 / -1; border-left: 4px solid #64748b !important; background: #fafbfc;">' +
+                                '<div class="card-body p-3">' +
+                                    '<div class="d-flex align-items-start">' +
+                                        '<div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center mr-3 mt-1" style="width: 32px; height: 32px; min-width: 32px; font-size: 14px;">' +
+                                            '<i class="fas fa-clock" aria-hidden="true"></i>' +
+                                        '</div>' +
+                                        '<div>' +
+                                            '<h6 class="font-weight-bold text-dark mb-1" style="font-size: 13px;">No Slots Configured</h6>' +
+                                            '<p class="text-muted mb-0" style="font-size: 12px; line-height: 1.45;">No available time slots are configured for ' + escapeHtml(res.day_of_week) + 's.</p>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>'
+                        );
+                        $('#calendar-info-text').text('Showing available dates');
                         return;
                     }
 
@@ -540,7 +589,7 @@
                         $container.append($slotBtn);
                     });
                 }).fail(function () {
-                    $container.html('<div class="alert alert-danger text-center small mb-0"><i class="fas fa-exclamation-triangle mr-1"></i> Failed to load time slots. Please try again.</div>');
+                    $container.html('<div class="alert alert-danger text-center small mb-0 w-100" style="grid-column: 1 / -1;"><i class="fas fa-exclamation-triangle mr-1"></i> Failed to load time slots. Please try again.</div>');
                 });
             }
 
