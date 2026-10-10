@@ -191,10 +191,10 @@ class ReferralService
     {
         // 1. Ensure referral code exists for customer
         $referralCode = $user->referral_code;
-        if (empty($referralCode)) {
-            $referralCode = strtoupper(($user->first_name ?: 'REF') . $user->id);
-            $user->update(['referral_code' => $referralCode]);
-        }
+        // if (empty($referralCode)) {
+        //     $referralCode = strtoupper(($user->first_name ?: 'REF') . $user->id);
+        //     $user->update(['referral_code' => $referralCode]);
+        // }
 
         $referralLink = url('/register?ref=' . $referralCode);
         $setting = Setting::first();
@@ -203,6 +203,8 @@ class ReferralService
         // Fetch bookings where this user's referral code was used
         $referralBookings = Booking::with('user')
             ->where('referal_code', $referralCode)
+            ->where('status', 'completed')
+            ->where('payment_status', 'paid')
             ->latest()
             ->get();
 
@@ -227,6 +229,10 @@ class ReferralService
         $totalRewards = (float) WalletTransaction::where('user_id', $user->id)
             ->where('source', 'referral_bonus')
             ->sum('amount');
+
+        $completedBookingCount = WalletTransaction::where('user_id', $user->id)
+            ->where('source', 'referral_bonus')
+            ->count();
 
         // if ($totalRewards == 0) {
         //     $completedCount = $referralBookings->filter(function ($b) {
@@ -295,6 +301,7 @@ class ReferralService
             'referralLink'            => $referralLink,
             'totalReferrals'          => $totalReferrals,
             'pendingReferrals'        => $pendingReferrals,
+            'completedBookingCount' => $completedBookingCount,
             'totalRewards'            => $totalRewards,
             'referrals'               => $referrals,
             'hasCompletedPaidBooking' => $hasCompletedPaidBooking,
@@ -493,7 +500,11 @@ class ReferralService
             ->get();
 
         $totalInvited = $referralRecords->count();
-        $successfulReferrals = $referralRecords->whereIn('status', ['signed_up', 'rewarded'])->count();
+        // $successfulReferrals = $referralRecords->whereIn('status', ['signed_up', 'rewarded'])->count();
+
+        $completedBookingCount = WalletTransaction::where('user_id', $user->id)
+            ->where('source', 'referral_bonus')
+            ->count();
         
         $totalRewards = (float) WalletTransaction::where('user_id', $user->id)
             ->where('source', 'referral_bonus')
@@ -535,10 +546,11 @@ class ReferralService
 
         return (object) [
             'total_invited'           => $totalInvited,
-            'successful_referrals'    => $successfulReferrals,
+            // 'successful_referrals'    => $successfulReferrals,
             'total_rewards'           => $totalRewards,
             'total_rewards_formatted' => '$' . number_format($totalRewards, 2),
             'recent_referrals'        => $recentReferrals,
+            'completedBookingCount' => $completedBookingCount
         ];
     }
 }

@@ -144,7 +144,7 @@
                         </div>
                         <div class="stat-value">{{ $stats->total_spent_formatted }}</div>
                         <p>Total Spent</p>
-                        <a href="{{ $stats->total_spent_url }}">View invoices</a>
+                    <a href="{{ $stats->total_spent_url }}">View invoices</a>
                     </div>
                 </div>
             </div>
@@ -317,12 +317,13 @@
             <div class="dashboard-card referrals-card">
                 <div class="dashboard-card-header">
                     <h2 class="section-title">Your Referrals</h2>
-                    <a href="#" class="card-link">View all</a>
+                    <a href="{{route('customer.referrals.index')}}" class="card-link">View all</a>
                 </div>
 
                 <div class="referral-metrics">
                     <div><strong>{{ $yourReferrals->total_invited ?? 0 }}</strong><span>Invited</span></div>
-                    <div><strong>{{ $yourReferrals->successful_referrals ?? 0 }}</strong><span>Successful</span></div>
+                    <!-- <div><strong>{{ $yourReferrals->successful_referrals ?? 0 }}</strong><span>Successful</span></div> -->
+                    <div><strong>{{ $yourReferrals->completedBookingCount ?? 0 }}</strong><span>Completed</span></div>
                     <div><strong>{{ $yourReferrals->total_rewards_formatted ?? '$0.00' }}</strong><span>Earned Credits</span></div>
                 </div>
 
@@ -366,7 +367,6 @@
                     </table>
                 </div>
 
-                <a href="#" class="view-referrals-link">View all referrals</a>
             </div>
         </section>
     </div>

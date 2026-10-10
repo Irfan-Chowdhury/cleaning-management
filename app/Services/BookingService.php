@@ -186,11 +186,12 @@ class BookingService
             $updateData['payment_method'] = $data['payment_method'];
         }
 
-        // Auditable trait automatically logs this update in audit_logs
-        $booking->update($updateData);
 
         // Sync or create Payment model record
         try {
+            // Auditable trait automatically logs this update in audit_logs
+            $booking->update($updateData);
+
             $payment = Payment::firstOrNew(['booking_id' => $booking->id]);
             $payment->user_id = $booking->user_id;
             $payment->amount = isset($data['amount']) ? (float) $data['amount'] : (float) $booking->total_amount;
@@ -211,10 +212,9 @@ class BookingService
                 } elseif ($oldStatus !== BookingStatus::PROCESSING->value && $newStatusEnum === BookingStatus::PROCESSING) {
                     $customer->notify(new BookingProcessingNotification($booking));
                 } elseif ($oldStatus !== BookingStatus::COMPLETED->value && $newStatusEnum === BookingStatus::COMPLETED) {
-                    $customer->notify(new BookingCompletedNotification($booking));
-
                     // Process referral reward in referrals table & credit wallet if payment is paid
                     $this->processReferralRewardOnBookingCompletion($booking);
+                    $customer->notify(new BookingCompletedNotification($booking));
                 }
             } catch (\Throwable $e) {
                 Log::error('Failed to send customer booking status update notification: ' . $e->getMessage());
@@ -501,7 +501,7 @@ class BookingService
                             'referral_code'    => $referrer->referral_code,
                             'recipient_email'  => $booking->customer_email ?: $booking->user?->email,
                             'referred_user_id' => $booking->user_id,
-                            'status'           => 'signed_up',
+                            'status'           => 'rewarded',
                         ]);
                     }
                 }
