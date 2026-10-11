@@ -50,22 +50,22 @@
             <a href="{{ route('customers.index') }}" class="admin-metric-card metric-green">
                 <span class="metric-icon"><i class="fas fa-users" aria-hidden="true"></i></span>
                 <span class="metric-label">Active Customers</span>
-                <strong>1,248</strong>
-                <span class="metric-note">36 new this month</span>
+                <strong>{{ number_format($activeCustomers['total_count'] ?? 0) }}</strong>
+                <span class="metric-note">{{ number_format($activeCustomers['new_this_month_count'] ?? 0) }} new this month</span>
             </a>
 
             <a href="{{ route('wallets.index') }}" class="admin-metric-card metric-amber">
                 <span class="metric-icon"><i class="fas fa-wallet" aria-hidden="true"></i></span>
-                <span class="metric-label">Wallet Credits</span>
-                <strong>$18,420</strong>
-                <span class="metric-note">Referral and review rewards</span>
+                <span class="metric-label">Total Revenue This {{ $totalRevenue['month_name'] ?? now()->format('F') }}</span>
+                <strong>${{ number_format($totalRevenue['amount'] ?? 0, 2) }}</strong>
+                <span class="metric-note">{{ number_format($totalRevenue['completed_count'] ?? 0) }} completed bookings with paid this month</span>
             </a>
 
             <a href="{{ route('referrals.index') }}" class="admin-metric-card metric-rose">
                 <span class="metric-icon"><i class="fas fa-user-friends" aria-hidden="true"></i></span>
-                <span class="metric-label">Referral Pipeline</span>
+                <span class="metric-label">Referral Signup</span>
                 <strong>73</strong>
-                <span class="metric-note">19 pending approval</span>
+                <span class="metric-note">19 Invited</span>
             </a>
         </section>
 
