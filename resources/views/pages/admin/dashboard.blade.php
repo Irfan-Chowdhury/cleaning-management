@@ -92,38 +92,24 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><strong>#CL-2048</strong></td>
-                                <td>Sarah Ahmed</td>
-                                <td>Deep Cleaning</td>
-                                <td>Today, 10:30 AM</td>
-                                <td><span class="admin-status status-pending">Pending</span></td>
-                                <td><span class="admin-payment payment-paid">Paid</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>#CL-2049</strong></td>
-                                <td>Rahim Khan</td>
-                                <td>Residential Cleaning</td>
-                                <td>Today, 02:00 PM</td>
-                                <td><span class="admin-status status-confirmed">Confirmed</span></td>
-                                <td><span class="admin-payment payment-due">Due</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>#CL-2050</strong></td>
-                                <td>Nusrat Jahan</td>
-                                <td>Office Cleaning</td>
-                                <td>Tomorrow, 09:00 AM</td>
-                                <td><span class="admin-status status-progress">In Progress</span></td>
-                                <td><span class="admin-payment payment-paid">Paid</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>#CL-2051</strong></td>
-                                <td>Tanvir Hasan</td>
-                                <td>Move-out Cleaning</td>
-                                <td>Aug 24, 11:00 AM</td>
-                                <td><span class="admin-status status-cancelled">Cancelled</span></td>
-                                <td><span class="admin-payment payment-refund">Refund</span></td>
-                            </tr>
+                            @forelse ($bookingQueue as $booking)
+                                <tr>
+                                    <td>
+                                        <a href="{{ route('bookings.show', $booking['id']) }}" class="text-dark font-weight-bold">
+                                            {{ $booking['reference'] }}
+                                        </a>
+                                    </td>
+                                    <td>{{ $booking['customer_name'] }}</td>
+                                    <td>{{ $booking['service_name'] }}</td>
+                                    <td>{{ $booking['schedule'] }}</td>
+                                    <td><span class="admin-status {{ $booking['status_badge_class'] }}">{{ $booking['status_label'] }}</span></td>
+                                    <td><span class="admin-payment {{ $booking['payment_badge_class'] }}">{{ $booking['payment_label'] }}</span></td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">No bookings found in the queue.</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -139,34 +125,17 @@
                 </div>
 
                 <div class="service-mix-list">
-                    <div class="service-mix-row">
-                        <div>
-                            <strong>Residential Cleaning</strong>
-                            <span>156 bookings</span>
+                    @forelse ($serviceMix as $service)
+                        <div class="service-mix-row">
+                            <div>
+                                <strong>{{ $service['name'] }}</strong>
+                                <span>{{ $service['label'] }}</span>
+                            </div>
+                            <div class="service-progress"><span style="width: {{ $service['percentage'] }}%"></span></div>
                         </div>
-                        <div class="service-progress"><span style="width: 76%"></span></div>
-                    </div>
-                    <div class="service-mix-row">
-                        <div>
-                            <strong>Deep Cleaning</strong>
-                            <span>98 bookings</span>
-                        </div>
-                        <div class="service-progress"><span style="width: 58%"></span></div>
-                    </div>
-                    <div class="service-mix-row">
-                        <div>
-                            <strong>Office Cleaning</strong>
-                            <span>74 bookings</span>
-                        </div>
-                        <div class="service-progress"><span style="width: 46%"></span></div>
-                    </div>
-                    <div class="service-mix-row">
-                        <div>
-                            <strong>Window Cleaning</strong>
-                            <span>41 bookings</span>
-                        </div>
-                        <div class="service-progress"><span style="width: 29%"></span></div>
-                    </div>
+                    @empty
+                        <p class="text-muted small mb-0">No active services found.</p>
+                    @endforelse
                 </div>
             </div>
         </section>

@@ -5,8 +5,10 @@ namespace App\Services;
 use App\Enums\BookingStatus;
 use App\Models\Booking;
 use App\Models\Referral;
+use App\Models\Service;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class AdminDashboardService
 {
@@ -91,8 +93,114 @@ class AdminDashboardService
             ->first();
 
         return [
-            'signed_up_count' => (int) $referralCounts->signed_up_count,
-            'invited_count'   => (int) $referralCounts->invited_count,
+            'signed_up_count' => (int) ($referralCounts->signed_up_count ?? 0),
+            'invited_count'   => (int) ($referralCounts->invited_count ?? 0),
         ];
+    }
+
+    /**
+     * Fetch the latest bookings for the booking queue.
+     *
+     * @param int $limit
+     * @return array
+     */
+    public function getBookingQueue(int $limit = 10): array
+    {
+        $bookings = Booking::with([
+            'service:id,name',
+            'user:id,first_name,last_name,email',
+        ])
+            ->latest('id')
+            ->limit($limit)
+            ->get();
+
+        return $bookings->map(function (Booking $booking) {
+            $statusVal = $booking->status instanceof BookingStatus
+                ? $booking->status->value
+                : (string) $booking->status;
+
+            $statusLabel = $booking->status instanceof BookingStatus
+                ? $booking->status->label()
+                : ucfirst($statusVal);
+
+            $statusBadgeClass = match (strtolower($statusVal)) {
+                'pending'                            => 'status-pending',
+                'confirmed', 'approved', 'completed' => 'status-confirmed',
+                'processing'                         => 'status-progress',
+                'cancelled'                          => 'status-cancelled',
+                default                              => 'status-pending',
+            };
+
+            $payment = strtolower((string) $booking->payment_status);
+            $paymentBadgeClass = match ($payment) {
+                'paid'               => 'payment-paid',
+                'refund', 'refunded' => 'payment-refund',
+                default              => 'payment-due',
+            };
+
+            $scheduleDate = Carbon::parse($booking->booking_date);
+            $timeStr = $booking->start_time ? Carbon::parse($booking->start_time)->format('h:i A') : '';
+            if ($scheduleDate->isToday()) {
+                $schedule = 'Today' . ($timeStr ? ', ' . $timeStr : '');
+            } elseif ($scheduleDate->isTomorrow()) {
+                $schedule = 'Tomorrow' . ($timeStr ? ', ' . $timeStr : '');
+            } else {
+                $schedule = $scheduleDate->format('M d') . ($timeStr ? ', ' . $timeStr : '');
+            }
+
+            $customerName = $booking->customer_name;
+            if (empty($customerName) && $booking->user) {
+                $customerName = trim($booking->user->first_name . ' ' . $booking->user->last_name);
+            }
+
+            return [
+                'id'                  => $booking->id,
+                'reference'           => sprintf('#BK-%04d', $booking->id),
+                'customer_name'       => $customerName ?: 'Customer',
+                'service_name'        => $booking->service?->name ?? 'Cleaning Service',
+                'schedule'            => $schedule,
+                'status_label'        => $statusLabel,
+                'status_badge_class'  => $statusBadgeClass,
+                'payment_label'       => ucfirst($payment ?: 'due'),
+                'payment_badge_class' => $paymentBadgeClass,
+            ];
+        })->all();
+    }
+
+    /**
+     * Fetch active services and their completed & paid bookings count.
+     *
+     * @return array
+     */
+    public function getServiceMix(): array
+    {
+        $services = Service::where('status', 'active')
+            ->withCount(['bookings' => function ($query) {
+                $query->where('status', BookingStatus::COMPLETED)
+                    ->where(function ($q) {
+                        $q->where('payment_status', 'paid')
+                          ->orWhere('payment_status', 'Paid');
+                    });
+            }])
+            ->orderByDesc('bookings_count')
+            ->get();
+
+        $totalCompleted = $services->sum('bookings_count');
+
+        return $services->map(function (Service $service) use ($totalCompleted) {
+            $count = (int) $service->bookings_count;
+            $percentage = $totalCompleted > 0 ? (int) round(($count / $totalCompleted) * 100) : 0;
+
+            // Give a subtle minimum width for items with count > 0 for visual bar presentation
+            $barWidth = ($count > 0 && $percentage < 5) ? 5 : $percentage;
+
+            return [
+                'id'         => $service->id,
+                'name'       => $service->name,
+                'count'      => $count,
+                'label'      => number_format($count) . ' completed ' . Str::plural('booking', $count),
+                'percentage' => $barWidth,
+            ];
+        })->all();
     }
 }

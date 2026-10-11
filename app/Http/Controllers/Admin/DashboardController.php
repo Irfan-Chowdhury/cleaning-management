@@ -21,12 +21,16 @@ class DashboardController extends Controller
         $activeCustomers  = $this->dashboardService->getActiveCustomersMetrics();
         $totalRevenue     = $this->dashboardService->getTotalRevenueMetrics();
         $referralPipeline = $this->dashboardService->getReferralMetrics();
+        $bookingQueue     = $this->dashboardService->getBookingQueue(10);
+        $serviceMix       = $this->dashboardService->getServiceMix();
 
         return view('pages.admin.dashboard', compact(
             'todayBookings',
             'activeCustomers',
             'totalRevenue',
-            'referralPipeline'
+            'referralPipeline',
+            'bookingQueue',
+            'serviceMix'
         ));
     }
 }
