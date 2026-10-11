@@ -199,7 +199,7 @@
             <div class="body-content">
                 <div class="greeting">Hello!</div>
                 <div class="intro-text">
-                    <strong>{{ $senderName }}</strong> thinks you would love <strong>{{ $companyName }}</strong> for your home or office cleaning needs and has sent you an exclusive invitation!
+                    <strong>{{ $senderName }}</strong> thinks you would love <strong>{{ $companyName }}</strong> for your residential or commercial cleaning needs and has sent you an exclusive invitation!
                 </div>
 
                 <!-- Reward Highlight Card -->
@@ -227,20 +227,20 @@
                 <!-- Simple How It Works Steps -->
                 <div class="steps-container">
                     <div class="steps-title">How to Redeem Your Reward:</div>
-                    
+
                     <div class="step-item">
                         <div class="step-number">1</div>
                         <div class="step-text">Click the button above to register your new account.</div>
                     </div>
-                    
+
                     <div class="step-item">
                         <div class="step-number">2</div>
                         <div class="step-text">Your <strong>{{ $formattedReward }}</strong> credit will automatically be ready for your first booking.</div>
                     </div>
-                    
+
                     <div class="step-item">
                         <div class="step-number">3</div>
-                        <div class="step-text">Schedule your preferred cleaning service and enjoy a sparkling fresh home!</div>
+                        <div class="step-text">Schedule your preferred cleaning service and enjoy a sparkling clean space!</div>
                     </div>
                 </div>
             </div>
