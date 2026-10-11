@@ -26,6 +26,9 @@ class DashboardController extends Controller
         $openSlotsThisWeek         = $this->dashboardService->getOpenSlotsThisWeek();
         $totalHolidaysCurrentMonth = $this->dashboardService->getTotalHolidaysCurrentMonthCount();
         $creditsIssuedThisMonth    = $this->dashboardService->getTotalCreditsIssuedCurrentMonth();
+        $welcomeBonusThisMonth     = $this->dashboardService->getWelcomeBonusThisMonth();
+        $referralBonusThisMonth    = $this->dashboardService->getReferralBonusThisMonth();
+        $googleRewardsThisMonth    = $this->dashboardService->getGoogleRewardsThisMonth();
 
         return view('pages.admin.dashboard', compact(
             'todayBookings',
@@ -36,7 +39,10 @@ class DashboardController extends Controller
             'serviceMix',
             'openSlotsThisWeek',
             'totalHolidaysCurrentMonth',
-            'creditsIssuedThisMonth'
+            'creditsIssuedThisMonth',
+            'welcomeBonusThisMonth',
+            'referralBonusThisMonth',
+            'googleRewardsThisMonth'
         ));
     }
 }

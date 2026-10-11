@@ -172,6 +172,21 @@
                         <strong>${{ number_format($creditsIssuedThisMonth ?? 0, 2) }}</strong>
                         <small>Credits issued this month</small>
                     </a>
+                    <a href="{{ route('wallets.index') }}" class="operation-item">
+                        <span><i class="fas fa-gift" aria-hidden="true"></i></span>
+                        <strong>${{ number_format($welcomeBonusThisMonth ?? 0, 2) }}</strong>
+                        <small>Welcome Bonus this month</small>
+                    </a>
+                    <a href="{{ route('referrals.index') }}" class="operation-item">
+                        <span><i class="fas fa-user-friends" aria-hidden="true"></i></span>
+                        <strong>${{ number_format($referralBonusThisMonth ?? 0, 2) }}</strong>
+                        <small>Referral Bonus this month</small>
+                    </a>
+                    <a href="{{ route('reviews.index') }}" class="operation-item">
+                        <span><i class="fab fa-google" aria-hidden="true"></i></span>
+                        <strong>${{ number_format($googleRewardsThisMonth ?? 0, 2) }}</strong>
+                        <small>Google Rewards this month</small>
+                    </a>
                 </div>
             </div>
 

@@ -314,4 +314,49 @@ class AdminDashboardService
             ->whereBetween('created_at', [$now->copy()->startOfMonth(), $now->copy()->endOfMonth()])
             ->sum('amount');
     }
+
+    /**
+     * Sum welcome bonus credits issued on the current month.
+     *
+     * @return float
+     */
+    public function getWelcomeBonusThisMonth(): float
+    {
+        $now = Carbon::now();
+
+        return (float) WalletTransaction::where('type', 'credit')
+            ->where('source', 'welcome_bonus')
+            ->whereBetween('created_at', [$now->copy()->startOfMonth(), $now->copy()->endOfMonth()])
+            ->sum('amount');
+    }
+
+    /**
+     * Sum referral bonus credits issued on the current month.
+     *
+     * @return float
+     */
+    public function getReferralBonusThisMonth(): float
+    {
+        $now = Carbon::now();
+
+        return (float) WalletTransaction::where('type', 'credit')
+            ->where('source', 'referral_bonus')
+            ->whereBetween('created_at', [$now->copy()->startOfMonth(), $now->copy()->endOfMonth()])
+            ->sum('amount');
+    }
+
+    /**
+     * Sum Google review reward credits issued on the current month.
+     *
+     * @return float
+     */
+    public function getGoogleRewardsThisMonth(): float
+    {
+        $now = Carbon::now();
+
+        return (float) WalletTransaction::where('type', 'credit')
+            ->where('source', 'review_bonus')
+            ->whereBetween('created_at', [$now->copy()->startOfMonth(), $now->copy()->endOfMonth()])
+            ->sum('amount');
+    }
 }
