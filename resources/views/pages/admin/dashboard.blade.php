@@ -152,7 +152,7 @@
                 <div class="operations-grid">
                     <a href="{{ route('weekly-schedule.index') }}" class="operation-item">
                         <span><i class="far fa-clock" aria-hidden="true"></i></span>
-                        <strong>42</strong>
+                        <strong>{{ number_format($openSlotsThisWeek ?? 0) }}</strong>
                         <small>Open slots this week</small>
                     </a>
                     <a href="{{ route('holidays.index') }}" class="operation-item">

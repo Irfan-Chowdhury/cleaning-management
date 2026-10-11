@@ -17,12 +17,13 @@ class DashboardController extends Controller
 
     public function index(): View
     {
-        $todayBookings    = $this->dashboardService->getTodayBookingsMetrics();
-        $activeCustomers  = $this->dashboardService->getActiveCustomersMetrics();
-        $totalRevenue     = $this->dashboardService->getTotalRevenueMetrics();
-        $referralPipeline = $this->dashboardService->getReferralMetrics();
-        $bookingQueue     = $this->dashboardService->getBookingQueue(10);
-        $serviceMix       = $this->dashboardService->getServiceMix();
+        $todayBookings     = $this->dashboardService->getTodayBookingsMetrics();
+        $activeCustomers   = $this->dashboardService->getActiveCustomersMetrics();
+        $totalRevenue      = $this->dashboardService->getTotalRevenueMetrics();
+        $referralPipeline  = $this->dashboardService->getReferralMetrics();
+        $bookingQueue      = $this->dashboardService->getBookingQueue(10);
+        $serviceMix        = $this->dashboardService->getServiceMix();
+        $openSlotsThisWeek = $this->dashboardService->getOpenSlotsThisWeek();
 
         return view('pages.admin.dashboard', compact(
             'todayBookings',
@@ -30,7 +31,8 @@ class DashboardController extends Controller
             'totalRevenue',
             'referralPipeline',
             'bookingQueue',
-            'serviceMix'
+            'serviceMix',
+            'openSlotsThisWeek'
         ));
     }
 }

@@ -4,9 +4,11 @@ namespace App\Services;
 
 use App\Enums\BookingStatus;
 use App\Models\Booking;
+use App\Models\Holiday;
 use App\Models\Referral;
 use App\Models\Service;
 use App\Models\User;
+use App\Models\WeeklySchedule;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 
@@ -202,5 +204,55 @@ class AdminDashboardService
                 'percentage' => $barWidth,
             ];
         })->all();
+    }
+
+    /**
+     * Calculate open slots for the current week using weekly_schedule, schedule_slots, and holidays.
+     *
+     * @return int
+     */
+    public function getOpenSlotsThisWeek(): int
+    {
+        $startOfWeek = Carbon::now()->startOfWeek(); // Monday
+        $endOfWeek   = Carbon::now()->endOfWeek();   // Sunday
+
+        // Fetch active holidays that overlap with the current week
+        $holidays = Holiday::where('is_active', true)
+            ->where('start_date', '<=', $endOfWeek->format('Y-m-d'))
+            ->where('end_date', '>=', $startOfWeek->format('Y-m-d'))
+            ->get(['start_date', 'end_date']);
+
+        // Fetch active weekly schedule days with their schedule_slots count
+        $weeklySchedules = WeeklySchedule::where('is_active', true)
+            ->withCount('slots')
+            ->get()
+            ->keyBy(fn ($item) => strtolower($item->day_of_week));
+
+        $openSlotsCount = 0;
+
+        // Loop through Monday to Sunday of the current week
+        for ($date = $startOfWeek->copy(); $date->lte($endOfWeek); $date->addDay()) {
+            $dateStr = $date->format('Y-m-d');
+            $dayName = strtolower($date->format('l'));
+
+            // Check if this date falls within any active holiday
+            $isHoliday = $holidays->contains(function ($holiday) use ($dateStr) {
+                $start = Carbon::parse($holiday->start_date)->format('Y-m-d');
+                $end   = Carbon::parse($holiday->end_date)->format('Y-m-d');
+                return $dateStr >= $start && $dateStr <= $end;
+            });
+
+            if ($isHoliday) {
+                continue;
+            }
+
+            // Add slots count if the day of week is active
+            $schedule = $weeklySchedules->get($dayName);
+            if ($schedule) {
+                $openSlotsCount += (int) $schedule->slots_count;
+            }
+        }
+
+        return $openSlotsCount;
     }
 }
