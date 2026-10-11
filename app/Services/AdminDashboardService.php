@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\BookingStatus;
 use App\Models\Booking;
+use App\Models\Referral;
 use App\Models\User;
 use Carbon\Carbon;
 
@@ -77,6 +78,21 @@ class AdminDashboardService
             'amount'          => $amount,
             'completed_count' => $completedCount,
             'month_name'      => $now->format('F'),
+        ];
+    }
+    
+    public function getReferralMetrics(): array
+    {
+        $referralCounts = Referral::query()
+            ->selectRaw("
+                COUNT(CASE WHEN status IN ('signed_up', 'rewarded') THEN 1 END) AS signed_up_count,
+                COUNT(CASE WHEN status = 'invited' THEN 1 END) AS invited_count
+            ")
+            ->first();
+
+        return [
+            'signed_up_count' => (int) $referralCounts->signed_up_count,
+            'invited_count'   => (int) $referralCounts->invited_count,
         ];
     }
 }

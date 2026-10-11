@@ -64,8 +64,8 @@
             <a href="{{ route('referrals.index') }}" class="admin-metric-card metric-rose">
                 <span class="metric-icon"><i class="fas fa-user-friends" aria-hidden="true"></i></span>
                 <span class="metric-label">Referral Signup</span>
-                <strong>73</strong>
-                <span class="metric-note">19 Invited</span>
+                <strong>{{ number_format($referralPipeline['signed_up_count'] ?? 0) }}</strong>
+                <span class="metric-note">{{ number_format($referralPipeline['invited_count'] ?? 0) }} Invited</span>
             </a>
         </section>
 

@@ -17,10 +17,16 @@ class DashboardController extends Controller
 
     public function index(): View
     {
-        $todayBookings   = $this->dashboardService->getTodayBookingsMetrics();
-        $activeCustomers = $this->dashboardService->getActiveCustomersMetrics();
-        $totalRevenue    = $this->dashboardService->getTotalRevenueMetrics();
+        $todayBookings    = $this->dashboardService->getTodayBookingsMetrics();
+        $activeCustomers  = $this->dashboardService->getActiveCustomersMetrics();
+        $totalRevenue     = $this->dashboardService->getTotalRevenueMetrics();
+        $referralPipeline = $this->dashboardService->getReferralMetrics();
 
-        return view('pages.admin.dashboard', compact('todayBookings', 'activeCustomers', 'totalRevenue'));
+        return view('pages.admin.dashboard', compact(
+            'todayBookings',
+            'activeCustomers',
+            'totalRevenue',
+            'referralPipeline'
+        ));
     }
 }
