@@ -2,11 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\WalletService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\View\View;
 
 class WalletController extends Controller
 {
+    public function __construct(
+        protected WalletService $walletService
+    ) {}
+
     public function index()
     {
         // TODO: Replace dummy data with real query when wallet relationships are ready.
@@ -32,29 +38,19 @@ class WalletController extends Controller
         return view('pages.admin.wallet.index', compact('wallets'));
     }
 
-    public function show(int $id)
+    /**
+     * Display wallet details, customer info, summary and transaction history for a specific user.
+     *
+     * @param int $id
+     * @return View
+     */
+    public function show(int $id): View
     {
-        // Dummy user details
-        $user = (object)[
-            'id'                => $id,
-            'name'              => 'Alice Johnson',
-            'email'             => 'alice@example.com',
-            'phone'             => '+1 (555) 234-5678',
-            'gender'            => 'Female',
-            'photo'             => 'https://ui-avatars.com/api/?name=Alice+Johnson&background=0D8ABC&color=fff&size=128',
-            'total_credit'      => 1500.00,
-            'total_debit'       => 320.50,
-            'remaining_balance' => 1179.50,
-        ];
+        $customer      = (object) $this->walletService->getCustomerDetails($id);
+        $walletSummary = (object) $this->walletService->getWalletSummary($id);
+        $transactions  = $this->walletService->getTransactionHistory($id);
+        $user          = $customer;
 
-        // Dummy transactions data for table
-        $transactions = collect([
-            (object)['id' => 1, 'credit' => 500.00, 'debit' => 0.00,   'source' => 'Bank Transfer - Deposit',    'created_at' => '2026-08-10 10:15:00'],
-            (object)['id' => 2, 'credit' => 0.00,   'debit' => 120.50, 'source' => 'Home Deep Cleaning Booking', 'created_at' => '2026-08-12 14:30:00'],
-            (object)['id' => 3, 'credit' => 1000.00,'debit' => 0.00,   'source' => 'Promotional Bonus',          'created_at' => '2026-08-15 09:00:00'],
-            (object)['id' => 4, 'credit' => 0.00,   'debit' => 200.00, 'source' => 'Office Sanitation Service',  'created_at' => '2026-08-18 16:45:00'],
-        ]);
-
-        return view('pages.admin.wallet.show', compact('user', 'transactions'));
+        return view('pages.admin.wallet.show', compact('customer', 'user', 'walletSummary', 'transactions'));
     }
 }

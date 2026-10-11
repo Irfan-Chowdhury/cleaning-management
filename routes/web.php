@@ -125,7 +125,7 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::resource('services', ServiceController::class);
 
     Route::get('/wallets', [WalletController::class, 'index'])->name('wallets.index');
-    Route::get('/wallets/{user}', [WalletController::class, 'show'])->name('wallets.show');
+    Route::get('/wallets/{id}', [WalletController::class, 'show'])->name('wallets.show');
 
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
     Route::get('/bookings/{id}', [BookingController::class, 'show'])->name('bookings.show');
