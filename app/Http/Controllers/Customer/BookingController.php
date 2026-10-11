@@ -46,7 +46,7 @@ class BookingController extends Controller
         $pdf = Pdf::loadView('pdf.booking-invoice', compact('booking', 'setting'))
             ->setPaper('a4', 'portrait');
 
-        $fileName = 'Booking-BK-' . sprintf('%03d', $booking->id) . '.pdf';
+        $fileName = '#BK-' . sprintf('%03d', $booking->id) . '.pdf';
 
         return $pdf->download($fileName);
     }

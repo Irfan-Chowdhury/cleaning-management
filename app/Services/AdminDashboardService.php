@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\BookingStatus;
+use App\Models\AuditLog;
 use App\Models\Booking;
 use App\Models\Holiday;
 use App\Models\Referral;
@@ -358,5 +359,146 @@ class AdminDashboardService
             ->where('source', 'review_bonus')
             ->whereBetween('created_at', [$now->copy()->startOfMonth(), $now->copy()->endOfMonth()])
             ->sum('amount');
+    }
+
+    /**
+     * Fetch recent operational activities using the AuditLog table (Option A).
+     *
+     * @param int $limit
+     * @return array
+     */
+    public function getRecentActivities(int $limit = 4): array
+    {
+        $logs = AuditLog::with(['user', 'auditable'])
+            ->latest('id')
+            ->limit($limit)
+            ->get();
+
+        if ($logs->isEmpty()) {
+            return $this->getFallbackRecentActivities($limit);
+        }
+
+        return $logs->map(function (AuditLog $log) {
+            $module = class_basename($log->auditable_type);
+            $action = strtolower($log->action);
+            $timeAgo = $log->created_at ? $log->created_at->diffForHumans() : 'Just now';
+            $userName = $log->user ? trim($log->user->first_name . ' ' . $log->user->last_name) : 'System';
+
+            $title = "Activity recorded";
+            $description = "{$userName} performed an action";
+            $dotClass = 'dot-blue';
+
+            if ($module === 'Booking') {
+                $bookingId = $log->auditable_id;
+                $newValues = $log->new_values ?? [];
+                $customer = $newValues['customer_name'] ?? ($log->auditable?->customer_name ?? $userName);
+
+                if ($action === 'created') {
+                    $title = sprintf('Booking #BK-%04d submitted', $bookingId);
+                    $service = $log->auditable?->service?->name ?? 'Cleaning Service';
+                    $description = "{$customer} requested {$service}";
+                    $dotClass = 'dot-blue';
+                } elseif ($action === 'updated') {
+                    $status = $newValues['status'] ?? ($log->auditable?->status instanceof BookingStatus ? $log->auditable->status->value : null);
+                    if ($status === 'cancelled') {
+                        $title = sprintf('Booking #BK-%04d cancelled', $bookingId);
+                        $description = "Booking was cancelled for {$customer}";
+                        $dotClass = 'dot-rose';
+                    } elseif ($status === 'completed') {
+                        $title = sprintf('Booking #BK-%04d completed', $bookingId);
+                        $description = "Cleaning completed successfully";
+                        $dotClass = 'dot-green';
+                    } else {
+                        $title = sprintf('Booking #BK-%04d updated', $bookingId);
+                        $description = "Status updated to " . ucfirst((string) ($status ?? 'in progress'));
+                        $dotClass = 'dot-amber';
+                    }
+                } else {
+                    $title = sprintf('Booking #BK-%04d %s', $bookingId, $action);
+                    $description = "Action by {$userName}";
+                    $dotClass = 'dot-rose';
+                }
+            } elseif ($module === 'WalletTransaction') {
+                $newValues = $log->new_values ?? [];
+                $amount = (float) ($newValues['amount'] ?? ($log->auditable?->amount ?? 0));
+                $type = $newValues['type'] ?? ($log->auditable?->type ?? 'credit');
+                $source = $newValues['source'] ?? ($log->auditable?->source ?? '');
+                $sourceLabel = ucwords(str_replace('_', ' ', (string) $source));
+
+                if ($type === 'credit') {
+                    $title = 'Wallet credit added';
+                    $description = '$' . number_format($amount, 2) . ' credit added' . ($sourceLabel ? " ({$sourceLabel})" : '');
+                    $dotClass = 'dot-green';
+                } else {
+                    $title = 'Wallet credit used';
+                    $description = '$' . number_format($amount, 2) . ' credit debited';
+                    $dotClass = 'dot-amber';
+                }
+            } elseif ($module === 'Referral') {
+                $status = $log->new_values['status'] ?? ($log->auditable?->status ?? '');
+                if ($status === 'rewarded') {
+                    $title = 'Referral reward completed';
+                    $description = 'Referral reward queued and paid';
+                    $dotClass = 'dot-green';
+                } else {
+                    $title = 'Referral waiting for approval';
+                    $description = 'Referral reward queued after registration';
+                    $dotClass = 'dot-amber';
+                }
+            } elseif ($module === 'User') {
+                $role = (int) ($log->new_values['role'] ?? ($log->auditable?->role ?? 2));
+                if ($action === 'created') {
+                    $title = $role === 2 ? 'New customer registered' : 'User account created';
+                    $description = "{$userName} registered in the system";
+                    $dotClass = 'dot-green';
+                } else {
+                    $title = 'User profile updated';
+                    $description = "Details modified for {$userName}";
+                    $dotClass = 'dot-amber';
+                }
+            } else {
+                $title = "{$module} {$action}";
+                $description = "Updated by {$userName}";
+                $dotClass = match ($action) {
+                    'created' => 'dot-blue',
+                    'deleted' => 'dot-rose',
+                    default   => 'dot-amber',
+                };
+            }
+
+            return [
+                'title'            => $title,
+                'description'      => $description,
+                'dot_class'        => $dotClass,
+                'created_at_human' => $timeAgo,
+            ];
+        })->all();
+    }
+
+    /**
+     * Fallback recent activities when audit_logs table is empty.
+     *
+     * @param int $limit
+     * @return array
+     */
+    protected function getFallbackRecentActivities(int $limit = 4): array
+    {
+        $bookings = Booking::with(['service', 'user'])
+            ->latest('id')
+            ->limit($limit)
+            ->get();
+
+        return $bookings->map(function (Booking $booking) {
+            $customerName = $booking->customer_name ?: ($booking->user ? trim($booking->user->first_name . ' ' . $booking->user->last_name) : 'Customer');
+            $serviceName = $booking->service?->name ?? 'Cleaning Service';
+            $timeAgo = $booking->created_at ? $booking->created_at->diffForHumans() : 'Recently';
+
+            return [
+                'title'            => sprintf('Booking #BK-%04d submitted', $booking->id),
+                'description'      => "{$customerName} requested {$serviceName}",
+                'dot_class'        => 'dot-blue',
+                'created_at_human' => $timeAgo,
+            ];
+        })->all();
     }
 }

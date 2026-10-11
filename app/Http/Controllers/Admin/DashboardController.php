@@ -29,6 +29,7 @@ class DashboardController extends Controller
         $welcomeBonusThisMonth     = $this->dashboardService->getWelcomeBonusThisMonth();
         $referralBonusThisMonth    = $this->dashboardService->getReferralBonusThisMonth();
         $googleRewardsThisMonth    = $this->dashboardService->getGoogleRewardsThisMonth();
+        $recentActivities          = []; //$this->dashboardService->getRecentActivities(4);
 
         return view('pages.admin.dashboard', compact(
             'todayBookings',
@@ -42,7 +43,8 @@ class DashboardController extends Controller
             'creditsIssuedThisMonth',
             'welcomeBonusThisMonth',
             'referralBonusThisMonth',
-            'googleRewardsThisMonth'
+            'googleRewardsThisMonth',
+            'recentActivities'
         ));
     }
 }

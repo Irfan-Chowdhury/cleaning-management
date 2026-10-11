@@ -3,7 +3,7 @@
 @section('title', 'Admin Dashboard')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('public/assets/css/admin-dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/assets/css/admin-dashboard.css') }}?v={{ filemtime(public_path('assets/css/admin-dashboard.css')) }}">
 @endpush
 
 @section('content')
@@ -144,7 +144,7 @@
             <div class="admin-panel operations-panel">
                 <div class="admin-panel-header">
                     <div>
-                        <h2>Operations Health</h2>
+                        <h2>Operations Overview</h2>
                         <p>Availability, credits, referrals and customer status.</p>
                     </div>
                 </div>
@@ -190,45 +190,28 @@
                 </div>
             </div>
 
-            <div class="admin-panel activity-panel">
+            <!-- <div class="admin-panel activity-panel">
                 <div class="admin-panel-header">
                     <div>
-                        <h2>Recent Activity</h2>
+                        <h2>Recent Audit Logs</h2>
                         <p>Latest operational events.</p>
                     </div>
                 </div>
 
                 <div class="activity-list">
-                    <div class="activity-item">
-                        <span class="activity-dot dot-blue"></span>
-                        <div>
-                            <strong>Booking #CL-2048 submitted</strong>
-                            <small>Sarah Ahmed requested Deep Cleaning · 8 min ago</small>
+                    @forelse ($recentActivities as $activity)
+                        <div class="activity-item">
+                            <span class="activity-dot {{ $activity['dot_class'] }}"></span>
+                            <div>
+                                <strong>{{ $activity['title'] }}</strong>
+                                <small>{{ $activity['description'] }} · {{ $activity['created_at_human'] }}</small>
+                            </div>
                         </div>
-                    </div>
-                    <div class="activity-item">
-                        <span class="activity-dot dot-green"></span>
-                        <div>
-                            <strong>Wallet credit added</strong>
-                            <small>$25 welcome credit added for new customer · 24 min ago</small>
-                        </div>
-                    </div>
-                    <div class="activity-item">
-                        <span class="activity-dot dot-amber"></span>
-                        <div>
-                            <strong>Referral waiting for approval</strong>
-                            <small>Referral reward queued after completed booking · 1 hr ago</small>
-                        </div>
-                    </div>
-                    <div class="activity-item">
-                        <span class="activity-dot dot-rose"></span>
-                        <div>
-                            <strong>Payment review required</strong>
-                            <small>Manual payment verification pending for #CL-2052 · 2 hrs ago</small>
-                        </div>
-                    </div>
+                    @empty
+                        <p class="text-muted small py-3 mb-0">No recent activity recorded.</p>
+                    @endforelse
                 </div>
-            </div>
+            </div> -->
         </section>
     </div>
 @endsection
