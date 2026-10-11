@@ -255,4 +255,48 @@ class AdminDashboardService
 
         return $openSlotsCount;
     }
+
+    /**
+     * Calculate upcoming holidays for the current month.
+     *
+     * @return int
+     */
+    // public function getUpcomingHolidaysCount(): int
+    // {
+    //     $today      = Carbon::today();
+    //     $endOfMonth = Carbon::now()->endOfMonth();
+
+    //     return Holiday::where('is_active', true)
+    //         ->whereDate('end_date', '>=', $today)
+    //         ->whereDate('start_date', '<=', $endOfMonth)
+    //         ->count();
+    // }
+
+    public function getTotalHolidaysCurrentMonthCount(): int
+    {
+        $startOfMonth = Carbon::now()->startOfMonth();
+        $endOfMonth   = Carbon::now()->endOfMonth();
+
+        $holidays = Holiday::where('is_active', true)
+            ->whereDate('end_date', '>=', $startOfMonth)
+            ->whereDate('start_date', '<=', $endOfMonth)
+            ->get(['start_date', 'end_date']);
+
+        $holidayDates = [];
+
+        foreach ($holidays as $holiday) {
+            $startDate = Carbon::parse($holiday->start_date)->max($startOfMonth);
+            $endDate   = Carbon::parse($holiday->end_date)->min($endOfMonth);
+
+            for (
+                $date = $startDate->copy();
+                $date->lte($endDate);
+                $date->addDay()
+            ) {
+                $holidayDates[$date->toDateString()] = true;
+            }
+        }
+
+        return count($holidayDates);
+    }
 }

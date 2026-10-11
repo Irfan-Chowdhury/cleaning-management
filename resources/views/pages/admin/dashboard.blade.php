@@ -157,8 +157,8 @@
                     </a>
                     <a href="{{ route('holidays.index') }}" class="operation-item">
                         <span><i class="fas fa-umbrella-beach" aria-hidden="true"></i></span>
-                        <strong>3</strong>
-                        <small>Upcoming holidays</small>
+                        <strong>{{ number_format($totalHolidaysCurrentMonth ?? 0) }}</strong>
+                        <small>Total Holidays of this Month</small>
                     </a>
                     <a href="{{ route('wallets.index') }}" class="operation-item">
                         <span><i class="fas fa-coins" aria-hidden="true"></i></span>
