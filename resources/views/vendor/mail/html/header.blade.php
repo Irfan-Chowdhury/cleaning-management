@@ -7,7 +7,7 @@
 <tr>
 <td class="header">
 <a href="{{ $url }}" style="display: inline-block;">
-<img src="{{ $logoUrl }}" class="logo" alt="{{ $companyName }} Logo" style="max-height: 50px; width: auto;">
+<!-- <img src="{{ $logoUrl }}" class="logo" alt="{{ $companyName }} Logo" style="max-height: 50px; width: auto;"> -->
 </a>
 </td>
 </tr>
