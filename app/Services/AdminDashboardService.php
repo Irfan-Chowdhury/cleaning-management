@@ -8,6 +8,7 @@ use App\Models\Holiday;
 use App\Models\Referral;
 use App\Models\Service;
 use App\Models\User;
+use App\Models\WalletTransaction;
 use App\Models\WeeklySchedule;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -298,5 +299,19 @@ class AdminDashboardService
         }
 
         return count($holidayDates);
+    }
+
+    /**
+     * Sum the amount where wallet_transactions.type = credit on the current month.
+     *
+     * @return float
+     */
+    public function getTotalCreditsIssuedCurrentMonth(): float
+    {
+        $now = Carbon::now();
+
+        return (float) WalletTransaction::where('type', 'credit')
+            ->whereBetween('created_at', [$now->copy()->startOfMonth(), $now->copy()->endOfMonth()])
+            ->sum('amount');
     }
 }

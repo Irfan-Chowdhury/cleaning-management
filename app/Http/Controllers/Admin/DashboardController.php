@@ -23,8 +23,9 @@ class DashboardController extends Controller
         $referralPipeline      = $this->dashboardService->getReferralMetrics();
         $bookingQueue          = $this->dashboardService->getBookingQueue(10);
         $serviceMix            = $this->dashboardService->getServiceMix();
-        $openSlotsThisWeek     = $this->dashboardService->getOpenSlotsThisWeek();
+        $openSlotsThisWeek         = $this->dashboardService->getOpenSlotsThisWeek();
         $totalHolidaysCurrentMonth = $this->dashboardService->getTotalHolidaysCurrentMonthCount();
+        $creditsIssuedThisMonth    = $this->dashboardService->getTotalCreditsIssuedCurrentMonth();
 
         return view('pages.admin.dashboard', compact(
             'todayBookings',
@@ -34,7 +35,8 @@ class DashboardController extends Controller
             'bookingQueue',
             'serviceMix',
             'openSlotsThisWeek',
-            'totalHolidaysCurrentMonth'
+            'totalHolidaysCurrentMonth',
+            'creditsIssuedThisMonth'
         ));
     }
 }

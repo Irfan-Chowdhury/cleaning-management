@@ -473,3 +473,29 @@
         font-size: 24px;
     }
 }
+
+/* Tooltip icon styling (easily adjustable size & color) */
+:root {
+    --stat-tooltip-size: 11px;             /* Adjust icon size here */
+    --stat-tooltip-color: #b45309;          /* Adjust default icon color here (warm amber) */
+    --stat-tooltip-hover: #78350f;          /* Adjust hover color here */
+}
+
+.stat-tooltip-icon {
+    font-size: var(--stat-tooltip-size, 11px);
+    color: var(--stat-tooltip-color, #b45309);
+    cursor: pointer;
+    margin-left: auto;
+    padding: 2px;
+    line-height: 1;
+    opacity: 0.85;
+    transition: color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+    vertical-align: middle;
+}
+
+.stat-tooltip-icon:hover {
+    color: var(--stat-tooltip-hover, #78350f);
+    opacity: 1;
+    transform: scale(1.15);
+}
+

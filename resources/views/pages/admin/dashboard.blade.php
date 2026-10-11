@@ -161,14 +161,16 @@
                         <small>Total Holidays of this Month</small>
                     </a>
                     <a href="{{ route('wallets.index') }}" class="operation-item">
-                        <span><i class="fas fa-coins" aria-hidden="true"></i></span>
-                        <strong>$2,140</strong>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span><i class="fas fa-coins" aria-hidden="true"></i></span>
+                            <i class="fas fa-exclamation-circle stat-tooltip-icon" 
+                               data-toggle="tooltip" 
+                               data-placement="top" 
+                               title="Total sum of Welcome Bonuses, Referral Rewards, Google Review Rewards of this {{ now()->format('F') }}" 
+                               aria-hidden="true"></i>
+                        </div>
+                        <strong>${{ number_format($creditsIssuedThisMonth ?? 0, 2) }}</strong>
                         <small>Credits issued this month</small>
-                    </a>
-                    <a href="{{ route('referrals.index') }}" class="operation-item">
-                        <span><i class="fas fa-gift" aria-hidden="true"></i></span>
-                        <strong>$875</strong>
-                        <small>Referral rewards pending</small>
                     </a>
                 </div>
             </div>
@@ -215,3 +217,11 @@
         </section>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+@endpush

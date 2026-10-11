@@ -12,5 +12,5 @@ it('instantiates AdminDashboardService and returns today bookings structure', fu
         ->and(method_exists($service, 'getBookingQueue'))->toBeTrue()
         ->and(method_exists($service, 'getServiceMix'))->toBeTrue()
         ->and(method_exists($service, 'getOpenSlotsThisWeek'))->toBeTrue()
-        ->and(method_exists($service, 'getUpcomingHolidaysCount'))->toBeTrue();
+        ->and(method_exists($service, 'getTotalCreditsIssuedCurrentMonth'))->toBeTrue();
 });
