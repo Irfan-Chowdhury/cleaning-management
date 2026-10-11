@@ -9,19 +9,6 @@
 @endpush
 
 @section('content')
-    <div class="alert alert-warning d-flex align-items-center mb-4 p-3 shadow-sm rounded-lg" style="background-color: #fff8e6; border: 1px solid #ffe0b2; border-left: 5px solid #ff9800; color: #8c5400;" role="alert">
-        <div class="mr-3" style="font-size: 24px;">
-            <i class="fas fa-tools text-warning"></i>
-        </div>
-        <div>
-            <h5 class="alert-heading font-weight-bold mb-1" style="font-size: 16px; color: #d97706;">
-                Page Under Construction &bull; Coming Soon!
-            </h5>
-            <p class="mb-0 small" style="color: #92400e;">
-                We are actively working on enhancing this dashboard with exciting features. Stay tuned!
-            </p>
-        </div>
-    </div>
     <div class="wallets-page">
         <div class="wallets-header">
             <div>
@@ -42,7 +29,7 @@
                 <table id="wallets-table" class="table table-hover table-bordered nowrap wallets-table" style="width: 100%">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th>#SL</th>
                             <th>Name</th>
                             <th>User</th>
                             <th>Total Credit</th>
@@ -52,30 +39,36 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($wallets as $wallet)
+                        @foreach ($wallets as $wallet)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>
+                                <td data-search="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
+                                <td data-search="{{ $wallet->name }} {{ $wallet->first_name ?? '' }} {{ $wallet->last_name ?? '' }}">
                                     <strong>{{ $wallet->name }}</strong>
                                 </td>
-                                <td>
+                                <td data-search="{{ $wallet->email }} {{ $wallet->phone ?? '' }}">
                                     <span class="text-muted" style="font-size: 12px;">
                                         <i class="fas fa-envelope mr-1" aria-hidden="true"></i>{{ $wallet->email }}
                                     </span>
+                                    @if (!empty($wallet->phone))
+                                        <br>
+                                        <span class="text-muted" style="font-size: 11px;">
+                                            <i class="fas fa-phone mr-1" aria-hidden="true"></i>{{ $wallet->phone }}
+                                        </span>
+                                    @endif
                                 </td>
-                                <td>
+                                <td data-order="{{ $wallet->total_credit }}" data-search="{{ $wallet->total_credit }} {{ number_format($wallet->total_credit, 2) }} {{ number_format($wallet->total_credit, 0) }}">
                                     <span class="wallet-credit-badge">
                                         + {{ number_format($wallet->total_credit, 2) }}
                                     </span>
                                 </td>
-                                <td>
+                                <td data-order="{{ $wallet->total_debit }}" data-search="{{ $wallet->total_debit }} {{ number_format($wallet->total_debit, 2) }} {{ number_format($wallet->total_debit, 0) }}">
                                     <span class="wallet-debit-badge">
                                         - {{ number_format($wallet->total_debit, 2) }}
                                     </span>
                                 </td>
-                                <td>
+                                <td data-order="{{ $wallet->remaining_balance }}" data-search="{{ $wallet->remaining_balance }} {{ number_format($wallet->remaining_balance, 2) }} {{ number_format(abs($wallet->remaining_balance), 2) }}">
                                     <span class="wallet-balance-badge {{ $wallet->remaining_balance < 0 ? 'negative' : '' }}">
-                                        {{ $wallet->remaining_balance >= 0 ? '+' : '' }}{{ number_format($wallet->remaining_balance, 2) }}
+                                        {{ $wallet->remaining_balance >= 0 ? '+' : '-' }} {{ number_format(abs($wallet->remaining_balance), 2) }}
                                     </span>
                                 </td>
                                 <td>
@@ -88,14 +81,7 @@
                                     </div>
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="text-center py-4 text-muted">
-                                    <i class="fas fa-wallet fa-2x mb-2 d-block" aria-hidden="true"></i>
-                                    No wallet records found.
-                                </td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -114,11 +100,14 @@
                 responsive: true,
                 order: [[0, 'asc']],
                 columnDefs: [
-                    { orderable: false, targets: [6] }
+                    { targets: [0, 1, 2, 3, 4, 5], searchable: true },
+                    { targets: [6], orderable: false, searchable: false }
                 ],
                 language: {
                     search: 'Search wallets:',
                     lengthMenu: 'Show _MENU_ wallets',
+                    emptyTable: 'No wallet records found.',
+                    zeroRecords: 'No matching wallets found.',
                 }
             });
         });

@@ -141,7 +141,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($transactions as $transaction)
+                        @foreach ($transactions as $transaction)
                             <tr>
                                 <td>
                                     @if ($transaction->credit > 0)
@@ -173,20 +173,14 @@
                                     </span>
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="text-center py-4 text-muted">
-                                    <i class="fas fa-receipt fa-2x mb-2 d-block" aria-hidden="true"></i>
-                                    No transactions found.
-                                </td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                     <tfoot>
                         <tr>
                             <th>Total Credit: <span class="wallet-credit-badge">+ ${{ number_format($walletSummary->total_credit ?? 0, 2) }}</span></th>
                             <th>Total Debit: <span class="wallet-debit-badge">- ${{ number_format($walletSummary->total_debit ?? 0, 2) }}</span></th>
-                            <th colspan="2"></th>
+                            <th></th>
+                            <th></th>
                         </tr>
                     </tfoot>
                 </table>
@@ -208,6 +202,8 @@
                 order: [[3, 'desc']],
                 language: {
                     lengthMenu: 'Show _MENU_ entries',
+                    emptyTable: 'No transactions found.',
+                    zeroRecords: 'No transactions found.',
                 }
             });
         });

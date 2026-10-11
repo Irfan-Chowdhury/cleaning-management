@@ -9,6 +9,50 @@ use Illuminate\Support\Collection;
 class WalletService
 {
     /**
+     * Get summary of all user wallets with credit, debit, and remaining balance.
+     *
+     * @return Collection
+     */
+    public function getAllWallets(): Collection
+    {
+        return User::query()
+            ->where(function ($query) {
+                $query->where('role', 2)
+                    ->orWhereHas('walletTransactions');
+            })
+            ->withSum(['walletTransactions as total_credit' => function ($q) {
+                $q->where('type', 'credit');
+            }], 'amount')
+            ->withSum(['walletTransactions as total_debit' => function ($q) {
+                $q->where('type', 'debit');
+            }], 'amount')
+            ->orderBy('id', 'asc')
+            ->get()
+            ->map(function (User $user) {
+                $credit = (float) ($user->total_credit ?? 0);
+                $debit  = (float) ($user->total_debit ?? 0);
+                $remaining = $credit - $debit;
+
+                $fullName = trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? ''));
+                if (empty($fullName)) {
+                    $fullName = 'User #' . $user->id;
+                }
+
+                return (object) [
+                    'id'                => $user->id,
+                    'name'              => $fullName,
+                    'first_name'        => $user->first_name,
+                    'last_name'         => $user->last_name,
+                    'email'             => $user->email,
+                    'phone'             => $user->phone,
+                    'total_credit'      => $credit,
+                    'total_debit'       => $debit,
+                    'remaining_balance' => $remaining,
+                ];
+            });
+    }
+
+    /**
      * Get customer profile details for the wallet view.
      *
      * @param int $userId
