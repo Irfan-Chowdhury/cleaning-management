@@ -24,13 +24,13 @@
                     <!-- Brand Header: Logo (if setting.company_logo exists) or Company Name -->
                     <tr>
                         <td align="center" style="background: linear-gradient(135deg, #0866e8 0%, #004bb5 100%); padding: 36px 40px; text-align: center;">
-                            @if($companyLogo)
+                            {{-- @if($companyLogo)
                                 <div style="display: inline-block; background-color: #ffffff; padding: 12px 24px; border-radius: 12px; box-shadow: 0 4px 14px rgba(0,0,0,0.15);">
                                     <img src="{{ $companyLogo }}" alt="{{ $companyName }}" style="max-height: 55px; max-width: 220px; width: auto; height: auto; display: block; border: 0;" />
                                 </div>
-                            @else
+                            @else --}}
                                 <h1 style="color: #ffffff; font-size: 26px; font-weight: 800; margin: 0; letter-spacing: -0.5px;">{{ $companyName }}</h1>
-                            @endif
+                            {{-- @endif --}}
                         </td>
                     </tr>
 

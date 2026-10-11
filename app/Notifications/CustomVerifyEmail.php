@@ -27,51 +27,51 @@ class CustomVerifyEmail extends VerifyEmailBase
         $setting = Setting::first();
 
         $companyName = $setting?->company_name ?: config('app.name', 'Dust2Glow');
-        
+
         // Pass company logo if setting.company_logo is uploaded/set
 
         // $companyLogo = !empty($setting?->company_logo) ? $setting->company_logo_url : null;
         $companyLogo = null;
-        if (!empty($setting?->company_logo)) {
-            $rawLogo = $setting->company_logo;
-            
-            if (filter_var($rawLogo, FILTER_VALIDATE_URL)) {
-                $companyLogo = $rawLogo;
-            } else {
-                $cleanPath = ltrim($rawLogo, '/');
-                $possiblePaths = [
-                    base_path($cleanPath),
-                    public_path(str_replace('public/', '', $cleanPath)),
-                    public_path($cleanPath),
-                ];
+        // if (!empty($setting?->company_logo)) {
+        //     $rawLogo = $setting->company_logo;
 
-                $filePath = null;
-                foreach ($possiblePaths as $path) {
-                    if (file_exists($path) && is_file($path)) {
-                        $filePath = $path;
-                        break;
-                    }
-                }
+        //     if (filter_var($rawLogo, FILTER_VALIDATE_URL)) {
+        //         $companyLogo = $rawLogo;
+        //     } else {
+        //         $cleanPath = ltrim($rawLogo, '/');
+        //         $possiblePaths = [
+        //             base_path($cleanPath),
+        //             public_path(str_replace('public/', '', $cleanPath)),
+        //             public_path($cleanPath),
+        //         ];
 
-                if ($filePath) {
-                    $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-                    $mime = match ($ext) {
-                        'png'  => 'image/png',
-                        'jpg', 'jpeg' => 'image/jpeg',
-                        'gif'  => 'image/gif',
-                        'svg'  => 'image/svg+xml',
-                        'webp' => 'image/webp',
-                        default => 'image/' . $ext,
-                    };
-                    $fileData = file_get_contents($filePath);
-                    $companyLogo = 'data:' . $mime . ';base64,' . base64_encode($fileData);
-                } else {
-                    $companyLogo = $setting->company_logo_url;
-                }
-            }
-        }
+        //         $filePath = null;
+        //         foreach ($possiblePaths as $path) {
+        //             if (file_exists($path) && is_file($path)) {
+        //                 $filePath = $path;
+        //                 break;
+        //             }
+        //         }
 
-        
+        //         if ($filePath) {
+        //             $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+        //             $mime = match ($ext) {
+        //                 'png'  => 'image/png',
+        //                 'jpg', 'jpeg' => 'image/jpeg',
+        //                 'gif'  => 'image/gif',
+        //                 'svg'  => 'image/svg+xml',
+        //                 'webp' => 'image/webp',
+        //                 default => 'image/' . $ext,
+        //             };
+        //             $fileData = file_get_contents($filePath);
+        //             $companyLogo = 'data:' . $mime . ';base64,' . base64_encode($fileData);
+        //         } else {
+        //             $companyLogo = $setting->company_logo_url;
+        //         }
+        //     }
+        // }
+
+
         $userName = trim(($notifiable->first_name ?? '') . ' ' . ($notifiable->last_name ?? ''));
         $supportEmail = $setting?->email;
         $supportPhone = $setting?->phone;
