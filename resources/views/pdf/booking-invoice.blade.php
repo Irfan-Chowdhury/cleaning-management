@@ -14,9 +14,9 @@
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             color: #1e293b;
             background-color: #ffffff;
-            font-size: 13px;
-            line-height: 1.5;
-            padding: 30px;
+            font-size: 11.5px;
+            line-height: 1.4;
+            padding: 28px 36px 24px 36px;
         }
 
         .invoice-box {
@@ -27,7 +27,7 @@
         /* Header Table */
         .header-table {
             width: 100%;
-            margin-bottom: 25px;
+            margin-bottom: 14px;
             border-collapse: collapse;
         }
 
@@ -36,28 +36,29 @@
         }
 
         .company-logo-img {
-            max-height: 55px;
+            max-height: 46px;
             width: auto;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             display: block;
         }
 
         .company-name {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 800;
             color: #2563eb;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .company-sub {
-            font-size: 11px;
+            font-size: 10.5px;
             color: #64748b;
+            line-height: 1.35;
         }
 
         .invoice-title {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 800;
             color: #0f172a;
             text-align: right;
@@ -67,19 +68,19 @@
 
         .invoice-meta {
             text-align: right;
-            font-size: 12px;
+            font-size: 11.5px;
             color: #475569;
-            margin-top: 4px;
+            margin-top: 3px;
         }
 
         .badge-status {
             display: inline-block;
-            padding: 4px 12px;
-            font-size: 11px;
+            padding: 3px 10px;
+            font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
             border-radius: 20px;
-            margin-top: 6px;
+            margin-top: 4px;
         }
 
         .badge-paid {
@@ -98,40 +99,52 @@
         .divider {
             height: 2px;
             background-color: #2563eb;
-            margin-bottom: 25px;
+            margin-bottom: 12px;
+            font-size: 0;
+            line-height: 0;
         }
 
         /* Two Column Info Section */
         .info-table {
             width: 100%;
-            margin-bottom: 25px;
+            margin-bottom: 12px;
             border-collapse: collapse;
         }
 
-        .info-table td {
-            width: 50%;
+        .info-cell {
+            width: 48.5%;
             vertical-align: top;
-            padding: 12px 16px;
+            padding: 0;
+        }
+
+        .info-spacer {
+            width: 3%;
+        }
+
+        .info-box {
+            padding: 9px 12px;
             background-color: #f8fafc;
             border: 1px solid #e2e8f0;
-            border-radius: 8px;
+            border-radius: 6px;
+            min-height: 130px;
         }
 
         .section-heading {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             color: #2563eb;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             border-bottom: 1px solid #cbd5e1;
-            padding-bottom: 4px;
+            padding-bottom: 3px;
         }
 
         .info-list p {
-            margin-bottom: 4px;
-            font-size: 12px;
+            margin-bottom: 3px;
+            font-size: 11px;
             color: #334155;
+            line-height: 1.35;
         }
 
         .info-list strong {
@@ -142,24 +155,24 @@
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 25px;
+            margin-bottom: 12px;
         }
 
         .data-table th {
             background-color: #1e293b;
             color: #ffffff;
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            padding: 10px 14px;
+            padding: 7px 10px;
             text-align: left;
         }
 
         .data-table td {
-            padding: 12px 14px;
+            padding: 7px 10px;
             border-bottom: 1px solid #e2e8f0;
-            font-size: 12.5px;
+            font-size: 11.5px;
             color: #334155;
         }
 
@@ -170,18 +183,18 @@
         /* Price Breakdown Table */
         .summary-wrapper {
             width: 100%;
-            margin-bottom: 30px;
+            margin-bottom: 12px;
         }
 
         .summary-table {
-            width: 320px;
+            width: 300px;
             margin-left: auto;
             border-collapse: collapse;
         }
 
         .summary-table td {
-            padding: 6px 12px;
-            font-size: 12.5px;
+            padding: 3px 8px;
+            font-size: 11px;
             color: #475569;
         }
 
@@ -192,12 +205,12 @@
         }
 
         .summary-table tr.total-row td {
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 800;
             color: #0f172a;
             border-top: 2px solid #2563eb;
             border-bottom: 2px solid #2563eb;
-            padding: 10px 12px;
+            padding: 6px 8px;
             background-color: #eff6ff;
         }
 
@@ -209,14 +222,94 @@
             color: #16a34a !important;
         }
 
+        /* Bottom 2-Column Blocks */
+        .bottom-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        .bottom-cell {
+            width: 48.5%;
+            vertical-align: top;
+            padding: 0;
+        }
+
+        .bottom-spacer {
+            width: 3%;
+        }
+
+        .card-box {
+            border: 1px solid #2563eb;
+            border-radius: 6px;
+            overflow: hidden;
+            background-color: #ffffff;
+            min-height: 180px;
+        }
+
+        .block-header {
+            background-color: #2563eb;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 6px 12px;
+        }
+
+        .block-content {
+            padding: 8px 12px;
+            background-color: #ffffff;
+        }
+
+        .payment-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .payment-table td {
+            padding: 4px 0;
+            font-size: 10.5px;
+            border-bottom: 1px solid #f1f5f9;
+            line-height: 1.35;
+        }
+
+        .payment-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .payment-table td:first-child {
+            font-weight: 700;
+            width: 38%;
+            color: #0f172a;
+        }
+
+        .terms-list {
+            padding-left: 14px;
+            margin: 0;
+            font-size: 9.5px;
+            color: #334155;
+            line-height: 1.3;
+        }
+
+        .terms-list li {
+            margin-bottom: 3px;
+            color: #2563eb;
+        }
+
+        .terms-list li span {
+            color: #334155;
+        }
+
         /* Footer Notes */
         .footer-note {
-            margin-top: 40px;
-            padding-top: 15px;
+            margin-top: 14px;
+            padding-top: 10px;
             border-top: 1px solid #e2e8f0;
             text-align: center;
-            font-size: 11px;
+            font-size: 10.5px;
             color: #64748b;
+            line-height: 1.4;
         }
 
         .footer-note strong {
@@ -294,28 +387,33 @@
         <!-- Info Section -->
         <table class="info-table">
             <tr>
-                <td style="margin-right: 10px;">
-                    <div class="section-heading">Customer Information</div>
-                    <div class="info-list">
-                        <p><strong>Name:</strong> {{ $booking->customer_name ?: ($booking->user ? trim($booking->user->first_name . ' ' . ($booking->user->last_name ?? '')) : 'Guest') }}</p>
-                        <p><strong>Email:</strong> {{ $booking->customer_email ?: ($booking->user->email ?? 'N/A') }}</p>
-                        <p><strong>Phone:</strong> {{ $booking->customer_phone ?: ($booking->user->phone ?? 'N/A') }}</p>
-                        <p><strong>Address:</strong> {{ $booking->customer_address ?: 'N/A' }}</p>
-                        @if ($booking->unit_suite_floor)
-                            <p><strong>Unit / Suite / Floor:</strong> {{ $booking->unit_suite_floor }}</p>
-                        @endif
-                        @if ($booking->suburb || $booking->postcode)
-                            <p><strong>Suburb / Postcode:</strong> {{ $booking->suburb ?? '' }} {{ $booking->postcode ?? '' }}</p>
-                        @endif
+                <td class="info-cell">
+                    <div class="info-box">
+                        <div class="section-heading">Customer Information</div>
+                        <div class="info-list">
+                            <p><strong>Name:</strong> {{ $booking->customer_name ?: ($booking->user ? trim($booking->user->first_name . ' ' . ($booking->user->last_name ?? '')) : 'Guest') }}</p>
+                            <p><strong>Email:</strong> {{ $booking->customer_email ?: ($booking->user->email ?? 'N/A') }}</p>
+                            <p><strong>Phone:</strong> {{ $booking->customer_phone ?: ($booking->user->phone ?? 'N/A') }}</p>
+                            <p><strong>Address:</strong> {{ $booking->customer_address ?: 'N/A' }}</p>
+                            @if ($booking->unit_suite_floor)
+                                <p><strong>Unit / Suite / Floor:</strong> {{ $booking->unit_suite_floor }}</p>
+                            @endif
+                            @if ($booking->suburb || $booking->postcode)
+                                <p><strong>Suburb / Postcode:</strong> {{ $booking->suburb ?? '' }} {{ $booking->postcode ?? '' }}</p>
+                            @endif
+                        </div>
                     </div>
                 </td>
-                <td>
-                    <div class="section-heading">Service &amp; Schedule</div>
-                    <div class="info-list">
-                        <p><strong>Service:</strong> {{ $booking->service?->name ?? 'Cleaning Service' }}</p>
-                        <p><strong>Scheduled Date:</strong> {{ $bookingDateFormatted }}</p>
-                        <p><strong>Time Slot:</strong> {{ $bookingTimeFormatted }}</p>
-                        <p><strong>Booking Status:</strong> {{ ucfirst($booking->status_label ?? 'Pending') }}</p>
+                <td class="info-spacer"></td>
+                <td class="info-cell">
+                    <div class="info-box">
+                        <div class="section-heading">Service &amp; Schedule</div>
+                        <div class="info-list">
+                            <p><strong>Service:</strong> {{ $booking->service?->name ?? 'Cleaning Service' }}</p>
+                            <p><strong>Scheduled Date:</strong> {{ $bookingDateFormatted }}</p>
+                            <p><strong>Time Slot:</strong> {{ $bookingTimeFormatted }}</p>
+                            <p><strong>Booking Status:</strong> {{ ucfirst($booking->status_label ?? 'Pending') }}</p>
+                        </div>
                     </div>
                 </td>
             </tr>
@@ -346,23 +444,23 @@
 
         <!-- Service Questionnaire Section -->
         @if (!empty($booking->answers) && is_array($booking->answers))
-            <div style="margin-top: 20px; margin-bottom: 25px;">
-                <div class="section-heading" style="font-size: 12px; font-weight: 700; color: #2563eb; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">
+            <div style="margin-top: 8px; margin-bottom: 10px;">
+                <div class="section-heading" style="font-size: 11px; font-weight: 700; color: #2563eb; text-transform: uppercase; margin-bottom: 6px; border-bottom: 1px solid #cbd5e1; padding-bottom: 3px;">
                     Service Questionnaire &amp; Details
                 </div>
-                <table class="data-table" style="width: 100%; border-collapse: collapse;">
+                <table class="data-table" style="width: 100%; border-collapse: collapse; margin-bottom: 0;">
                     <thead>
                         <tr>
-                            <th style="width: 40%; background-color: #1e293b; color: #ffffff; padding: 8px 12px; font-size: 11px;">Question</th>
-                            <th style="width: 60%; background-color: #1e293b; color: #ffffff; padding: 8px 12px; font-size: 11px;">Answer</th>
+                            <th style="width: 40%; background-color: #1e293b; color: #ffffff; padding: 5px 8px; font-size: 10px;">Question</th>
+                            <th style="width: 60%; background-color: #1e293b; color: #ffffff; padding: 5px 8px; font-size: 10px;">Answer</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($booking->answers as $ans)
                             @if (!empty($ans['question']) && !empty($ans['answer']))
                                 <tr>
-                                    <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600; font-size: 12px; color: #0f172a;">{{ $ans['question'] }}</td>
-                                    <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; font-size: 12px; color: #334155;">{{ $ans['answer'] }}</td>
+                                    <td style="padding: 5px 8px; border-bottom: 1px solid #e2e8f0; font-weight: 600; font-size: 10.5px; color: #0f172a;">{{ $ans['question'] }}</td>
+                                    <td style="padding: 5px 8px; border-bottom: 1px solid #e2e8f0; font-size: 10.5px; color: #334155;">{{ $ans['answer'] }}</td>
                                 </tr>
                             @endif
                         @endforeach
@@ -448,6 +546,63 @@
                 </tr>
             </table>
         </div>
+
+        <!-- New -->
+        <!-- Payment & Terms Section -->
+        <table class="bottom-table">
+            <tr>
+                <!-- Payment Details -->
+                <td class="bottom-cell">
+                    <div class="card-box">
+                        <div class="block-header">Payment Details</div>
+                        <div class="block-content">
+                            <table class="payment-table">
+                                <tr>
+                                    <td>Bank:</td>
+                                    <td>Commonwealth Bank</td>
+                                </tr>
+                                <tr>
+                                    <td>Account Name:</td>
+                                    <td>Dust2Glow Group Pty Ltd</td>
+                                </tr>
+                                <tr>
+                                    <td>BSB:</td>
+                                    <td>062 709</td>
+                                </tr>
+                                <tr>
+                                    <td>Account Number:</td>
+                                    <td>10 450 457</td>
+                                </tr>
+                                <tr>
+                                    <td>Reference:</td>
+                                    {{-- <td>{{ $bookingIdFormatted }}</td> --}}
+                                    <td>NV-2026-0007</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </td>
+
+                <td class="bottom-spacer"></td>
+
+                <!-- Terms & Notes -->
+                <td class="bottom-cell">
+                    <div class="card-box">
+                        <div class="block-header">Terms &amp; Notes</div>
+                        <div class="block-content">
+                            <ul class="terms-list">
+                                <li><span>Cleaning is carried out overnight, with a start time between 12am and 6am each week, subject to site access being arranged.</span></li>
+                                <li><span>All cleaning products and equipment are supplied by Dust2Glow.</span></li>
+                                <li><span>Prices are per visit and cover the scope above only. Additional work is quoted separately.</span></li>
+                                <li><span>Payment is due within 30 days from invoice date.</span></li>
+                                <li><span>For any questions, please contact us at info@dust2glowcleaning.com.au or call 0426 003 944.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
 
         <!-- Footer -->
         <div class="footer-note">
