@@ -3,11 +3,22 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\AdminDashboardService;
+use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index()
+    protected AdminDashboardService $dashboardService;
+
+    public function __construct(AdminDashboardService $dashboardService)
     {
-        return view('pages.admin.dashboard');
+        $this->dashboardService = $dashboardService;
+    }
+
+    public function index(): View
+    {
+        $todayBookings = $this->dashboardService->getTodayBookingsMetrics();
+
+        return view('pages.admin.dashboard', compact('todayBookings'));
     }
 }

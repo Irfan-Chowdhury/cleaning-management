@@ -42,8 +42,9 @@
             <a href="{{ route('bookings.index') }}" class="admin-metric-card metric-blue">
                 <span class="metric-icon"><i class="far fa-calendar-check" aria-hidden="true"></i></span>
                 <span class="metric-label">Today Bookings</span>
-                <strong>24</strong>
-                <span class="metric-note">8 awaiting confirmation</span>
+                <strong>{{ $todayBookings['today_count'] ?? 0 }}</strong>
+                <span class="metric-note">{{ $todayBookings['approved_count'] ?? 0 }} awaiting confirmation</span>
+                <!-- <span class="metric-note">{{ $todayBookings['approved_count'] ?? 0 }} approved</span> -->
             </a>
 
             <a href="{{ route('customers.index') }}" class="admin-metric-card metric-green">
