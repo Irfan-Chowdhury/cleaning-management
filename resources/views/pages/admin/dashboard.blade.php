@@ -7,7 +7,7 @@
 @endpush
 
 @section('content')
-    <div class="alert alert-warning d-flex align-items-center mb-4 p-3 shadow-sm rounded-lg" style="background-color: #fff8e6; border: 1px solid #ffe0b2; border-left: 5px solid #ff9800; color: #8c5400;" role="alert">
+    {{-- <div class="alert alert-warning d-flex align-items-center mb-4 p-3 shadow-sm rounded-lg" style="background-color: #fff8e6; border: 1px solid #ffe0b2; border-left: 5px solid #ff9800; color: #8c5400;" role="alert">
         <div class="mr-3" style="font-size: 24px;">
             <i class="fas fa-tools text-warning"></i>
         </div>
@@ -19,7 +19,7 @@
                 We are actively working on enhancing this dashboard with exciting features. Stay tuned!
             </p>
         </div>
-    </div>
+    </div> --}}
 
     <div class="admin-dashboard-page">
         <div class="admin-dashboard-header">
@@ -163,10 +163,10 @@
                     <a href="{{ route('wallets.index') }}" class="operation-item">
                         <div class="d-flex align-items-center justify-content-between">
                             <span><i class="fas fa-coins" aria-hidden="true"></i></span>
-                            <i class="fas fa-exclamation-circle stat-tooltip-icon" 
-                               data-toggle="tooltip" 
-                               data-placement="top" 
-                               title="Total sum of Welcome Bonuses, Referral Rewards, Google Review Rewards of this {{ now()->format('F') }}" 
+                            <i class="fas fa-exclamation-circle stat-tooltip-icon"
+                               data-toggle="tooltip"
+                               data-placement="top"
+                               title="Total sum of Welcome Bonuses, Referral Rewards, Google Review Rewards of this {{ now()->format('F') }}"
                                aria-hidden="true"></i>
                         </div>
                         <strong>${{ number_format($creditsIssuedThisMonth ?? 0, 2) }}</strong>
