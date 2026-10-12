@@ -17,6 +17,7 @@ use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\GoogleReviewController as AdminGoogleReviewController;
+use App\Http\Controllers\Admin\QuotationController;
 use App\Http\Middleware\EnsureGoogleReviewEnabled;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\AuthController;
@@ -126,6 +127,9 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
 
     Route::get('/wallets', [WalletController::class, 'index'])->name('wallets.index');
     Route::get('/wallets/{id}', [WalletController::class, 'show'])->name('wallets.show');
+    Route::get('/quotations', [QuotationController::class, 'index'])->name('quotations.index');
+    Route::get('/quotations/create', [QuotationController::class, 'create'])->name('quotations.create');
+    Route::get('/quotations/{id}/edit', [QuotationController::class, 'edit'])->name('quotations.edit');
 
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
     Route::get('/bookings/{id}', [BookingController::class, 'show'])->name('bookings.show');
