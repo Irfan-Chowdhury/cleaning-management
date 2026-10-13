@@ -49,30 +49,39 @@ class QuotationService
      *
      * @param  array  $data  Validated data from UpdateQuotationRequest
      */
-    // public function update(Quotation $quotation, array $data): Quotation
-    // {
-    //     return DB::transaction(function () use ($quotation, $data) {
-    //         $quotation->update([
-    //             'quote_date'     => $data['quote_date'],
-    //             'abn'            => $data['abn'] ?? null,
-    //             'contact_person' => $data['contact_person'],
-    //             'company_name'   => $data['company_name'],
-    //             'address'        => $data['address'],
-    //             'phone'          => $data['phone'],
-    //             'email'          => $data['email'],
-    //             'frequency'      => $data['frequency'],
-    //             'shift_schedule' => $data['shift_schedule'],
-    //             'subtotal'       => $data['subtotal'],
-    //             'gst_amount'     => $data['gst_amount'],
-    //             'total_amount'   => $data['total_amount'],
-    //             'terms_notes'    => $data['terms_notes'] ?? null,
-    //         ]);
+    public function update(Quotation $quotation, array $data, bool $convertToInvoice = false): Quotation
+    {
+        return DB::transaction(function () use ($quotation, $data, $convertToInvoice) {
+            $quotation = Quotation::whereKey($quotation->id)->lockForUpdate()->firstOrFail();
 
-    //         $this->syncItems($quotation, $data['items']);
+            if ($convertToInvoice && $quotation->status !== 'draft') {
+                throw new \DomainException('Only draft quotations can be converted to an invoice.');
+            }
 
-    //         return $quotation->fresh('items');
-    //     });
-    // }
+            $totals = $this->calculateTotals(array_column($data['items'], 'amount'));
+
+            $quotation->update([
+                'quote_date'     => $data['quote_date'],
+                'abn'            => $data['abn'] ?? null,
+                'contact_person' => $data['contact_person'],
+                'company_name'   => $data['company_name'],
+                'address'        => $data['address'],
+                'phone'          => $data['phone'],
+                'email'          => $data['email'],
+                'frequency'      => $data['frequency'],
+                'shift_schedule' => $data['shift_schedule'],
+                'subtotal'       => $totals['subtotal'],
+                'gst_amount'     => $totals['gst_amount'],
+                'total_amount'   => $totals['total_amount'],
+                'terms_notes'    => $data['terms_notes'] ?? $quotation->terms_notes,
+                'status'         => $convertToInvoice ? 'converted' : $quotation->status,
+            ]);
+
+            $this->syncItems($quotation, $data['items']);
+
+            return $quotation->fresh('items');
+        });
+    }
 
     /**
      * Permanently delete a quotation and cascade-delete its items.

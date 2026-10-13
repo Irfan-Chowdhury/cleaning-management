@@ -346,10 +346,21 @@
 
         {{-- Bottom Action Button --}}
         <div class="quotation-bottom-actions">
-            <button type="submit" class="btn btn-primary btn-primary-blue" id="btn-save-pdf">
+            <button type="submit" class="btn btn-primary btn-primary-blue" id="btn-save-pdf"
+                    @if ($isEdit) name="action" value="update" @endif>
                 <i class="fas fa-save mr-1" aria-hidden="true"></i>
-                <span>{{ $isEdit ? 'Update Quotation' : 'Save & Download PDF' }}</span>
+                <span>{{ $isEdit ? 'Update & Download PDF' : 'Save & Download PDF' }}</span>
             </button>
+            @if ($isEdit)
+                <button type="submit"
+                        class="btn {{ $quotation->status === 'draft' ? 'btn-success' : 'btn-secondary' }}"
+                        name="action"
+                        value="convert"
+                        @disabled($quotation->status !== 'draft')>
+                    <i class="fas {{ $quotation->status === 'draft' ? 'fa-file-invoice-dollar' : 'fa-check-circle' }} mr-1" aria-hidden="true"></i>
+                    <span>{{ $quotation->status === 'draft' ? 'Convert to Invoice' : 'Invoiced' }}</span>
+                </button>
+            @endif
         </div>
     </form>
 </div>

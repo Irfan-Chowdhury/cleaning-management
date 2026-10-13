@@ -177,33 +177,46 @@ class QuotationController extends Controller
     /**
      * Show the form for editing an existing quotation.
      */
-    // public function edit(Quotation $quotation)
-    // {
-    //     $quotation->load('items');
-    //     $isEdit = true;
+    public function edit(Quotation $quotation)
+    {
+        $quotation->load('items');
+        $isEdit = true;
 
-    //     return view('pages.admin.quotations.form', compact('quotation', 'isEdit'));
-    // }
+        return view('pages.admin.quotations.form', compact('quotation', 'isEdit'));
+    }
 
     /**
      * Update an existing quotation (with items) and redirect back to the edit page.
      */
-    // public function update(UpdateQuotationRequest $request, Quotation $quotation): RedirectResponse
-    // {
-    //     try {
-    //         $quotation = $this->quotationService->update($quotation, $request->validated());
+    public function update(UpdateQuotationRequest $request, Quotation $quotation): RedirectResponse
+    {
+        $convertToInvoice = $request->input('action') === 'convert';
 
-    //         return redirect()
-    //             ->route('quotations.edit', $quotation->id)
-    //             ->with('success', "Quotation {$quotation->quote_number} updated successfully!");
-    //     } catch (\Throwable $e) {
-    //         Log::error('QuotationController@update failed: ' . $e->getMessage());
+        try {
+            $quotation = $this->quotationService->update(
+                $quotation,
+                $request->validated(),
+                $convertToInvoice
+            );
 
-    //         return back()
-    //             ->withInput()
-    //             ->with('error', 'An error occurred while updating the quotation. Please try again.');
-    //     }
-    // }
+            $message = $convertToInvoice
+                ? "Quotation {$quotation->quote_number} converted to invoice successfully!"
+                : "Quotation {$quotation->quote_number} updated successfully!";
+
+            return redirect()
+                ->route('quotations.edit', $quotation->id)
+                ->with('success', $message)
+                ->with('quotation_pdf_download', route('quotations.download', $quotation->id));
+        } catch (\Throwable $e) {
+            Log::error('QuotationController@update failed: ' . $e->getMessage());
+
+            return back()
+                ->withInput()
+                ->with('error', $convertToInvoice
+                    ? 'This quotation could not be converted. It may already have been invoiced.'
+                    : 'An error occurred while updating the quotation. Please try again.');
+        }
+    }
 
     /**
      * Delete a quotation and its line items.
@@ -214,15 +227,11 @@ class QuotationController extends Controller
     //         $number = $quotation->quote_number;
     //         $this->quotationService->delete($quotation);
 
-    //         return response()->json([
-    //             'message' => "Quotation {$number} deleted successfully.",
-    //         ]);
+    //         return response()->json(['message' => "Quotation {$number} deleted successfully."]);
     //     } catch (\Throwable $e) {
     //         Log::error('QuotationController@destroy failed: ' . $e->getMessage());
 
-    //         return response()->json([
-    //             'message' => 'Failed to delete quotation. Please try again.',
-    //         ], 500);
+    //         return response()->json(['message' => 'Failed to delete quotation. Please try again.'], 500);
     //     }
     // }
 
@@ -234,11 +243,17 @@ class QuotationController extends Controller
         $quotation = Quotation::with('items')->findOrFail($id);
         $setting = Setting::first();
         $quoteDateFormatted = Carbon::parse($quotation->quote_date)->format('d M Y');
+        $quotationUpdatedAtFormatted = Carbon::parse($quotation->updated_at)->format('d M Y, h:i A');
+        $isInvoice = strtolower((string) $quotation->status) === 'converted';
+        $documentTitle = $isInvoice ? 'Invoice' : 'Quote';
+        $view = $isInvoice ? 'pdf.quotation-invoice' : 'pdf.quotation';
 
-        $pdf = Pdf::loadView('pdf.quotation', compact('quotation', 'setting', 'quoteDateFormatted'))
+        $pdf = Pdf::loadView($view, compact('quotation', 'setting', 'quoteDateFormatted', 'quotationUpdatedAtFormatted', 'documentTitle'))
             ->setPaper('a4', 'portrait');
 
-        return $pdf->download("{$quotation->quote_number}.pdf");
+        $suffix = $isInvoice ? '-invoice' : '';
+
+        return $pdf->download("{$quotation->quote_number}{$suffix}.pdf");
     }
 
     // ─── Private Helpers ───────────────────────────────────────────────────────
