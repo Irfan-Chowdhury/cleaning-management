@@ -42,12 +42,10 @@
         }
 
         .company-name {
-            font-size: 18px;
-            font-weight: 800;
-            color: #0052cc;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-            margin-bottom: 2px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #010711;
+            margin-bottom: 4px;
         }
 
         .company-sub {
@@ -62,12 +60,12 @@
         }
 
         .quote-title {
-            font-size: 24px;
+            font-size: 30px;
             font-weight: 900;
             color: #0052cc;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
         .quote-number {
@@ -215,8 +213,8 @@
 
         .totals-table .label-col {
             text-align: right;
-            color: #64748b;
-            font-weight: 600;
+            color: #000711;
+            font-weight: 800;
         }
 
         .totals-table .value-col {
@@ -235,18 +233,59 @@
             padding: 8px 12px;
         }
 
+        .terms-notes-box {
+            width: 100%;
+            margin-top: 20px;
+            border: 1px solid #0052cc;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .terms-notes-heading {
+            padding: 7px 12px;
+            background: #0052cc;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .terms-notes-content {
+            padding: 9px 12px;
+            font-size: 10.5px;
+            color: #475569;
+            line-height: 1.5;
+        }
+
+        .terms-notes-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        .terms-notes-list li {
+            margin-bottom: 3px;
+            padding-left: 2px;
+        }
+
         /* Footer */
         .footer {
-            margin-top: 24px;
+            margin-top: 22px;
             border-top: 1px solid #e2e8f0;
-            padding-top: 12px;
-            font-size: 10px;
-            color: #94a3b8;
+            padding-top: 16px;
             text-align: center;
         }
 
-        .footer strong {
+        .footer-title {
+            margin-bottom: 4px;
+            font-size: 18px;
+            font-weight: 800;
             color: #0052cc;
+        }
+
+        .footer-message {
+            font-size: 11px;
+            color: #64748b;
         }
     </style>
 </head>
@@ -257,16 +296,12 @@
     <table class="header-table">
         <tr>
             <td style="width: 55%;">
-                @php
-                    $setting = \App\Models\Setting::first();
-        $documentTitle = $quotation->status === 'draft' ? 'QUOTE' : 'INVOICE';
-                @endphp
+                @php($documentTitle = $quotation->status === 'draft' ? 'QUOTE' : 'INVOICE')
                 @if ($setting?->company_logo)
                     <img class="company-logo-img"
                          src="{{ public_path($setting->company_logo) }}"
                          alt="{{ $setting->company_name ?? 'Company' }}">
                 @endif
-                <div class="company-name">{{ $setting?->company_name ?? config('app.name') }}</div>
                 @if ($setting?->address)
                     <div class="company-sub">{{ $setting->address }}</div>
                 @endif
@@ -282,9 +317,10 @@
             </td>
             <td class="quote-title-box">
                 <div class="quote-title">{{ $documentTitle }}</div>
+                <div class="company-name">{{ ucfirst((string) ($setting?->company_name ?? config('app.name'))) }}</div>
                 <div class="quote-number">{{ $quotation->quote_number }}</div>
                 <div class="quote-date">
-                    Date: {{ \Carbon\Carbon::parse($quotation->quote_date)->format('d M Y') }}
+                    Issue Date: {{ $quoteDateFormatted }}
                 </div>
             </td>
         </tr>
@@ -328,7 +364,7 @@
             </td>
             <td style="width: 40%;">
                 <div class="info-box">
-                    <div class="info-box-title">Service Details</div>
+                    <div class="info-box-title">Quote Details</div>
                     <div class="info-row">
                         <span class="info-label">Frequency:</span>
                         <span class="info-value">{{ $quotation->frequency }}</span>
@@ -336,6 +372,10 @@
                     <div class="info-row">
                         <span class="info-label">Schedule:</span>
                         <span class="info-value">{{ $quotation->shift_schedule }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Valid For:</span>
+                        <span class="info-value">30 days</span>
                     </div>
                 </div>
             </td>
@@ -380,21 +420,23 @@
         </tr>
     </table>
 
-    @if ($quotation->terms_notes)
-        <hr class="divider-light">
-        <div style="margin-top: 8px;">
-            <div style="font-size: 10px; font-weight: 800; color: #0052cc; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 5px;">
-                Terms &amp; Notes
-            </div>
-            <div style="font-size: 10.5px; color: #475569; line-height: 1.5; white-space: pre-wrap;">{{ $quotation->terms_notes }}</div>
+    <div class="terms-notes-box">
+        <div class="terms-notes-heading">Terms &amp; Notes</div>
+        <div class="terms-notes-content">
+            <ul class="terms-notes-list">
+                <li>Cleaning is carried out overnight, with a start time between 12am and 6am each week, subject to site access being arranged.</li>
+                <li>All cleaning products and equipment are supplied by Dust2Glow.</li>
+                <li>Prices are per visit and cover the scope above only. Additional work is quoted separately.</li>
+                <li>Payment is due within 30 days from invoice date.</li>
+                <li>For any questions, please contact us at info@dust2glowcleaning.com.au or call 0426 003 944.</li>
+            </ul>
         </div>
-    @endif
+    </div>
 
     {{-- ── FOOTER ── --}}
     <div class="footer">
-        This quotation was prepared by <strong>{{ $setting?->company_name ?? config('app.name') }}</strong>.
-        Valid for 30 days from the date of issue.
-        Thank you for your business.
+        <div class="footer-title">Thank you for choosing Dust2Glow</div>
+        <div class="footer-message">We look forward to working with you.</div>
     </div>
 
 </div>

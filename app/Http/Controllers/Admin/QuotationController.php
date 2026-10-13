@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreQuotationRequest;
 use App\Http\Requests\Admin\UpdateQuotationRequest;
 use App\Models\Quotation;
+use App\Models\Setting;
 use App\Services\QuotationService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -176,8 +177,10 @@ class QuotationController extends Controller
     public function download(int $id)
     {
         $quotation = Quotation::with('items')->findOrFail($id);
+        $setting = Setting::first();
+        $quoteDateFormatted = Carbon::parse($quotation->quote_date)->format('d M Y');
 
-        $pdf = Pdf::loadView('pdf.quotation', compact('quotation'))
+        $pdf = Pdf::loadView('pdf.quotation', compact('quotation', 'setting', 'quoteDateFormatted'))
             ->setPaper('a4', 'portrait');
 
         return $pdf->download("{$quotation->quote_number}.pdf");
