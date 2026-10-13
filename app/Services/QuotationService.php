@@ -86,13 +86,13 @@ class QuotationService
     /**
      * Permanently delete a quotation and cascade-delete its items.
      */
-    // public function delete(Quotation $quotation): void
-    // {
-    //     DB::transaction(function () use ($quotation) {
-    //         $quotation->items()->delete();
-    //         $quotation->delete();
-    //     });
-    // }
+    public function delete(Quotation $quotation): void
+    {
+        DB::transaction(function () use ($quotation) {
+            $quotation->items()->delete();
+            $quotation->delete();
+        });
+    }
 
     /**
      * Replace all line items for a quotation.

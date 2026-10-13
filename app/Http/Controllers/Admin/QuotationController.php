@@ -99,7 +99,8 @@ class QuotationController extends Controller
                         . '<a href="' . e($editUrl) . '" class="btn btn-sm btn-outline-primary quotation-action-btn" title="Edit Quotation">'
                         . '<i class="fas fa-edit" aria-hidden="true"></i></a>'
                         . '<button type="button" class="btn btn-sm btn-outline-danger quotation-action-btn js-quote-delete"'
-                        . ' data-id="' . (int) $quotation->id . '" data-number="' . e($quotation->quote_number) . '" title="Delete Quotation">'
+                        . ' data-id="' . (int) $quotation->id . '" data-url="' . e(route('quotations.destroy', $quotation->id)) . '"'
+                        . ' data-number="' . e($quotation->quote_number) . '" title="Delete Quotation">'
                         . '<i class="fas fa-trash" aria-hidden="true"></i></button></div>';
                 })
                 ->rawColumns(['quote_number_link', 'company_display', 'quote_date_formatted', 'status_display', 'actions'])
@@ -221,19 +222,23 @@ class QuotationController extends Controller
     /**
      * Delete a quotation and its line items.
      */
-    // public function destroy(Quotation $quotation): JsonResponse
-    // {
-    //     try {
-    //         $number = $quotation->quote_number;
-    //         $this->quotationService->delete($quotation);
+    public function destroy(Quotation $quotation): JsonResponse
+    {
+        try {
+            $number = $quotation->quote_number;
+            $this->quotationService->delete($quotation);
 
-    //         return response()->json(['message' => "Quotation {$number} deleted successfully."]);
-    //     } catch (\Throwable $e) {
-    //         Log::error('QuotationController@destroy failed: ' . $e->getMessage());
+            return response()->json([
+                'message' => "Quotation {$number} deleted successfully.",
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('QuotationController@destroy failed: ' . $e->getMessage());
 
-    //         return response()->json(['message' => 'Failed to delete quotation. Please try again.'], 500);
-    //     }
-    // }
+            return response()->json([
+                'message' => 'Failed to delete quotation. Please try again.',
+            ], 500);
+        }
+    }
 
     /**
      * Stream the PDF for a saved quotation as a browser download.

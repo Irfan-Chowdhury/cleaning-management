@@ -92,12 +92,11 @@ $(document).ready(function () {
             var quoteId     = $(this).data('id');
             var quoteNumber = $(this).data('number') || 'this quotation';
             var $btn        = $(this);
-            var row         = $btn.closest('tr');
             var csrfToken   = $('meta[name="csrf-token"]').attr('content');
 
             Swal.fire({
                 title: 'Delete Quotation?',
-                html: 'Are you sure you want to delete <strong>' + quoteNumber + '</strong>?<br>This action cannot be undone.',
+                text: 'Are you sure you want to delete ' + quoteNumber + '? This action cannot be undone.',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
@@ -107,18 +106,16 @@ $(document).ready(function () {
             }).then(function (result) {
                 if (!result.isConfirmed) return;
 
+                $btn.prop('disabled', true);
+
                 $.ajax({
-                    url: '/quotations/' + quoteId,
+                    url: $btn.data('url') || '/quotations/' + quoteId,
                     type: 'DELETE',
                     headers: { 'X-CSRF-TOKEN': csrfToken },
                     success: function (response) {
-                        row.fadeOut(300, function () {
-                            if ($.fn.DataTable && $.fn.DataTable.isDataTable('#quotations-table')) {
-                                $('#quotations-table').DataTable().row(row).remove().draw(false);
-                            } else {
-                                row.remove();
-                            }
-                        });
+                        if ($.fn.DataTable && $.fn.DataTable.isDataTable('#quotations-table')) {
+                            $('#quotations-table').DataTable().ajax.reload(null, false);
+                        }
                         showNotification('success', response.message || 'Quotation deleted successfully.');
                     },
                     error: function (xhr) {
@@ -126,6 +123,9 @@ $(document).ready(function () {
                             ? xhr.responseJSON.message
                             : 'Failed to delete quotation. Please try again.';
                         showNotification('error', msg);
+                    },
+                    complete: function () {
+                        $btn.prop('disabled', false);
                     }
                 });
             });
