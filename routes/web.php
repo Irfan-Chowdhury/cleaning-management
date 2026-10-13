@@ -127,9 +127,8 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
 
     Route::get('/wallets', [WalletController::class, 'index'])->name('wallets.index');
     Route::get('/wallets/{id}', [WalletController::class, 'show'])->name('wallets.show');
-    Route::get('/quotations', [QuotationController::class, 'index'])->name('quotations.index');
-    Route::get('/quotations/create', [QuotationController::class, 'create'])->name('quotations.create');
-    Route::get('/quotations/{id}/edit', [QuotationController::class, 'edit'])->name('quotations.edit');
+    Route::resource('quotations', QuotationController::class)->except('show');
+    Route::get('/quotations/{id}/download', [QuotationController::class, 'download'])->name('quotations.download');
 
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
     Route::get('/bookings/{id}', [BookingController::class, 'show'])->name('bookings.show');

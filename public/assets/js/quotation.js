@@ -63,24 +63,32 @@ $(document).ready(function () {
             });
         }
 
-        // Delete Confirmation via SweetAlert2
+        // Delete Confirmation via SweetAlert2 → real AJAX DELETE
         $(document).on('click', '.js-quote-delete', function (e) {
             e.preventDefault();
+            var quoteId     = $(this).data('id');
             var quoteNumber = $(this).data('number') || 'this quotation';
-            var row = $(this).closest('tr');
+            var $btn        = $(this);
+            var row         = $btn.closest('tr');
+            var csrfToken   = $('meta[name="csrf-token"]').attr('content');
 
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    title: 'Delete Quotation?',
-                    text: 'Are you sure you want to delete quotation ' + quoteNumber + '? This action cannot be undone.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'Yes, delete it!'
-                }).then(function (result) {
-                    if (result.isConfirmed) {
-                        // In UI demonstration mode, fade out the row and show toast
+            Swal.fire({
+                title: 'Delete Quotation?',
+                html: 'Are you sure you want to delete <strong>' + quoteNumber + '</strong>?<br>This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then(function (result) {
+                if (!result.isConfirmed) return;
+
+                $.ajax({
+                    url: '/quotations/' + quoteId,
+                    type: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': csrfToken },
+                    success: function (response) {
                         row.fadeOut(300, function () {
                             if ($.fn.DataTable && $.fn.DataTable.isDataTable('#quotations-table')) {
                                 $('#quotations-table').DataTable().row(row).remove().draw(false);
@@ -88,12 +96,16 @@ $(document).ready(function () {
                                 row.remove();
                             }
                         });
-                        showNotification('success', 'Quotation ' + quoteNumber + ' deleted successfully.');
+                        showNotification('success', response.message || 'Quotation deleted successfully.');
+                    },
+                    error: function (xhr) {
+                        var msg = (xhr.responseJSON && xhr.responseJSON.message)
+                            ? xhr.responseJSON.message
+                            : 'Failed to delete quotation. Please try again.';
+                        showNotification('error', msg);
                     }
                 });
-            } else if (confirm('Are you sure you want to delete ' + quoteNumber + '?')) {
-                row.remove();
-            }
+            });
         });
     }
 
@@ -206,46 +218,19 @@ $(document).ready(function () {
             });
         });
 
-        // "Save & Download PDF" / "Update & Download PDF" Button Trigger
+        // "Save & Download PDF" / "Update & Download PDF" Button
+        // Sync hidden calculation fields then let the form submit natively (full-page POST)
         $('#btn-save-pdf').on('click', function (e) {
-            e.preventDefault();
-            $('#input-download-pdf').val('1');
+            // Ensure latest totals are in the hidden fields before submit
+            calculateTotals();
 
-            if ($quoteForm[0].checkValidity()) {
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'PDF Generation Ready',
-                        text: 'Quotation details validated! In the backend phase, this will compile the PDF document and initiate your download.',
-                        confirmButtonColor: '#0866e8'
-                    });
-                } else {
-                    alert('Quotation saved and PDF generation prepared!');
-                }
-            } else {
-                $quoteForm[0].reportValidity();
-            }
+            // Let the browser perform the native form submission (no preventDefault)
         });
 
-        // Form Submit Simulation
-        $quoteForm.on('submit', function (e) {
-            e.preventDefault();
-            var isEdit = $('#form-is-edit').val() === '1';
-            var actionText = isEdit ? 'updated' : 'saved';
-
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Quotation ' + (isEdit ? 'Updated' : 'Saved') + ' Successfully!',
-                    text: 'The quotation and all associated line items have been processed in the UI.',
-                    confirmButtonColor: '#0866e8'
-                }).then(function () {
-                    window.location.href = $('#redirect-index-url').val();
-                });
-            } else {
-                alert('Quotation ' + actionText + ' successfully!');
-                window.location.href = $('#redirect-index-url').val();
-            }
+        // On form submit: sync totals then allow native browser POST
+        $quoteForm.on('submit', function () {
+            calculateTotals();
+            // Do NOT call e.preventDefault() – allow the real POST to fire
         });
 
         // Initial Calculation on Load

@@ -3,15 +3,23 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreQuotationRequest;
+use App\Http\Requests\Admin\UpdateQuotationRequest;
 use App\Models\Quotation;
-use App\Models\QuotationItem;
+use App\Services\QuotationService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 class QuotationController extends Controller
 {
+    public function __construct(private readonly QuotationService $quotationService)
+    {
+    }
+
     /**
      * Display a listing of quotations with top metric cards.
      */
@@ -57,7 +65,7 @@ class QuotationController extends Controller
      */
     public function create()
     {
-        $nextNumber = $this->generateSequentialQuoteNumber();
+        $nextNumber  = $this->generateSequentialQuoteNumber();
         $defaultDate = Carbon::now()->format('Y-m-d');
 
         $quotation = (object) [
@@ -70,16 +78,15 @@ class QuotationController extends Controller
             'address'        => '',
             'phone'          => '',
             'email'          => '',
-            'frequency'      => 'Weekly',
-            'shift_schedule' => 'Morning (08:00 - 12:00)',
+            'frequency'      => '',
+            'shift_schedule' => '',
             'subtotal'       => 0.00,
             'gst_amount'     => 0.00,
             'total_amount'   => 0.00,
-            'terms_notes'    => "Payment terms: Net 14 days from invoice date.\nQuotation valid for 30 days from date of issue.\nIncludes all cleaning chemicals, equipment, and consumables.",
+            'terms_notes'    => null,
             'status'         => 'draft',
             'items'          => collect([
-                (object) ['id' => 1, 'description' => 'Commercial Office Deep Cleaning (Floors, Desks & High-Touch Areas)', 'amount' => 650.00],
-                (object) ['id' => 2, 'description' => 'Window Panes & Glass Partitions Polish (Interior/Exterior)', 'amount' => 250.00],
+                (object) ['id' => null, 'description' => '', 'amount' => 0.00],
             ]),
         ];
 
@@ -89,50 +96,106 @@ class QuotationController extends Controller
     }
 
     /**
-     * Show the form for editing an existing quotation.
+     * Store a new quotation (with all line items) inside a DB transaction,
+     * then redirect back to the create form with a success flash message.
+     * The session('success') is picked up by main.js → shown as a SweetAlert toast (top-right).
      */
-    public function edit(int|string $id)
+    public function store(StoreQuotationRequest $request): RedirectResponse
     {
-        $quotation = null;
-
         try {
-            $quotation = Quotation::with('items')->find($id);
+            $quotation = $this->quotationService->store($request->validated());
+
+            return redirect()
+                ->back()
+                ->with('success', "Quotation {$quotation->quote_number} saved successfully!");
         } catch (\Throwable $e) {
-            Log::info('Quotation find fallback to mock entity: ' . $e->getMessage());
+            Log::error('QuotationController@store failed: ' . $e->getMessage());
+
+            return back()
+                ->withInput()
+                ->with('error', 'An error occurred while saving the quotation. Please try again.');
         }
-
-        if (! $quotation) {
-            $mockQuotes = $this->getMockQuotations();
-            $quotation = $mockQuotes->firstWhere('id', (int) $id) ?? $mockQuotes->first();
-        }
-
-        $isEdit = true;
-
-        return view('pages.admin.quotations.form', compact('quotation', 'isEdit'));
     }
 
     /**
+     * Show the form for editing an existing quotation.
+     */
+    // public function edit(Quotation $quotation)
+    // {
+    //     $quotation->load('items');
+    //     $isEdit = true;
+
+    //     return view('pages.admin.quotations.form', compact('quotation', 'isEdit'));
+    // }
+
+    /**
+     * Update an existing quotation (with items) and redirect back to the edit page.
+     */
+    // public function update(UpdateQuotationRequest $request, Quotation $quotation): RedirectResponse
+    // {
+    //     try {
+    //         $quotation = $this->quotationService->update($quotation, $request->validated());
+
+    //         return redirect()
+    //             ->route('quotations.edit', $quotation->id)
+    //             ->with('success', "Quotation {$quotation->quote_number} updated successfully!");
+    //     } catch (\Throwable $e) {
+    //         Log::error('QuotationController@update failed: ' . $e->getMessage());
+
+    //         return back()
+    //             ->withInput()
+    //             ->with('error', 'An error occurred while updating the quotation. Please try again.');
+    //     }
+    // }
+
+    /**
+     * Delete a quotation and its line items.
+     */
+    // public function destroy(Quotation $quotation): JsonResponse
+    // {
+    //     try {
+    //         $number = $quotation->quote_number;
+    //         $this->quotationService->delete($quotation);
+
+    //         return response()->json([
+    //             'message' => "Quotation {$number} deleted successfully.",
+    //         ]);
+    //     } catch (\Throwable $e) {
+    //         Log::error('QuotationController@destroy failed: ' . $e->getMessage());
+
+    //         return response()->json([
+    //             'message' => 'Failed to delete quotation. Please try again.',
+    //         ], 500);
+    //     }
+    // }
+
+    /**
+     * Stream the PDF for a saved quotation as a browser download.
+     */
+    public function download(int $id)
+    {
+        $quotation = Quotation::with('items')->findOrFail($id);
+
+        $pdf = Pdf::loadView('pdf.quotation', compact('quotation'))
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->download("{$quotation->quote_number}.pdf");
+    }
+
+    // ─── Private Helpers ───────────────────────────────────────────────────────
+
+    /**
      * Generate sequential quote number (e.g. QT-2026-0008).
+     * Delegates to the service but falls back gracefully if DB is unavailable.
      */
     private function generateSequentialQuoteNumber(): string
     {
-        $year = Carbon::now()->format('Y');
-        $prefix = "QT-{$year}-";
-
         try {
-            $lastQuote = Quotation::where('quote_number', 'like', "{$prefix}%")
-                ->orderBy('id', 'desc')
-                ->first();
-
-            if ($lastQuote && preg_match('/-(\d+)$/', $lastQuote->quote_number, $matches)) {
-                $nextSequence = (int) $matches[1] + 1;
-                return $prefix . str_pad((string) $nextSequence, 4, '0', STR_PAD_LEFT);
-            }
+            return $this->quotationService->generateSequentialQuoteNumber();
         } catch (\Throwable) {
-            // Ignore DB error during UI view mode
+            $year = Carbon::now()->format('Y');
+            return "QT-{$year}-0001";
         }
-
-        return $prefix . '0008';
     }
 
     /**

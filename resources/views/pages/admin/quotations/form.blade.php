@@ -37,21 +37,22 @@
     </div>
 
     {{-- Main Quotation Form --}}
-    <form id="quotation-form" method="POST" action="{{ $isEdit ? route('quotations.index') : route('quotations.index') }}">
+    <form id="quotation-form" method="POST"
+          action="{{ $isEdit ? route('quotations.update', $quotation->id) : route('quotations.store') }}"
+          novalidate>
         @csrf
         @if ($isEdit)
             @method('PUT')
         @endif
 
-        {{-- Hidden fields for state management & calculation submissions --}}
-        <input type="hidden" id="form-is-edit" value="{{ $isEdit ? '1' : '0' }}">
+        {{-- Hidden fields for real-time calculation submission --}}
+        <input type="hidden" id="form-is-edit"      value="{{ $isEdit ? '1' : '0' }}">
         <input type="hidden" id="redirect-index-url" value="{{ route('quotations.index') }}">
-        <input type="hidden" id="input-download-pdf" name="download_pdf" value="1">
-        <input type="hidden" id="input-subtotal" name="subtotal" value="{{ $quotation->subtotal ?? 0.00 }}">
-        <input type="hidden" id="input-gst-amount" name="gst_amount" value="{{ $quotation->gst_amount ?? 0.00 }}">
-        <input type="hidden" id="input-total-amount" name="total_amount" value="{{ $quotation->total_amount ?? 0.00 }}">
+        <input type="hidden" id="input-subtotal"     name="subtotal"      value="{{ old('subtotal',      $quotation->subtotal ?? 0.00) }}">
+        <input type="hidden" id="input-gst-amount"   name="gst_amount"    value="{{ old('gst_amount',    $quotation->gst_amount ?? 0.00) }}">
+        <input type="hidden" id="input-total-amount" name="total_amount"  value="{{ old('total_amount',  $quotation->total_amount ?? 0.00) }}">
 
-        {{-- Section 1: Quote Information (Full-Width Card) --}}
+        {{-- ── Section 1: Quote Information ── --}}
         <div class="quote-section-card">
             <div class="quote-section-header">
                 <h2 class="quote-section-title">
@@ -61,43 +62,49 @@
             </div>
             <div class="quote-section-body">
                 <div class="form-row">
-                    {{-- Quote Number (~30% width) --}}
+                    {{-- Quote Number (~30%) --}}
                     <div class="form-group col-12 col-md-4 quote-info-col-num">
                         <label for="quote_number">Quote Number</label>
-                        <input type="text" 
-                               class="form-control font-weight-bold" 
-                               id="quote_number" 
-                               name="quote_number" 
-                               value="{{ $quotation->quote_number }}" 
+                        <input type="text"
+                               class="form-control font-weight-bold"
+                               id="quote_number"
+                               name="quote_number"
+                               value="{{ $quotation->quote_number }}"
                                readonly>
                     </div>
 
-                    {{-- Quote Date (~25% width) --}}
+                    {{-- Quote Date (~25%) --}}
                     <div class="form-group col-12 col-md-3 quote-info-col-date">
                         <label for="quote_date">Quote Date <span class="text-danger">*</span></label>
-                        <input type="date" 
-                               class="form-control" 
-                               id="quote_date" 
-                               name="quote_date" 
-                               value="{{ is_string($quotation->quote_date) ? $quotation->quote_date : $quotation->quote_date->format('Y-m-d') }}" 
+                        <input type="date"
+                               class="form-control @error('quote_date') is-invalid @enderror"
+                               id="quote_date"
+                               name="quote_date"
+                               value="{{ old('quote_date', is_string($quotation->quote_date) ? $quotation->quote_date : $quotation->quote_date->format('Y-m-d')) }}"
                                required>
+                        @error('quote_date')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
-                    {{-- ABN (~45% width) --}}
+                    {{-- ABN (~45%) --}}
                     <div class="form-group col-12 col-md-5 quote-info-col-abn mb-md-0">
                         <label for="abn">ABN <span class="text-muted font-weight-normal">(Optional)</span></label>
-                        <input type="text" 
-                               class="form-control" 
-                               id="abn" 
-                               name="abn" 
-                               placeholder="e.g. 51 824 753 556" 
-                               value="{{ $quotation->abn ?? '' }}">
+                        <input type="text"
+                               class="form-control @error('abn') is-invalid @enderror"
+                               id="abn"
+                               name="abn"
+                               placeholder="e.g. 51 824 753 556"
+                               value="{{ old('abn', $quotation->abn ?? '') }}">
+                        @error('abn')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- Section 2: Prepared For (Full-Width Card, 2 Columns) --}}
+        {{-- ── Section 2: Prepared For ── --}}
         <div class="quote-section-card">
             <div class="quote-section-header">
                 <h2 class="quote-section-title">
@@ -111,23 +118,29 @@
                     <div class="col-12 col-md-6">
                         <div class="form-group">
                             <label for="contact_person">Contact Person <span class="text-danger">*</span></label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="contact_person" 
-                                   name="contact_person" 
-                                   placeholder="Enter contact person name" 
-                                   value="{{ $quotation->contact_person ?? '' }}" 
+                            <input type="text"
+                                   class="form-control @error('contact_person') is-invalid @enderror"
+                                   id="contact_person"
+                                   name="contact_person"
+                                   placeholder="Enter contact person name"
+                                   value="{{ old('contact_person', $quotation->contact_person ?? '') }}"
                                    required>
+                            @error('contact_person')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="form-group mb-md-0">
                             <label for="address">Address <span class="text-danger">*</span></label>
-                            <textarea class="form-control" 
-                                      id="address" 
-                                      name="address" 
-                                      rows="5" 
-                                      placeholder="Enter complete site address" 
-                                      required 
-                                      style="height: 124px;">{{ $quotation->address ?? '' }}</textarea>
+                            <textarea class="form-control @error('address') is-invalid @enderror"
+                                      id="address"
+                                      name="address"
+                                      rows="5"
+                                      placeholder="Enter complete site address"
+                                      required
+                                      style="height: 124px;">{{ old('address', $quotation->address ?? '') }}</textarea>
+                            @error('address')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
 
@@ -135,40 +148,49 @@
                     <div class="col-12 col-md-6">
                         <div class="form-group">
                             <label for="company_name">Company Name <span class="text-danger">*</span></label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="company_name" 
-                                   name="company_name" 
-                                   placeholder="Enter company name" 
-                                   value="{{ $quotation->company_name ?? '' }}" 
+                            <input type="text"
+                                   class="form-control @error('company_name') is-invalid @enderror"
+                                   id="company_name"
+                                   name="company_name"
+                                   placeholder="Enter company name"
+                                   value="{{ old('company_name', $quotation->company_name ?? '') }}"
                                    required>
+                            @error('company_name')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="form-group">
                             <label for="phone">Phone <span class="text-danger">*</span></label>
-                            <input type="tel" 
-                                   class="form-control" 
-                                   id="phone" 
-                                   name="phone" 
-                                   placeholder="Enter phone number" 
-                                   value="{{ $quotation->phone ?? '' }}" 
+                            <input type="tel"
+                                   class="form-control @error('phone') is-invalid @enderror"
+                                   id="phone"
+                                   name="phone"
+                                   placeholder="Enter phone number"
+                                   value="{{ old('phone', $quotation->phone ?? '') }}"
                                    required>
+                            @error('phone')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="form-group mb-0">
                             <label for="email">Email <span class="text-danger">*</span></label>
-                            <input type="email" 
-                                   class="form-control" 
-                                   id="email" 
-                                   name="email" 
-                                   placeholder="Enter email address" 
-                                   value="{{ $quotation->email ?? '' }}" 
+                            <input type="email"
+                                   class="form-control @error('email') is-invalid @enderror"
+                                   id="email"
+                                   name="email"
+                                   placeholder="Enter email address"
+                                   value="{{ old('email', $quotation->email ?? '') }}"
                                    required>
+                            @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- Section 3: Service Details (Full-Width Card, 2 Equal Inputs) --}}
+        {{-- ── Section 3: Service Details ── --}}
         <div class="quote-section-card">
             <div class="quote-section-header">
                 <h2 class="quote-section-title">
@@ -178,34 +200,40 @@
             </div>
             <div class="quote-section-body">
                 <div class="form-row">
-                    {{-- Frequency (Input Field) --}}
+                    {{-- Frequency --}}
                     <div class="form-group col-12 col-md-6 mb-md-0">
                         <label for="frequency">Frequency <span class="text-danger">*</span></label>
-                        <input type="text" 
-                               class="form-control" 
-                               id="frequency" 
-                               name="frequency" 
-                               placeholder="e.g. Weekly, Daily, Fortnightly" 
-                               value="{{ $quotation->frequency ?? '' }}" 
+                        <input type="text"
+                               class="form-control @error('frequency') is-invalid @enderror"
+                               id="frequency"
+                               name="frequency"
+                               placeholder="e.g. Weekly, Daily, Fortnightly"
+                               value="{{ old('frequency', $quotation->frequency ?? '') }}"
                                required>
+                        @error('frequency')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
-                    {{-- Shift / Schedule (Input Field) --}}
+                    {{-- Shift / Schedule --}}
                     <div class="form-group col-12 col-md-6 mb-0">
                         <label for="shift_schedule">Shift / Schedule <span class="text-danger">*</span></label>
-                        <input type="text" 
-                               class="form-control" 
-                               id="shift_schedule" 
-                               name="shift_schedule" 
-                               placeholder="e.g. Morning (08:00 - 12:00)" 
-                               value="{{ $quotation->shift_schedule ?? '' }}" 
+                        <input type="text"
+                               class="form-control @error('shift_schedule') is-invalid @enderror"
+                               id="shift_schedule"
+                               name="shift_schedule"
+                               placeholder="e.g. Morning (08:00 - 12:00)"
+                               value="{{ old('shift_schedule', $quotation->shift_schedule ?? '') }}"
                                required>
+                        @error('shift_schedule')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- Section 4: Service Items (Full-Width Card) --}}
+        {{-- ── Section 4: Service Items ── --}}
         <div class="quote-section-card">
             <div class="quote-section-header">
                 <h2 class="quote-section-title">
@@ -219,6 +247,13 @@
                 </button>
             </div>
 
+            {{-- Items validation error --}}
+            @error('items')
+                <div class="alert alert-danger mx-3 mt-3 mb-0 py-2" role="alert">
+                    <i class="fas fa-exclamation-circle mr-1"></i> {{ $message }}
+                </div>
+            @enderror
+
             <div class="table-responsive">
                 <table class="table quote-items-table" id="line-items-table">
                     <thead>
@@ -231,11 +266,15 @@
                     </thead>
                     <tbody id="line-items-tbody">
                         @php
-                            $items = $quotation->items ?? collect();
-                            if ($items->isEmpty()) {
-                                $items = collect([
-                                    (object) ['description' => '', 'amount' => 0.00]
-                                ]);
+                            // Use old() input on validation failure; otherwise use model/object items
+                            $oldItems = old('items');
+                            if ($oldItems) {
+                                $items = collect($oldItems)->map(fn($i) => (object) $i);
+                            } else {
+                                $items = $quotation->items ?? collect();
+                                if ($items->isEmpty()) {
+                                    $items = collect([(object) ['description' => '', 'amount' => 0.00]]);
+                                }
                             }
                         @endphp
 
@@ -243,24 +282,30 @@
                             <tr class="line-item-row">
                                 <td class="line-item-index text-center align-middle">{{ $idx + 1 }}</td>
                                 <td>
-                                    <input type="text" 
-                                           name="items[{{ $idx }}][description]" 
-                                           class="form-control line-item-desc" 
-                                           placeholder="Enter description" 
-                                           value="{{ $item->description ?? '' }}" 
+                                    <input type="text"
+                                           name="items[{{ $idx }}][description]"
+                                           class="form-control line-item-desc @error('items.' . $idx . '.description') is-invalid @enderror"
+                                           placeholder="Enter description"
+                                           value="{{ $item->description ?? '' }}"
                                            required>
+                                    @error('items.' . $idx . '.description')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </td>
                                 <td style="width: 200px;">
                                     <div class="amount-input-group">
                                         <span class="currency-symbol">$</span>
-                                        <input type="number" 
-                                               step="0.01" 
-                                               min="0" 
-                                               name="items[{{ $idx }}][amount]" 
-                                               class="form-control line-item-amount text-right" 
-                                               placeholder="0.00" 
-                                               value="{{ number_format((float) ($item->amount ?? 0), 2, '.', '') }}" 
+                                        <input type="number"
+                                               step="0.01"
+                                               min="0"
+                                               name="items[{{ $idx }}][amount]"
+                                               class="form-control line-item-amount text-right @error('items.' . $idx . '.amount') is-invalid @enderror"
+                                               placeholder="0.00"
+                                               value="{{ number_format((float) ($item->amount ?? 0), 2, '.', '') }}"
                                                required>
+                                        @error('items.' . $idx . '.amount')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </td>
                                 <td class="text-center align-middle">
@@ -271,7 +316,7 @@
                             </tr>
                         @endforeach
                     </tbody>
-                    {{-- Integrated Pricing Summary Table Rows --}}
+                    {{-- Integrated Pricing Summary --}}
                     <tfoot>
                         <tr class="table-summary-row border-top">
                             <td colspan="2" class="text-right font-weight-bold text-muted py-2 align-middle border-0">Subtotal:</td>
@@ -299,11 +344,11 @@
             </div>
         </div>
 
-        {{-- Bottom-Right Action Button ("Save & Download PDF" only) --}}
+        {{-- Bottom Action Button --}}
         <div class="quotation-bottom-actions">
             <button type="submit" class="btn btn-primary btn-primary-blue" id="btn-save-pdf">
-                <i class="fas fa-file-pdf mr-1" aria-hidden="true"></i>
-                <span>{{ $isEdit ? 'Update & Download PDF' : 'Save & Download PDF' }}</span>
+                <i class="fas fa-save mr-1" aria-hidden="true"></i>
+                <span>{{ $isEdit ? 'Update Quotation' : 'Save Quotation' }}</span>
             </button>
         </div>
     </form>
