@@ -348,7 +348,7 @@
         <div class="quotation-bottom-actions">
             <button type="submit" class="btn btn-primary btn-primary-blue" id="btn-save-pdf">
                 <i class="fas fa-save mr-1" aria-hidden="true"></i>
-                <span>{{ $isEdit ? 'Update Quotation' : 'Save Quotation' }}</span>
+                <span>{{ $isEdit ? 'Update Quotation' : 'Save & Download PDF' }}</span>
             </button>
         </div>
     </form>
@@ -357,4 +357,14 @@
 
 @push('scripts')
     <script src="{{ asset('public/assets/js/quotation.js') }}"></script>
+    @if (session('quotation_pdf_download'))
+        <script>
+            window.addEventListener('load', function () {
+                var downloadFrame = document.createElement('iframe');
+                downloadFrame.hidden = true;
+                downloadFrame.src = @json(session('quotation_pdf_download'));
+                document.body.appendChild(downloadFrame);
+            });
+        </script>
+    @endif
 @endpush

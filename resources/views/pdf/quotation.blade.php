@@ -259,6 +259,7 @@
             <td style="width: 55%;">
                 @php
                     $setting = \App\Models\Setting::first();
+        $documentTitle = $quotation->status === 'draft' ? 'QUOTE' : 'INVOICE';
                 @endphp
                 @if ($setting?->company_logo)
                     <img class="company-logo-img"
@@ -280,7 +281,7 @@
                 @endif
             </td>
             <td class="quote-title-box">
-                <div class="quote-title">Quotation</div>
+                <div class="quote-title">{{ $documentTitle }}</div>
                 <div class="quote-number">{{ $quotation->quote_number }}</div>
                 <div class="quote-date">
                     Date: {{ \Carbon\Carbon::parse($quotation->quote_date)->format('d M Y') }}

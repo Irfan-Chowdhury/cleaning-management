@@ -107,7 +107,8 @@ class QuotationController extends Controller
 
             return redirect()
                 ->back()
-                ->with('success', "Quotation {$quotation->quote_number} saved successfully!");
+                ->with('success', "Quotation {$quotation->quote_number} saved successfully!")
+                ->with('quotation_pdf_download', route('quotations.download', $quotation->id));
         } catch (\Throwable $e) {
             Log::error('QuotationController@store failed: ' . $e->getMessage());
 
