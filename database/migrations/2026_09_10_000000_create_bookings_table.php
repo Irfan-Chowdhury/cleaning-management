@@ -38,6 +38,7 @@ return new class extends Migration
             $table->decimal('subtotal', 10, 2)->default(0.00);
             $table->decimal('discount_amount', 10, 2)->default(0.00);
             $table->decimal('credit_used', 10, 2)->default(0.00);
+            $table->decimal('gst_amount', 10, 2)->default(0.00);
             $table->decimal('total_amount', 10, 2)->default(0.00);
 
             $table->string('referal_code')->nullable();

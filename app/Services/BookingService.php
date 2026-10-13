@@ -163,11 +163,21 @@ class BookingService
             $updateData['service_id'] = $data['service_id'];
         }
 
-        if (isset($data['amount'])) {
+        if (isset($data['subtotal'])) {
+            // The discount is managed elsewhere and displayed as read-only in the form.
+            // Recalculate these values on the server instead of trusting read-only inputs.
+            $subtotal = round((float) $data['subtotal'], 2);
+            $discount = (float) ($booking->discount_amount ?? 0);
+            $taxableAmount = $subtotal - $discount;
+            $gstAmount = round($taxableAmount * 0.10, 2);
+            $totalAmount = round($taxableAmount + $gstAmount, 2);
+
+            $updateData['subtotal'] = $subtotal;
+            $updateData['gst_amount'] = $gstAmount;
+            $updateData['total_amount'] = $totalAmount;
+        } elseif (isset($data['amount'])) {
+            // Keep compatibility with callers that still submit only a total amount.
             $updateData['total_amount'] = (float) $data['amount'];
-            if ($data['status']=='approved') {
-                $updateData['subtotal'] = (float) $data['amount'];
-            }
         }
 
         if (!empty($data['date'])) {
@@ -194,7 +204,7 @@ class BookingService
 
             $payment = Payment::firstOrNew(['booking_id' => $booking->id]);
             $payment->user_id = $booking->user_id;
-            $payment->amount = isset($data['amount']) ? (float) $data['amount'] : (float) $booking->total_amount;
+            $payment->amount = (float) $booking->total_amount;
             $payment->payment_status = $data['payment_status'] ?? ($booking->payment_status ?? 'pending');
             $payment->payment_method = $data['payment_method'] ?? ($booking->payment_method ?? 'pending');
             $payment->save();

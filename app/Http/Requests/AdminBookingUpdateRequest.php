@@ -19,6 +19,7 @@ class AdminBookingUpdateRequest extends FormRequest
             'status'         => ['required', Rule::enum(BookingStatus::class)],
             'service_id'     => ['nullable', 'exists:services,id'],
             'amount'         => ['nullable', 'numeric', 'min:0'],
+            'subtotal'       => ['nullable', 'numeric', 'min:0', 'max:99999999.99'],
             'date'           => ['nullable', 'date'],
             'slot'           => ['nullable', 'string'],
             'payment_status' => ['nullable', 'string', 'in:paid,pending,failed,refunded,unpaid'],
