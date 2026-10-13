@@ -547,8 +547,13 @@
     font-size: 13px;
 }
 
+.quotations-card > .table-responsive {
+    padding: 14px 18px 18px;
+}
+
 .quotations-table {
     margin-bottom: 0 !important;
+    width: 100% !important;
 }
 
 .quotations-table thead th {
@@ -641,6 +646,18 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
+}
+
+@media (max-width: 575.98px) {
+    .quotations-card > .table-responsive {
+        padding: 10px 12px 14px;
+    }
+
+    .quotations-table thead th,
+    .quotations-table tbody td {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
 }
 
 .status-badge-draft {

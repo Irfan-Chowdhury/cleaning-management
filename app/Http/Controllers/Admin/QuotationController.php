@@ -14,6 +14,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Yajra\DataTables\Facades\DataTables;
 
 class QuotationController extends Controller
 {
@@ -26,39 +27,93 @@ class QuotationController extends Controller
      */
     public function index()
     {
+        if (request()->ajax()) {
+            $query = Quotation::query()->select([
+                'id',
+                'quote_number',
+                'company_name',
+                'contact_person',
+                'quote_date',
+                'total_amount',
+                'status',
+            ])->orderByDesc('id');
+
+            return DataTables::eloquent($query)
+                ->addColumn('quote_number_link', function (Quotation $quotation) {
+                    $url = route('quotations.edit', $quotation->id);
+
+                    return '<a href="' . e($url) . '" class="quote-number-badge" title="View / Edit Quotation">'
+                        . '<i class="far fa-file-alt" aria-hidden="true"></i>'
+                        . '<span>' . e($quotation->quote_number) . '</span></a>';
+                })
+                ->addColumn('company_display', function (Quotation $quotation) {
+                    return '<div class="company-meta-cell">'
+                        . '<span class="company-name">' . e($quotation->company_name) . '</span>'
+                        . '<span class="contact-person"><i class="far fa-user mr-1" aria-hidden="true"></i>'
+                        . e($quotation->contact_person) . '</span></div>';
+                })
+                ->filterColumn('company_name', function ($query, $keyword) {
+                    $query->where(function ($query) use ($keyword) {
+                        $query->where('company_name', 'like', "%{$keyword}%")
+                            ->orWhere('contact_person', 'like', "%{$keyword}%");
+                    });
+                })
+                ->filterColumn('quote_date', function ($query, $keyword) {
+                    try {
+                        $date = Carbon::createFromFormat('d M Y', $keyword);
+
+                        if ($date && $date->format('d M Y') === $keyword) {
+                            $query->whereDate('quote_date', $date->toDateString());
+                            return;
+                        }
+                    } catch (\Throwable) {
+                        // Fall back to searching the stored date string (e.g. by year).
+                    }
+
+                    $query->where('quote_date', 'like', "%{$keyword}%");
+                })
+                ->filterColumn('total_amount', function ($query, $keyword) {
+                    $amount = preg_replace('/[^0-9.\\-]/', '', $keyword);
+
+                    if ($amount !== '') {
+                        $query->where('total_amount', 'like', "%{$amount}%");
+                    }
+                })
+                ->addColumn('quote_date_formatted', function (Quotation $quotation) {
+                    $date = Carbon::parse($quotation->quote_date)->format('d M Y');
+
+                    return '<div class="quote-date-cell"><i class="far fa-calendar-alt text-muted" aria-hidden="true"></i>'
+                        . '<span>' . e($date) . '</span></div>';
+                })
+                ->addColumn('status_display', function (Quotation $quotation) {
+                    $isConverted = strtolower((string) $quotation->status) === 'converted';
+                    $label = $isConverted ? 'Converted' : 'Draft';
+                    $class = $isConverted ? 'status-badge-converted' : 'status-badge-draft';
+
+                    return '<span class="status-badge ' . $class . '">' . $label . '</span>';
+                })
+                ->addColumn('actions', function (Quotation $quotation) {
+                    $editUrl = route('quotations.edit', $quotation->id);
+
+                    return '<div class="quotation-actions">'
+                        . '<a href="' . e($editUrl) . '" class="btn btn-sm btn-outline-primary quotation-action-btn" title="Edit Quotation">'
+                        . '<i class="fas fa-edit" aria-hidden="true"></i></a>'
+                        . '<button type="button" class="btn btn-sm btn-outline-danger quotation-action-btn js-quote-delete"'
+                        . ' data-id="' . (int) $quotation->id . '" data-number="' . e($quotation->quote_number) . '" title="Delete Quotation">'
+                        . '<i class="fas fa-trash" aria-hidden="true"></i></button></div>';
+                })
+                ->rawColumns(['quote_number_link', 'company_display', 'quote_date_formatted', 'status_display', 'actions'])
+                ->toJson();
+        }
+
         $metrics = [
-            'total_count'     => 0,
-            'draft_count'     => 0,
-            'converted_count' => 0,
-            'total_revenue'   => 0.00,
+            'total_count' => Quotation::count(),
+            'draft_count' => Quotation::where('status', 'draft')->count(),
+            'converted_count' => Quotation::where('status', 'converted')->count(),
+            'total_revenue' => (float) Quotation::where('status', 'converted')->sum('total_amount'),
         ];
 
-        $quotations = collect();
-
-        try {
-            $dbQuotations = Quotation::with('items')->orderBy('id', 'desc')->get();
-
-            if ($dbQuotations->isNotEmpty()) {
-                $quotations = $dbQuotations;
-                $metrics['total_count']     = $quotations->count();
-                $metrics['draft_count']     = $quotations->where('status', 'draft')->count();
-                $metrics['converted_count'] = $quotations->where('status', 'converted')->count();
-                $metrics['total_revenue']   = (float) $quotations->where('status', 'converted')->sum('total_amount');
-            }
-        } catch (\Throwable $e) {
-            Log::info('Quotations DB query fallback to mock UI data: ' . $e->getMessage());
-        }
-
-        // If no records in database, supply realistic UI mock data so the interface renders fully
-        if ($quotations->isEmpty()) {
-            $quotations = $this->getMockQuotations();
-            $metrics['total_count']     = $quotations->count();
-            $metrics['draft_count']     = $quotations->where('status', 'draft')->count();
-            $metrics['converted_count'] = $quotations->where('status', 'converted')->count();
-            $metrics['total_revenue']   = (float) $quotations->where('status', 'converted')->sum('total_amount');
-        }
-
-        return view('pages.admin.quotations.index', compact('quotations', 'metrics'));
+        return view('pages.admin.quotations.index', compact('metrics'));
     }
 
     /**

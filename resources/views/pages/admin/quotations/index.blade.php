@@ -74,7 +74,7 @@
         <div class="quotations-card-header">
             <div>
                 <h2>All Quotations</h2>
-                <p>{{ $quotations->count() }} records found</p>
+                <p>{{ number_format($metrics['total_count']) }} records found</p>
             </div>
         </div>
 
@@ -90,73 +90,7 @@
                         <th class="text-center" style="width: 110px;">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @forelse ($quotations as $quote)
-                        <tr>
-                            {{-- Quote No. --}}
-                            <td>
-                                <a href="{{ route('quotations.edit', $quote->id) }}" class="quote-number-badge" title="View / Edit Quotation">
-                                    <i class="far fa-file-alt" aria-hidden="true"></i>
-                                    <span>{{ $quote->quote_number }}</span>
-                                </a>
-                            </td>
-
-                            {{-- Company --}}
-                            <td>
-                                <div class="company-meta-cell">
-                                    <span class="company-name">{{ $quote->company_name }}</span>
-                                    <span class="contact-person"><i class="far fa-user mr-1" aria-hidden="true"></i>{{ $quote->contact_person }}</span>
-                                </div>
-                            </td>
-
-                            {{-- Quote Date --}}
-                            <td>
-                                <div class="quote-date-cell">
-                                    <i class="far fa-calendar-alt text-muted" aria-hidden="true"></i>
-                                    <span>{{ is_string($quote->quote_date) ? date('d M Y', strtotime($quote->quote_date)) : $quote->quote_date->format('d M Y') }}</span>
-                                </div>
-                            </td>
-
-                            {{-- Amount --}}
-                            <td>
-                                <span class="quote-amount">${{ number_format((float) $quote->total_amount, 2) }}</span>
-                            </td>
-
-                            {{-- Status Badges --}}
-                            <td>
-                                @if (strtolower($quote->status) === 'converted')
-                                    <span class="status-badge status-badge-converted">Converted</span>
-                                @else
-                                    <span class="status-badge status-badge-draft">Draft</span>
-                                @endif
-                            </td>
-
-                            {{-- Actions --}}
-                            <td class="text-center">
-                                <div class="quotation-actions">
-                                    <a href="{{ route('quotations.edit', $quote->id) }}" 
-                                       class="btn btn-sm btn-outline-primary quotation-action-btn" 
-                                       title="Edit Quotation">
-                                        <i class="fas fa-edit" aria-hidden="true"></i>
-                                    </a>
-                                    <button type="button" 
-                                            class="btn btn-sm btn-outline-danger quotation-action-btn js-quote-delete" 
-                                            data-id="{{ $quote->id }}" 
-                                            data-number="{{ $quote->quote_number }}" 
-                                            title="Delete Quotation">
-                                        <i class="fas fa-trash" aria-hidden="true"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="text-center py-4 text-muted">
-                                No quotations available. Click "Create New Quotation" to add your first quote.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
+                <tbody></tbody>
             </table>
         </div>
     </div>

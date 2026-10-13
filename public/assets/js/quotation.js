@@ -41,13 +41,36 @@ $(document).ready(function () {
     if ($quotationsTable.length) {
         if ($.fn.DataTable && !$.fn.DataTable.isDataTable('#quotations-table')) {
             $quotationsTable.DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: window.location.pathname,
                 responsive: true,
                 autoWidth: false,
                 pageLength: 10,
                 lengthMenu: [5, 10, 25, 50],
-                order: [[2, 'desc']], // Sort by Quote Date descending by default
+                order: [[2, 'desc']],
+                columns: [
+                    { data: 'quote_number_link', name: 'quote_number', responsivePriority: 1 },
+                    { data: 'company_display', name: 'company_name', responsivePriority: 2 },
+                    { data: 'quote_date_formatted', name: 'quote_date', responsivePriority: 4 },
+                    {
+                        data: 'total_amount',
+                        name: 'total_amount',
+                        className: 'quote-amount',
+                        responsivePriority: 5,
+                        render: function (value, type) {
+                            if (type !== 'display') return value;
+                            return '$' + (Number(value) || 0).toLocaleString('en-US', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            });
+                        }
+                    },
+                    { data: 'status_display', name: 'status', responsivePriority: 3 },
+                    { data: 'actions', name: 'actions', orderable: false, searchable: false, responsivePriority: 1 }
+                ],
                 columnDefs: [
-                    { orderable: false, targets: [5] } // Action column not orderable
+                    { orderable: false, targets: [5] }
                 ],
                 language: {
                     search: '',
