@@ -411,7 +411,8 @@
                     </div>
                     <div class="info-row">
                         <span class="info-label">Invoice Date:</span>
-                        <span class="info-value">{{ $quotationUpdatedAtFormatted }}</span>
+                        {{-- <span class="info-value">{{ $quotationUpdatedAtFormatted }}</span> --}}
+                        <span class="info-value">{{ $quoteDateFormatted }}</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Frequency:</span>

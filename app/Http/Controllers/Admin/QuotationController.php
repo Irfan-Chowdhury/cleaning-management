@@ -107,11 +107,19 @@ class QuotationController extends Controller
                 ->toJson();
         }
 
+        $currentMonth = Carbon::now();
         $metrics = [
             'total_count' => Quotation::count(),
             'draft_count' => Quotation::where('status', 'draft')->count(),
             'converted_count' => Quotation::where('status', 'converted')->count(),
             'total_revenue' => (float) Quotation::where('status', 'converted')->sum('total_amount'),
+            'current_month_revenue' => (float) Quotation::where('status', 'converted')
+                ->whereBetween('quote_date', [
+                    $currentMonth->copy()->startOfMonth()->toDateString(),
+                    $currentMonth->copy()->endOfMonth()->toDateString(),
+                ])
+                ->sum('total_amount'),
+            'current_month_name' => $currentMonth->format('F'),
         ];
 
         return view('pages.admin.quotations.index', compact('metrics'));

@@ -428,8 +428,8 @@
    -------------------------------------------------------------------------- */
 .quotations-metric-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(205px, 1fr));
+    gap: 14px;
     margin-bottom: 24px;
 }
 
@@ -448,73 +448,88 @@
 .quotations-metric-card {
     position: relative;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 140px;
-    padding: 18px 20px;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+    min-height: 104px;
+    padding: 16px 18px;
     background: #ffffff;
-    border: 1px solid #e8edf5;
-    border-radius: 10px;
-    box-shadow: 0 4px 16px rgba(19, 33, 60, 0.04);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid #dce8f6;
+    border-radius: 9px;
+    box-shadow: 0 3px 12px rgba(19, 33, 60, 0.045);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .quotations-metric-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(19, 33, 60, 0.08);
-}
-
-.quotations-metric-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    border-color: #c7d9ef;
+    box-shadow: 0 6px 16px rgba(19, 33, 60, 0.08);
 }
 
 .quotations-metric-icon {
     display: inline-flex;
-    width: 44px;
-    height: 44px;
+    flex: 0 0 46px;
+    width: 46px;
+    height: 46px;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
-    border-radius: 10px;
+    font-size: 19px;
+    border-radius: 11px;
+}
+
+.quotations-metric-content {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .metric-blue .quotations-metric-icon {
-    color: #0066FF;
-    background: #EBF3FF;
+    color: #1769c2;
+    background: #eaf3ff;
 }
 
-.metric-amber .quotations-metric-icon {
-    color: #b76e00;
-    background: #fff6e5;
+.metric-navy .quotations-metric-icon {
+    color: #253858;
+    background: #edf1f7;
 }
 
 .metric-green .quotations-metric-icon {
-    color: #12805c;
-    background: #e8f7f0;
+    color: #16845d;
+    background: #e9f7f0;
+}
+
+.metric-orange .quotations-metric-icon {
+    color: #cc7410;
+    background: #fff3e4;
 }
 
 .metric-purple .quotations-metric-icon {
     color: #6941c6;
-    background: #f4ebff;
+    background: #f4edff;
 }
 
 .quotations-metric-label {
-    margin-top: 14px;
-    color: #667085;
-    font-size: 12px;
+    color: #53647b;
+    font-size: 13px;
     font-weight: 700;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
+    line-height: 1.25;
 }
 
 .quotations-metric-value {
-    margin-top: 4px;
-    color: #13213c;
-    font-size: 26px;
+    margin-top: 3px;
+    color: #172b4d;
+    font-size: clamp(18px, 1.7vw, 25px);
     font-weight: 800;
-    line-height: 1.15;
+    line-height: 1.12;
+    font-variant-numeric: tabular-nums;
+}
+
+.quotations-metric-support {
+    margin-top: 3px;
+    color: #8492a6;
+    font-size: 11px;
+    line-height: 1.2;
 }
 
 .quotations-card {

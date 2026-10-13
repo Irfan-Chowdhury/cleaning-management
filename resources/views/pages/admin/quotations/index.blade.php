@@ -26,46 +26,59 @@
     <div class="quotations-metric-grid">
         {{-- Card 1: Total Quotations --}}
         <div class="quotations-metric-card metric-blue">
-            <div class="quotations-metric-header">
+            <span class="quotations-metric-icon" aria-hidden="true">
+                <i class="fas fa-clipboard-list"></i>
+            </span>
+            <div class="quotations-metric-content">
                 <span class="quotations-metric-label">Total Quotations</span>
-                <span class="quotations-metric-icon">
-                    <i class="fas fa-file-invoice" aria-hidden="true"></i>
-                </span>
+                <span class="quotations-metric-value">{{ number_format($metrics['total_count']) }}</span>
             </div>
-            <div class="quotations-metric-value">{{ number_format($metrics['total_count']) }}</div>
         </div>
 
         {{-- Card 2: Draft --}}
-        <div class="quotations-metric-card metric-amber">
-            <div class="quotations-metric-header">
+        <div class="quotations-metric-card metric-navy">
+            <span class="quotations-metric-icon" aria-hidden="true">
+                <i class="fas fa-file-alt"></i>
+            </span>
+            <div class="quotations-metric-content">
                 <span class="quotations-metric-label">Draft</span>
-                <span class="quotations-metric-icon">
-                    <i class="fas fa-pencil-alt" aria-hidden="true"></i>
-                </span>
+                <span class="quotations-metric-value">{{ number_format($metrics['draft_count']) }}</span>
             </div>
-            <div class="quotations-metric-value">{{ number_format($metrics['draft_count']) }}</div>
         </div>
 
         {{-- Card 3: Converted --}}
         <div class="quotations-metric-card metric-green">
-            <div class="quotations-metric-header">
+            <span class="quotations-metric-icon" aria-hidden="true">
+                <i class="fas fa-check-circle"></i>
+            </span>
+            <div class="quotations-metric-content">
                 <span class="quotations-metric-label">Converted</span>
-                <span class="quotations-metric-icon">
-                    <i class="fas fa-check-circle" aria-hidden="true"></i>
-                </span>
+                <span class="quotations-metric-value">{{ number_format($metrics['converted_count']) }}</span>
             </div>
-            <div class="quotations-metric-value">{{ number_format($metrics['converted_count']) }}</div>
         </div>
 
         {{-- Card 4: Total Revenue (Converted Quotes) --}}
-        <div class="quotations-metric-card metric-purple">
-            <div class="quotations-metric-header">
+        <div class="quotations-metric-card metric-orange">
+            <span class="quotations-metric-icon" aria-hidden="true">
+                <i class="fas fa-dollar-sign"></i>
+            </span>
+            <div class="quotations-metric-content">
                 <span class="quotations-metric-label">Total Revenue</span>
-                <span class="quotations-metric-icon">
-                    <i class="fas fa-dollar-sign" aria-hidden="true"></i>
-                </span>
+                <span class="quotations-metric-value">${{ number_format($metrics['total_revenue'], 2) }}</span>
+                <span class="quotations-metric-support">From converted quotes</span>
             </div>
-            <div class="quotations-metric-value">${{ number_format($metrics['total_revenue'], 2) }}</div>
+        </div>
+
+        {{-- Card 5: Current Month Revenue from Converted Quotes --}}
+        <div class="quotations-metric-card metric-purple">
+            <span class="quotations-metric-icon" aria-hidden="true">
+                <i class="fas fa-calendar-alt"></i>
+            </span>
+            <div class="quotations-metric-content">
+                <span class="quotations-metric-label">Total Revenue This {{ $metrics['current_month_name'] }}</span>
+                <span class="quotations-metric-value">${{ number_format($metrics['current_month_revenue'], 2) }}</span>
+                <span class="quotations-metric-support">From converted quotes</span>
+            </div>
         </div>
     </div>
 
