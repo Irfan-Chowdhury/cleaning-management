@@ -254,7 +254,7 @@
                                            title="View Details">
                                             <i class="fas fa-eye" aria-hidden="true"></i>
                                         </a>
-                                        @if ($booking->status_raw === 'approved')
+                                        @if ($booking->status_raw === 'approved' && !$booking->booking_date_expired)
                                             <a href="{{ route('booking-service.review-confirm', ['booking' => $booking->id]) }}"
                                                class="btn btn-sm btn-success px-2 py-1"
                                                title="Proceed to Step 4 (Review & Confirm)"

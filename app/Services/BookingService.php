@@ -412,6 +412,9 @@ class BookingService
                 'booking_id'           => 'BK-' . sprintf('%03d', $b->id),
                 'service_name'         => $b->service?->name ?? 'Cleaning Service',
                 'date'                 => $b->booking_date ?? $b->created_at->format('Y-m-d'),
+                'booking_date_expired' => $b->booking_date
+                    ? \Carbon\Carbon::parse($b->booking_date)->toDateString() < now()->toDateString()
+                    : false,
                 'time'                 => $b->start_time ? \Carbon\Carbon::parse($b->start_time)->format('g:i A') : '09:00 AM',
                 'amount'               => (float) $b->total_amount,
                 'status'               => $statusEnum->label(),
