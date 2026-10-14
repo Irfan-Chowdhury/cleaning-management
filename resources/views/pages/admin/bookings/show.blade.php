@@ -258,6 +258,7 @@
                     @php
                         $discountLabel = 'Discount Amount';
                         $discountVal = (float) ($booking->discount_amount > 0 ? $booking->discount_amount : $booking->credit_used);
+                        $gstVal = (float) ($booking->gst_amount ?? 0);
 
                         if ((float) $booking->credit_used > 0) {
                             $discountLabel = 'Discount Amount (Wallet)';
@@ -276,6 +277,10 @@
                         <div class="price-summary-row">
                             <span class="text-muted">{{ $discountLabel }}</span>
                             <span class="font-weight-semibold text-danger">-${{ number_format($discountVal, 2) }}</span>
+                        </div>
+                        <div class="price-summary-row">
+                            <span class="text-muted">GST (10%)</span>
+                            <span class="font-weight-semibold text-dark">${{ number_format($gstVal, 2) }}</span>
                         </div>
                         <div class="price-summary-row total-row">
                             <span>Total Amount</span>

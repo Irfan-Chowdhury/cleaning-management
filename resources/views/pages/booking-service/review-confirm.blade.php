@@ -40,7 +40,9 @@
         };
 
         $subtotal = (float) ($latestBooking->subtotal > 0 ? $latestBooking->subtotal : $latestBooking->total_amount);
-        $displayTotal = max(0, $subtotal - $appliedDiscount);
+        $taxableAmount = max(0, $subtotal - $appliedDiscount);
+        $gstAmount = (float) ($latestBooking->gst_amount ?? round($taxableAmount * 0.10, 2));
+        $displayTotal = $taxableAmount + $gstAmount;
     @endphp
 
     <div class="booking-page">
@@ -145,6 +147,7 @@
                                     <span id="main-discount-label">{{ $discountLabelText }}</span>
                                     <strong id="main-discount-val" class="text-success">- ${{ number_format($appliedDiscount, 2) }}</strong>
                                 </div>
+                                <div><span>GST (10%)</span><strong id="main-gst-val">${{ number_format($gstAmount, 2) }}</strong></div>
                                 <hr>
                                 <div class="grand-total"><span>Total</span><strong id="main-grand-total-val">${{ number_format($displayTotal, 2) }}</strong></div>
                             </div>
@@ -559,7 +562,9 @@
             }
 
             function updateLivePricing(subtotal, discount) {
-                var finalTotal = Math.max(0, subtotal - discount);
+                var taxableAmount = Math.max(0, subtotal - discount);
+                var gstAmount = Math.round((taxableAmount * 0.10 + Number.EPSILON) * 100) / 100;
+                var finalTotal = taxableAmount + gstAmount;
                 var selectedOfferType = $('input[name="offer_type"]:checked').val() || null;
 
                 $('#applied-offer-type-hidden').val(discount > 0 ? selectedOfferType : '');
@@ -592,6 +597,7 @@
 
                 // Update main review panel price box & payment breakdown
                 $('#main-estimated-total').text('$' + finalTotal.toFixed(2));
+                $('#main-gst-val').text('$' + gstAmount.toFixed(2));
                 if (discount > 0) {
                     $('#main-discount-row').show();
                     $('#main-discount-val').text('- $' + discount.toFixed(2));

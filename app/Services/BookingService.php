@@ -317,6 +317,15 @@ class BookingService
             }
         }
 
+        // Finalize tax and payable total after the selected discount has been applied.
+        // Recalculate on the server so the confirmed booking and payment use the same amount.
+        $subtotal = (float) ($booking->subtotal > 0 ? $booking->subtotal : $booking->total_amount);
+        $discountAmount = (float) ($booking->discount_amount > 0
+            ? $booking->discount_amount
+            : $booking->credit_used);
+        $taxableAmount = max(0, $subtotal - $discountAmount);
+        $booking->gst_amount = round($taxableAmount * 0.10, 2);
+        $booking->total_amount = round($taxableAmount + (float) $booking->gst_amount, 2);
         $booking->status = BookingStatus::CONFIRMED;
         $booking->save();
 
