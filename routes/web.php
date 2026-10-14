@@ -128,6 +128,7 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::get('/wallets/{id}', [WalletController::class, 'show'])->name('wallets.show');
 
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
+    Route::get('/admin/bookings/slots-for-date', [BookingServiceController::class, 'adminSlotsForDate'])->name('admin.bookings.slots-for-date');
     Route::get('/bookings/{id}', [BookingController::class, 'show'])->name('bookings.show');
     Route::get('/bookings/{id}/edit', [BookingController::class, 'edit'])->name('bookings.edit');
     Route::put('/bookings/{id}', [BookingController::class, 'update'])->name('bookings.update');

@@ -125,7 +125,7 @@ class BookingServiceController extends Controller
         return view('pages.booking-service.date-time', compact('holidays', 'step2Data'));
     }
 
-    public function slotsForDate(Request $request): JsonResponse
+    public function slotsForDate(Request $request, bool $adminOverride = false): JsonResponse
     {
         try {
             $dateStr = $request->query('date', Carbon::today()->format('Y-m-d'));
@@ -140,7 +140,9 @@ class BookingServiceController extends Controller
             $dayName = $date->format('l'); // e.g. 'Monday'
 
             // Check minimum & maximum advance booking date restrictions
-            $advanceDateError = (new BookingStep2Request())->validateAdvanceBookingDate($formattedDate);
+            $advanceDateError = $adminOverride
+                ? null
+                : (new BookingStep2Request())->validateAdvanceBookingDate($formattedDate);
             if ($advanceDateError) {
                 return response()->json([
                     'date'          => $formattedDate,
@@ -154,24 +156,26 @@ class BookingServiceController extends Controller
             }
 
             // Check if date is a holiday
-            try {
-                $holiday = Holiday::where('is_active', true)
-                    ->where('start_date', '<=', $formattedDate)
-                    ->where('end_date', '>=', $formattedDate)
-                    ->first();
+            if (!$adminOverride) {
+                try {
+                    $holiday = Holiday::where('is_active', true)
+                        ->where('start_date', '<=', $formattedDate)
+                        ->where('end_date', '>=', $formattedDate)
+                        ->first();
 
-                if ($holiday) {
-                    return response()->json([
-                        'date'          => $formattedDate,
-                        'day_of_week'   => $dayName,
-                        'is_holiday'    => true,
-                        'holiday_title' => $holiday->title,
-                        'is_day_active' => false,
-                        'slots'         => [],
-                    ]);
+                    if ($holiday) {
+                        return response()->json([
+                            'date'          => $formattedDate,
+                            'day_of_week'   => $dayName,
+                            'is_holiday'    => true,
+                            'holiday_title' => $holiday->title,
+                            'is_day_active' => false,
+                            'slots'         => [],
+                        ]);
+                    }
+                } catch (\Throwable $e) {
+                    // Ignore if holidays table missing
                 }
-            } catch (\Throwable $e) {
-                // Ignore if holidays table missing
             }
 
             // Check if day of week is active in weekly_schedule
@@ -183,7 +187,7 @@ class BookingServiceController extends Controller
 
             // Fetch slots for this day from DB
             $slots = collect();
-            if ($weeklySchedule && $weeklySchedule->is_active) {
+            if ($weeklySchedule && ($weeklySchedule->is_active || $adminOverride)) {
                 try {
                     $slots = ScheduleSlot::where('weekly_schedule_id', $weeklySchedule->id)
                         ->orderBy('sort_order')
@@ -194,7 +198,7 @@ class BookingServiceController extends Controller
             }
 
             // Fallback: If no slots exist in DB, provide default 7 AM - 6 PM standard slots
-            if ($slots->isEmpty() && (!$weeklySchedule || $weeklySchedule->is_active)) {
+            if ($slots->isEmpty() && ($adminOverride || !$weeklySchedule || $weeklySchedule->is_active)) {
                 $defaultTimes = [
                     '07:00:00' => '08:00:00',
                     '08:00:00' => '09:00:00',
@@ -239,11 +243,11 @@ class BookingServiceController extends Controller
             } catch (\Throwable $e) {
             }
 
-            $formattedSlots = $slots->map(function ($slot) use ($bookedTimes) {
+            $formattedSlots = $slots->map(function ($slot) use ($bookedTimes, $adminOverride) {
                 $startTime = Carbon::parse($slot->start_time)->format('H:i');
                 $endTime = !empty($slot->end_time) ? Carbon::parse($slot->end_time)->format('H:i') : null;
                 $displayTime = Carbon::parse($slot->start_time)->format('g:i A');
-                $isBooked = in_array($startTime, $bookedTimes);
+                $isBooked = !$adminOverride && in_array($startTime, $bookedTimes);
 
                 return [
                     'id'           => $slot->id,
@@ -269,6 +273,14 @@ class BookingServiceController extends Controller
                 'details' => $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Load schedule slots for the admin booking editor without customer date/day restrictions.
+     */
+    public function adminSlotsForDate(Request $request): JsonResponse
+    {
+        return $this->slotsForDate($request, true);
     }
 
     public function storeStep2(BookingStep2Request $request): RedirectResponse

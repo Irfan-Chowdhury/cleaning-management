@@ -443,7 +443,7 @@
                     }
                 }
             });
-            var slotsUrl = @json(route('booking-service.slots-for-date'));
+            var slotsUrl = @json(route('admin.bookings.slots-for-date'));
             var initialSlot = @json(old('slot', $booking->slot ?? ''));
 
             function formatTimeStr(val) {
