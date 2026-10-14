@@ -196,7 +196,7 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
         return nl2br(Artisan::output());
     })->where('class', '[A-Za-z0-9_]+');
 
-    Route::get('/documentation', function () {
+    Route::get('/documentation-test', function () {
         $content = File::get(public_path() . '/documentation/index.html');
         try {
             $setting = Setting::latest()->first();
