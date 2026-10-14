@@ -375,7 +375,7 @@
                     </div>
                     <div class="info-row">
                         <span class="info-label">Valid For:</span>
-                        <span class="info-value">30 days</span>
+                        <span class="info-value">{{ $dueDateFormatted }}</span>
                     </div>
                 </div>
             </td>
@@ -427,7 +427,7 @@
                 <li>Cleaning is carried out overnight, with a start time between 12am and 6am each week, subject to site access being arranged.</li>
                 <li>All cleaning products and equipment are supplied by Dust2Glow.</li>
                 <li>Prices are per visit and cover the scope above only. Additional work is quoted separately.</li>
-                <li>Payment is due within 30 days from invoice date.</li>
+                <li>Payment is due within 7 days from invoice date.</li>
                 <li>For any questions, please contact us at info@dust2glowcleaning.com.au or call 0426 003 944.</li>
             </ul>
         </div>

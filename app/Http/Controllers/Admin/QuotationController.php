@@ -256,12 +256,12 @@ class QuotationController extends Controller
         $quotation = Quotation::with('items')->findOrFail($id);
         $setting = Setting::first();
         $quoteDateFormatted = Carbon::parse($quotation->quote_date)->format('d M Y');
-        $quotationUpdatedAtFormatted = Carbon::parse($quotation->updated_at)->format('d M Y, h:i A');
+        $dueDateFormatted = Carbon::parse($quotation->quote_date)->addDays(7)->format('d M Y');
         $isInvoice = strtolower((string) $quotation->status) === 'converted';
         $documentTitle = $isInvoice ? 'Invoice' : 'Quote';
         $view = $isInvoice ? 'pdf.quotation-invoice' : 'pdf.quotation';
 
-        $pdf = Pdf::loadView($view, compact('quotation', 'setting', 'quoteDateFormatted', 'quotationUpdatedAtFormatted', 'documentTitle'))
+        $pdf = Pdf::loadView($view, compact('quotation', 'setting', 'quoteDateFormatted', 'dueDateFormatted', 'documentTitle'))
             ->setPaper('a4', 'portrait');
 
         $suffix = $isInvoice ? '-invoice' : '';
