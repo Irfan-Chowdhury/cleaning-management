@@ -17,6 +17,7 @@ use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\GoogleReviewController as AdminGoogleReviewController;
+use App\Http\Controllers\Admin\QuotationController;
 use App\Http\Middleware\EnsureGoogleReviewEnabled;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\AuthController;
@@ -126,8 +127,11 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
 
     Route::get('/wallets', [WalletController::class, 'index'])->name('wallets.index');
     Route::get('/wallets/{id}', [WalletController::class, 'show'])->name('wallets.show');
+    Route::resource('quotations', QuotationController::class)->except('show');
+    Route::get('/quotations/{id}/download', [QuotationController::class, 'download'])->name('quotations.download');
 
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
+    Route::get('/bookings/{id}/download-pdf', [BookingController::class, 'downloadPdf'])->name('bookings.downloadPdf');
     Route::get('/bookings/{id}', [BookingController::class, 'show'])->name('bookings.show');
     Route::get('/bookings/{id}/edit', [BookingController::class, 'edit'])->name('bookings.edit');
     Route::put('/bookings/{id}', [BookingController::class, 'update'])->name('bookings.update');
@@ -192,7 +196,7 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
         return nl2br(Artisan::output());
     })->where('class', '[A-Za-z0-9_]+');
 
-    Route::get('/documentation', function () {
+    Route::get('/documentation-test', function () {
         $content = File::get(public_path() . '/documentation/index.html');
         try {
             $setting = Setting::latest()->first();

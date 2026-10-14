@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Traits\DownloadsBookingInvoicePdf;
 use App\Enums\BookingStatus;
 use App\Http\Requests\AdminBookingUpdateRequest;
 use App\Models\Booking;
@@ -10,6 +11,8 @@ use App\Services\BookingService;
 
 class BookingController extends Controller
 {
+    use DownloadsBookingInvoicePdf;
+
     public function __construct(
         protected BookingService $bookingService
     ) {
@@ -134,6 +137,13 @@ class BookingController extends Controller
         }
 
         return view('pages.admin.bookings.show', compact('booking'));
+    }
+
+    public function downloadPdf(int $id)
+    {
+        $booking = Booking::with(['user', 'service', 'payment', 'images'])->findOrFail($id);
+
+        return $this->downloadBookingInvoicePdf($booking);
     }
 
     public function edit(int $id)
