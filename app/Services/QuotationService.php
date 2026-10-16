@@ -55,7 +55,7 @@ class QuotationService
             $quotation = Quotation::whereKey($quotation->id)->lockForUpdate()->firstOrFail();
 
             if ($convertToInvoice && $quotation->status !== 'draft') {
-                throw new \DomainException('Only draft quotations can be converted to an invoice.');
+                throw new \DomainException('Only draft quotations can be invoiced.');
             }
 
             $totals = $this->calculateTotals(array_column($data['items'], 'amount'));
@@ -74,7 +74,7 @@ class QuotationService
                 'gst_amount'     => $totals['gst_amount'],
                 'total_amount'   => $totals['total_amount'],
                 'terms_notes'    => $data['terms_notes'] ?? $quotation->terms_notes,
-                'status'         => $convertToInvoice ? 'converted' : $quotation->status,
+                'status'         => $convertToInvoice ? 'invoiced' : $quotation->status,
             ]);
 
             $this->syncItems($quotation, $data['items']);

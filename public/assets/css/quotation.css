@@ -685,13 +685,13 @@
     background: #f79009;
 }
 
-.status-badge-converted {
+.status-badge-invoiced {
     color: #027a48;
     background: #ecfdf3;
     border: 1px solid #a6f4c5;
 }
 
-.status-badge-converted::before {
+.status-badge-invoiced::before {
     background: #12b76a;
 }
 

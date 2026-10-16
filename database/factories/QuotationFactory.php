@@ -33,7 +33,7 @@ class QuotationFactory extends Factory
             'gst_amount'     => 0,
             'total_amount'   => 0,
             'terms_notes'    => null,
-            'status'         => $this->faker->randomElement(['draft', 'converted']),
+            'status'         => $this->faker->randomElement(['draft', 'invoiced']),
         ];
     }
 

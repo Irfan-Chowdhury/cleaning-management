@@ -86,9 +86,9 @@ class QuotationController extends Controller
                         . '<span>' . e($date) . '</span></div>';
                 })
                 ->addColumn('status_display', function (Quotation $quotation) {
-                    $isConverted = strtolower((string) $quotation->status) === 'converted';
-                    $label = $isConverted ? 'Converted' : 'Draft';
-                    $class = $isConverted ? 'status-badge-converted' : 'status-badge-draft';
+                    $isInvoiced = strtolower((string) $quotation->status) === 'invoiced';
+                    $label = $isInvoiced ? 'Invoiced' : 'Draft';
+                    $class = $isInvoiced ? 'status-badge-invoiced' : 'status-badge-draft';
 
                     return '<span class="status-badge ' . $class . '">' . $label . '</span>';
                 })
@@ -111,9 +111,9 @@ class QuotationController extends Controller
         $metrics = [
             'total_count' => Quotation::count(),
             'draft_count' => Quotation::where('status', 'draft')->count(),
-            'converted_count' => Quotation::where('status', 'converted')->count(),
-            'total_revenue' => (float) Quotation::where('status', 'converted')->sum('total_amount'),
-            'current_month_revenue' => (float) Quotation::where('status', 'converted')
+            'invoiced_count' => Quotation::where('status', 'invoiced')->count(),
+            'total_revenue' => (float) Quotation::where('status', 'invoiced')->sum('total_amount'),
+            'current_month_revenue' => (float) Quotation::where('status', 'invoiced')
                 ->whereBetween('quote_date', [
                     $currentMonth->copy()->startOfMonth()->toDateString(),
                     $currentMonth->copy()->endOfMonth()->toDateString(),
@@ -209,7 +209,7 @@ class QuotationController extends Controller
             );
 
             $message = $convertToInvoice
-                ? "Quotation {$quotation->quote_number} converted to invoice successfully!"
+                ? "Quotation {$quotation->quote_number} invoiced successfully!"
                 : "Quotation {$quotation->quote_number} updated successfully!";
 
             return redirect()
@@ -222,7 +222,7 @@ class QuotationController extends Controller
             return back()
                 ->withInput()
                 ->with('error', $convertToInvoice
-                    ? 'This quotation could not be converted. It may already have been invoiced.'
+                    ? 'This quotation could not be invoiced. It may already have been invoiced.'
                     : 'An error occurred while updating the quotation. Please try again.');
         }
     }
@@ -257,7 +257,7 @@ class QuotationController extends Controller
         $setting = Setting::first();
         $quoteDateFormatted = Carbon::parse($quotation->quote_date)->format('d M Y');
         $dueDateFormatted = Carbon::parse($quotation->quote_date)->addDays(7)->format('d M Y');
-        $isInvoice = strtolower((string) $quotation->status) === 'converted';
+        $isInvoice = strtolower((string) $quotation->status) === 'invoiced';
         $documentTitle = $isInvoice ? 'Invoice' : 'Quote';
         $view = $isInvoice ? 'pdf.quotation-invoice' : 'pdf.quotation';
 

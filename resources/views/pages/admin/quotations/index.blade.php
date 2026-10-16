@@ -53,7 +53,7 @@
             </span>
             <div class="quotations-metric-content">
                 <span class="quotations-metric-label">Converted</span>
-                <span class="quotations-metric-value">{{ number_format($metrics['converted_count']) }}</span>
+                <span class="quotations-metric-value">{{ number_format($metrics['invoiced_count']) }}</span>
             </div>
         </div>
 
@@ -65,7 +65,7 @@
             <div class="quotations-metric-content">
                 <span class="quotations-metric-label">Total Revenue</span>
                 <span class="quotations-metric-value">${{ number_format($metrics['total_revenue'], 2) }}</span>
-                <span class="quotations-metric-support">From converted quotes</span>
+                <span class="quotations-metric-support">From invoiced quotes</span>
             </div>
         </div>
 
@@ -77,7 +77,7 @@
             <div class="quotations-metric-content">
                 <span class="quotations-metric-label">Total Revenue This {{ $metrics['current_month_name'] }}</span>
                 <span class="quotations-metric-value">${{ number_format($metrics['current_month_revenue'], 2) }}</span>
-                <span class="quotations-metric-support">From converted quotes</span>
+                <span class="quotations-metric-support">From invoiced quotes</span>
             </div>
         </div>
     </div>
