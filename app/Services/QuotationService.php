@@ -121,12 +121,12 @@ class QuotationService
 
     /**
      * Generate the next sequential quote number for the current year.
-     * Format: QT-{YEAR}-{0001}
+     * Format: D2G-{YEAR}-{0001}
      */
     public function generateSequentialQuoteNumber(): string
     {
         $year   = Carbon::now()->format('Y');
-        $prefix = "QT-{$year}-";
+        $prefix = "D2G-{$year}-";
 
         $last = Quotation::where('quote_number', 'like', "{$prefix}%")
             ->orderBy('id', 'desc')
