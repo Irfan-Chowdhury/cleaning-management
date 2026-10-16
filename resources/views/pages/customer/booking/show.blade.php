@@ -205,6 +205,7 @@
                     @php
                         $subtotal = (float) ($booking->subtotal > 0 ? $booking->subtotal : $booking->total_amount);
                         $discountVal = (float) ($booking->discount_amount > 0 ? $booking->discount_amount : $booking->credit_used);
+                        $gstVal = (float) ($booking->gst_amount ?? 0);
                         $totalVal = (float) $booking->total_amount;
 
                         $discountLabel = 'Discount';
@@ -228,6 +229,10 @@
                                 <span class="font-weight-semibold text-danger">-${{ number_format($discountVal, 2) }}</span>
                             </div>
                         @endif
+                        <div class="price-summary-row">
+                            <span class="text-muted">GST (10%)</span>
+                            <span class="font-weight-semibold text-dark">${{ number_format($gstVal, 2) }}</span>
+                        </div>
                         <div class="price-summary-row total-row">
                             <span>Total Amount</span>
                             <span class="text-primary">${{ number_format($totalVal, 2) }}</span>

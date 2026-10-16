@@ -131,6 +131,7 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::get('/quotations/{id}/download', [QuotationController::class, 'download'])->name('quotations.download');
 
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
+    Route::get('/admin/bookings/slots-for-date', [BookingServiceController::class, 'adminSlotsForDate'])->name('admin.bookings.slots-for-date');
     Route::get('/bookings/{id}/download-pdf', [BookingController::class, 'downloadPdf'])->name('bookings.downloadPdf');
     Route::get('/bookings/{id}', [BookingController::class, 'show'])->name('bookings.show');
     Route::get('/bookings/{id}/edit', [BookingController::class, 'edit'])->name('bookings.edit');

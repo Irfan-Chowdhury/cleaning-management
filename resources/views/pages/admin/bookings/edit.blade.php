@@ -98,6 +98,39 @@
             padding-bottom: 12px;
             border-bottom: 1px solid #f0f4f9;
         }
+
+        .booking-pricing-section {
+            padding: 18px;
+            margin-bottom: 22px;
+            background: #f8fbff;
+            border: 1px solid #e1ebf8;
+            border-radius: 10px;
+        }
+
+        .booking-pricing-heading {
+            margin-bottom: 16px;
+            color: #172b4d;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .booking-pricing-section .form-control {
+            min-height: 44px;
+            border-color: #d8e1ed;
+            border-radius: 7px;
+        }
+
+        .booking-pricing-section .form-control[readonly] {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        .booking-pricing-total {
+            background-color: #e8f3ff !important;
+            color: #124a86 !important;
+            border-color: #b8d7f7 !important;
+            font-weight: 800;
+        }
     </style>
 @endpush
 
@@ -311,17 +344,35 @@
                     </div>
                 </div>
 
-                <!-- Row 3: Amount, Payment Status & Payment Method -->
-                <div class="row">
-                    <div class="col-md-4 form-group mb-4">
-                        <label for="booking-amount">Amount ($) <span class="text-danger">*</span></label>
-                        <div class="booking-input-icon">
-                            <i class="fas fa-dollar-sign" aria-hidden="true"></i>
-                            <input type="number" step="0.01" class="form-control" id="booking-amount" name="amount" value="{{ old('amount', number_format($booking->amount, 2, '.', '')) }}" placeholder="0.00" required>
+                <!-- Pricing Section -->
+                <div class="booking-pricing-section">
+                    <h3 class="booking-pricing-heading"><i class="fas fa-calculator text-primary mr-2" aria-hidden="true"></i>Pricing</h3>
+                    <div class="row">
+                        <div class="col-12 col-sm-6 col-lg-3 form-group mb-3 mb-lg-0">
+                            <label for="booking-subtotal">Subtotal ($)</label>
+                            <input type="number" step="0.01" min="0" class="form-control" id="booking-subtotal" name="subtotal"
+                                   value="{{ old('subtotal', $booking->model->subtotal ?? $booking->amount) }}">
+                        </div>
+                        <div class="col-12 col-sm-6 col-lg-3 form-group mb-3 mb-lg-0">
+                            <label for="booking-discount">Discount ($)</label>
+                            <input type="number" step="0.01" class="form-control" id="booking-discount" readonly
+                                   value="{{ number_format((float) ($booking->model->discount_amount ?? 0), 2, '.', '') }}">
+                        </div>
+                        <div class="col-12 col-sm-6 col-lg-3 form-group mb-3 mb-sm-0">
+                            <label for="booking-gst">GST (10%)</label>
+                            <input type="number" step="0.01" class="form-control" id="booking-gst" readonly value="0.00">
+                        </div>
+                        <div class="col-12 col-sm-6 col-lg-3 form-group mb-0">
+                            <label for="booking-amount">Total Amount ($)</label>
+                            <input type="number" step="0.01" min="0" class="form-control booking-pricing-total" id="booking-amount" name="amount"
+                                   value="{{ old('amount', number_format($booking->amount, 2, '.', '')) }}" readonly required>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-md-4 form-group mb-4">
+                <!-- Payment Status & Payment Method -->
+                <div class="row">
+                    <div class="col-md-6 form-group mb-4">
                         <label for="payment-status">Payment Status <span class="text-danger">*</span></label>
                         <div class="booking-input-icon">
                             <i class="fas fa-credit-card" aria-hidden="true"></i>
@@ -335,7 +386,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4 form-group mb-4">
+                    <div class="col-md-6 form-group mb-4">
                         <label for="payment-method">Payment Method</label>
                         <div class="booking-input-icon">
                             <i class="fas fa-wallet" aria-hidden="true"></i>
@@ -392,7 +443,7 @@
                     }
                 }
             });
-            var slotsUrl = @json(route('booking-service.slots-for-date'));
+            var slotsUrl = @json(route('admin.bookings.slots-for-date'));
             var initialSlot = @json(old('slot', $booking->slot ?? ''));
 
             function formatTimeStr(val) {
@@ -498,6 +549,20 @@
             if (currentDate) {
                 loadTimeSlotsForDate(currentDate, initialSlot);
             }
+
+            function recalculateBookingPricing() {
+                var subtotal = parseFloat($('#booking-subtotal').val()) || 0;
+                var discount = parseFloat($('#booking-discount').val()) || 0;
+                var taxableAmount = subtotal - discount;
+                var gst = Math.round((taxableAmount * 0.10 + Number.EPSILON) * 100) / 100;
+                var total = Math.round((taxableAmount + gst + Number.EPSILON) * 100) / 100;
+
+                $('#booking-gst').val(gst.toFixed(2));
+                $('#booking-amount').val(total.toFixed(2));
+            }
+
+            $('#booking-subtotal').on('input change', recalculateBookingPricing);
+            recalculateBookingPricing();
 
             $('#booking-edit-form').on('submit', function (e) {
                 var currentForm = this;

@@ -352,6 +352,7 @@
         $subtotal = (float) ($booking->subtotal > 0 ? $booking->subtotal : $booking->total_amount);
         $discountAmount = (float) ($booking->discount_amount ?? 0);
         $creditUsed = (float) ($booking->credit_used ?? 0);
+        $gstAmount = (float) ($booking->gst_amount ?? 0);
         $totalAmount = (float) ($booking->total_amount ?? 0);
 
         $paymentStatus = strtolower((string) ($booking->payment_status ?? 'pending'));
@@ -540,6 +541,10 @@
                         <td class="amount-col text-success">- ${{ number_format($creditUsed, 2) }}</td>
                     </tr>
                 @endif
+                <tr>
+                    <td>GST (10%):</td>
+                    <td class="amount-col">${{ number_format($gstAmount, 2) }}</td>
+                </tr>
                 <tr class="total-row">
                     <td>Total {{ $isPaid ? 'Paid' : 'Amount Due' }}:</td>
                     <td class="amount-col">${{ number_format($totalAmount, 2) }}</td>

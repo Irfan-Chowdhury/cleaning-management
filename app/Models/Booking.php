@@ -37,6 +37,7 @@ class Booking extends Model
         'subtotal',
         'discount_amount',
         'credit_used',
+        'gst_amount',
         'total_amount',
         'referal_code',
         'promo_code',

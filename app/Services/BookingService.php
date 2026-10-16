@@ -163,11 +163,21 @@ class BookingService
             $updateData['service_id'] = $data['service_id'];
         }
 
-        if (isset($data['amount'])) {
+        if (isset($data['subtotal'])) {
+            // The discount is managed elsewhere and displayed as read-only in the form.
+            // Recalculate these values on the server instead of trusting read-only inputs.
+            $subtotal = round((float) $data['subtotal'], 2);
+            $discount = (float) ($booking->discount_amount ?? 0);
+            $taxableAmount = $subtotal - $discount;
+            $gstAmount = round($taxableAmount * 0.10, 2);
+            $totalAmount = round($taxableAmount + $gstAmount, 2);
+
+            $updateData['subtotal'] = $subtotal;
+            $updateData['gst_amount'] = $gstAmount;
+            $updateData['total_amount'] = $totalAmount;
+        } elseif (isset($data['amount'])) {
+            // Keep compatibility with callers that still submit only a total amount.
             $updateData['total_amount'] = (float) $data['amount'];
-            if ($data['status']=='approved') {
-                $updateData['subtotal'] = (float) $data['amount'];
-            }
         }
 
         if (!empty($data['date'])) {
@@ -194,7 +204,7 @@ class BookingService
 
             $payment = Payment::firstOrNew(['booking_id' => $booking->id]);
             $payment->user_id = $booking->user_id;
-            $payment->amount = isset($data['amount']) ? (float) $data['amount'] : (float) $booking->total_amount;
+            $payment->amount = (float) $booking->total_amount;
             $payment->payment_status = $data['payment_status'] ?? ($booking->payment_status ?? 'pending');
             $payment->payment_method = $data['payment_method'] ?? ($booking->payment_method ?? 'pending');
             $payment->save();
@@ -307,6 +317,15 @@ class BookingService
             }
         }
 
+        // Finalize tax and payable total after the selected discount has been applied.
+        // Recalculate on the server so the confirmed booking and payment use the same amount.
+        $subtotal = (float) ($booking->subtotal > 0 ? $booking->subtotal : $booking->total_amount);
+        $discountAmount = (float) ($booking->discount_amount > 0
+            ? $booking->discount_amount
+            : $booking->credit_used);
+        $taxableAmount = max(0, $subtotal - $discountAmount);
+        $booking->gst_amount = round($taxableAmount * 0.10, 2);
+        $booking->total_amount = round($taxableAmount + (float) $booking->gst_amount, 2);
         $booking->status = BookingStatus::CONFIRMED;
         $booking->save();
 
@@ -393,6 +412,9 @@ class BookingService
                 'booking_id'           => 'BK-' . sprintf('%03d', $b->id),
                 'service_name'         => $b->service?->name ?? 'Cleaning Service',
                 'date'                 => $b->booking_date ?? $b->created_at->format('Y-m-d'),
+                'booking_date_expired' => $b->booking_date
+                    ? \Carbon\Carbon::parse($b->booking_date)->toDateString() < now()->toDateString()
+                    : false,
                 'time'                 => $b->start_time ? \Carbon\Carbon::parse($b->start_time)->format('g:i A') : '09:00 AM',
                 'amount'               => (float) $b->total_amount,
                 'status'               => $statusEnum->label(),
