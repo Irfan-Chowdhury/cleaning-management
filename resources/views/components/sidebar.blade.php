@@ -65,6 +65,11 @@
             <span>Customer Wallets</span>
         </a>
 
+        <a href="{{ route('quotations.index') }}" class="sidebar-link {{ request()->routeIs('quotations.*') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i></span>
+            <span>Quotations</span>
+        </a>
+
         <a href="{{ route('bookings.index') }}" class="sidebar-link {{ request()->routeIs('bookings.*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="far fa-calendar-alt" aria-hidden="true"></i></span>
             <span>Bookings</span>

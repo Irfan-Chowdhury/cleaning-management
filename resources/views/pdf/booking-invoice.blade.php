@@ -599,7 +599,7 @@
                                 <li><span>Cleaning is carried out overnight, with a start time between 12am and 6am each week, subject to site access being arranged.</span></li>
                                 <li><span>All cleaning products and equipment are supplied by Dust2Glow.</span></li>
                                 <li><span>Prices are per visit and cover the scope above only. Additional work is quoted separately.</span></li>
-                                <li><span>Payment is due within 30 days from invoice date.</span></li>
+                                <li><span>Payment is due within 7 days from invoice date.</span></li>
                                 <li><span>For any questions, please contact us at info@dust2glowcleaning.com.au or call 0426 003 944.</span></li>
                             </ul>
                         </div>

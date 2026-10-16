@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             WeeklyScheduleSeeder::class,
             PromotionSeeder::class,
             NotificationSeeder::class,
+            QuotationSeeder::class,
         ]);
     }
 }

@@ -201,7 +201,7 @@
                 </div>
             </section>
 
-            <section class="settings-section">
+            {{-- <section class="settings-section">
                 <div class="settings-section-heading">
                     <span class="settings-section-icon"><i class="fas fa-tags" aria-hidden="true"></i></span>
                     <div>
@@ -223,7 +223,7 @@
                                name="promotion_max_uses_per_customer" value="{{ old('promotion_max_uses_per_customer', $settings->promotion_max_uses_per_customer) }}" placeholder="1">
                     </div>
                 </div>
-            </section>
+            </section> --}}
         </form>
     </div>
 @endsection
