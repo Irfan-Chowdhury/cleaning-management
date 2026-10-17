@@ -16,9 +16,11 @@ use App\Notifications\BookingCancelledNotification;
 use App\Notifications\BookingCompletedNotification;
 use App\Notifications\BookingConfirmedNotification;
 use App\Notifications\BookingProcessingNotification;
+use App\Notifications\NewBookingAdminNotification;
 use App\Notifications\NewBookingPendingNotification;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 use Throwable;
 
 class BookingService
@@ -132,17 +134,37 @@ class BookingService
             Log::error('Failed to create payment record: ' . $e->getMessage());
         }
 
-        // Send Notification to all Admins
+        // Send Notification to all Admins (in-app database notification)
         try {
             $admins = User::where('role', 1)->get();
             foreach ($admins as $admin) {
                 $admin->notify(new NewBookingPendingNotification($booking));
             }
+            // Send email notification to specific admin email
+            $this->sendNewBookingAdminEmailNotification($booking);
+
         } catch (\Throwable $e) {
             Log::error('Failed to send admin booking notification: ' . $e->getMessage());
         }
 
         return $booking;
+    }
+
+    /**
+     * Send simple email notification to specific admin email informing about the new booking.
+     */
+    public function sendNewBookingAdminEmailNotification(Booking $booking): void
+    {
+        $adminEmail = config('services.booking_notification.admin_email');
+
+        if (!empty($adminEmail)) {
+            try {
+                Notification::route('mail', trim($adminEmail))
+                    ->notify(new NewBookingAdminNotification($booking));
+            } catch (\Throwable $e) {
+                Log::error('Failed to send admin booking email notification: ' . $e->getMessage());
+            }
+        }
     }
 
     /**

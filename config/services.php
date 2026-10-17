@@ -34,5 +34,8 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'booking_notification' => [
+        'admin_email' => env('ADMIN_BOOKING_NOTIFICATION_EMAIL'),
+    ],
 
 ];
