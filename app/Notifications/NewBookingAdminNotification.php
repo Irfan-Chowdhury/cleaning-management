@@ -8,7 +8,6 @@ use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\HtmlString;
 
 class NewBookingAdminNotification extends Notification
 {
@@ -45,19 +44,18 @@ class NewBookingAdminNotification extends Notification
             ($this->booking->postcode ? ' ' . $this->booking->postcode : '')
         );
 
+        $actionUrl = route('bookings.edit', $this->booking->id);
+
         return (new MailMessage)
             ->subject("New Booking Request #{$this->booking->id} - {$serviceName}")
-            ->greeting('Hello Admin,')
-            ->line("A new cleaning booking request has been submitted by **{$this->booking->customer_name}**.")
-            ->line(new HtmlString("<strong>Booking Details:</strong><br>" .
-                "&bull; <strong>Booking ID:</strong> #{$this->booking->id}<br>" .
-                "&bull; <strong>Service:</strong> " . e($serviceName) . "<br>" .
-                "&bull; <strong>Customer:</strong> " . e($this->booking->customer_name) . " (" . e($this->booking->customer_email) . ")<br>" .
-                "&bull; <strong>Phone:</strong> " . e($this->booking->customer_phone ?: 'N/A') . "<br>" .
-                "&bull; <strong>Date & Time:</strong> {$formattedDate} at {$formattedTime}<br>" .
-                "&bull; <strong>Address:</strong> " . e($fullAddress ?: 'N/A')))
-            ->action('View & Manage Booking', route('bookings.edit', $this->booking->id))
-            ->line('Please review this quote request in the admin panel and set the final price for confirmation.')
-            ->salutation(new HtmlString("Regards,<br>" . e($companyName)));
+            ->view('emails.new_booking_admin', [
+                'booking'       => $this->booking,
+                'serviceName'   => $serviceName,
+                'companyName'   => $companyName,
+                'formattedDate' => $formattedDate,
+                'formattedTime' => $formattedTime,
+                'fullAddress'   => $fullAddress,
+                'actionUrl'     => $actionUrl,
+            ]);
     }
 }
