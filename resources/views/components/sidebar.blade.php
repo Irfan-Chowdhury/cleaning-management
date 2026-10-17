@@ -153,13 +153,32 @@
         </a>
     </nav>
 
-    <div class="sidebar-support">
-        <div class="sidebar-support-copy">
-            <h6>Need help?</h6>
-            <p>Our support team is available 7 days a week.</p>
-        </div>
+    @if(auth()->check() && (int) auth()->user()->role === 2)
+        @if(!empty($sidebarSettings?->phone) || !empty($sidebarSettings?->email))
+        <div class="sidebar-support">
+            <div class="sidebar-support-copy">
+                <h6>Need help?</h6>
+                <p class="mb-2" style="font-size: 11px; line-height: 1.4; color: var(--muted-text);">Our support team is available 7 days a week.</p>
+                @if(!empty($sidebarSettings?->phone))
+                    <p class="mb-1 text-truncate" style="max-width: 170px;">
+                        <i class="fas fa-phone-alt mr-1 text-primary" style="font-size: 11px;"></i>
+                        <a href="tel:{{ $sidebarSettings->phone }}" title="{{ $sidebarSettings->phone }}" style="color: inherit; text-decoration: none; font-weight: 500;">
+                            {{ $sidebarSettings->phone }}
+                        </a>
+                    </p>
+                @endif
+                @if(!empty($sidebarSettings?->email))
+                    <p class="mb-0 text-truncate" style="max-width: 170px;">
+                        <i class="fas fa-envelope mr-1 text-primary" style="font-size: 11px;"></i>
+                        <a href="mailto:{{ $sidebarSettings->email }}" title="{{ $sidebarSettings->email }}" style="color: inherit; text-decoration: none; font-weight: 500;">
+                            {{ $sidebarSettings->email }}
+                        </a>
+                    </p>
+                @endif
+            </div>
 
-        <a href="#" class="btn support-btn">Contact Support</a>
-        <i class="fas fa-headset support-icon" aria-hidden="true"></i>
-    </div>
+            <i class="fas fa-headset support-icon" aria-hidden="true"></i>
+        </div>
+        @endif
+    @endif
 </aside>
