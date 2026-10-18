@@ -258,7 +258,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($transactions as $item)
+                        @foreach ($transactions as $item)
                             @php
                                 $typeLower = strtolower($item->type);
                                 $sourceKey = strtolower($item->source);
@@ -314,14 +314,7 @@
                                     @endif
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="text-center py-4 text-muted">
-                                    <i class="fas fa-wallet fa-2x mb-2 d-block" aria-hidden="true"></i>
-                                    No wallet transactions found.
-                                </td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>

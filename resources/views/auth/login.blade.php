@@ -1,9 +1,16 @@
+@php
+    $setting = $setting ?? \Illuminate\Support\Facades\Cache::rememberForever('app_settings', function () {
+        return \App\Models\Setting::latest()->first();
+    }) ?? \App\Models\Setting::latest()->first();
+    $companyName = $setting?->company_name ?? config('app.name', 'Dust2Glow');
+    $companyLogoUrl = $setting?->company_logo_url ?? asset('public/assets/images/company_logo/brand_logo.png');
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login | Dust2Glow</title>
+    <title>Login | {{ $companyName }}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -38,6 +45,22 @@
             padding: 30px 30px 22px;
             text-align: center;
             border-bottom: 1px solid #eef1f5;
+        }
+
+        .auth-logo-wrap {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-brand-logo {
+            max-width: 210px;
+            max-height: 60px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            display: inline-block;
         }
 
         .auth-logo {
@@ -129,9 +152,17 @@
     <main class="auth-page d-flex align-items-center justify-content-center">
         <section class="auth-card">
             <div class="auth-brand">
-                <span class="auth-logo"><i class="fas fa-broom" aria-hidden="true"></i></span>
+                @if(!empty($companyLogoUrl))
+                    <div class="auth-logo-wrap">
+                        <a href="{{ url('/') }}" aria-label="{{ $companyName }}">
+                            <img src="{{ $companyLogoUrl }}" alt="{{ $companyName }}" class="auth-brand-logo">
+                        </a>
+                    </div>
+                @else
+                    <span class="auth-logo"><i class="fas fa-broom" aria-hidden="true"></i></span>
+                @endif
                 <h1>Welcome back</h1>
-                <p>Login to manage your Dust2Glow cleaning bookings.</p>
+                <p>Log in to manage your cleaning bookings with {{ $companyName }}.</p>
             </div>
 
             <div class="auth-body">
@@ -193,7 +224,7 @@
                     <button type="submit" class="btn btn-primary btn-block auth-btn">Login</button>
 
                     <p class="mt-4 mb-0 text-center text-muted">
-                        New to Dust2Glow?
+                        New to {{ $companyName }}?
                         <a href="{{ route('register') }}" class="auth-link">Create an account</a>
                     </p>
                 </form>

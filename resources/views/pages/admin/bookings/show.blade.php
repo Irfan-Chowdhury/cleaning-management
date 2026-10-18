@@ -127,7 +127,7 @@
                 <span class="badge {{ $statusEnum->badgeClass() }} font-weight-bold px-3 py-2 mr-2" style="font-size: 14px; border-radius: 999px;">
                     <i class="fas fa-info-circle mr-1"></i> Status: {{ $statusEnum->label() }}
                 </span>
-                @if (!empty($booking->model))
+                @if ($statusLower === 'completed')
                     <a href="{{ route('bookings.downloadPdf', $booking->id) }}" class="btn btn-outline-danger mr-2">
                         <i class="fas fa-file-pdf mr-1" aria-hidden="true"></i> Download PDF Invoice
                     </a>

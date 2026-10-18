@@ -479,7 +479,7 @@
                             <tr><td>Account Name:</td><td>Dust2Glow Group Pty Ltd</td></tr>
                             <tr><td>BSB:</td><td>062 709</td></tr>
                             <tr><td>Account Number:</td><td>10 450 457</td></tr>
-                            <tr><td>Reference:</td><td>NV-2026-0007</td></tr>
+                            <tr><td>Reference:</td><td>{{ $quotation->quote_number }}</td></tr>
                         </table>
                     </div>
                 </div>

@@ -27,7 +27,7 @@ return new class extends Migration
             $table->decimal('gst_amount', 10, 2)->default(0.00);
             $table->decimal('total_amount', 10, 2)->default(0.00);
             $table->text('terms_notes')->nullable();
-            $table->string('status')->default('draft'); // 'draft', 'converted'
+            $table->string('status')->default('draft'); // 'draft', 'invoiced'
             $table->timestamps();
         });
     }

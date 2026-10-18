@@ -408,12 +408,14 @@
                 <td class="info-spacer"></td>
                 <td class="info-cell">
                     <div class="info-box">
-                        <div class="section-heading">Service &amp; Schedule</div>
+                        <div class="section-heading">Service Details</div>
                         <div class="info-list">
                             <p><strong>Service:</strong> {{ $booking->service?->name ?? 'Cleaning Service' }}</p>
                             <p><strong>Scheduled Date:</strong> {{ $bookingDateFormatted }}</p>
                             <p><strong>Time Slot:</strong> {{ $bookingTimeFormatted }}</p>
                             <p><strong>Booking Status:</strong> {{ ucfirst($booking->status_label ?? 'Pending') }}</p>
+                            <p><strong>Payment Status:</strong> {{ ucfirst($booking->payment_status) }}</p>
+                            <p><strong>Payment Method:</strong> {{ ucfirst($booking->payment_method) }}</p>
                         </div>
                     </div>
                 </td>
@@ -580,8 +582,7 @@
                                 </tr>
                                 <tr>
                                     <td>Reference:</td>
-                                    {{-- <td>{{ $bookingIdFormatted }}</td> --}}
-                                    <td>NV-2026-0007</td>
+                                    <td>{{ $bookingIdFormatted }}</td>
                                 </tr>
                             </table>
                         </div>

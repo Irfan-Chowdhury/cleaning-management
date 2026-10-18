@@ -47,27 +47,27 @@ describe('QuotationService', function () {
 
         $number = $service->generateSequentialQuoteNumber();
 
-        expect($number)->toMatch('/^QT-\d{4}-\d{4}$/');
+        expect($number)->toMatch('/^D2G-\d{4}-\d{4}$/');
     });
 
-    it('generates QT-{YEAR}-0001 when no quotations exist', function () {
+    it('generates D2G-{YEAR}-0001 when no quotations exist', function () {
         $service = app(QuotationService::class);
         $year    = now()->format('Y');
 
         $number = $service->generateSequentialQuoteNumber();
 
-        expect($number)->toBe("QT-{$year}-0001");
+        expect($number)->toBe("D2G-{$year}-0001");
     });
 
     it('increments quote number correctly when previous quotes exist', function () {
         $year = now()->format('Y');
 
-        Quotation::factory()->create(['quote_number' => "QT-{$year}-0005"]);
+        Quotation::factory()->create(['quote_number' => "D2G-{$year}-0005"]);
 
         $service = app(QuotationService::class);
         $number  = $service->generateSequentialQuoteNumber();
 
-        expect($number)->toBe("QT-{$year}-0006");
+        expect($number)->toBe("D2G-{$year}-0006");
     });
 
     it('calculates totals correctly with 10% GST', function () {

@@ -46,7 +46,7 @@
                         <div class="date-time-grid">
                             <div class="booking-date-panel">
                                 <label class="booking-section-label">Select a Date</label>
-                                <div class="booking-calendar" 
+                                <div class="booking-calendar"
                                      id="interactive-calendar"
                                      data-holidays='@json($holidays)'
                                      data-slots-url="{{ route('booking-service.slots-for-date') }}"
@@ -69,7 +69,7 @@
                                     </div>
                                 </div>
                                 <div class="booking-info-strip">
-                                    <i class="far fa-calendar-alt" aria-hidden="true"></i> 
+                                    <i class="far fa-calendar-alt" aria-hidden="true"></i>
                                     <span id="calendar-info-text">Showing available dates</span>
                                 </div>
                             </div>
@@ -108,7 +108,7 @@
 
             <aside class="booking-right-column">
                 @include('pages.booking-service.partials.scheduling-guide')
-                @include('pages.booking-service.partials.support-card')
+                {{-- @include('pages.booking-service.partials.support-card') --}}
             </aside>
         </div>
     </div>

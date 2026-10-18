@@ -35,8 +35,9 @@ class AppServiceProvider extends ServiceProvider
             $setting = null;
         }
 
-        View::composer('components.sidebar', function ($view) use (&$setting) {
+        View::composer(['components.sidebar', 'auth.login', 'auth.register'], function ($view) use (&$setting) {
             $view->with('sidebarSettings', $setting);
+            $view->with('setting', $setting);
         });
     }
 }
