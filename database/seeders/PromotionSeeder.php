@@ -6,6 +6,7 @@ use App\Enums\PromotionStatus;
 use App\Models\Promotion;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class PromotionSeeder extends Seeder
 {
@@ -15,12 +16,13 @@ class PromotionSeeder extends Seeder
     public function run(): void
     {
         $adminId = User::query()->where('role', 1)->value('id');
+        DB::statement('ALTER TABLE promotions AUTO_INCREMENT = 1');
 
         $promotions = [
             [
-                'name' => 'Welcome Cleaning Credit',
-                'code' => 'WELCOME25',
-                'description' => 'Introductory discount for first-time cleaning service customers.',
+                'name' => 'Christmas Special Offer',
+                'code' => 'CHRISTMAS2026',
+                'description' => 'Exclusive fixed discount for the holiday season.',
                 'discount_type' => 'fixed',
                 'discount_value' => 25.00,
                 'status' => PromotionStatus::ACTIVE,
@@ -38,7 +40,7 @@ class PromotionSeeder extends Seeder
                 'status' => PromotionStatus::ACTIVE,
                 'start_at' => now()->subDays(2),
                 'expires_at' => now()->addDays(30),
-                'new_customers_only' => false,
+                'new_customers_only' => true,
                 'existing_customers_only' => false,
             ],
             [
@@ -74,7 +76,7 @@ class PromotionSeeder extends Seeder
                 'status' => PromotionStatus::EXPIRED,
                 'start_at' => now()->subDays(90),
                 'expires_at' => now()->subDays(10),
-                'new_customers_only' => false,
+                'new_customers_only' => true,
                 'existing_customers_only' => false,
             ],
         ];

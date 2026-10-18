@@ -8,7 +8,7 @@ use Illuminate\Database\Seeder;
 class HolidaySeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * php artisan db:seed --class=HolidaySeeder
      */
     public function run(): void
     {
@@ -81,6 +81,34 @@ class HolidaySeeder extends Seeder
                 'description' => 'Commemorating the victory of Bangladesh forces in the 1971 Liberation War.',
                 'start_date'  => '2026-12-16',
                 'end_date'    => '2026-12-16',
+                'is_active'   => true,
+            ],
+            [
+                'title'       => 'Durga Puja',
+                'description' => 'Celebrating Durga Puja, a major Hindu religious festival in Bangladesh.',
+                'start_date'  => '2026-10-20',
+                'end_date'    => '2026-10-22',
+                'is_active'   => true,
+            ],
+            [
+                'title'       => 'National Revolution and Solidarity Day',
+                'description' => 'Commemorating National Revolution and Solidarity Day in Bangladesh.',
+                'start_date'  => '2026-11-07',
+                'end_date'    => '2026-11-07',
+                'is_active'   => true,
+            ],
+            [
+                'title'       => 'Victory Day (Bijoy Dibos)',
+                'description' => 'Commemorating the victory of Bangladesh forces in the 1971 Liberation War.',
+                'start_date'  => '2026-12-16',
+                'end_date'    => '2026-12-16',
+                'is_active'   => true,
+            ],
+            [
+                'title'       => 'Christmas Day (Borodin)',
+                'description' => 'Celebrating Christmas Day, a Christian religious festival observed in Bangladesh.',
+                'start_date'  => '2026-12-25',
+                'end_date'    => '2026-12-25',
                 'is_active'   => true,
             ],
         ];

@@ -90,8 +90,8 @@
                             @enderror
                         </div>
 
-                        <div id="booking-questionnaire" 
-                             class="booking-questionnaire" 
+                        <div id="booking-questionnaire"
+                             class="booking-questionnaire"
                              data-empty-text="Select a service to load related questions."
                              data-saved-questions='@json($savedQuestions)'>
                             <div class="booking-questionnaire-empty">
@@ -110,11 +110,11 @@
                                     <i class="fas fa-cloud-upload-alt text-primary mb-2" style="font-size: 28px;"></i>
                                     <strong class="d-block text-dark" style="font-size: 13.5px;">Click to select photos of your home/space</strong>
                                     <span class="text-muted d-block mt-1" style="font-size: 11.5px;">Supported formats: JPG, PNG, WEBP (Max 5MB per file)</span>
-                                    <input type="file" 
-                                           id="booking-images" 
-                                           name="images[]" 
-                                           multiple 
-                                           accept="image/jpeg,image/png,image/jpg,image/webp" 
+                                    <input type="file"
+                                           id="booking-images"
+                                           name="images[]"
+                                           multiple
+                                           accept="image/jpeg,image/png,image/jpg,image/webp"
                                            class="d-none">
                                 </label>
                             </div>
@@ -151,10 +151,10 @@
 
                         <div class="form-group booking-field booking-notes-field">
                             <label for="booking-notes">Have a note, request, or fun fact? Drop it here.</label>
-                            <textarea class="form-control @error('service_notes') is-invalid @enderror" 
-                                      id="booking-notes" 
-                                      name="service_notes" 
-                                      maxlength="500" 
+                            <textarea class="form-control @error('service_notes') is-invalid @enderror"
+                                      id="booking-notes"
+                                      name="service_notes"
+                                      maxlength="500"
                                       placeholder="Go ahead, we&rsquo;re all ears.">{{ old('service_notes', $step1Data['service_notes'] ?? '') }}</textarea>
                             @error('service_notes')
                                 <span class="invalid-feedback d-block" role="alert">
@@ -175,7 +175,7 @@
 
             <aside class="booking-right-column">
                 @include('pages.booking-service.partials.service-guide-card')
-                @include('pages.booking-service.partials.support-card')
+                {{-- @include('pages.booking-service.partials.support-card') --}}
             </aside>
         </div>
     </div>

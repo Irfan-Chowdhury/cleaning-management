@@ -10,7 +10,7 @@ class WeeklyScheduleSeeder extends Seeder
 {
     /**
      * // php artisan db:seed --class=WeeklyScheduleSeeder
-     * Seed weekly schedule with five slots for every weekday.
+     *
      */
     public function run(): void
     {
