@@ -11,6 +11,7 @@ use App\Models\WalletTransaction;
 use App\Notifications\ReferralInviteNotification;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -446,7 +447,8 @@ class ReferralService
             ];
         }
 
-        // 3. Save invitation record in referrals table
+        // 3. Save invitation record and dispatch email inside a database transaction
+        DB::beginTransaction();
         try {
             $senderCode = $sender->referral_code ?: strtoupper(($sender->first_name ?: 'REF') . $sender->id);
             Referral::updateOrCreate(
@@ -460,21 +462,19 @@ class ReferralService
                     'status'          => 'invited',
                 ]
             );
-        } catch (Throwable $e) {
-            Log::error('Failed to save referral invitation record: ' . $e->getMessage());
-        }
 
-        // 4. Dispatch professional referral email notification to the recipient
-        try {
             Notification::route('mail', trim($recipientEmail))
                 ->notify(new ReferralInviteNotification($sender, $customMessage));
+
+            DB::commit();
 
             return [
                 'success' => true,
                 'message' => 'Referral invitation sent successfully to ' . trim($recipientEmail) . '!',
             ];
         } catch (Throwable $e) {
-            Log::error('Failed to send referral email invitation: ' . $e->getMessage());
+            DB::rollBack();
+            Log::error('Failed to process referral invitation or send email: ' . $e->getMessage());
 
             return [
                 'success' => false,
