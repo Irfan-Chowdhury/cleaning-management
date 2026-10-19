@@ -41,7 +41,8 @@
 
         $subtotal = (float) ($latestBooking->subtotal > 0 ? $latestBooking->subtotal : $latestBooking->total_amount);
         $taxableAmount = max(0, $subtotal - $appliedDiscount);
-        $gstAmount = (float) ($latestBooking->gst_amount ?? round($taxableAmount * 0.10, 2));
+        // $gstAmount = (float) ($latestBooking->gst_amount ?? round($taxableAmount * 0.10, 2));
+        $gstAmount = (float) round($taxableAmount * 0.10, 2);
         $displayTotal = $taxableAmount + $gstAmount;
     @endphp
 

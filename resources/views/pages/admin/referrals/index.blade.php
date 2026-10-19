@@ -41,7 +41,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($referrals as $referral)
+                        @foreach ($referrals as $referral)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>
@@ -79,14 +79,7 @@
                                     <strong class="text-primary">{{ $referral->booking_service }}</strong>
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="text-center py-4 text-muted">
-                                    <i class="fas fa-user-friends fa-2x mb-2 d-block" aria-hidden="true"></i>
-                                    No referrals found.
-                                </td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -107,6 +100,8 @@
                 language: {
                     search: 'Search referrals:',
                     lengthMenu: 'Show _MENU_ entries',
+                    emptyTable: '<div class="text-center py-4 text-muted"><i class="fas fa-user-friends fa-2x mb-2 d-block" aria-hidden="true"></i>No referrals found.</div>',
+                    zeroRecords: '<div class="text-center py-4 text-muted"><i class="fas fa-search fa-2x mb-2 d-block" aria-hidden="true"></i>No matching referrals found.</div>'
                 }
             });
         });

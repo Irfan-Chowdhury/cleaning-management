@@ -331,7 +331,7 @@ class ReferralService
             return !empty($emailToCompare) && in_array($emailToCompare, $existingEmails);
         })->map(function ($ref) {
             $referredUser = $ref->referredUser;
-            
+
             // Explicitly fetch recipient_email for invited and signed_up statuses
             $email = !empty($ref->recipient_email) ? trim($ref->recipient_email) : ($referredUser?->email ?: '');
 
@@ -378,24 +378,6 @@ class ReferralService
             ->where('referal_code', '!=', '')
             ->latest()
             ->get();
-
-        if ($referralBookings->isEmpty()) {
-            return collect([
-                (object)[
-                    'id'              => 1,
-                    'referrer_name'   => 'John Doe',
-                    'referrer_email'  => 'john@example.com',
-                    'referrer_avatar' => 'https://ui-avatars.com/api/?name=John+Doe&background=0D8ABC&color=fff&size=128',
-                    'referred_name'   => 'Mary Jane',
-                    'referred_email'  => 'mary@example.com',
-                    'referred_avatar' => 'https://ui-avatars.com/api/?name=Mary+Jane&background=9c36b5&color=fff&size=128',
-                    'referral_code'   => 'REF-JOHN25',
-                    'reward_amount'   => 25.00,
-                    'booking_service' => 'Deep Home Cleaning',
-                    'created_at'      => '2026-08-15 10:30:00',
-                ],
-            ]);
-        }
 
         return $referralBookings->map(function ($booking) use ($configuredReward) {
             $referredUser = $booking->user;
@@ -505,7 +487,7 @@ class ReferralService
         $completedBookingCount = WalletTransaction::where('user_id', $user->id)
             ->where('source', 'referral_bonus')
             ->count();
-        
+
         $totalRewards = (float) WalletTransaction::where('user_id', $user->id)
             ->where('source', 'referral_bonus')
             ->sum('amount');
