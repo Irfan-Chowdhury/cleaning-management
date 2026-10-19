@@ -79,22 +79,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile', [ProfileController::class, 'update'])->name('customer.profile.update');
 });
 
-// Booking Wizard Routes (Accessible by both Admin & Customer)
-Route::middleware('auth')->prefix('booking-service')->group(function () {
-    Route::get('/create', [BookingServiceController::class, 'create'])->name('booking-service.create');
-    Route::post('/step-1', [BookingServiceController::class, 'storeStep1'])->name('booking-service.store-step-1');
-    Route::get('/questionnaire/{service}', [BookingServiceController::class, 'questionnaire'])->name('booking-service.questionnaire');
-    Route::get('/date-time', [BookingServiceController::class, 'dateTime'])->name('booking-service.date-time');
-    Route::post('/step-2', [BookingServiceController::class, 'storeStep2'])->name('booking-service.store-step-2');
-    Route::get('/slots-for-date', [BookingServiceController::class, 'slotsForDate'])->name('booking-service.slots-for-date');
-    Route::get('/your-details', [BookingServiceController::class, 'yourDetails'])->name('booking-service.your-details');
-    Route::post('/step-3', [BookingServiceController::class, 'storeStep3'])->name('booking-service.store-step-3');
-    Route::get('/review-confirm', [BookingServiceController::class, 'step4ReviewConfirm'])->name('booking-service.review-confirm');
-    Route::post('/confirm', [BookingServiceController::class, 'confirmBooking'])->name('booking-service.confirm');
-    Route::post('/apply-promo', [BookingServiceController::class, 'applyPromo'])->name('booking-service.apply-promo');
-    Route::post('/remove-promo', [BookingServiceController::class, 'removePromo'])->name('booking-service.remove-promo');
-});
-
 // Admin Protected Routes
 Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::get('/admin-dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');

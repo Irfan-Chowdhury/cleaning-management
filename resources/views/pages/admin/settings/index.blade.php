@@ -75,11 +75,11 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <label for="currency">Currency</label>
                         <input type="text" class="form-control text-uppercase" id="currency" name="currency"
                                value="{{ old('currency', $settings->currency) }}" placeholder="USD" maxlength="3">
-                    </div>
+                    </div> --}}
 
                     <div class="form-group settings-logo-field">
                         <label for="company_logo">Company Logo</label>
