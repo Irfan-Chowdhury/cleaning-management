@@ -472,52 +472,6 @@
             </div>
         @endif
 
-        <!-- Space Photos / Uploaded Images Section -->
-        {{--
-            @if (!empty($booking->images) && $booking->images->count() > 0)
-                <div style="margin-top: 20px; margin-bottom: 25px;">
-                    <div class="section-heading" style="font-size: 12px; font-weight: 700; color: #2563eb; text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">
-                        Space Photos / Uploaded Images ({{ $booking->images->count() }})
-                    </div>
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <tr>
-                            @foreach ($booking->images as $index => $img)
-                                @php
-                                    $rawImgPath = $img->image_path;
-                                    $fullPath = public_path('public/' . $rawImgPath);
-
-                                    if (!file_exists($fullPath)) {
-                                        $fullPath = public_path($rawImgPath);
-                                    }
-
-                                    $imgBase64 = null;
-
-                                    if (file_exists($fullPath) && is_file($fullPath)) {
-                                        $mime = mime_content_type($fullPath) ?: 'image/jpeg';
-                                        $imgBase64 = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($fullPath));
-                                    }
-                                @endphp
-
-                                @if ($imgBase64)
-                                    <td style="width: 33.33%; padding: 6px; text-align: center; vertical-align: top;">
-                                        <div style="border: 1px solid #cbd5e1; padding: 4px; background: #ffffff; border-radius: 6px;">
-                                            <img src="{{ $imgBase64 }}"
-                                                style="max-width: 100%; max-height: 120px; object-fit: cover; border-radius: 4px;"
-                                                alt="Uploaded Photo">
-                                        </div>
-                                    </td>
-
-                                    @if (($index + 1) % 3 === 0 && !$loop->last)
-                                        </tr><tr>
-                                    @endif
-                                @endif
-                            @endforeach
-                        </tr>
-                    </table>
-                </div>
-            @endif
-        --}}
-
         <!-- Summary & Totals -->
         <div class="summary-wrapper">
             <table class="summary-table">
@@ -600,7 +554,7 @@
                                 <li><span>Cleaning is carried out overnight, with a start time between 12am and 6am each week, subject to site access being arranged.</span></li>
                                 <li><span>All cleaning products and equipment are supplied by Dust2Glow.</span></li>
                                 <li><span>Prices are per visit and cover the scope above only. Additional work is quoted separately.</span></li>
-                                <li><span>Payment is due within 7 days from invoice date.</span></li>
+                                <li><span>Late Payment Terms: Payment is due within 7 days of the invoice date. Any amount remaining unpaid after 14 days from the invoice date will incur interest at 8.35% per annum (the current NSW court pre-judgment interest rate), calculated daily as simple interest on the outstanding balance until paid in full.</span></li>
                                 <li><span>For any questions, please contact us at info@dust2glowcleaning.com.au or call 0426 003 944.</span></li>
                             </ul>
                         </div>
