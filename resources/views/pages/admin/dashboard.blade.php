@@ -29,9 +29,6 @@
                 <p>Track bookings, customers, credits, referrals, service availability and payment health.</p>
             </div>
             <div class="admin-dashboard-actions">
-                <a href="{{ route('booking-service.create') }}" class="btn btn-outline-primary">
-                    <i class="fas fa-calendar-plus" aria-hidden="true"></i> New Booking
-                </a>
                 <a href="{{ route('bookings.index') }}" class="btn btn-primary">
                     <i class="fas fa-tasks" aria-hidden="true"></i> Manage Bookings
                 </a>
