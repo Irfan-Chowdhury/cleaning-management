@@ -36,8 +36,9 @@
             return savedQuestions[questionId] !== undefined ? savedQuestions[questionId] : null;
         }
 
-        function renderSelect(question, savedValue) {
-            var html = '<select class="form-control" name="' + fieldName(question) + '"' + (question.required ? ' required' : '') + '>';
+        function renderSelect(question, savedValue, hasError) {
+            var errorClass = hasError ? ' is-invalid' : '';
+            var html = '<select class="form-control' + errorClass + '" name="' + fieldName(question) + '"' + (question.required ? ' required' : '') + '>';
 
             html += '<option value="">Please Choose...</option>';
             $.each(question.options, function (index, option) {
@@ -48,9 +49,10 @@
             return html + '</select>';
         }
 
-        function renderCheckboxes(question, savedValue) {
-            var html = '<div class="row booking-checkbox-grid">';
+        function renderCheckboxes(question, savedValue, hasError) {
             var savedArray = Array.isArray(savedValue) ? savedValue : (savedValue ? [savedValue] : []);
+            var requiredAttr = question.required ? ' data-required="true"' : '';
+            var html = '<div class="row booking-checkbox-grid' + (hasError ? ' is-invalid-grid' : '') + '"' + requiredAttr + ' data-question-id="' + question.id + '">';
 
             $.each(question.options, function (index, option) {
                 var id = 'question_' + question.id + '_option_' + option.id;
@@ -68,8 +70,8 @@
             return html + '</div>';
         }
 
-        function renderRadios(question, savedValue) {
-            var html = '<div class="row booking-checkbox-grid">';
+        function renderRadios(question, savedValue, hasError) {
+            var html = '<div class="row booking-checkbox-grid' + (hasError ? ' is-invalid-grid' : '') + '">';
 
             $.each(question.options, function (index, option) {
                 var id = 'question_' + question.id + '_option_' + option.id;
@@ -78,7 +80,7 @@
                 html += '' +
                     '<div class="col-sm-6 col-lg-4">' +
                         '<div class="custom-control custom-radio">' +
-                            '<input type="radio" class="custom-control-input" id="' + id + '" name="' + fieldName(question) + '" value="' + escapeHtml(option.label) + '"' + (question.required ? ' required' : '') + checked + '>' +
+                            '<input type="radio" class="custom-control-input' + (hasError ? ' is-invalid' : '') + '" id="' + id + '" name="' + fieldName(question) + '" value="' + escapeHtml(option.label) + '"' + (question.required ? ' required' : '') + checked + '>' +
                             '<label class="custom-control-label" for="' + id + '">' + escapeHtml(option.label) + '</label>' +
                         '</div>' +
                     '</div>';
@@ -87,40 +89,42 @@
             return html + '</div>';
         }
 
-        function renderQuestionField(question, savedValue) {
+        function renderQuestionField(question, savedValue, hasError) {
             var fieldType = (question.field_type || '').toLowerCase();
             var valStr = savedValue ? escapeHtml(savedValue) : '';
+            var errorClass = hasError ? ' is-invalid' : '';
 
             if (fieldType === 'select' || fieldType === 'dropdown') {
-                return renderSelect(question, savedValue);
+                return renderSelect(question, savedValue, hasError);
             }
 
             if (fieldType === 'checkbox') {
-                return renderCheckboxes(question, savedValue);
+                return renderCheckboxes(question, savedValue, hasError);
             }
 
             if (fieldType === 'radio') {
-                return renderRadios(question, savedValue);
+                return renderRadios(question, savedValue, hasError);
             }
 
             if (fieldType === 'textarea') {
-                return '<textarea class="form-control" name="' + fieldName(question) + '" rows="3"' + (question.required ? ' required' : '') + '>' + valStr + '</textarea>';
+                return '<textarea class="form-control' + errorClass + '" name="' + fieldName(question) + '" rows="3"' + (question.required ? ' required' : '') + '>' + valStr + '</textarea>';
             }
 
             if (fieldType === 'number') {
-                return '<input type="number" class="form-control" name="' + fieldName(question) + '" value="' + valStr + '"' + (question.required ? ' required' : '') + '>';
+                return '<input type="number" class="form-control' + errorClass + '" name="' + fieldName(question) + '" value="' + valStr + '"' + (question.required ? ' required' : '') + '>';
             }
 
             if (fieldType === 'date') {
-                return '<input type="date" class="form-control" name="' + fieldName(question) + '" value="' + valStr + '"' + (question.required ? ' required' : '') + '>';
+                return '<input type="date" class="form-control' + errorClass + '" name="' + fieldName(question) + '" value="' + valStr + '"' + (question.required ? ' required' : '') + '>';
             }
 
-            return '<input type="text" class="form-control" name="' + fieldName(question) + '" value="' + valStr + '"' + (question.required ? ' required' : '') + '>';
+            return '<input type="text" class="form-control' + errorClass + '" name="' + fieldName(question) + '" value="' + valStr + '"' + (question.required ? ' required' : '') + '>';
         }
 
         function renderQuestionnaire(response) {
             var $container = $('#booking-questionnaire');
             var savedQuestions = $container.data('saved-questions') || {};
+            var questionErrors = $container.data('question-errors') || {};
             var questions = response.questions || [];
             var html = '';
 
@@ -142,19 +146,88 @@
 
             $.each(questions, function (index, question) {
                 var savedValue = getSavedValue(question.id, savedQuestions);
+                var errorKey = 'questions.' + question.id;
+                var questionError = null;
+                if (questionErrors && questionErrors[errorKey]) {
+                    questionError = Array.isArray(questionErrors[errorKey]) ? questionErrors[errorKey][0] : questionErrors[errorKey];
+                }
+                var hasError = !!questionError;
+
                 html += '' +
-                    '<div class="booking-question-item">' +
+                    '<div class="booking-question-item' + (hasError ? ' has-error' : '') + '" data-question-id="' + question.id + '">' +
                         '<label>' +
                             '<span class="booking-question-number">' + (question.sort_order || (index + 1)) + '</span>' +
                             escapeHtml(question.title) +
-                            (question.required ? ' <span>*</span>' : '') +
+                            (question.required ? ' <span class="text-danger booking-question-required-star" style="color: #dc3545;">*</span>' : '') +
                         '</label>' +
-                        renderQuestionField(question, savedValue) +
-                    '</div>';
+                        renderQuestionField(question, savedValue, hasError);
+
+                if (hasError) {
+                    html += '<span class="invalid-feedback d-block mt-1"><strong>' + escapeHtml(questionError) + '</strong></span>';
+                }
+
+                html += '</div>';
             });
 
             $container.html(html);
         }
+
+        // Real-time error dismissal when user interacts with question fields
+        $(document).on('change input', '#booking-questionnaire input, #booking-questionnaire select, #booking-questionnaire textarea', function () {
+            var $field = $(this);
+            var $item = $field.closest('.booking-question-item');
+            var $grid = $field.closest('.booking-checkbox-grid');
+
+            if ($grid.length && $grid.data('required')) {
+                if ($grid.find('input[type="checkbox"]:checked').length > 0) {
+                    $grid.removeClass('is-invalid-grid');
+                    $item.find('.invalid-feedback').remove();
+                }
+            } else {
+                if ($field.val()) {
+                    $field.removeClass('is-invalid');
+                    $item.find('.invalid-feedback').remove();
+                }
+            }
+        });
+
+        // Client-side validation on step 1 form submission
+        $('#booking-step1-form').on('submit', function (e) {
+            var hasValidationError = false;
+            var $firstInvalidElement = null;
+
+            // Validate required checkbox groups
+            $('#booking-questionnaire .booking-checkbox-grid[data-required="true"]').each(function () {
+                var $grid = $(this);
+                var $item = $grid.closest('.booking-question-item');
+                var checkedCount = $grid.find('input[type="checkbox"]:checked').length;
+
+                if (checkedCount === 0) {
+                    hasValidationError = true;
+                    $grid.addClass('is-invalid-grid');
+                    if ($item.find('.checkbox-group-error').length === 0) {
+                        $item.find('.invalid-feedback').remove();
+                        $item.append('<span class="invalid-feedback d-block checkbox-group-error mt-1"><strong>This question requires at least one selection.</strong></span>');
+                    }
+                    if (!$firstInvalidElement) {
+                        $firstInvalidElement = $item;
+                    }
+                } else {
+                    $grid.removeClass('is-invalid-grid');
+                    $item.find('.checkbox-group-error').remove();
+                }
+            });
+
+            if (hasValidationError) {
+                e.preventDefault();
+                if ($firstInvalidElement && $firstInvalidElement.length) {
+                    $('html, body').animate({
+                        scrollTop: $firstInvalidElement.offset().top - 100
+                    }, 300);
+                }
+                return false;
+            }
+        });
 
         function updateServiceGuideCard(serviceId) {
             var $card = $('#service-guide-card');

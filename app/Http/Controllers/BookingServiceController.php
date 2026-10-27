@@ -14,6 +14,7 @@ use App\Models\Holiday;
 use App\Models\Promotion;
 use App\Models\ScheduleSlot;
 use App\Models\Service;
+use App\Models\ServiceQuestion;
 use App\Models\Setting;
 use App\Models\User;
 use App\Models\WalletTransaction;
@@ -62,6 +63,31 @@ class BookingServiceController extends Controller
     public function storeStep1(BookingStep1Request $request): RedirectResponse
     {
         $validated = $request->validated();
+        $validated['questions'] = $request->input('questions', []);
+
+        // Server-side validation for required questions
+        $serviceId = $validated['service_id'] ?? null;
+        if ($serviceId) {
+            $requiredQuestions = ServiceQuestion::where('service_id', $serviceId)
+                ->where('required', true)
+                ->orderBy('sort_order')
+                ->get();
+
+            $questionErrors = [];
+            foreach ($requiredQuestions as $question) {
+                $answer = $request->input("questions.{$question->id}");
+                if ($answer === null || $answer === '' || (is_array($answer) && count($answer) === 0)) {
+                    $questionErrors["questions.{$question->id}"] = "The '{$question->title}' field is required.";
+                }
+            }
+
+            if (!empty($questionErrors)) {
+                return redirect()->back()
+                    ->withErrors($questionErrors)
+                    ->withInput();
+            }
+        }
+
         $existingStep1 = $this->bookingSessionService->getStep1Data();
         $existingImages = $existingStep1['images'] ?? [];
 

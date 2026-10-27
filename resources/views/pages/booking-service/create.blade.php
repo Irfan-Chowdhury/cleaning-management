@@ -47,6 +47,18 @@
             background: #b91c1c;
             transform: scale(1.15);
         }
+        .booking-question-item label span.text-danger,
+        .booking-question-required-star {
+            color: #dc3545 !important;
+            font-weight: 700;
+            margin-left: 3px;
+        }
+        .booking-checkbox-grid.is-invalid-grid {
+            padding: 8px 10px 2px 10px;
+            background: #fff5f5;
+            border: 1px dashed #dc3545;
+            border-radius: 8px;
+        }
     </style>
 @endpush
 
@@ -63,7 +75,7 @@
                         <p>Tell us what you need and how often.</p>
                     </div>
 
-                    <form action="{{ route('booking-service.store-step-1') }}" method="POST" enctype="multipart/form-data">
+                    <form id="booking-step1-form" action="{{ route('booking-service.store-step-1') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <div class="form-group booking-field">
@@ -90,10 +102,29 @@
                             @enderror
                         </div>
 
+                        @if ($errors->has('questions.*'))
+                            <div class="alert alert-danger mb-3 p-3 rounded-lg" style="background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b;">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-exclamation-circle mr-2" style="font-size: 18px;"></i>
+                                    <div>
+                                        <strong>Please answer all required questions marked with <span class="text-danger font-weight-bold">*</span>:</strong>
+                                        <ul class="mb-0 mt-1 pl-3 small">
+                                            @foreach ($errors->get('questions.*') as $errArray)
+                                                @foreach ($errArray as $err)
+                                                    <li>{{ $err }}</li>
+                                                @endforeach
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
                         <div id="booking-questionnaire"
                              class="booking-questionnaire"
                              data-empty-text="Select a service to load related questions."
-                             data-saved-questions='@json($savedQuestions)'>
+                             data-saved-questions='@json($savedQuestions)'
+                             data-question-errors='@json($errors->get("questions.*"))'>
                             <div class="booking-questionnaire-empty">
                                 <i class="far fa-list-alt" aria-hidden="true"></i>
                                 <span>Select a service to load related questions.</span>

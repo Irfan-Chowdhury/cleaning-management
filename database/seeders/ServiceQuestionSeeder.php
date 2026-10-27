@@ -93,7 +93,7 @@ class ServiceQuestionSeeder extends Seeder
                     'service_id' => $serviceId,
                     'title' => $title,
                     'field_type' => $fieldType,
-                    'required' => false,
+                    'required' => $sortOrder < 3,
                     'sort_order' => $sortOrder + 1,
                 ];
 
