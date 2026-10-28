@@ -21,6 +21,7 @@ use App\Models\WalletTransaction;
 use App\Models\WeeklySchedule;
 use App\Services\BookingService;
 use App\Services\BookingSessionService;
+use App\Services\CustomerBookingService;
 use App\Services\ImageService;
 use App\Services\PromotionDiscountService;
 use App\Services\ReferralService;
@@ -37,18 +38,21 @@ class BookingServiceController extends Controller
     protected BookingSessionService $bookingSessionService;
     protected BookingService $bookingService;
     protected ImageService $imageService;
+    protected CustomerBookingService $customerBookingService;
 
     public function __construct(
         BookingSessionService $bookingSessionService,
         BookingService $bookingService,
-        ImageService $imageService
+        ImageService $imageService,
+        CustomerBookingService $customerBookingService
     ) {
         $this->bookingSessionService = $bookingSessionService;
         $this->bookingService = $bookingService;
         $this->imageService = $imageService;
+        $this->customerBookingService = $customerBookingService;
     }
 
-    public function create(\Illuminate\Http\Request $request)
+    public function create(Request $request)
     {
         $services = Service::where('status', 'active')->orderBy('name')->get();
         $step1Data = $this->bookingSessionService->getStep1Data();
@@ -65,38 +69,23 @@ class BookingServiceController extends Controller
         $validated = $request->validated();
         $validated['questions'] = $request->input('questions', []);
 
-        // Server-side validation for required questions
-        $serviceId = $validated['service_id'] ?? null;
-        if ($serviceId) {
-            $requiredQuestions = ServiceQuestion::where('service_id', $serviceId)
-                ->where('required', true)
-                ->orderBy('sort_order')
-                ->get();
-
-            $questionErrors = [];
-            foreach ($requiredQuestions as $question) {
-                $answer = $request->input("questions.{$question->id}");
-                if ($answer === null || $answer === '' || (is_array($answer) && count($answer) === 0)) {
-                    $questionErrors["questions.{$question->id}"] = "The '{$question->title}' field is required.";
-                }
-            }
-
-            if (!empty($questionErrors)) {
-                return redirect()->back()
-                    ->withErrors($questionErrors)
-                    ->withInput();
-            }
-        }
-
-        $existingStep1 = $this->bookingSessionService->getStep1Data();
-        $existingImages = $existingStep1['images'] ?? [];
-
-        $validated['images'] = $this->imageService->uploadTemporaryBookingImages(
-            $request->file('images'),
-            $existingImages
+        // Validate service questions & allowed options via service class
+        $questionErrors = $this->customerBookingService->validateServiceQuestions(
+            $validated['service_id'] ?? null,
+            $validated['questions']
         );
 
-        $this->bookingSessionService->saveStep1($validated);
+        if (!empty($questionErrors)) {
+            return redirect()->back()
+                ->withErrors($questionErrors)
+                ->withInput();
+        }
+
+        // Coordinate step 1 business logic (image handling & session storage)
+        $this->customerBookingService->processStep1(
+            $validated,
+            $request->file('images')
+        );
 
         return redirect()->route('booking-service.date-time');
     }

@@ -3,7 +3,9 @@
 namespace App\Http\Requests;
 
 use App\Models\ServiceQuestion;
+use App\Services\CustomerBookingService;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 class BookingStep1Request extends FormRequest
 {
@@ -80,5 +82,26 @@ class BookingStep1Request extends FormRequest
         }
 
         return $messages;
+    }
+
+    /**
+     * Configure the validator instance for deep answer validation against question_options table.
+     * Delegates validation to CustomerBookingService.
+     */
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator) {
+            $serviceId = $this->input('service_id');
+            $submittedQuestions = $this->input('questions');
+
+            if ($serviceId && is_array($submittedQuestions) && !empty($submittedQuestions)) {
+                $customerBookingService = app(CustomerBookingService::class);
+                $errors = $customerBookingService->validateServiceQuestions($serviceId, $submittedQuestions);
+
+                foreach ($errors as $field => $message) {
+                    $validator->errors()->add($field, $message);
+                }
+            }
+        });
     }
 }
