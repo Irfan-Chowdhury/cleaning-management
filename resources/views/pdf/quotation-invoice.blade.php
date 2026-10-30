@@ -244,12 +244,20 @@
         }
 
         .bottom-cell {
-            width: 48.5%;
+            vertical-align: top;
             padding: 0;
+        }
+
+        .bottom-cell-payment {
+            width: 40%;
         }
 
         .bottom-spacer {
             width: 3%;
+        }
+
+        .bottom-cell-terms {
+            width: 57%;
         }
 
         .card-box {
@@ -470,7 +478,7 @@
 
     <table class="bottom-table">
         <tr>
-            <td class="bottom-cell">
+            <td class="bottom-cell bottom-cell-payment">
                 <div class="card-box">
                     <div class="block-header">Payment Details</div>
                     <div class="block-content">
@@ -485,16 +493,15 @@
                 </div>
             </td>
             <td class="bottom-spacer"></td>
-            <td class="bottom-cell">
+            <td class="bottom-cell bottom-cell-terms">
                 <div class="card-box">
                     <div class="block-header">Terms &amp; Notes</div>
                     <div class="block-content">
                         <ul class="terms-list">
-                            <li><span>Cleaning is carried out overnight, with a start time between 12am and 6am each week, subject to site access being arranged.</span></li>
-                            <li><span>All cleaning products and equipment are supplied by Dust2Glow.</span></li>
-                            <li><span>Prices are per visit and cover the scope above only. Additional work is quoted separately.</span></li>
-                            <li><span>Late Payment Terms: Payment is due within 7 days of the invoice date. Any amount remaining unpaid after 14 days from the invoice date will incur interest at 8.35% per annum (the current NSW court pre-judgment interest rate), calculated daily as simple interest on the outstanding balance until paid in full.</span></li>
-                            <li><span>For any questions, please contact us at info@dust2glowcleaning.com.au or call 0426 003 944.</span></li>
+                            <li><span><strong>Service Scope:</strong> Prices are per visit and cover the agreed scope of work. Additional work may incur extra charges.</span></li>
+                            <li><span><strong>Late Payment:</strong> Payment is due within 7 days of the invoice date. Late fees or interest will apply if payment remains unpaid 14 days after the invoice date.</span></li>
+                            <li><span><strong>Complaints:</strong> Any concerns regarding the cleaning service must be reported within 24 hours of completion.</span></li>
+                            <li><span><strong>Contact Information:</strong> For enquiries, contact <i>info@dust2glowcleaning.com.au</i> or call <i>0426 003 944</i>.</span></li>
                         </ul>
                     </div>
                 </div>
