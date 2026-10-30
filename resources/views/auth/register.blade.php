@@ -157,6 +157,7 @@
     </style>
 </head>
 <body>
+    @include('components.under-construction-banner')
     <main class="auth-page d-flex align-items-center justify-content-center">
         <section class="auth-card">
             <div class="auth-brand">
