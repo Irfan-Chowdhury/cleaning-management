@@ -424,10 +424,10 @@
         <div class="terms-notes-heading">Terms &amp; Notes</div>
         <div class="terms-notes-content">
             <ul class="terms-notes-list">
-                <li><span><strong>Service Scope:</strong> Prices are per visit and cover the agreed scope of work. Additional work may incur extra charges.</span></li>
-                <li><span><strong>Late Payment:</strong> Payment is due within 7 days of the invoice date. Late fees or interest will apply if payment remains unpaid 14 days after the invoice date.</span></li>
-                <li><span><strong>Complaints:</strong> Any concerns regarding the cleaning service must be reported within 24 hours of completion.</span></li>
-                <li><span><strong>Contact Information:</strong> For enquiries, contact <i>info@dust2glowcleaning.com.au</i> or call <i>0426 003 944</i>.</span></li>
+                <li><span><strong>Scope of Work:</strong> The quoted price covers only the cleaning services listed in this quotation.</span></li>
+                <li><span><strong>Additional Work:</strong> Any extra services or changes to the agreed scope will be quoted separately and require customer approval before work begins.</span></li>
+                <li><span><strong>Quotation Validity:</strong> This quotation is valid for 7 days from the date of issue.</span></li>
+                <li><span><strong>Acceptance:</strong> Work will be scheduled once the quotation has been accepted and the booking confirmed.</span></li>
             </ul>
         </div>
     </div>
