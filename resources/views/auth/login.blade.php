@@ -103,12 +103,13 @@
             position: relative;
         }
 
-        .input-icon i {
+        .input-icon > i {
             position: absolute;
             top: 50%;
             left: 14px;
             color: #0866e8;
             transform: translateY(-50%);
+            z-index: 2;
         }
 
         .input-icon .form-control {
@@ -116,6 +117,40 @@
             padding-left: 42px;
             border-color: #e1e7f0;
             border-radius: 8px;
+        }
+
+        .input-icon .form-control.has-toggle {
+            padding-right: 44px;
+        }
+
+        .input-icon .form-control.has-toggle.is-invalid {
+            background-image: none;
+        }
+
+        .password-toggle-btn {
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            padding: 6px;
+            color: #667085;
+            cursor: pointer;
+            z-index: 3;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            line-height: 1;
+            transition: color 0.15s ease-in-out;
+        }
+
+        .password-toggle-btn:hover,
+        .password-toggle-btn:focus {
+            color: #0866e8;
+            outline: none;
+            box-shadow: none;
         }
 
         .form-control:focus {
@@ -204,7 +239,10 @@
                         </div>
                         <div class="input-icon">
                             <i class="fas fa-lock" aria-hidden="true"></i>
-                            <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Enter your password">
+                            <input type="password" class="form-control has-toggle @error('password') is-invalid @enderror" id="password" name="password" placeholder="Enter your password">
+                            <button type="button" class="password-toggle-btn" id="togglePassword" aria-label="Show password" tabindex="-1">
+                                <i class="far fa-eye" id="togglePasswordIcon" aria-hidden="true"></i>
+                            </button>
                             @error('password')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -269,5 +307,29 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const togglePasswordBtn = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('togglePasswordIcon');
+
+            if (togglePasswordBtn && passwordInput && toggleIcon) {
+                togglePasswordBtn.addEventListener('click', function () {
+                    const isPassword = passwordInput.getAttribute('type') === 'password';
+                    passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+
+                    if (isPassword) {
+                        toggleIcon.classList.remove('fa-eye');
+                        toggleIcon.classList.add('fa-eye-slash');
+                        togglePasswordBtn.setAttribute('aria-label', 'Hide password');
+                    } else {
+                        toggleIcon.classList.remove('fa-eye-slash');
+                        toggleIcon.classList.add('fa-eye');
+                        togglePasswordBtn.setAttribute('aria-label', 'Show password');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
