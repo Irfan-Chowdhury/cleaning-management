@@ -132,7 +132,7 @@
                     <h1 class="mb-0 font-weight-bold" style="font-size: 22px; color: #0f172a;">Booking Details</h1>
                     <span class="booking-id-badge ml-2">BK-{{ sprintf('%03d', $booking->id) }}</span>
                 </div>
-                <p class="text-muted mt-1 mb-0" style="font-size: 12.5px;">Submitted on {{ $booking->created_at ? $booking->created_at->format('F d, Y \a\t g:i A') : 'N/A' }}</p>
+                <p class="text-muted mt-1 mb-0" style="font-size: 12.5px;">Created on {{ $booking->created_at ? $booking->created_at->format('F d, Y \a\t g:i A') : 'N/A' }}</p>
             </div>
             <div class="d-flex align-items-center gap-2">
                 @if ($booking->status_raw === 'completed')

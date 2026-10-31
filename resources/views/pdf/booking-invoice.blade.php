@@ -380,7 +380,7 @@
                 <td style="width: 45%; text-align: right;">
                     <div class="invoice-title">INVOICE</div>
                     <div class="invoice-meta"><strong>Invoice #:</strong> {{ $bookingIdFormatted }}</div>
-                    <div class="invoice-meta"><strong>Date:</strong> {{ $booking->created_at ? $booking->created_at->format('d M Y') : date('d M Y') }}</div>
+                    <div class="invoice-meta"><strong>Date:</strong> {{ $booking->updated_at ? $booking->updated_at->format('d M Y') : date('d M Y') }}</div>
                     <div class="invoice-meta">
                         <span class="badge-status {{ $isPaid ? 'badge-paid' : 'badge-pending' }}">
                             {{ $isPaid ? 'Payment Paid' : 'Payment Pending' }}
