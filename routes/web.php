@@ -111,6 +111,7 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
 
     Route::get('/wallets', [WalletController::class, 'index'])->name('wallets.index');
     Route::get('/wallets/{id}', [WalletController::class, 'show'])->name('wallets.show');
+    Route::get('/quotations/clients', [QuotationController::class, 'clients'])->name('quotations.clients');
     Route::resource('quotations', QuotationController::class)->except('show');
     Route::get('/quotations/{id}/download', [QuotationController::class, 'download'])->name('quotations.download');
 

@@ -105,7 +105,7 @@
         </div>
 
         {{-- ── Section 2: Prepared For ── --}}
-        <div class="quote-section-card">
+        <div class="quote-section-card has-dropdown" style="z-index: 50; overflow: visible;">
             <div class="quote-section-header">
                 <h2 class="quote-section-title">
                     <i class="fas fa-user-circle" aria-hidden="true"></i>
@@ -147,27 +147,31 @@
                     {{-- Right Column: Company Name, Phone, Email --}}
                     <div class="col-12 col-md-6">
                         <div class="form-group">
-                            <label for="company_name">Company Name <span class="text-danger">*</span></label>
+                            <label for="company_name">Company Name <span class="text-muted font-weight-normal">(Optional)</span></label>
                             <input type="text"
                                    class="form-control @error('company_name') is-invalid @enderror"
                                    id="company_name"
                                    name="company_name"
                                    placeholder="Enter company name"
-                                   value="{{ old('company_name', $quotation->company_name ?? '') }}"
-                                   required>
+                                   value="{{ old('company_name', $quotation->company_name ?? '') }}">
                             @error('company_name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="form-group">
                             <label for="phone">Phone <span class="text-danger">*</span></label>
-                            <input type="tel"
-                                   class="form-control @error('phone') is-invalid @enderror"
-                                   id="phone"
-                                   name="phone"
-                                   placeholder="Enter phone number"
-                                   value="{{ old('phone', $quotation->phone ?? '') }}"
-                                   required>
+                            <div class="phone-search-wrapper position-relative">
+                                <input type="tel"
+                                       class="form-control @error('phone') is-invalid @enderror"
+                                       id="phone"
+                                       name="phone"
+                                       placeholder="Enter or search phone number"
+                                       value="{{ old('phone', $quotation->phone ?? '') }}"
+                                       autocomplete="off"
+                                       required>
+                                <span class="phone-search-icon"><i class="fas fa-search text-muted"></i></span>
+                                <div id="phone-search-dropdown" class="phone-autocomplete-dropdown" style="display: none;"></div>
+                            </div>
                             @error('phone')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -344,12 +348,50 @@
             </div>
         </div>
 
+        {{-- ── Section 5: Status (Create Page Only) ── --}}
+        @if (! $isEdit)
+        <div class="quote-section-card">
+            <div class="quote-section-header">
+                <h2 class="quote-section-title">
+                    <i class="fas fa-file-signature" aria-hidden="true"></i>
+                    <span>Status</span>
+                </h2>
+            </div>
+            <div class="quote-section-body py-3">
+                <div class="d-flex align-items-center">
+                    <div class="custom-control custom-radio custom-control-inline mr-4">
+                        <input type="radio"
+                               class="custom-control-input quote-status-radio"
+                               id="status-draft"
+                               name="status"
+                               value="draft"
+                               {{ old('status', 'draft') === 'draft' ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="status-draft">
+                            Draft
+                        </label>
+                    </div>
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio"
+                               class="custom-control-input quote-status-radio"
+                               id="status-invoiced"
+                               name="status"
+                               value="invoiced"
+                               {{ old('status') === 'invoiced' ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="status-invoiced">
+                            Invoiced
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
         {{-- Bottom Action Button --}}
         <div class="quotation-bottom-actions">
             <button type="submit" class="btn btn-primary btn-primary-blue" id="btn-save-pdf"
                     @if ($isEdit) name="action" value="update" @endif>
                 <i class="fas fa-save mr-1" aria-hidden="true"></i>
-                <span>{{ $isEdit ? 'Update & Download PDF' : 'Save & Download PDF' }}</span>
+                <span id="btn-save-label">{{ $isEdit ? 'Update & Download PDF' : (old('status', 'draft') === 'invoiced' ? 'Save & Download Invoiced' : 'Save & Download Draft') }}</span>
             </button>
             @if ($isEdit)
                 <button type="submit"

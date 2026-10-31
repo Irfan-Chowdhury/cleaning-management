@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('quote_date');
             $table->string('abn')->nullable();
             $table->string('contact_person');
-            $table->string('company_name');
+            $table->string('company_name')->nullable();
             $table->text('address');
             $table->string('phone');
             $table->string('email');
