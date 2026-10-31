@@ -84,6 +84,60 @@ class ServiceQuestionSeeder extends Seeder
                 ['What condition is the carpet in?', 'select', ['Lightly Soiled', 'Moderately Soiled', 'Heavily Soiled', 'Not Sure']],
                 ['Any specific treatments needed?', 'checkbox', ['Stain Removal', 'Pet Stains / Odour', 'Deodorising', 'Carpet Protection', 'Other']],
             ],
+            12 => [
+                ['Property / Facility Type?', 'select', ['NDIS Participant Home', 'SIL (Supported Independent Living)', 'Aged Care Facility', 'Retirement Village', 'Home Care Package Client', 'Other']],
+                ['How is your cleaning service funded or arranged?', 'select', ['NDIS Plan-Managed', 'NDIS Self-Managed', 'NDIS Agency-Managed', 'Home Care Package', 'Private (Self-Funded)', 'Arranged Through a Care Provider or Facility']],
+                ['Approximate Property Size?', 'select', ['Under 100 m²', '100–250 m²', '250–500 m²', '500–1,000 m²', '1,000+ m²', 'Not Sure']],
+                ['What would you like cleaned / any special requirements?', 'checkbox', ['Bedrooms', 'Living Areas', 'Kitchen', 'Bathrooms', 'Laundry', 'Common Areas', 'Entire Property', 'Infection Control Disinfection', 'Fragrance-Free Products', 'Other']],
+            ],
+            13 => [
+                ['Gym Type?', 'select', ['Commercial Gym', '24-Hour Gym', 'Fitness Studio', 'Yoga / Pilates Studio', 'Boxing / MMA Gym', 'Other']],
+                ['Approximate Gym Size?', 'select', ['Under 100 m²', '100–250 m²', '250–500 m²', '500–1,000 m²', '1,000+ m²', 'Not Sure']],
+                ['Number of Floors?', 'select', ['1', '2', '3', '4+']],
+                ['What areas need cleaning?', 'checkbox', ['Gym Floor', 'Equipment Sanitising', 'Group Fitness Studios', 'Change Rooms', 'Showers', 'Bathrooms', 'Reception', 'Sauna / Spa', 'Mirrors / Windows', 'Entire Facility', 'Other']],
+            ],
+            14 => [
+                ['Facility Type?', 'select', ['Childcare Centre', 'Preschool', 'Kindergarten', 'Family Day Care', 'Before & After School Care', 'Other']],
+                ['Approximate Facility Size?', 'select', ['Under 250 m²', '250–500 m²', '500–1,000 m²', '1,000–2,500 m²', '2,500+ m²', 'Not Sure']],
+                ['How many rooms?', 'select', ['1–3', '4–6', '7–10', '11+']],
+                ['What areas need cleaning?', 'checkbox', ['Playrooms', 'Sleep Rooms', 'Bathrooms / Nappy Change Areas', 'Kitchen', 'Toys & Equipment Sanitising', 'Outdoor Play Areas', 'Offices', 'Hallways', 'Entire Facility', 'Other']],
+            ],
+            15 => [
+                ['Property Type?', 'select', ['House', 'Apartment', 'Townhouse', 'Commercial', 'Other']],
+                ['How many bathrooms?', 'select', ['1', '2', '3', '4+']],
+                ['What condition is the bathroom in?', 'select', ['Lightly Soiled', 'Moderately Soiled', 'Heavily Soiled', 'Not Sure']],
+                ['What would you like included?', 'checkbox', ['Shower Screen', 'Tiles & Grout', 'Mould Removal', 'Toilet', 'Bath', 'Vanity / Cabinets', 'Mirrors', 'Exhaust Fan', 'Floors', 'Other']],
+            ],
+            16 => [
+                ['Facility Type?', 'select', ['Indoor Sports Centre', 'Recreation Centre', 'Aquatic Centre', 'Stadium', 'Sports Club', 'Other']],
+                ['Approximate Facility Size?', 'select', ['Under 500 m²', '500–1,000 m²', '1,000–2,500 m²', '2,500–5,000 m²', '5,000+ m²', 'Not Sure']],
+                ['How many courts / halls?', 'select', ['1–2', '3–5', '6–10', '11+']],
+                ['What areas need cleaning?', 'checkbox', ['Courts / Sports Floors', 'Grandstand / Seating', 'Change Rooms', 'Bathrooms', 'Showers', 'Canteen / Kiosk', 'Reception', 'Function Rooms', 'Pool Area', 'Entire Facility', 'Other']],
+            ],
+            17 => [
+                ['Kitchen Type?', 'select', ['Restaurant / Café', 'Catering Kitchen', 'Hotel', 'Pub / Bar', 'Food Manufacturing', 'Other']],
+                ['Approximate Kitchen Size?', 'select', ['Under 25 m²', '25–50 m²', '50–100 m²', '100–250 m²', '250+ m²', 'Not Sure']],
+                ['What type of cleaning do you need?', 'select', ['Routine Clean', 'Deep Clean', 'Pre-Audit / Inspection Clean', 'Not Sure']],
+                ['What areas / treatments are needed?', 'checkbox', ['Cooking Equipment', 'Floors & Drains', 'Walls & Ceilings', 'Prep Areas', 'Dishwashing Area', 'Cool Rooms / Freezers', 'Degreasing', 'Entire Kitchen', 'Other']],
+            ],
+            18 => [
+                ['Store Type?', 'select', ['Fashion / Apparel', 'Supermarket', 'Shopping Centre Store', 'Showroom', 'Pharmacy', 'Other']],
+                ['Approximate Store Size?', 'select', ['Under 100 m²', '100–250 m²', '250–500 m²', '500–1,000 m²', '1,000+ m²', 'Not Sure']],
+                ['Number of Floors?', 'select', ['1', '2', '3', '4+']],
+                ['What areas need cleaning?', 'checkbox', ['Sales Floor', 'Shelving / Displays', 'Checkout Area', 'Fitting Rooms', 'Windows / Glass Frontage', 'Storeroom', 'Staff Room', 'Bathrooms', 'Entire Store', 'Other']],
+            ],
+            19 => [
+                ['What type of home do you have?', 'select', ['Single Storey', 'Two Storey', 'Three Storey', 'Four Storey', 'Apartment']],
+                ['How many bedrooms?', 'select', ['1', '2', '3', '4', '5+']],
+                ['How many bathrooms?', 'select', ['1', '2', '3', '4+']],
+                ['Any additional cleaning required?', 'checkbox', ['Windows', 'Oven', 'Fridge', 'Inside Cabinets', 'Laundry', 'Ironing', 'Pet Hair', 'Blinds', 'Balcony', 'Other']],
+            ],
+            20 => [
+                ['What type of home do you have?', 'select', ['Single Storey', 'Two Storey', 'Three Storey', 'Four Storey', 'Apartment']],
+                ['How many bedrooms?', 'select', ['Studio', '1', '2', '3', '4', '5+']],
+                ['Reason for deep clean?', 'select', ['Seasonal', 'First-Time Clean', 'Pre-Sale', 'Move-In', 'Post-Renovation', 'Post-Event', 'Other']],
+                ['What areas need deep cleaning?', 'checkbox', ['Kitchen', 'Bathrooms', 'Bedrooms', 'Living Areas', 'Laundry', 'Floors', 'Walls', 'Windows', 'Ceilings / Fans', 'Inside Appliances', 'Entire Property', 'Other']],
+            ],
         ];
 
         foreach ($services as $serviceId => $serviceQuestions) {
@@ -93,7 +147,7 @@ class ServiceQuestionSeeder extends Seeder
                     'service_id' => $serviceId,
                     'title' => $title,
                     'field_type' => $fieldType,
-                    'required' => false,
+                    'required' => $sortOrder < 3,
                     'sort_order' => $sortOrder + 1,
                 ];
 

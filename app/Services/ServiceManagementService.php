@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Collection;
 class ServiceManagementService
 {
     /**
-     * Get all services ordered by latest created.
+     * Get all services ordered by name ascending.
      */
     public function getAllServices(): Collection
     {
-        return Service::latest()->get();
+        return Service::orderBy('name', 'asc')->get();
     }
 
     /**

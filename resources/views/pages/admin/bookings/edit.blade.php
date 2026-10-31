@@ -82,6 +82,13 @@
             box-shadow: 0 0 0 0.2rem rgba(8, 102, 232, 0.14);
         }
 
+        .booking-input-icon .form-control:disabled {
+            background-color: #f1f5f9;
+            color: #64748b;
+            cursor: not-allowed;
+            border-color: #e2e8f0;
+        }
+
         .customer-details-card {
             background: #ffffff;
             border: 1px solid #e8edf5;
@@ -308,16 +315,17 @@
                     </div>
 
                     <div class="col-md-6 form-group mb-4">
-                        <label for="booking-service">Service <span class="text-danger">*</span></label>
+                        <label for="booking-service">Service</label>
                         <div class="booking-input-icon">
                             <i class="fas fa-broom" aria-hidden="true"></i>
-                            <select class="form-control" id="booking-service" name="service_id" required>
+                            <select class="form-control" id="booking-service" disabled>
                                 @foreach ($services as $service)
                                     <option value="{{ $service->id }}" {{ (old('service_id', $booking->service_id) == $service->id) ? 'selected' : '' }}>
                                         {{ $service->name }}
                                     </option>
                                 @endforeach
                             </select>
+                            <input type="hidden" name="service_id" value="{{ old('service_id', $booking->service_id) }}">
                         </div>
                     </div>
                 </div>

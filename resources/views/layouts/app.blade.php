@@ -21,6 +21,8 @@
         @include('components.sidebar')
 
         <div class="dashboard-main">
+            @include('components.under-construction-banner')
+
             @include('components.header')
 
             <main class="dashboard-content">

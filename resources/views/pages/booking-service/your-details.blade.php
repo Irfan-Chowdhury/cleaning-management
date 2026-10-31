@@ -66,7 +66,6 @@
                                 <p>{{ $accountData['phone'] ?: '+61 412 345 678' }}</p>
                                 <p>{{ $accountData['address'] ?: '25 King St, Sydney NSW 2000, Australia' }}</p>
                             </div>
-                            <a href="#">Edit</a>
                         </div>
 
                         <div class="details-form-grid">

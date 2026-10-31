@@ -10,6 +10,7 @@
                 lengthChange: true,
                 searching: true,
                 ordering: true,
+                order: [[1, 'asc']],
                 responsive: true,
                 autoWidth: false,
                 columnDefs: [

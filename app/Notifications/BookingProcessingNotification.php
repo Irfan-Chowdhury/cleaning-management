@@ -26,8 +26,8 @@ class BookingProcessingNotification extends Notification
 
         return [
             'type'       => 'booking_processing',
-            'title'      => "Booking #{$this->booking->id} In Processing!",
-            'message'    => "Your booking for {$serviceName} is now in processing. Our cleaning team is preparing your service.",
+            'title'      => "Booking #{$this->booking->id} Cleaner Assigned!",
+            'message'    => "Your {$serviceName} booking has been assigned and is being prepared for service.",
             'link'       => route('customer.bookings.show', $this->booking->id),
             'icon'       => 'fas fa-spinner',
             'booking_id' => $this->booking->id,

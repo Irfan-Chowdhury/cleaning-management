@@ -424,11 +424,10 @@
         <div class="terms-notes-heading">Terms &amp; Notes</div>
         <div class="terms-notes-content">
             <ul class="terms-notes-list">
-                <li>Cleaning is carried out overnight, with a start time between 12am and 6am each week, subject to site access being arranged.</li>
-                <li>All cleaning products and equipment are supplied by Dust2Glow.</li>
-                <li>Prices are per visit and cover the scope above only. Additional work is quoted separately.</li>
-                <li>Late Payment Terms: Payment is due within 7 days of the invoice date. Any amount remaining unpaid after 14 days from the invoice date will incur interest at 8.35% per annum (the current NSW court pre-judgment interest rate), calculated daily as simple interest on the outstanding balance until paid in full.</li>
-                <li>For any questions, please contact us at info@dust2glowcleaning.com.au or call 0426 003 944.</li>
+                <li><span><strong>Scope of Work:</strong> The quoted price covers only the cleaning services listed in this quotation.</span></li>
+                <li><span><strong>Additional Work:</strong> Any extra services or changes to the agreed scope will be quoted separately and require customer approval before work begins.</span></li>
+                <li><span><strong>Quotation Validity:</strong> This quotation is valid for 7 days from the date of issue.</span></li>
+                <li><span><strong>Acceptance:</strong> Work will be scheduled once the quotation has been accepted and the booking confirmed.</span></li>
             </ul>
         </div>
     </div>
