@@ -374,10 +374,12 @@
             <td style="width: 60%; padding-right: 12px;">
                 <div class="info-box">
                     <div class="info-box-title">Prepared For</div>
-                    <div class="info-row">
-                        <span class="info-label">Company:</span>
-                        <span class="info-value">{{ $quotation->company_name }}</span>
-                    </div>
+                    @if ($quotation->company_name)
+                        <div class="info-row">
+                            <span class="info-label">Company:</span>
+                            <span class="info-value">{{ $quotation->company_name }}</span>
+                        </div>
+                    @endif
                     <div class="info-row">
                         <span class="info-label">Contact:</span>
                         <span class="info-value">{{ $quotation->contact_person }}</span>

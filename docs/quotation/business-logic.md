@@ -51,7 +51,7 @@ This document details the actual business logic, mathematical algorithms, data v
 ### 2.1 Storage Model
 In the current implementation, **customer information on quotations is completely standalone and denormalized**. The `quotations` table stores customer data directly as plain strings:
 - `contact_person` (varchar 255)
-- `company_name` (varchar 255)
+- `company_name` (varchar 255, nullable)
 - `address` (text / varchar 500)
 - `phone` (varchar 30)
 - `email` (varchar 255)

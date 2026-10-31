@@ -193,7 +193,6 @@ describe('POST /quotations (store)', function () {
         $response->assertSessionHasErrors([
             'quote_date',
             'contact_person',
-            'company_name',
             'address',
             'phone',
             'email',
@@ -201,6 +200,19 @@ describe('POST /quotations (store)', function () {
             'shift_schedule',
             'items',
         ]);
+    });
+
+    it('allows storing and updating quotation with null company_name', function () {
+        $service = app(QuotationService::class);
+        $payload = validQuotationPayload(['company_name' => null]);
+
+        $quotation = $service->store($payload);
+
+        expect($quotation->company_name)->toBeNull();
+
+        $updated = $service->update($quotation, array_merge($payload, ['company_name' => null]));
+
+        expect($updated->company_name)->toBeNull();
     });
 
     it('fails validation when items array is empty', function () {
