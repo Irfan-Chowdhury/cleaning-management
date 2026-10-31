@@ -106,7 +106,7 @@
                         <th>Quote Date</th>
                         <th>Amount</th>
                         <th>Status</th>
-                        <th class="text-center" style="width: 110px;">Actions</th>
+                        <th class="text-center" style="width: 140px;">Actions</th>
                     </tr>
                 </thead>
                 <tbody></tbody>

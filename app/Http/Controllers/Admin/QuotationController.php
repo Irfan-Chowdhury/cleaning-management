@@ -94,6 +94,8 @@ class QuotationController extends Controller
                 })
                 ->addColumn('actions', function (Quotation $quotation) {
                     $editUrl = route('quotations.edit', $quotation->id);
+                    $company = $quotation->company_name ?: $quotation->contact_person;
+                    $contact = $quotation->contact_person;
 
                     return '<div class="quotation-actions">'
                         . '<a href="' . e($editUrl) . '" class="btn btn-sm btn-outline-primary quotation-action-btn" title="Edit Quotation">'
@@ -101,7 +103,16 @@ class QuotationController extends Controller
                         . '<button type="button" class="btn btn-sm btn-outline-danger quotation-action-btn js-quote-delete"'
                         . ' data-id="' . (int) $quotation->id . '" data-url="' . e(route('quotations.destroy', $quotation->id)) . '"'
                         . ' data-number="' . e($quotation->quote_number) . '" title="Delete Quotation">'
-                        . '<i class="fas fa-trash" aria-hidden="true"></i></button></div>';
+                        . '<i class="fas fa-trash" aria-hidden="true"></i></button>'
+                        . '<button type="button" class="btn btn-sm btn-outline-info quotation-action-btn js-quote-duplicate"'
+                        . ' data-id="' . (int) $quotation->id . '"'
+                        . ' data-number="' . e($quotation->quote_number) . '"'
+                        . ' data-company="' . e($company) . '"'
+                        . ' data-contact="' . e($contact) . '"'
+                        . ' data-amount="' . (float) $quotation->total_amount . '"'
+                        . ' data-status="' . e($quotation->status) . '"'
+                        . ' title="Duplicate Quotation">'
+                        . '<i class="fas fa-clone" aria-hidden="true"></i></button></div>';
                 })
                 ->rawColumns(['quote_number_link', 'company_display', 'quote_date_formatted', 'status_display', 'actions'])
                 ->toJson();

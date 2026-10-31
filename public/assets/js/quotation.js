@@ -86,6 +86,142 @@ $(document).ready(function () {
             });
         }
 
+        // Duplicate Quotation via SweetAlert2 (UI dummy simulation)
+        $(document).on('click', '.js-quote-duplicate', function (e) {
+            e.preventDefault();
+            var $btn        = $(this);
+            var $tr         = $btn.closest('tr');
+            var quoteId     = $btn.data('id');
+            var quoteNumber = $btn.data('number') || 'this quotation';
+            var company     = $btn.data('company') || 'Client';
+            var contact     = $btn.data('contact') || '';
+            var amount      = $btn.data('amount') || 0;
+            var status      = ($btn.data('status') || 'draft').toLowerCase();
+            var statusLabel = status === 'invoiced' ? 'Invoiced' : 'Draft';
+            var statusBadge = status === 'invoiced' ? 'status-badge-invoiced' : 'status-badge-draft';
+
+            // Extract contact person from row if not present in dataset
+            if (!contact && $tr.find('.contact-person').length) {
+                contact = $tr.find('.contact-person').text().trim();
+            }
+
+            Swal.fire({
+                title: 'Duplicate Quotation?',
+                html: 'Are you sure you want to duplicate <strong>' + quoteNumber + '</strong>?<br>' +
+                      '<span class="text-muted" style="font-size: 13px;">A new quotation will be created with today\'s date retaining the <strong>' + statusLabel + '</strong> stage.</span>',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#0066FF',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="fas fa-copy mr-1"></i> Yes, duplicate it!',
+                cancelButtonText: 'Cancel'
+            }).then(function (result) {
+                if (!result.isConfirmed) return;
+
+                // Determine next sequential quote number (D2G-XXXX / D2G-XXXXX)
+                var maxNum = 0;
+                $('#quotations-table tbody tr').each(function () {
+                    var rowText = $(this).text();
+                    var match = rowText.match(/D2G-(\d+)/g);
+                    if (match) {
+                        match.forEach(function (m) {
+                            var n = parseInt(m.replace('D2G-', ''), 10);
+                            if (n > maxNum) maxNum = n;
+                        });
+                    }
+                });
+
+                var srcMatch = String(quoteNumber).match(/(\d+)$/);
+                if (srcMatch && srcMatch[1]) {
+                    var srcNum = parseInt(srcMatch[1], 10);
+                    if (srcNum > maxNum) maxNum = srcNum;
+                }
+
+                var nextSeq = maxNum + 1;
+                var padLength = Math.max(4, String(nextSeq).length);
+                var newQuoteNumber = 'D2G-' + String(nextSeq).padStart(padLength, '0');
+
+                // Current date formatted as DD Mon YYYY (e.g. 01 Nov 2026)
+                var today = new Date();
+                var day = String(today.getDate()).padStart(2, '0');
+                var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                var month = monthNames[today.getMonth()];
+                var year = today.getFullYear();
+                var formattedDate = day + ' ' + month + ' ' + year;
+
+                var formattedAmount = '$' + (Number(amount) || 0).toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+
+                // Generate a dummy ID for the duplicated row
+                var newId = (parseInt(quoteId, 10) || 100) + 1000 + Math.floor(Math.random() * 900);
+
+                // Replicate exact existing table cells format matching QuotationController@index
+                var quoteNumberHtml = '<a href="/quotations/' + newId + '/edit" class="quote-number-badge" title="View / Edit Quotation">' +
+                    '<i class="far fa-file-alt" aria-hidden="true"></i>' +
+                    '<span>' + newQuoteNumber + '</span>' +
+                '</a>';
+
+                var companyCellHtml = $tr.find('td:nth-child(2)').html() ||
+                    ('<div class="company-meta-cell">' +
+                        '<span class="company-name">' + company + '</span>' +
+                        (contact ? '<span class="contact-person"><i class="far fa-user mr-1" aria-hidden="true"></i>' + contact + '</span>' : '') +
+                    '</div>');
+
+                var quoteDateHtml = '<div class="quote-date-cell">' +
+                    '<i class="far fa-calendar-alt text-muted" aria-hidden="true"></i>' +
+                    '<span>' + formattedDate + '</span>' +
+                '</div>';
+
+                var actionsHtml = '<div class="quotation-actions">' +
+                    '<a href="/quotations/' + newId + '/edit" class="btn btn-sm btn-outline-primary quotation-action-btn" title="Edit Quotation">' +
+                        '<i class="fas fa-edit" aria-hidden="true"></i>' +
+                    '</a>' +
+                    '<button type="button" class="btn btn-sm btn-outline-danger quotation-action-btn js-quote-delete"' +
+                            ' data-id="' + newId + '" data-url="/quotations/' + newId + '"' +
+                            ' data-number="' + newQuoteNumber + '" title="Delete Quotation">' +
+                        '<i class="fas fa-trash" aria-hidden="true"></i>' +
+                    '</button>' +
+                    '<button type="button" class="btn btn-sm btn-outline-info quotation-action-btn js-quote-duplicate"' +
+                            ' data-id="' + newId + '"' +
+                            ' data-number="' + newQuoteNumber + '"' +
+                            ' data-company="' + company + '"' +
+                            ' data-contact="' + contact + '"' +
+                            ' data-amount="' + amount + '"' +
+                            ' data-status="' + status + '"' +
+                            ' title="Duplicate Quotation">' +
+                        '<i class="fas fa-copy" aria-hidden="true"></i>' +
+                    '</button>' +
+                '</div>';
+
+                var newRowHtml = '<tr class="table-row-highlighted" style="background-color: #f0fdf4; transition: background-color 2.5s ease;">' +
+                    '<td>' + quoteNumberHtml + '</td>' +
+                    '<td>' + companyCellHtml + '</td>' +
+                    '<td>' + quoteDateHtml + '</td>' +
+                    '<td class="quote-amount">' + formattedAmount + '</td>' +
+                    '<td><span class="status-badge ' + statusBadge + '">' + statusLabel + '</span></td>' +
+                    '<td class="text-center">' + actionsHtml + '</td>' +
+                '</tr>';
+
+                var $tbody = $('#quotations-table tbody');
+                $tbody.find('.dataTables_empty').closest('tr').remove();
+                $tbody.prepend(newRowHtml);
+
+                setTimeout(function () {
+                    $tbody.find('.table-row-highlighted').css('background-color', '');
+                }, 3000);
+
+                var $counter = $('.quotations-card-header p');
+                if ($counter.length) {
+                    var curCount = parseInt($counter.text().replace(/[^0-9]/g, ''), 10) || 0;
+                    $counter.text((curCount + 1).toLocaleString() + ' records found');
+                }
+
+                showNotification('success', 'Quotation ' + newQuoteNumber + ' duplicated successfully with ' + statusLabel + ' status.');
+            });
+        });
+
         // Delete Confirmation via SweetAlert2 → real AJAX DELETE
         $(document).on('click', '.js-quote-delete', function (e) {
             e.preventDefault();
