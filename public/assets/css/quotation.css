@@ -370,6 +370,22 @@
 }
 
 /* --------------------------------------------------------------------------
+   Status Selection Card (Create Page)
+   -------------------------------------------------------------------------- */
+.quote-status-radio + .custom-control-label {
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+    user-select: none;
+    transition: color 0.15s ease-in-out;
+}
+
+.quote-status-radio:checked + .custom-control-label {
+    color: #0066FF;
+}
+
+/* --------------------------------------------------------------------------
    Bottom Action Buttons
    -------------------------------------------------------------------------- */
 .quotation-bottom-actions {

@@ -348,12 +348,50 @@
             </div>
         </div>
 
+        {{-- ── Section 5: Status (Create Page Only) ── --}}
+        @if (! $isEdit)
+        <div class="quote-section-card">
+            <div class="quote-section-header">
+                <h2 class="quote-section-title">
+                    <i class="fas fa-file-signature" aria-hidden="true"></i>
+                    <span>Status</span>
+                </h2>
+            </div>
+            <div class="quote-section-body py-3">
+                <div class="d-flex align-items-center">
+                    <div class="custom-control custom-radio custom-control-inline mr-4">
+                        <input type="radio"
+                               class="custom-control-input quote-status-radio"
+                               id="status-draft"
+                               name="status"
+                               value="draft"
+                               {{ old('status', 'draft') === 'draft' ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="status-draft">
+                            Draft
+                        </label>
+                    </div>
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio"
+                               class="custom-control-input quote-status-radio"
+                               id="status-invoiced"
+                               name="status"
+                               value="invoiced"
+                               {{ old('status') === 'invoiced' ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="status-invoiced">
+                            Invoiced
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
         {{-- Bottom Action Button --}}
         <div class="quotation-bottom-actions">
             <button type="submit" class="btn btn-primary btn-primary-blue" id="btn-save-pdf"
                     @if ($isEdit) name="action" value="update" @endif>
                 <i class="fas fa-save mr-1" aria-hidden="true"></i>
-                <span>{{ $isEdit ? 'Update & Download PDF' : 'Save & Download PDF' }}</span>
+                <span id="btn-save-label">{{ $isEdit ? 'Update & Download PDF' : (old('status', 'draft') === 'invoiced' ? 'Save & Download Invoiced' : 'Save & Download Draft') }}</span>
             </button>
             @if ($isEdit)
                 <button type="submit"

@@ -403,6 +403,34 @@ $(document).ready(function () {
             }
         });
 
+        // -------------------------------------------------------------------------
+        // Create Page: Status Radio Toggle (Draft vs Invoiced)
+        // -------------------------------------------------------------------------
+        function updateSubmitButtonLabel() {
+            var isEdit = $('#form-is-edit').val() === '1';
+            if (isEdit) {
+                return;
+            }
+
+            var selectedStatus = $('input[name="status"]:checked').val() || 'draft';
+            var $btnLabel = $('#btn-save-label');
+
+            if ($btnLabel.length) {
+                if (selectedStatus === 'invoiced') {
+                    $btnLabel.text('Save & Download Invoiced');
+                } else {
+                    $btnLabel.text('Save & Download Draft');
+                }
+            }
+        }
+
+        $(document).on('change', 'input[name="status"]', function () {
+            updateSubmitButtonLabel();
+        });
+
+        // Initialize button label on load
+        updateSubmitButtonLabel();
+
         // "Save & Download PDF" / "Update & Download PDF" Button
         // Sync hidden calculation fields then let the form submit natively (full-page POST)
         $('#btn-save-pdf').on('click', function (e) {
