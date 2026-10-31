@@ -241,6 +241,168 @@ $(document).ready(function () {
             });
         });
 
+        // ---------------------------------------------------------------------
+        // Client Phone Search & Autofill (Temporary Dummy Data)
+        // ---------------------------------------------------------------------
+        var dummyClients = [
+            {
+                phone: '0412345678',
+                contact_person: 'John Smith',
+                company_name: 'Acme Cleaning Co',
+                email: 'john@acmecleaning.com.au',
+                address: '123 Test Street, Sydney NSW 2000'
+            },
+            {
+                phone: '0423456789',
+                contact_person: 'Sarah Jenkins',
+                company_name: 'Prime Corporate Office',
+                email: 'sarah@primeoffice.com.au',
+                address: '45 George Street, Parramatta NSW 2150'
+            },
+            {
+                phone: '0434567890',
+                contact_person: 'Michael Wong',
+                company_name: 'Harborview Medical Clinic',
+                email: 'm.wong@harborview.com.au',
+                address: '88 Pacific Highway, North Sydney NSW 2060'
+            },
+            {
+                phone: '0445678901',
+                contact_person: 'Emma Davis',
+                company_name: '',
+                email: 'emma.davis@gmail.com',
+                address: '12 Ocean View Road, Manly NSW 2095'
+            },
+            {
+                phone: '0456789012',
+                contact_person: 'David Miller',
+                company_name: 'Miller Logistics Hub',
+                email: 'david@millerlogistics.com.au',
+                address: '10 Warehouse Way, Eastern Creek NSW 2766'
+            },
+            {
+                phone: '0426003944',
+                contact_person: 'Irfan Chowdhury',
+                company_name: 'Dust2Glow Cleaning',
+                email: 'info@dust2glowcleaning.com.au',
+                address: 'Suite 4, 150 Pitt Street, Sydney NSW 2000'
+            }
+        ];
+
+        var $phoneInput = $('#phone');
+        var $dropdown = $('#phone-search-dropdown');
+
+        function cleanPhone(val) {
+            return (val || '').replace(/[^0-9]/g, '');
+        }
+
+        function renderClientSuggestions(matches) {
+            if (!$dropdown.length) return;
+
+            if (!matches.length) {
+                $dropdown.html('<div class="phone-autocomplete-empty"><i class="fas fa-info-circle mr-1"></i> No matching clients found</div>').show();
+                return;
+            }
+
+            var html = '';
+            matches.forEach(function (client) {
+                var emailBadge = client.email
+                    ? '<span class="client-email"><i class="far fa-envelope mr-1 text-muted"></i>' + $('<div>').text(client.email).html() + '</span>'
+                    : '';
+
+                var clientJson = JSON.stringify(client).replace(/"/g, '&quot;');
+
+                html += [
+                    '<div class="phone-autocomplete-item" data-client="' + clientJson + '">',
+                    '    <div class="phone-autocomplete-phone">',
+                    '        <i class="fas fa-phone-alt text-primary"></i>',
+                    '        <span>' + $('<div>').text(client.phone).html() + '</span>',
+                    '    </div>',
+                    '    <div class="phone-autocomplete-meta">',
+                    '        <span class="client-name"><i class="far fa-user mr-1 text-muted"></i>' + $('<div>').text(client.contact_person).html() + '</span>',
+                    '        ' + emailBadge,
+                    '    </div>',
+                    '</div>'
+                ].join('');
+            });
+
+            $dropdown.html(html).show();
+        }
+
+        $phoneInput.on('input focus', function () {
+            // Remove any spaces from phone input
+            var raw = $(this).val().replace(/\s+/g, '');
+            if ($(this).val() !== raw) {
+                $(this).val(raw);
+            }
+
+            var cleaned = cleanPhone(raw);
+
+            if (cleaned.length < 1 && raw.length < 1) {
+                $dropdown.hide().empty();
+                return;
+            }
+
+            var matches = dummyClients.filter(function (c) {
+                var cClean = cleanPhone(c.phone);
+                var nameMatch = c.contact_person.toLowerCase().indexOf(raw.toLowerCase()) !== -1;
+                var emailMatch = (c.email || '').toLowerCase().indexOf(raw.toLowerCase()) !== -1;
+                var phoneMatch = cClean.indexOf(cleaned) !== -1 || c.phone.indexOf(raw) !== -1;
+                return phoneMatch || nameMatch || emailMatch;
+            });
+
+            renderClientSuggestions(matches);
+        });
+
+        // Prevent any space entry in client profile modal phone fields
+        $(document).on('input', '#modal_phone, #client_phone', function () {
+            var raw = $(this).val().replace(/\s+/g, '');
+            if ($(this).val() !== raw) {
+                $(this).val(raw);
+            }
+        });
+
+        // Click selection on a client suggestion
+        $(document).on('click', '.phone-autocomplete-item', function (e) {
+            e.preventDefault();
+            var clientData = $(this).data('client');
+
+            if (clientData) {
+                var client = typeof clientData === 'string' ? JSON.parse(clientData) : clientData;
+
+                $phoneInput.val(client.phone);
+                $('#contact_person').val(client.contact_person);
+                $('#company_name').val(client.company_name || '');
+                $('#address').val(client.address);
+                $('#email').val(client.email);
+
+                // Add visual pulse effect on the autofilled fields
+                var $autofilled = $('#contact_person, #company_name, #address, #email');
+                $autofilled.addClass('field-autofilled');
+                setTimeout(function () {
+                    $autofilled.removeClass('field-autofilled');
+                }, 1200);
+
+                showNotification('success', 'Autofilled client details for ' + client.contact_person);
+            }
+
+            $dropdown.hide().empty();
+        });
+
+        // Close dropdown when clicking outside
+        $(document).on('click', function (e) {
+            if (!$(e.target).closest('.phone-search-wrapper').length) {
+                $dropdown.hide().empty();
+            }
+        });
+
+        // Close dropdown on Escape key
+        $(document).on('keydown', function (e) {
+            if (e.key === 'Escape') {
+                $dropdown.hide().empty();
+            }
+        });
+
         // "Save & Download PDF" / "Update & Download PDF" Button
         // Sync hidden calculation fields then let the form submit natively (full-page POST)
         $('#btn-save-pdf').on('click', function (e) {

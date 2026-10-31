@@ -72,7 +72,7 @@
                             </span>
                         </td>
                         <td>
-                            <a href="tel:0412345678" class="text-muted"><i class="fas fa-phone-alt mr-1 text-muted"></i> 0412 345 678</a>
+                            <a href="tel:0412345678" class="text-muted"><i class="fas fa-phone-alt mr-1 text-muted"></i> 0412345678</a>
                         </td>
                         <td>
                             <a href="mailto:john@acmecleaning.com.au" class="text-muted"><i class="far fa-envelope mr-1 text-muted"></i> john@acmecleaning.com.au</a>
@@ -106,7 +106,7 @@
                             </span>
                         </td>
                         <td>
-                            <a href="tel:0423456789" class="text-muted"><i class="fas fa-phone-alt mr-1 text-muted"></i> 0423 456 789</a>
+                            <a href="tel:0423456789" class="text-muted"><i class="fas fa-phone-alt mr-1 text-muted"></i> 0423456789</a>
                         </td>
                         <td>
                             <a href="mailto:sarah@primeoffice.com.au" class="text-muted"><i class="far fa-envelope mr-1 text-muted"></i> sarah@primeoffice.com.au</a>
@@ -140,7 +140,7 @@
                             </span>
                         </td>
                         <td>
-                            <a href="tel:0434567890" class="text-muted"><i class="fas fa-phone-alt mr-1 text-muted"></i> 0434 567 890</a>
+                            <a href="tel:0434567890" class="text-muted"><i class="fas fa-phone-alt mr-1 text-muted"></i> 0434567890</a>
                         </td>
                         <td>
                             <a href="mailto:m.wong@harborview.com.au" class="text-muted"><i class="far fa-envelope mr-1 text-muted"></i> m.wong@harborview.com.au</a>
@@ -174,7 +174,7 @@
                             </span>
                         </td>
                         <td>
-                            <a href="tel:0445678901" class="text-muted"><i class="fas fa-phone-alt mr-1 text-muted"></i> 0445 678 901</a>
+                            <a href="tel:0445678901" class="text-muted"><i class="fas fa-phone-alt mr-1 text-muted"></i> 0445678901</a>
                         </td>
                         <td>
                             <a href="mailto:emma.davis@gmail.com" class="text-muted"><i class="far fa-envelope mr-1 text-muted"></i> emma.davis@gmail.com</a>
@@ -208,7 +208,7 @@
                             </span>
                         </td>
                         <td>
-                            <a href="tel:0456789012" class="text-muted"><i class="fas fa-phone-alt mr-1 text-muted"></i> 0456 789 012</a>
+                            <a href="tel:0456789012" class="text-muted"><i class="fas fa-phone-alt mr-1 text-muted"></i> 0456789012</a>
                         </td>
                         <td>
                             <a href="mailto:david@millerlogistics.com.au" class="text-muted"><i class="far fa-envelope mr-1 text-muted"></i> david@millerlogistics.com.au</a>
