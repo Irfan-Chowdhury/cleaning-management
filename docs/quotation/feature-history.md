@@ -36,6 +36,7 @@ Based on git version control history on branches `quotation` and `main`:
 | **2026-10-17** | `5adea78` | Md Irfan Chowdhury | **Prefix Standardized**: Quote numbering prefix updated from `QT-` to `D2G-` (Dust2Glow) across controllers, services, factories, and tests. |
 | **2026-10-17** | `71bd4ba` | Md Irfan Chowdhury | **Status Refactored**: Quotation status value transitioned from `'converted'` to `'invoiced'` across migrations, models, controllers, CSS classes, and metric queries. |
 | **2026-10-21** | `486b42a` | Md Irfan Chowdhury | **Terms Updated**: Standardized payment and interest terms on quotation and invoice PDF views (8.35% NSW court pre-judgment interest rate). |
+| **2026-11-01** | *Current* | Antigravity | **Numbering Format Updated**: Removed Year component from quotation numbering format (`D2G-0001` instead of `D2G-YYYY-0001`), sequence calculated after the last row ID in database, zero-padded to minimum 4 digits, seamlessly expanding to 5+ digits for 10000+. |
 
 ---
 
@@ -44,7 +45,7 @@ Based on git version control history on branches `quotation` and `main`:
 | Feature / Area | Original Specification (`quotation.md`) | Actual Implementation | Notes / Analysis |
 | :--- | :--- | :--- | :--- |
 | **Form Submission Mechanism** | jQuery AJAX form submission without full page reload. | Standard browser full-page `POST` / `PUT` submission. | Submits normally, redirects `back()` or to `edit`, and uses session flash + hidden `<iframe>` to auto-trigger PDF download. |
-| **Quote Number Prefix** | Not explicitly dictated. | Originally `QT-{YEAR}-{SEQ}`, changed to `D2G-{YEAR}-{SEQ}`. | `D2G` stands for Dust2Glow branding. |
+| **Quote Number Prefix** | Not explicitly dictated. | Originally `QT-{YEAR}-{SEQ}`, updated to `D2G-{YEAR}-{SEQ}`, now streamlined to `D2G-{SEQ}` (e.g. `D2G-0001`). | `D2G` stands for Dust2Glow branding. |
 | **Quotation Status Values** | Implicitly draft vs converted/invoiced. | Stored as `'draft'` and `'invoiced'` (previously `'converted'`). | One-way status transition. |
 | **Terms & Notes Field** | Defined in DB schema and Form Requests (`terms_notes`, max: 5000). | Omitted from UI form; PDF renders hardcoded terms text. | Discrepancy: Database column exists and is validated, but not editable in the UI form. |
 | **PDF Generation Library** | DomPDF via `Barryvdh\DomPDF\Facade\Pdf`. | DomPDF via `Barryvdh\DomPDF\Facade\Pdf`. | Fully aligned. Uses `setPaper('a4', 'portrait')`. |

@@ -117,37 +117,40 @@ $$\text{Total Amount} = \text{round}(\text{Subtotal} + \text{GST Amount}, 2)$$
 ## 4. Quotation Number Generation
 
 ### 4.1 Specification & Format
-- **Format**: `D2G-{YEAR}-{SEQUENCE}`
-  - Example: `D2G-2026-0001`, `D2G-2026-0002`
+- **Format**: `D2G-{SEQUENCE}`
+  - Example: `D2G-0001`, `D2G-0026`, `D2G-9999`, `D2G-10000`
   - Fixed prefix: `D2G-` (Dust2Glow)
-  - Year: Current 4-digit calendar year (`now()->format('Y')`)
-  - Sequence: 4-digit zero-padded integer (`0001` through `9999`)
+  - Sequence: Minimum 4-digit zero-padded integer (`0001` through `9999`), dynamically expanding to 5+ digits when exceeding 9999 (e.g., `D2G-10000`).
 - **Database Constraint**: `quote_number` has a `UNIQUE` index on the `quotations` table.
 
 ### 4.2 Generation Algorithm (`QuotationService::generateSequentialQuoteNumber`)
 ```php
 public function generateSequentialQuoteNumber(): string
 {
-    $year   = Carbon::now()->format('Y');
-    $prefix = "D2G-{$year}-";
+    $prefix = 'D2G-';
 
-    $last = Quotation::where('quote_number', 'like', "{$prefix}%")
-        ->orderBy('id', 'desc')
-        ->value('quote_number');
+    // Determine sequence based on the last row ID in database
+    $lastId = (int) (Quotation::max('id') ?? 0);
 
-    if ($last && preg_match('/(\d+)$/', $last, $m)) {
-        $next = (int) $m[1] + 1;
-    } else {
-        $next = 1;
+    // Also check numeric suffix of the last recorded quote number to maintain monotonicity
+    $lastQuote = Quotation::orderBy('id', 'desc')->value('quote_number');
+    $lastQuoteNum = 0;
+    if ($lastQuote && preg_match('/(\d+)$/', $lastQuote, $m)) {
+        $lastQuoteNum = (int) $m[1];
     }
 
-    return $prefix . str_pad((string) $next, 4, '0', STR_PAD_LEFT);
+    $next = max($lastId, $lastQuoteNum) + 1;
+    $padLength = max(4, strlen((string) $next));
+
+    return $prefix . str_pad((string) $next, $padLength, '0', STR_PAD_LEFT);
 }
 ```
-1. Queries the highest `id` record matching prefix `D2G-{current_year}-%`.
-2. Extracts trailing digits via regular expression `/(\d+)$/`.
-3. Increments by 1 (or starts at 1 if none found).
-4. Zero-pads to 4 digits via `str_pad(..., 4, '0', STR_PAD_LEFT)`.
+1. Reads the maximum `id` from `quotations` (`Quotation::max('id')`).
+2. Reads the numeric suffix of the latest quote number (`Quotation::orderBy('id', 'desc')->value('quote_number')`).
+3. Sets `$next = max($lastId, $lastQuoteNum) + 1` (starting at 1 if database is empty).
+4. Determines padding width dynamically: `max(4, strlen((string) $next))`.
+   - 1 to 9999: pads with leading zeros to 4 digits (`D2G-0001` to `D2G-9999`).
+   - 10000+: expands to 5 digits (`D2G-10000`) and continues increasing digits dynamically.
 
 ---
 
@@ -197,7 +200,7 @@ Instead, it is an **in-place status transition** of the quotation:
 2. The controller passes `$convertToInvoice = true` to `QuotationService@update`.
 3. The quotation is locked (`lockForUpdate()`) to prevent race conditions.
 4. `quotation.status` is updated to `'invoiced'`.
-5. The quote retains its original `quote_number` (e.g. `D2G-2026-0005`).
+5. The quote retains its original `quote_number` (e.g. `D2G-0005`).
 
 ### 6.2 Downstream Effects of Conversion
 - **Document Header**: PDF document type changes from `"QUOTE"` to `"INVOICE"`.

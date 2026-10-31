@@ -280,7 +280,7 @@ class QuotationController extends Controller
     // ─── Private Helpers ───────────────────────────────────────────────────────
 
     /**
-     * Generate sequential quote number (e.g. D2G-2026-0008).
+     * Generate sequential quote number (e.g. D2G-0008).
      * Delegates to the service but falls back gracefully if DB is unavailable.
      */
     private function generateSequentialQuoteNumber(): string
@@ -288,8 +288,7 @@ class QuotationController extends Controller
         try {
             return $this->quotationService->generateSequentialQuoteNumber();
         } catch (\Throwable) {
-            $year = Carbon::now()->format('Y');
-            return "D2G-{$year}-0001";
+            return 'D2G-0001';
         }
     }
 }

@@ -14,7 +14,7 @@ erDiagram
 
     quotations {
         bigint unsigned id PK
-        string quote_number UK "unique, e.g. D2G-2026-0001"
+        string quote_number UK "unique, e.g. D2G-0001"
         date quote_date "Issue date"
         string abn "nullable, max 20"
         string contact_person "Client primary contact"
@@ -68,7 +68,7 @@ Migration: `database/migrations/2026_10_12_000001_create_quotations_table.php`
 | Column | Type | Nullable | Default | Constraints / Index | Description |
 | :--- | :--- | :---: | :---: | :--- | :--- |
 | `id` | BIGINT UNSIGNED | No | Auto | Primary Key | Auto-increment primary key |
-| `quote_number` | VARCHAR(255) | No | None | UNIQUE | Unique identifier (e.g. `D2G-2026-0001`) |
+| `quote_number` | VARCHAR(255) | No | None | UNIQUE | Unique identifier (e.g. `D2G-0001`) |
 | `quote_date` | DATE | No | None | Index (implicit) | Date of quote generation |
 | `abn` | VARCHAR(255) | Yes | NULL | None | Australian Business Number of client |
 | `contact_person` | VARCHAR(255) | No | None | None | Name of client representative |
@@ -215,7 +215,7 @@ Migration: `database/migrations/2026_10_12_000002_create_quotation_items_table.p
 ### 5.1 `QuotationFactory`
 - **File**: `database/factories/QuotationFactory.php`
 - Generates fake Australian commercial client details:
-  - `quote_number`: `D2G-{YEAR}-{SEQUENCE}` (adjusted in `afterCreating` callback to match quotation id)
+  - `quote_number`: `D2G-{SEQUENCE}` (e.g. `D2G-0001` to `D2G-9999`, and `D2G-10000`+, synced with quotation row id in `afterCreating` callback)
   - `quote_date`: Random date within past 30 days
   - `frequency`: Random of `['Daily', 'Weekly', 'Fortnightly', 'Monthly']`
   - `shift_schedule`: Random of `['Morning (08:00–12:00)', 'Afternoon (13:00–17:00)', 'Evening (18:00–22:00)']`

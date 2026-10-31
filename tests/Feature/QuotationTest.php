@@ -42,32 +42,47 @@ function validQuotationPayload(array $overrides = []): array
 
 describe('QuotationService', function () {
 
-    it('generates a sequential quote number for the current year', function () {
+    it('generates a sequential quote number', function () {
         $service = app(QuotationService::class);
 
         $number = $service->generateSequentialQuoteNumber();
 
-        expect($number)->toMatch('/^D2G-\d{4}-\d{4}$/');
+        expect($number)->toMatch('/^D2G-\d{4}$/');
     });
 
-    it('generates D2G-{YEAR}-0001 when no quotations exist', function () {
+    it('generates D2G-0001 when no quotations exist', function () {
         $service = app(QuotationService::class);
-        $year    = now()->format('Y');
 
         $number = $service->generateSequentialQuoteNumber();
 
-        expect($number)->toBe("D2G-{$year}-0001");
+        expect($number)->toBe('D2G-0001');
     });
 
     it('increments quote number correctly when previous quotes exist', function () {
-        $year = now()->format('Y');
-
-        Quotation::factory()->create(['quote_number' => "D2G-{$year}-0005"]);
+        Quotation::factory()->create(['quote_number' => 'D2G-0005']);
 
         $service = app(QuotationService::class);
         $number  = $service->generateSequentialQuoteNumber();
 
-        expect($number)->toBe("D2G-{$year}-0006");
+        expect($number)->toBe('D2G-0006');
+    });
+
+    it('expands to 5 digits when quotation sequence reaches or exceeds 9999', function () {
+        Quotation::factory()->create(['quote_number' => 'D2G-9999']);
+
+        $service = app(QuotationService::class);
+        $number  = $service->generateSequentialQuoteNumber();
+
+        expect($number)->toBe('D2G-10000');
+    });
+
+    it('expands dynamically to 6 digits when quotation sequence reaches or exceeds 99999', function () {
+        Quotation::factory()->create(['quote_number' => 'D2G-99999']);
+
+        $service = app(QuotationService::class);
+        $number  = $service->generateSequentialQuoteNumber();
+
+        expect($number)->toBe('D2G-100000');
     });
 
     it('calculates totals correctly with 10% GST', function () {

@@ -26,7 +26,7 @@ The module operates under the admin portal (`/quotations`) and is restricted str
 
 3. **Dynamic Multi-Item Quotation Form (`/quotations/create` & `/quotations/{id}/edit`)**:
    - Structured into four organized functional sections:
-     - **Quote Information**: Auto-generated sequential quote number (`D2G-YYYY-####`), quote date, and optional ABN.
+     - **Quote Information**: Auto-generated sequential quote number (`D2G-####`, e.g. `D2G-0001`), quote date, and optional ABN.
      - **Prepared For (Client Information)**: Contact person, company name, address, phone, and email.
      - **Service Details**: Service frequency (e.g. Weekly, Fortnightly) and shift schedule (e.g. Morning, Evening).
      - **Service Line Items**: Dynamic tabular line items with real-time client-side calculation and row indexing.
@@ -48,7 +48,7 @@ The module operates under the admin portal (`/quotations`) and is restricted str
      - `pdf.quotation` for draft quotations ("QUOTE").
      - `pdf.quotation-invoice` for converted quotations ("INVOICE"), appending company banking details.
    - Quote validity / due date automatically calculated as `quote_date + 7 days`.
-   - Upon creating or updating, the system flashes the download URL and leverages an invisible iframe on reload to trigger an instant browser file download (`D2G-YYYY-####.pdf` or `D2G-YYYY-####-invoice.pdf`).
+   - Upon creating or updating, the system flashes the download URL and leverages an invisible iframe on reload to trigger an instant browser file download (`D2G-####.pdf` or `D2G-####-invoice.pdf`).
 
 7. **Audit Logging**:
    - Both `Quotation` and `QuotationItem` implement the `Auditable` trait, logging lifecycle events (`created`, `updated`, `deleted`) to the application's audit log system.
