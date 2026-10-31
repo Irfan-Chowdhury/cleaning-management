@@ -16,10 +16,16 @@
             <h1 class="quotations-header-title">Quotations Management</h1>
             <p class="quotations-header-sub">Create, organize, and monitor cleaning service quotations and client proposals</p>
         </div>
-        <a href="{{ route('quotations.create') }}" class="btn btn-primary quotations-primary-btn">
-            <i class="fas fa-plus-circle" aria-hidden="true"></i>
-            <span>Create New Quotation</span>
-        </a>
+        <div class="quotations-header-actions d-flex align-items-center flex-wrap">
+            <button type="button" class="btn quotations-client-btn mr-2" data-toggle="modal" data-target="#clientProfileModal">
+                <i class="fas fa-user-plus" aria-hidden="true"></i>
+                <span>Add Client</span>
+            </button>
+            <a href="{{ route('quotations.create') }}" class="btn btn-primary quotations-primary-btn">
+                <i class="fas fa-plus-circle" aria-hidden="true"></i>
+                <span>Create New Quotation</span>
+            </a>
+        </div>
     </div>
 
     {{-- Metric Cards (4 Summary Cards) --}}
@@ -105,6 +111,93 @@
                 </thead>
                 <tbody></tbody>
             </table>
+        </div>
+    </div>
+
+    {{-- Create Client Profile Modal (UI Only) --}}
+    <div class="modal fade quotation-modal" id="clientProfileModal" tabindex="-1" role="dialog" aria-labelledby="clientProfileModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="clientProfileModalLabel">
+                        <i class="fas fa-user-plus" aria-hidden="true"></i>
+                        <span>Create Client Profile</span>
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="client-profile-form" novalidate>
+                    <div class="modal-body">
+                        <div class="form-row">
+                            {{-- Contact Person * --}}
+                            <div class="form-group col-12 col-md-6">
+                                <label for="modal_contact_person">Contact Person <span class="text-danger">*</span></label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="modal_contact_person"
+                                       name="contact_person"
+                                       placeholder="Enter contact person name"
+                                       required>
+                            </div>
+
+                            {{-- Company Name (Optional / Nullable) --}}
+                            <div class="form-group col-12 col-md-6">
+                                <label for="modal_company_name">Company Name <span class="text-muted font-weight-normal">(Optional)</span></label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="modal_company_name"
+                                       name="company_name"
+                                       placeholder="Enter company name">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            {{-- Phone * (Unique) --}}
+                            <div class="form-group col-12 col-md-6">
+                                <label for="modal_phone">Phone <span class="text-danger">*</span></label>
+                                <input type="tel"
+                                       class="form-control"
+                                       id="modal_phone"
+                                       name="phone"
+                                       placeholder="Enter phone number"
+                                       required>
+                            </div>
+
+                            {{-- Email * (Unique) --}}
+                            <div class="form-group col-12 col-md-6">
+                                <label for="modal_email">Email <span class="text-danger">*</span></label>
+                                <input type="email"
+                                       class="form-control"
+                                       id="modal_email"
+                                       name="email"
+                                       placeholder="Enter email address"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            {{-- Address * --}}
+                            <div class="form-group col-12 mb-0">
+                                <label for="modal_address">Address <span class="text-danger">*</span></label>
+                                <textarea class="form-control"
+                                          id="modal_address"
+                                          name="address"
+                                          rows="3"
+                                          placeholder="Enter complete site address"
+                                          required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary quotations-primary-btn" id="btn-save-client-profile">
+                            <i class="fas fa-save" aria-hidden="true"></i>
+                            <span>Save Client Profile</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

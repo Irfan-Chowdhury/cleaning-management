@@ -65,10 +65,33 @@
             <span>Customer Wallets</span>
         </a>
 
-        <a href="{{ route('quotations.index') }}" class="sidebar-link {{ request()->routeIs('quotations.*') ? 'active' : '' }}">
-            <span class="sidebar-link-icon"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i></span>
-            <span>Quotations</span>
+        <!-- Quotations with collapse -->
+        @php
+            $quotationOpen = request()->is('quotations*');
+        @endphp
+        <a href="#quotations-submenu" data-toggle="collapse"
+           aria-expanded="{{ $quotationOpen ? 'true' : 'false' }}"
+           class="sidebar-link d-flex align-items-center justify-content-between {{ $quotationOpen ? '' : 'collapsed' }}">
+            <span class="d-flex align-items-center">
+                <span class="sidebar-link-icon"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i></span>
+                <span>Quotations</span>
+            </span>
+            <i class="fas fa-chevron-down ml-auto" style="font-size: 10px;" aria-hidden="true"></i>
         </a>
+        <div class="collapse {{ $quotationOpen ? 'show' : '' }}" id="quotations-submenu" style="padding-left: 20px;">
+            <a href="{{ route('quotations.index') }}"
+               class="sidebar-link {{ request()->routeIs('quotations.index') || request()->routeIs('quotations.create') || request()->routeIs('quotations.edit') ? 'active' : '' }}"
+               style="margin-left: 18px; min-height: 38px; padding: 6px 14px;">
+                <span class="sidebar-link-icon" style="width: 20px; flex: 0 0 20px;"><i class="fas fa-clipboard-list" aria-hidden="true"></i></span>
+                <span>All Quotes</span>
+            </a>
+            <a href="{{ route('quotations.clients') }}"
+               class="sidebar-link {{ request()->routeIs('quotations.clients*') ? 'active' : '' }}"
+               style="margin-left: 18px; min-height: 38px; padding: 6px 14px;">
+                <span class="sidebar-link-icon" style="width: 20px; flex: 0 0 20px;"><i class="fas fa-user-tie" aria-hidden="true"></i></span>
+                <span>Clients</span>
+            </a>
+        </div>
 
         <a href="{{ route('bookings.index') }}" class="sidebar-link {{ request()->routeIs('bookings.*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="far fa-calendar-alt" aria-hidden="true"></i></span>

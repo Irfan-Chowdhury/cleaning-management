@@ -566,12 +566,14 @@
     padding: 14px 18px 18px;
 }
 
-.quotations-table {
+.quotations-table,
+.clients-table {
     margin-bottom: 0 !important;
     width: 100% !important;
 }
 
-.quotations-table thead th {
+.quotations-table thead th,
+.clients-table thead th {
     background: #f8fafc;
     color: #475467;
     font-size: 12px;
@@ -584,7 +586,8 @@
     vertical-align: middle;
 }
 
-.quotations-table tbody td {
+.quotations-table tbody td,
+.clients-table tbody td {
     padding: 14px 18px;
     vertical-align: middle;
     color: #344054;
@@ -734,3 +737,117 @@
     transform: translateY(-1px);
     box-shadow: 0 6px 16px rgba(0, 102, 255, 0.28);
 }
+
+.quotations-client-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    background: #0F172A;
+    color: #ffffff !important;
+    border: 1px solid #0F172A;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16);
+    transition: all 0.2s ease-in-out;
+}
+
+.quotations-client-btn:hover {
+    background: #1E293B;
+    color: #ffffff !important;
+    border-color: #1E293B;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.26);
+}
+
+.quotations-secondary-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #0066FF;
+    border: 1px solid #0066FF;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease-in-out;
+}
+
+.quotations-secondary-btn:hover {
+    background: #eff6ff;
+    color: #0052cc;
+    border-color: #0052cc;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 102, 255, 0.15);
+}
+
+/* --------------------------------------------------------------------------
+   Customer Profile Modal
+   -------------------------------------------------------------------------- */
+.quotation-modal .modal-content {
+    border: 0;
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.16);
+    overflow: hidden;
+}
+
+.quotation-modal .modal-header {
+    border-bottom: 1px solid #e2e8f0;
+    padding: 18px 24px;
+    background-color: #ffffff;
+}
+
+.quotation-modal .modal-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.quotation-modal .modal-title i {
+    color: #0066FF;
+}
+
+.quotation-modal .modal-body {
+    padding: 24px;
+    background-color: #ffffff;
+}
+
+.quotation-modal .modal-footer {
+    border-top: 1px solid #e2e8f0;
+    padding: 16px 24px;
+    background-color: #f8fafc;
+}
+
+.quotation-modal label {
+    font-weight: 600;
+    font-size: 13.5px;
+    color: #334155;
+    margin-bottom: 6px;
+}
+
+.quotation-modal .form-control {
+    border-radius: 6px;
+    border-color: #cbd5e1;
+    font-size: 14px;
+    color: #1e293b;
+    padding: 9px 13px;
+    min-height: 42px;
+}
+
+.quotation-modal textarea.form-control {
+    min-height: 80px;
+}
+
+.quotation-modal .form-control:focus {
+    border-color: #0066FF;
+    box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.15);
+}
+

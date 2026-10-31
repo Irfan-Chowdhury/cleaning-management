@@ -126,6 +126,14 @@ class QuotationController extends Controller
     }
 
     /**
+     * Display a listing of quotation client profiles (UI view).
+     */
+    public function clients()
+    {
+        return view('pages.admin.quotations.clients');
+    }
+
+    /**
      * Show the form for creating a new quotation.
      */
     public function create()
