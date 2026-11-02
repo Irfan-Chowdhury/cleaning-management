@@ -81,7 +81,7 @@ sequenceDiagram
     Service->>DB: Begin Transaction
     Service->>Service: calculateTotals(amounts)
     Service->>Service: generateSequentialQuoteNumber()
-    Service->>DB: INSERT into quotations (status = 'draft')
+    Service->>DB: INSERT into quotations (status = selected status ['draft'|'invoiced'])
     DB-->>Audit: Log Quotation 'created' event
     Service->>DB: Bulk INSERT into quotation_items
     Service->>DB: Commit Transaction

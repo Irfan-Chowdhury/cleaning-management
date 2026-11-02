@@ -118,6 +118,15 @@ describe('QuotationService', function () {
         ]);
     });
 
+    it('stores a quotation with invoiced status when provided', function () {
+        $service   = app(QuotationService::class);
+        $payload   = validQuotationPayload(['status' => 'invoiced']);
+
+        $quotation = $service->store($payload);
+
+        expect($quotation->status)->toBe('invoiced');
+    });
+
     it('updates a quotation and replaces its line items atomically', function () {
         $service   = app(QuotationService::class);
         $quotation = $service->store(validQuotationPayload());
@@ -197,6 +206,17 @@ describe('POST /quotations (store)', function () {
         $this->assertDatabaseHas('quotations', [
             'contact_person' => 'John Smith',
             'status'         => 'draft',
+        ]);
+    });
+
+    it('sets status to invoiced on creation when invoiced is selected', function () {
+        $admin = getAdminUser();
+
+        $this->actingAs($admin)->post(route('quotations.store'), validQuotationPayload(['status' => 'invoiced']));
+
+        $this->assertDatabaseHas('quotations', [
+            'contact_person' => 'John Smith',
+            'status'         => 'invoiced',
         ]);
     });
 

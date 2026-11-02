@@ -35,7 +35,7 @@ class QuotationService
                 'gst_amount'     => $totals['gst_amount'],
                 'total_amount'   => $totals['total_amount'],
                 'terms_notes'    => $data['terms_notes'] ?? null,
-                'status'         => 'draft',
+                'status'         => in_array($data['status'] ?? 'draft', ['draft', 'invoiced'], true) ? $data['status'] : 'draft',
             ]);
 
             $this->syncItems($quotation, $data['items']);

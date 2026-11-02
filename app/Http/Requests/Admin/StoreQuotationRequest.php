@@ -24,6 +24,7 @@ class StoreQuotationRequest extends FormRequest
             'frequency'      => ['required', 'string', 'max:100'],
             'shift_schedule' => ['required', 'string', 'max:100'],
             'terms_notes'    => ['nullable', 'string', 'max:5000'],
+            'status'         => ['nullable', 'string', 'in:draft,invoiced'],
 
             // Line items
             'items'                  => ['required', 'array', 'min:1'],
