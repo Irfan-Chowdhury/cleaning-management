@@ -269,6 +269,203 @@ $(document).ready(function () {
     }
 
     // -------------------------------------------------------------------------
+    // 2. Clients Directory List View (DataTable & Modal CRUD)
+    // -------------------------------------------------------------------------
+    var $clientsTable = $('#clients-table');
+
+    if ($clientsTable.length && $.fn.DataTable && !$.fn.DataTable.isDataTable('#clients-table')) {
+        var clientsAjaxUrl = $clientsTable.data('ajax-url') || '/quotations/clients';
+
+        $clientsTable.DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: clientsAjaxUrl,
+            responsive: true,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [5, 10, 25, 50],
+            order: [[0, 'desc']],
+            columns: [
+                { data: 'DT_RowIndex', name: 'id', orderable: false, searchable: false, width: '45px' },
+                { data: 'contact_person_cell', name: 'contact_person' },
+                { data: 'company_name_badge', name: 'company_name' },
+                { data: 'phone_link', name: 'phone' },
+                { data: 'email_link', name: 'email' },
+                { data: 'address_display', name: 'address' },
+                { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-center', width: '110px' }
+            ],
+            language: {
+                search: '',
+                searchPlaceholder: 'Search clients...',
+                lengthMenu: 'Show _MENU_ entries',
+                info: 'Showing _START_ to _END_ of _TOTAL_ clients',
+                infoEmpty: 'No clients found',
+                paginate: {
+                    previous: '<i class="fas fa-chevron-left"></i>',
+                    next: '<i class="fas fa-chevron-right"></i>'
+                }
+            }
+        });
+    }
+
+    // Reset Client Modal for "Add Client"
+    $(document).on('click', '[data-target="#clientProfileModal"]', function () {
+        if (!$(this).hasClass('js-client-edit')) {
+            $('#client_id, #modal_client_id').val('');
+            $('#clientModalTitleText').text('Create Client Profile');
+            $('#btn-save-client-text, #btn-modal-save-client-text').text('Save Client Profile');
+
+            var $form = $('#client-profile-form');
+            if ($form.length) {
+                $form[0].reset();
+                $form.find('.is-invalid').removeClass('is-invalid');
+                $form.find('.invalid-feedback').text('').hide();
+            }
+        }
+    });
+
+    // Populate Client Modal for Edit
+    $(document).on('click', '.js-client-edit', function (e) {
+        e.preventDefault();
+        var $btn = $(this);
+        var id = $btn.data('id');
+        var contactPerson = $btn.data('contact_person') || '';
+        var companyName = $btn.data('company_name') || '';
+        var phone = $btn.data('phone') || '';
+        var email = $btn.data('email') || '';
+        var address = $btn.data('address') || '';
+
+        $('#client_id, #modal_client_id').val(id);
+        $('#client_contact_person, #modal_contact_person').val(contactPerson);
+        $('#client_company_name, #modal_company_name').val(companyName);
+        $('#client_phone, #modal_phone').val(phone);
+        $('#client_email, #modal_email').val(email);
+        $('#client_address, #modal_address').val(address);
+
+        $('#clientModalTitleText').text('Edit Client Profile');
+        $('#btn-save-client-text, #btn-modal-save-client-text').text('Update Client Profile');
+
+        var $form = $('#client-profile-form');
+        if ($form.length) {
+            $form.find('.is-invalid').removeClass('is-invalid');
+            $form.find('.invalid-feedback').text('').hide();
+        }
+
+        $('#clientProfileModal').modal('show');
+    });
+
+    // Submit Client Profile Form (Create & Update) via AJAX
+    $(document).on('submit', '#client-profile-form', function (e) {
+        e.preventDefault();
+        var $form = $(this);
+        var $btn = $('#btn-save-client-profile');
+        var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+        var clientId = $('#client_id').val() || $('#modal_client_id').val();
+        var isUpdate = Boolean(clientId);
+
+        var url = isUpdate ? '/quotations/clients/' + clientId : '/quotations/clients';
+        var method = isUpdate ? 'PUT' : 'POST';
+
+        $form.find('.is-invalid').removeClass('is-invalid');
+        $form.find('.invalid-feedback').text('').hide();
+        $btn.prop('disabled', true);
+
+        var payload = {
+            contact_person: ($('#client_contact_person').length ? $('#client_contact_person') : $('#modal_contact_person')).val(),
+            company_name: ($('#client_company_name').length ? $('#client_company_name') : $('#modal_company_name')).val(),
+            phone: ($('#client_phone').length ? $('#client_phone') : $('#modal_phone')).val(),
+            email: ($('#client_email').length ? $('#client_email') : $('#modal_email')).val(),
+            address: ($('#client_address').length ? $('#client_address') : $('#modal_address')).val()
+        };
+
+        $.ajax({
+            url: url,
+            type: method,
+            data: payload,
+            headers: { 'X-CSRF-TOKEN': csrfToken },
+            success: function (res) {
+                $('#clientProfileModal').modal('hide');
+                $form[0].reset();
+                $('#client_id, #modal_client_id').val('');
+
+                showNotification('success', res.message || 'Client profile saved successfully.');
+
+                if ($.fn.DataTable && $.fn.DataTable.isDataTable('#clients-table')) {
+                    $('#clients-table').DataTable().ajax.reload(null, false);
+                }
+            },
+            error: function (xhr) {
+                if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
+                    var errors = xhr.responseJSON.errors;
+                    Object.keys(errors).forEach(function (field) {
+                        var $input = $('#client_' + field + ', #modal_' + field);
+                        var $feedback = $('#error-' + field + ', #error-modal-' + field);
+                        $input.addClass('is-invalid');
+                        $feedback.text(errors[field][0]).show();
+                    });
+                } else {
+                    var msg = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : 'Failed to save client profile.';
+                    showNotification('error', msg);
+                }
+            },
+            complete: function () {
+                $btn.prop('disabled', false);
+            }
+        });
+    });
+
+    $(document).on('click', '#btn-save-client-profile', function (e) {
+        var $form = $('#client-profile-form');
+        if ($form.length) {
+            $form.submit();
+        }
+    });
+
+    // Delete Client Confirmation via SweetAlert2
+    $(document).on('click', '.js-client-delete', function (e) {
+        e.preventDefault();
+        var $btn = $(this);
+        var clientId = $btn.data('id');
+        var clientName = $btn.data('name') || 'this client';
+        var url = $btn.data('url') || ('/quotations/clients/' + clientId);
+        var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+        Swal.fire({
+            title: 'Delete Client?',
+            text: 'Are you sure you want to delete ' + clientName + '? This action cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then(function (result) {
+            if (!result.isConfirmed) return;
+
+            $btn.prop('disabled', true);
+            $.ajax({
+                url: url,
+                type: 'DELETE',
+                headers: { 'X-CSRF-TOKEN': csrfToken },
+                success: function (res) {
+                    showNotification('success', res.message || 'Client deleted successfully.');
+                    if ($.fn.DataTable && $.fn.DataTable.isDataTable('#clients-table')) {
+                        $('#clients-table').DataTable().ajax.reload(null, false);
+                    }
+                },
+                error: function (xhr) {
+                    var msg = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : 'Failed to delete client.';
+                    showNotification('error', msg);
+                },
+                complete: function () {
+                    $btn.prop('disabled', false);
+                }
+            });
+        });
+    });
+
+    // -------------------------------------------------------------------------
     // 2. Create / Edit Quotation Form (Dynamic Items & Real-Time Calculation)
     // -------------------------------------------------------------------------
     var $quoteForm = $('#quotation-form');
@@ -378,55 +575,11 @@ $(document).ready(function () {
         });
 
         // ---------------------------------------------------------------------
-        // Client Phone Search & Autofill (Temporary Dummy Data)
+        // Client Phone Search & Autofill (Live AJAX from Database)
         // ---------------------------------------------------------------------
-        var dummyClients = [
-            {
-                phone: '0412345678',
-                contact_person: 'John Smith',
-                company_name: 'Acme Cleaning Co',
-                email: 'john@acmecleaning.com.au',
-                address: '123 Test Street, Sydney NSW 2000'
-            },
-            {
-                phone: '0423456789',
-                contact_person: 'Sarah Jenkins',
-                company_name: 'Prime Corporate Office',
-                email: 'sarah@primeoffice.com.au',
-                address: '45 George Street, Parramatta NSW 2150'
-            },
-            {
-                phone: '0434567890',
-                contact_person: 'Michael Wong',
-                company_name: 'Harborview Medical Clinic',
-                email: 'm.wong@harborview.com.au',
-                address: '88 Pacific Highway, North Sydney NSW 2060'
-            },
-            {
-                phone: '0445678901',
-                contact_person: 'Emma Davis',
-                company_name: '',
-                email: 'emma.davis@gmail.com',
-                address: '12 Ocean View Road, Manly NSW 2095'
-            },
-            {
-                phone: '0456789012',
-                contact_person: 'David Miller',
-                company_name: 'Miller Logistics Hub',
-                email: 'david@millerlogistics.com.au',
-                address: '10 Warehouse Way, Eastern Creek NSW 2766'
-            },
-            {
-                phone: '0426003944',
-                contact_person: 'Irfan Chowdhury',
-                company_name: 'Dust2Glow Cleaning',
-                email: 'info@dust2glowcleaning.com.au',
-                address: 'Suite 4, 150 Pitt Street, Sydney NSW 2000'
-            }
-        ];
-
         var $phoneInput = $('#phone');
         var $dropdown = $('#phone-search-dropdown');
+        var phoneSearchTimer = null;
 
         function cleanPhone(val) {
             return (val || '').replace(/[^0-9]/g, '');
@@ -466,35 +619,49 @@ $(document).ready(function () {
         }
 
         $phoneInput.on('input focus', function () {
-            // Remove any spaces from phone input
-            var raw = $(this).val().replace(/\s+/g, '');
-            if ($(this).val() !== raw) {
-                $(this).val(raw);
+            // Strictly allow numbers (0-9) and plus (+) only
+            var raw = $(this).val();
+            var cleaned = raw.replace(/[^\d+]/g, '');
+            if (cleaned.indexOf('+') > 0) {
+                cleaned = (cleaned[0] === '+' ? '+' : '') + cleaned.replace(/\+/g, '');
+            }
+            if ($(this).val() !== cleaned) {
+                $(this).val(cleaned);
             }
 
-            var cleaned = cleanPhone(raw);
+            var term = cleaned.trim();
 
-            if (cleaned.length < 1 && raw.length < 1) {
+            if (term.length < 1) {
                 $dropdown.hide().empty();
                 return;
             }
 
-            var matches = dummyClients.filter(function (c) {
-                var cClean = cleanPhone(c.phone);
-                var nameMatch = c.contact_person.toLowerCase().indexOf(raw.toLowerCase()) !== -1;
-                var emailMatch = (c.email || '').toLowerCase().indexOf(raw.toLowerCase()) !== -1;
-                var phoneMatch = cClean.indexOf(cleaned) !== -1 || c.phone.indexOf(raw) !== -1;
-                return phoneMatch || nameMatch || emailMatch;
-            });
-
-            renderClientSuggestions(matches);
+            clearTimeout(phoneSearchTimer);
+            phoneSearchTimer = setTimeout(function () {
+                $.ajax({
+                    url: '/quotations/clients/search',
+                    type: 'GET',
+                    data: { q: term },
+                    success: function (res) {
+                        var clients = res.clients || [];
+                        renderClientSuggestions(clients);
+                    },
+                    error: function () {
+                        $dropdown.hide().empty();
+                    }
+                });
+            }, 200);
         });
 
-        // Prevent any space entry in client profile modal phone fields
+        // Strictly allow numbers (0-9) and plus (+) only in client profile modal phone fields
         $(document).on('input', '#modal_phone, #client_phone', function () {
-            var raw = $(this).val().replace(/\s+/g, '');
-            if ($(this).val() !== raw) {
-                $(this).val(raw);
+            var raw = $(this).val();
+            var cleaned = raw.replace(/[^\d+]/g, '');
+            if (cleaned.indexOf('+') > 0) {
+                cleaned = (cleaned[0] === '+' ? '+' : '') + cleaned.replace(/\+/g, '');
+            }
+            if ($(this).val() !== cleaned) {
+                $(this).val(cleaned);
             }
         });
 

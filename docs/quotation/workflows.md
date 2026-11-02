@@ -248,4 +248,48 @@ sequenceDiagram
         Controller->>DomPDF: loadView('pdf.quotation', data)
         Controller->>Browser: Stream download as "{quote_number}.pdf"
     end
+
+---
+
+## 7. Customer / Client Profile Management Workflows
+
+### 7.1 Client Creation & Autocomplete Sequence
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Admin
+    participant View as Form / Directory View
+    participant Modal as #clientProfileModal
+    participant Router as routes/web.php
+    participant Controller as QuotationClientController
+    participant Service as QuotationClientService
+    participant DB as MySQL Database
+
+    rect rgb(240, 248, 255)
+    note over Admin,DB: Quick Client Profile Creation
+    Admin->>View: Clicks "Add Client"
+    View->>Modal: Reset & open modal
+    Admin->>Modal: Fills contact person, company, phone, email, address & submits
+    Modal->>Router: POST /quotations/clients (AJAX)
+    Router->>Controller: store(StoreQuotationClientRequest $request)
+    Controller->>Service: store(validatedData)
+    Service->>DB: INSERT INTO quotation_clients
+    Controller-->>Modal: Return 201 JSON { message, client }
+    Modal->>Modal: Close modal & reset form
+    Modal->>View: SweetAlert2 toast & reload DataTables if present
+    end
+
+    rect rgb(240, 255, 240)
+    note over Admin,DB: Live Autocomplete on /quotations/create
+    Admin->>View: Types phone number in Section 2 (#phone)
+    View->>Router: GET /quotations/clients/search?q={term} (Debounced 200ms)
+    Router->>Controller: search(Request $request)
+    Controller->>Service: search(term)
+    Service->>DB: SELECT * FROM quotation_clients WHERE phone/name/company/email LIKE ?
+    Controller-->>View: Return JSON { clients: [...] }
+    View->>View: Render suggestion dropdown
+    Admin->>View: Clicks a suggestion item
+    View->>View: Autofill Phone, Contact Person, Company, Address, Email
+    end
+```
 ```

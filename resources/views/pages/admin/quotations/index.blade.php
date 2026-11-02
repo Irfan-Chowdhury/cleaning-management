@@ -127,7 +127,9 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form id="client-profile-form" novalidate>
+                <form id="client-profile-form" action="{{ route('quotations.clients.store') }}" method="POST" novalidate>
+                    @csrf
+                    <input type="hidden" id="modal_client_id" name="client_id" value="">
                     <div class="modal-body">
                         <div class="form-row">
                             {{-- Contact Person * --}}
@@ -139,6 +141,7 @@
                                        name="contact_person"
                                        placeholder="Enter contact person name"
                                        required>
+                                <div class="invalid-feedback" id="error-modal-contact_person"></div>
                             </div>
 
                             {{-- Company Name (Optional / Nullable) --}}
@@ -149,6 +152,7 @@
                                        id="modal_company_name"
                                        name="company_name"
                                        placeholder="Enter company name">
+                                <div class="invalid-feedback" id="error-modal-company_name"></div>
                             </div>
                         </div>
 
@@ -162,6 +166,7 @@
                                        name="phone"
                                        placeholder="Enter phone number"
                                        required>
+                                <div class="invalid-feedback" id="error-modal-phone"></div>
                             </div>
 
                             {{-- Email * (Unique) --}}
@@ -173,6 +178,7 @@
                                        name="email"
                                        placeholder="Enter email address"
                                        required>
+                                <div class="invalid-feedback" id="error-modal-email"></div>
                             </div>
                         </div>
 
@@ -186,14 +192,15 @@
                                           rows="3"
                                           placeholder="Enter complete site address"
                                           required></textarea>
+                                <div class="invalid-feedback" id="error-modal-address"></div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary quotations-primary-btn" id="btn-save-client-profile">
+                        <button type="submit" class="btn btn-primary quotations-primary-btn" id="btn-save-client-profile">
                             <i class="fas fa-save" aria-hidden="true"></i>
-                            <span>Save Client Profile</span>
+                            <span id="btn-modal-save-client-text">Save Client Profile</span>
                         </button>
                     </div>
                 </form>

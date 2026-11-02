@@ -11,6 +11,20 @@ erDiagram
     quotations ||--o{ quotation_items : "has many (cascades on delete)"
     quotations ||--o{ audit_logs : "polymorphic morphMany"
     quotation_items ||--o{ audit_logs : "polymorphic morphMany"
+    quotation_clients ||--o{ audit_logs : "polymorphic morphMany"
+    users ||--o{ quotation_clients : "creates (created_by)"
+
+    quotation_clients {
+        bigint unsigned id PK
+        string contact_person "Client primary contact"
+        string company_name "nullable - Client company name"
+        string phone UK "unique - Client phone number"
+        string email UK "unique - Client email address"
+        text address "Physical site address"
+        bigint unsigned created_by FK "references users(id) ON DELETE SET NULL"
+        timestamp created_at
+        timestamp updated_at
+    }
 
     quotations {
         bigint unsigned id PK
@@ -103,6 +117,23 @@ Migration: `database/migrations/2026_10_12_000002_create_quotation_items_table.p
 
 ---
 
+### 2.3 Table: `quotation_clients`
+Migration: `database/migrations/2026_11_01_000001_create_quotation_clients_table.php`
+
+| Column | Type | Nullable | Default | Constraints / Index | Description |
+| :--- | :--- | :---: | :---: | :--- | :--- |
+| `id` | BIGINT UNSIGNED | No | Auto | Primary Key | Auto-increment primary key |
+| `contact_person` | VARCHAR(255) | No | None | None | Client representative name |
+| `company_name` | VARCHAR(255) | Yes | NULL | None | Client company / legal entity |
+| `phone` | VARCHAR(30) | No | None | UNIQUE | Client primary phone number |
+| `email` | VARCHAR(255) | No | None | UNIQUE | Client primary email address |
+| `address` | TEXT | No | None | None | Complete site or business address |
+| `created_by` | BIGINT UNSIGNED | Yes | NULL | FOREIGN KEY | References `users.id`, `ON DELETE SET NULL` |
+| `created_at` | TIMESTAMP | Yes | NULL | None | Creation timestamp |
+| `updated_at` | TIMESTAMP | Yes | NULL | None | Last update timestamp |
+
+---
+
 ## 3. Eloquent Models
 
 ### 3.1 Model: `App\Models\Quotation`
@@ -181,6 +212,32 @@ Migration: `database/migrations/2026_10_12_000002_create_quotation_items_table.p
   public function quotation(): BelongsTo
   {
       return $this->belongsTo(Quotation::class);
+  }
+  ```
+
+---
+
+### 3.3 Model: `App\Models\QuotationClient`
+- **File**: `app/Models/QuotationClient.php`
+- **Traits**:
+  - `Illuminate\Database\Eloquent\Factories\HasFactory`
+  - `App\Traits\Auditable`
+- **Fillable Attributes**:
+  ```php
+  protected $fillable = [
+      'contact_person',
+      'company_name',
+      'phone',
+      'email',
+      'address',
+      'created_by',
+  ];
+  ```
+- **Relationships**:
+  ```php
+  public function creator(): BelongsTo
+  {
+      return $this->belongsTo(User::class, 'created_by');
   }
   ```
 

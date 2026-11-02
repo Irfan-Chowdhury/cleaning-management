@@ -137,11 +137,11 @@ class QuotationController extends Controller
     }
 
     /**
-     * Display a listing of quotation client profiles (UI view).
+     * Display a listing of quotation client profiles.
      */
     public function clients()
     {
-        return view('pages.admin.quotations.clients');
+        return redirect()->route('quotations.clients');
     }
 
     /**
