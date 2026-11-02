@@ -106,6 +106,7 @@ class QuotationController extends Controller
                         . '<i class="fas fa-trash" aria-hidden="true"></i></button>'
                         . '<button type="button" class="btn btn-sm btn-outline-info quotation-action-btn js-quote-duplicate"'
                         . ' data-id="' . (int) $quotation->id . '"'
+                        . ' data-url="' . e(route('quotations.duplicate', $quotation->id)) . '"'
                         . ' data-number="' . e($quotation->quote_number) . '"'
                         . ' data-company="' . e($company) . '"'
                         . ' data-contact="' . e($contact) . '"'
@@ -264,6 +265,27 @@ class QuotationController extends Controller
 
             return response()->json([
                 'message' => 'Failed to delete quotation. Please try again.',
+            ], 500);
+        }
+    }
+
+    /**
+     * Duplicate an existing quotation and all its line items into a new record.
+     */
+    public function duplicate(Quotation $quotation): JsonResponse
+    {
+        try {
+            $duplicated = $this->quotationService->duplicate($quotation);
+
+            return response()->json([
+                'message'   => "Quotation {$duplicated->quote_number} duplicated successfully.",
+                'quotation' => $duplicated,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('QuotationController@duplicate failed: ' . $e->getMessage());
+
+            return response()->json([
+                'message' => 'Failed to duplicate quotation. Please try again.',
             ], 500);
         }
     }

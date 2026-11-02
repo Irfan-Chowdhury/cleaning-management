@@ -121,6 +121,7 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::get('/quotations/clients', [QuotationClientController::class, 'index'])->name('quotations.clients');
 
     Route::resource('quotations', QuotationController::class)->except('show');
+    Route::post('/quotations/{quotation}/duplicate', [QuotationController::class, 'duplicate'])->name('quotations.duplicate');
     Route::get('/quotations/{id}/download', [QuotationController::class, 'download'])->name('quotations.download');
 
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');

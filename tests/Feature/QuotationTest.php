@@ -166,6 +166,32 @@ describe('QuotationService', function () {
         $this->assertDatabaseMissing('quotation_items', ['quotation_id' => $id]);
     });
 
+    it('duplicates a quotation with sequential quote number, today date, and copied line items', function () {
+        $service   = app(QuotationService::class);
+        $original  = $service->store(validQuotationPayload());
+
+        $duplicated = $service->duplicate($original);
+
+        expect($duplicated->id)->not->toBe($original->id)
+            ->and($duplicated->quote_number)->not->toBe($original->quote_number)
+            ->and($duplicated->quote_date->toDateString())->toBe(now()->toDateString())
+            ->and($duplicated->contact_person)->toBe($original->contact_person)
+            ->and($duplicated->company_name)->toBe($original->company_name)
+            ->and($duplicated->status)->toBe($original->status)
+            ->and($duplicated->items)->toHaveCount(2);
+
+        $this->assertDatabaseHas('quotations', [
+            'id'           => $duplicated->id,
+            'quote_number' => $duplicated->quote_number,
+            'quote_date'   => now()->toDateString(),
+        ]);
+
+        $this->assertDatabaseHas('quotation_items', [
+            'quotation_id' => $duplicated->id,
+            'description'  => 'Office Cleaning',
+        ]);
+    });
+
 });
 
 // ─── Feature Tests: Store Endpoint ───────────────────────────────────────────
@@ -285,6 +311,43 @@ describe('POST /quotations (store)', function () {
         $response = $this->post(route('quotations.store'), validQuotationPayload());
 
         $response->assertRedirect(route('login'));
+    });
+
+});
+
+// ─── Feature Tests: Duplicate Endpoint ───────────────────────────────────────
+
+describe('POST /quotations/{quotation}/duplicate', function () {
+
+    it('requires authentication to duplicate a quotation', function () {
+        $quotation = Quotation::factory()->create();
+
+        $response = $this->postJson(route('quotations.duplicate', $quotation->id));
+
+        $response->assertUnauthorized();
+    });
+
+    it('duplicates a quotation via AJAX POST and returns JSON', function () {
+        $admin     = getAdminUser();
+        $service   = app(QuotationService::class);
+        $original  = $service->store(validQuotationPayload());
+
+        $response = $this->actingAs($admin)
+            ->postJson(route('quotations.duplicate', $original->id));
+
+        $response->assertOk()
+            ->assertJsonStructure([
+                'message',
+                'quotation' => [
+                    'id',
+                    'quote_number',
+                    'quote_date',
+                    'contact_person',
+                    'items',
+                ],
+            ]);
+
+        $this->assertDatabaseCount('quotations', 2);
     });
 
 });

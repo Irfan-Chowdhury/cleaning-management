@@ -292,4 +292,45 @@ sequenceDiagram
     View->>View: Autofill Phone, Contact Person, Company, Address, Email
     end
 ```
+
+---
+
+## 8. Quotation Duplication Workflow
+
+### 8.1 Trigger & Flow
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Admin
+    participant View as DataTable (quotation.js)
+    participant Router as routes/web.php
+    participant Controller as QuotationController
+    participant Service as QuotationService
+    participant DB as MySQL Database
+
+    Admin->>View: Clicks "Duplicate Quotation" button (.js-quote-duplicate)
+    View->>View: SweetAlert2 confirmation prompt displayed
+    Admin->>View: Confirms duplication
+    View->>View: Disable button & show spinner
+    View->>Router: AJAX POST /quotations/{id}/duplicate (X-CSRF-TOKEN)
+    Router->>Controller: duplicate(Quotation $quotation)
+    activate Controller
+
+    Controller->>Service: duplicate($quotation)
+    activate Service
+
+    Service->>DB: Begin Transaction
+    Service->>Service: generateSequentialQuoteNumber()
+    Service->>DB: INSERT INTO quotations (new quote_number, today quote_date, copied client/financial fields)
+    Service->>DB: Bulk INSERT INTO quotation_items (copied line items with sort_order)
+    Service->>DB: Commit Transaction
+    deactivate Service
+
+    Service-->>Controller: Return new Quotation instance (with items)
+    Controller-->>View: Return 200 JSON { message, quotation }
+    deactivate Controller
+
+    View->>View: Re-enable button
+    View->>View: SweetAlert2 success toast notification
+    View->>View: $('#quotations-table').DataTable().ajax.reload(null, false)
 ```
