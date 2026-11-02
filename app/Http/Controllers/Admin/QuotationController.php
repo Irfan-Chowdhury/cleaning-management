@@ -58,20 +58,44 @@ class QuotationController extends Controller
                             ->orWhere('contact_person', 'like', "%{$keyword}%");
                     });
                 })
-                ->filterColumn('quote_date', function ($query, $keyword) {
-                    try {
-                        $date = Carbon::createFromFormat('d M Y', $keyword);
+                ->filterColumn('quote_date', $dateFilter = function ($query, $keyword) {
+                    $keyword = trim((string) $keyword);
 
-                        if ($date && $date->format('d M Y') === $keyword) {
-                            $query->whereDate('quote_date', $date->toDateString());
-                            return;
-                        }
-                    } catch (\Throwable) {
-                        // Fall back to searching the stored date string (e.g. by year).
+                    if ($keyword === '') {
+                        return;
                     }
 
-                    $query->where('quote_date', 'like', "%{$keyword}%");
+                    $isSqlite = config('database.default') === 'sqlite';
+
+                    $query->where(function ($q) use ($keyword, $isSqlite) {
+                        if ($isSqlite) {
+                            $q->where('quote_date', 'like', "%{$keyword}%");
+                        } else {
+                            $q->whereRaw("DATE_FORMAT(quote_date, '%d %b %Y') LIKE ?", ["%{$keyword}%"])
+                              ->orWhereRaw("DATE_FORMAT(quote_date, '%e %b %Y') LIKE ?", ["%{$keyword}%"])
+                              ->orWhereRaw("DATE_FORMAT(quote_date, '%d %M %Y') LIKE ?", ["%{$keyword}%"])
+                              ->orWhereRaw("DATE_FORMAT(quote_date, '%e %M %Y') LIKE ?", ["%{$keyword}%"])
+                              ->orWhereRaw("DATE_FORMAT(quote_date, '%d/%m/%Y') LIKE ?", ["%{$keyword}%"])
+                              ->orWhereRaw("DATE_FORMAT(quote_date, '%e/%c/%Y') LIKE ?", ["%{$keyword}%"])
+                              ->orWhereRaw("DATE_FORMAT(quote_date, '%d-%m-%Y') LIKE ?", ["%{$keyword}%"])
+                              ->orWhereRaw("DATE_FORMAT(quote_date, '%Y-%m-%d') LIKE ?", ["%{$keyword}%"])
+                              ->orWhere('quote_date', 'like', "%{$keyword}%");
+                        }
+
+                        foreach (['d/m/Y', 'd-m-Y', 'd M Y', 'j M Y', 'd F Y', 'j F Y', 'Y-m-d'] as $format) {
+                            try {
+                                $parsed = Carbon::createFromFormat($format, $keyword);
+                                if ($parsed) {
+                                    $q->orWhereDate('quote_date', $parsed->toDateString());
+                                    break;
+                                }
+                            } catch (\Throwable) {
+                                // Try next format
+                            }
+                        }
+                    });
                 })
+                ->filterColumn('quote_date_formatted', $dateFilter)
                 ->filterColumn('total_amount', function ($query, $keyword) {
                     $amount = preg_replace('/[^0-9.\\-]/', '', $keyword);
 
@@ -106,6 +130,7 @@ class QuotationController extends Controller
                         . '<i class="fas fa-trash" aria-hidden="true"></i></button>'
                         . '<button type="button" class="btn btn-sm btn-outline-info quotation-action-btn js-quote-duplicate"'
                         . ' data-id="' . (int) $quotation->id . '"'
+                        . ' data-url="' . e(route('quotations.duplicate', $quotation->id)) . '"'
                         . ' data-number="' . e($quotation->quote_number) . '"'
                         . ' data-company="' . e($company) . '"'
                         . ' data-contact="' . e($contact) . '"'
@@ -137,11 +162,11 @@ class QuotationController extends Controller
     }
 
     /**
-     * Display a listing of quotation client profiles (UI view).
+     * Display a listing of quotation client profiles.
      */
     public function clients()
     {
-        return view('pages.admin.quotations.clients');
+        return redirect()->route('quotations.clients');
     }
 
     /**
@@ -188,10 +213,11 @@ class QuotationController extends Controller
     {
         try {
             $quotation = $this->quotationService->store($request->validated());
+            $label = $quotation->status === 'invoiced' ? 'Invoice' : 'Quotation';
 
             return redirect()
                 ->back()
-                ->with('success', "Quotation {$quotation->quote_number} saved successfully!")
+                ->with('success', "{$label} {$quotation->quote_number} saved successfully!")
                 ->with('quotation_pdf_download', route('quotations.download', $quotation->id));
         } catch (\Throwable $e) {
             Log::error('QuotationController@store failed: ' . $e->getMessage());
@@ -263,6 +289,27 @@ class QuotationController extends Controller
 
             return response()->json([
                 'message' => 'Failed to delete quotation. Please try again.',
+            ], 500);
+        }
+    }
+
+    /**
+     * Duplicate an existing quotation and all its line items into a new record.
+     */
+    public function duplicate(Quotation $quotation): JsonResponse
+    {
+        try {
+            $duplicated = $this->quotationService->duplicate($quotation);
+
+            return response()->json([
+                'message'   => "Quotation {$duplicated->quote_number} duplicated successfully.",
+                'quotation' => $duplicated,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('QuotationController@duplicate failed: ' . $e->getMessage());
+
+            return response()->json([
+                'message' => 'Failed to duplicate quotation. Please try again.',
             ], 500);
         }
     }

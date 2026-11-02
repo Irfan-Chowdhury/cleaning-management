@@ -46,22 +46,29 @@ This document details the actual business logic, mathematical algorithms, data v
 
 ---
 
-## 2. Customer Information Management
+## 2. Customer Information & Client Profile Management
 
 ### 2.1 Storage Model
-In the current implementation, **customer information on quotations is completely standalone and denormalized**. The `quotations` table stores customer data directly as plain strings:
-- `contact_person` (varchar 255)
-- `company_name` (varchar 255, nullable)
-- `address` (text / varchar 500)
-- `phone` (varchar 30)
-- `email` (varchar 255)
-- `abn` (varchar 20, nullable)
+1. **Quotation Clients Entity (`quotation_clients`)**:
+   - Client profiles are stored in the dedicated `quotation_clients` table:
+     - `contact_person` (varchar 255)
+     - `company_name` (varchar 255, nullable)
+     - `phone` (varchar 30, unique)
+     - `email` (varchar 255, unique)
+     - `address` (text)
+     - `created_by` (foreign key to `users.id`, nullable)
+   - Serves as the authoritative client directory for commercial cleaning quotations and proposals.
 
-### 2.2 Integration State with Customer / User Module
-- **No Foreign Key**: The `quotations` table does **not** contain a `user_id` or `customer_id` column.
-- **No Automatic Customer Creation**: Creating a quotation for a new company or person does not create a corresponding record in the `users` table (`role = 2`).
-- **No Autocomplete or Lookup**: The quotation form does not pull from or link to registered customers in the `users` table. Every quotation requires manual entry of contact details.
-- **Customer Portal Visibility**: Quotations are not visible to customers in their dashboard (`/dashboard` or `/my-bookings`). They exist strictly in the admin panel.
+2. **Denormalized Quotation Snapshot (`quotations`)**:
+   - Customer details on individual quotations remain denormalized strings:
+     - `contact_person`, `company_name`, `address`, `phone`, `email`, `abn`
+   - **Historical Integrity**: Changes to a client's profile in `quotation_clients` do not alter previously issued financial quotes or tax invoice documents.
+
+### 2.2 Client Profile Lifecycle & Integration
+- **Quick Creation from Quotations Dashboard**: Available via `#clientProfileModal` on both `/quotations` and `/quotations/clients`.
+- **Live Search & Autocomplete**: On `/quotations/create`, typing into the phone number input performs a debounced AJAX query to `GET /quotations/clients/search?q=...`. Selecting a matching client instantly auto-populates Contact Person, Company Name, Address, and Email.
+- **Unique Constraints**: Phone and email must be unique across `quotation_clients`, enforced by `StoreQuotationClientRequest` and `UpdateQuotationClientRequest`.
+- **User Role Isolation**: Client profiles exist exclusively in the admin quotation module and are distinct from portal customer accounts (`users` table where `role = 2`). Quotation clients are not required to hold portal login accounts.
 
 ---
 

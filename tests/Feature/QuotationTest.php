@@ -118,6 +118,15 @@ describe('QuotationService', function () {
         ]);
     });
 
+    it('stores a quotation with invoiced status when provided', function () {
+        $service   = app(QuotationService::class);
+        $payload   = validQuotationPayload(['status' => 'invoiced']);
+
+        $quotation = $service->store($payload);
+
+        expect($quotation->status)->toBe('invoiced');
+    });
+
     it('updates a quotation and replaces its line items atomically', function () {
         $service   = app(QuotationService::class);
         $quotation = $service->store(validQuotationPayload());
@@ -155,6 +164,32 @@ describe('QuotationService', function () {
 
         $this->assertDatabaseMissing('quotations', ['id' => $id]);
         $this->assertDatabaseMissing('quotation_items', ['quotation_id' => $id]);
+    });
+
+    it('duplicates a quotation with sequential quote number, today date, and copied line items', function () {
+        $service   = app(QuotationService::class);
+        $original  = $service->store(validQuotationPayload());
+
+        $duplicated = $service->duplicate($original);
+
+        expect($duplicated->id)->not->toBe($original->id)
+            ->and($duplicated->quote_number)->not->toBe($original->quote_number)
+            ->and($duplicated->quote_date->toDateString())->toBe(now()->toDateString())
+            ->and($duplicated->contact_person)->toBe($original->contact_person)
+            ->and($duplicated->company_name)->toBe($original->company_name)
+            ->and($duplicated->status)->toBe($original->status)
+            ->and($duplicated->items)->toHaveCount(2);
+
+        $this->assertDatabaseHas('quotations', [
+            'id'           => $duplicated->id,
+            'quote_number' => $duplicated->quote_number,
+            'quote_date'   => now()->toDateString(),
+        ]);
+
+        $this->assertDatabaseHas('quotation_items', [
+            'quotation_id' => $duplicated->id,
+            'description'  => 'Office Cleaning',
+        ]);
     });
 
 });
@@ -197,6 +232,17 @@ describe('POST /quotations (store)', function () {
         $this->assertDatabaseHas('quotations', [
             'contact_person' => 'John Smith',
             'status'         => 'draft',
+        ]);
+    });
+
+    it('sets status to invoiced on creation when invoiced is selected', function () {
+        $admin = getAdminUser();
+
+        $this->actingAs($admin)->post(route('quotations.store'), validQuotationPayload(['status' => 'invoiced']));
+
+        $this->assertDatabaseHas('quotations', [
+            'contact_person' => 'John Smith',
+            'status'         => 'invoiced',
         ]);
     });
 
@@ -265,6 +311,79 @@ describe('POST /quotations (store)', function () {
         $response = $this->post(route('quotations.store'), validQuotationPayload());
 
         $response->assertRedirect(route('login'));
+    });
+
+});
+
+// ─── Feature Tests: Duplicate Endpoint ───────────────────────────────────────
+
+describe('POST /quotations/{quotation}/duplicate', function () {
+
+    it('requires authentication to duplicate a quotation', function () {
+        $quotation = Quotation::factory()->create();
+
+        $response = $this->postJson(route('quotations.duplicate', $quotation->id));
+
+        $response->assertUnauthorized();
+    });
+
+    it('duplicates a quotation via AJAX POST and returns JSON', function () {
+        $admin     = getAdminUser();
+        $service   = app(QuotationService::class);
+        $original  = $service->store(validQuotationPayload());
+
+        $response = $this->actingAs($admin)
+            ->postJson(route('quotations.duplicate', $original->id));
+
+        $response->assertOk()
+            ->assertJsonStructure([
+                'message',
+                'quotation' => [
+                    'id',
+                    'quote_number',
+                    'quote_date',
+                    'contact_person',
+                    'items',
+                ],
+            ]);
+
+        $this->assertDatabaseCount('quotations', 2);
+    });
+
+});
+
+// ─── Feature Tests: DataTable Search Endpoint ─────────────────────────────────
+
+describe('GET /quotations (DataTables search)', function () {
+
+    it('returns filtered records when searching by quote date in datatables ajax request', function () {
+        $admin   = getAdminUser();
+        $service = app(QuotationService::class);
+
+        $target = $service->store(validQuotationPayload([
+            'quote_date'     => '2026-11-02',
+            'contact_person' => 'Target Date Person',
+        ]));
+
+        $other = $service->store(validQuotationPayload([
+            'quote_date'     => '2025-05-15',
+            'contact_person' => 'Other Date Person',
+        ]));
+
+        $response = $this->actingAs($admin)->getJson(route('quotations.index', [
+            'draw'    => 1,
+            'columns' => [
+                ['data' => 'quote_number_link', 'name' => 'quote_number', 'searchable' => 'true'],
+                ['data' => 'company_display', 'name' => 'company_name', 'searchable' => 'true'],
+                ['data' => 'quote_date_formatted', 'name' => 'quote_date', 'searchable' => 'true'],
+                ['data' => 'total_amount', 'name' => 'total_amount', 'searchable' => 'true'],
+                ['data' => 'status_display', 'name' => 'status', 'searchable' => 'true'],
+            ],
+            'search'  => ['value' => 'Nov', 'regex' => 'false'],
+        ]), ['X-Requested-With' => 'XMLHttpRequest']);
+
+        $response->assertOk()
+            ->assertJsonStructure(['draw', 'recordsTotal', 'recordsFiltered', 'data']);
     });
 
 });

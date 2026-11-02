@@ -35,7 +35,7 @@ class QuotationService
                 'gst_amount'     => $totals['gst_amount'],
                 'total_amount'   => $totals['total_amount'],
                 'terms_notes'    => $data['terms_notes'] ?? null,
-                'status'         => 'draft',
+                'status'         => in_array($data['status'] ?? 'draft', ['draft', 'invoiced'], true) ? $data['status'] : 'draft',
             ]);
 
             $this->syncItems($quotation, $data['items']);
@@ -91,6 +91,56 @@ class QuotationService
         DB::transaction(function () use ($quotation) {
             $quotation->items()->delete();
             $quotation->delete();
+        });
+    }
+
+    /**
+     * Duplicate an existing quotation and all its line items into a new record.
+     * Generates a new sequential quote number and sets the quote date to today.
+     *
+     * @param  Quotation  $quotation
+     * @return Quotation
+     */
+    public function duplicate(Quotation $quotation): Quotation
+    {
+        return DB::transaction(function () use ($quotation) {
+            $quotation->loadMissing('items');
+
+            $newQuotation = Quotation::create([
+                'quote_number'   => $this->generateSequentialQuoteNumber(),
+                'quote_date'     => Carbon::today()->toDateString(),
+                'abn'            => $quotation->abn,
+                'contact_person' => $quotation->contact_person,
+                'company_name'   => $quotation->company_name,
+                'address'        => $quotation->address,
+                'phone'          => $quotation->phone,
+                'email'          => $quotation->email,
+                'frequency'      => $quotation->frequency,
+                'shift_schedule' => $quotation->shift_schedule,
+                'subtotal'       => $quotation->subtotal,
+                'gst_amount'     => $quotation->gst_amount,
+                'total_amount'   => $quotation->total_amount,
+                'terms_notes'    => $quotation->terms_notes,
+                'status'         => $quotation->status ?? 'draft',
+            ]);
+
+            $rows = [];
+            foreach ($quotation->items as $index => $item) {
+                $rows[] = [
+                    'quotation_id' => $newQuotation->id,
+                    'description'  => $item->description,
+                    'amount'       => (float) $item->amount,
+                    'sort_order'   => $item->sort_order ?? $index,
+                    'created_at'   => now(),
+                    'updated_at'   => now(),
+                ];
+            }
+
+            if (! empty($rows)) {
+                QuotationItem::insert($rows);
+            }
+
+            return $newQuotation->load('items');
         });
     }
 

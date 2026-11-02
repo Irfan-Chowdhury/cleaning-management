@@ -42,7 +42,13 @@ The module operates under the admin portal (`/quotations`) and is restricted str
    - When finalized, administrators can trigger "Convert to Invoice", which atomically locks the quote and transitions its status to `invoiced`.
    - Once invoiced, the quotation status is locked against re-conversion.
 
-6. **Automated PDF Generation & Instant Download**:
+6. **Clients Directory & Profile Management (`/quotations/clients` & `/quotations`)**:
+   - Centralized client directory powered by `QuotationClient` entity and Yajra DataTables (`/quotations/clients`).
+   - Quick client creation via `#clientProfileModal` available directly from both `/quotations` and `/quotations/clients`.
+   - Live phone/name autocomplete on quotation creation (`/quotations/create`), auto-filling contact person, company, site address, and email.
+   - Full AJAX CRUD operations with client-side and server-side validation and SweetAlert2 notifications.
+
+7. **Automated PDF Generation & Instant Download**:
    - Powered by DomPDF (`Barryvdh\DomPDF\Facade\Pdf`).
    - Dynamic view rendering:
      - `pdf.quotation` for draft quotations ("QUOTE").
@@ -76,13 +82,13 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
 
 | Component Layer | File Path | Primary Responsibility |
 | :--- | :--- | :--- |
-| **Controller** | `app/Http/Controllers/Admin/QuotationController.php` | Handles HTTP endpoints, DataTables response, metric aggregation, and PDF download dispatch. |
-| **Service Layer** | `app/Services/QuotationService.php` | Encapsulates quotation creation, updating, line-item syncing, quote number generation, and calculations inside database transactions. |
-| **Models** | `app/Models/Quotation.php`<br>`app/Models/QuotationItem.php` | Eloquent models, casts, auditable trait integration, and `hasMany` / `belongsTo` relations. |
-| **Form Requests** | `app/Http/Requests/Admin/StoreQuotationRequest.php`<br>`app/Http/Requests/Admin/UpdateQuotationRequest.php` | Server-side validation rules and custom validation messages for store and update operations. |
-| **Database Migrations** | `database/migrations/2026_10_12_000001_create_quotations_table.php`<br>`database/migrations/2026_10_12_000002_create_quotation_items_table.php` | Database schema definitions for `quotations` and `quotation_items` tables. |
-| **Seeder & Factory** | `database/seeders/QuotationSeeder.php`<br>`database/factories/QuotationFactory.php` | Test & demo data generation with random line items and calculated totals. |
-| **Blade Views** | `resources/views/pages/admin/quotations/index.blade.php`<br>`resources/views/pages/admin/quotations/form.blade.php` | UI for quotation list with metrics and unified create/edit form. |
+| **Controller** | `app/Http/Controllers/Admin/QuotationController.php`<br>`app/Http/Controllers/Admin/QuotationClientController.php` | Handles quotation & client HTTP endpoints, DataTables responses, metric aggregation, live search, and PDF download dispatch. |
+| **Service Layer** | `app/Services/QuotationService.php`<br>`app/Services/QuotationClientService.php` | Encapsulates quotation creation, updating, line-item syncing, quote numbering, and client profile CRUD/search logic. |
+| **Models** | `app/Models/Quotation.php`<br>`app/Models/QuotationItem.php`<br>`app/Models/QuotationClient.php` | Eloquent models, casts, auditable trait integration, and relationships. |
+| **Form Requests** | `app/Http/Requests/Admin/StoreQuotationRequest.php`<br>`app/Http/Requests/Admin/UpdateQuotationRequest.php`<br>`app/Http/Requests/Admin/StoreQuotationClientRequest.php`<br>`app/Http/Requests/Admin/UpdateQuotationClientRequest.php` | Server-side validation rules and custom messages for quotations and client profiles. |
+| **Database Migrations** | `2026_10_12_000001_create_quotations_table.php`<br>`2026_10_12_000002_create_quotation_items_table.php`<br>`2026_11_01_000001_create_quotation_clients_table.php` | Database schema definitions for quotations, quotation items, and quotation clients. |
+| **Seeder & Factory** | `QuotationSeeder.php`, `QuotationClientSeeder.php`<br>`QuotationFactory.php` | Test & demo data generation for quotations and client profiles. |
+| **Blade Views** | `pages/admin/quotations/index.blade.php`<br>`pages/admin/quotations/form.blade.php`<br>`pages/admin/quotations/clients/index.blade.php` | UI for quotation list, create/edit form, and clients directory with modal profile creation. |
 | **PDF Templates** | `resources/views/pdf/quotation.blade.php`<br>`resources/views/pdf/quotation-invoice.blade.php` | DomPDF templates for draft quote and tax invoice documents. |
 | **Assets** | `public/assets/js/quotation.js`<br>`public/assets/css/quotation.css` | Dynamic row manipulation, client-side math, AJAX deletion, and responsive UI styles. |
 | **Feature Tests** | `tests/Feature/QuotationTest.php` | Automated Pest/PHPUnit tests for service logic, store validation, calculations, and security. |

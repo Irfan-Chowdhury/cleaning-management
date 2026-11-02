@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             PromotionSeeder::class,
             UserSeeder::class,
             // NotificationSeeder::class,
+            QuotationClientSeeder::class,
             QuotationSeeder::class,
         ]);
     }

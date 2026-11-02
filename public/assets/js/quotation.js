@@ -82,28 +82,27 @@ $(document).ready(function () {
                         previous: '<i class="fas fa-chevron-left"></i>',
                         next: '<i class="fas fa-chevron-right"></i>'
                     }
+                },
+                drawCallback: function () {
+                    var api = this.api();
+                    var info = api.page.info();
+                    if (info && $('.quotations-card-header p').length) {
+                        $('.quotations-card-header p').text(info.recordsTotal.toLocaleString() + ' records found');
+                    }
                 }
             });
         }
 
-        // Duplicate Quotation via SweetAlert2 (UI dummy simulation)
+        // Duplicate Quotation via SweetAlert2 → real AJAX POST
         $(document).on('click', '.js-quote-duplicate', function (e) {
             e.preventDefault();
             var $btn        = $(this);
-            var $tr         = $btn.closest('tr');
             var quoteId     = $btn.data('id');
             var quoteNumber = $btn.data('number') || 'this quotation';
-            var company     = $btn.data('company') || 'Client';
-            var contact     = $btn.data('contact') || '';
-            var amount      = $btn.data('amount') || 0;
             var status      = ($btn.data('status') || 'draft').toLowerCase();
             var statusLabel = status === 'invoiced' ? 'Invoiced' : 'Draft';
-            var statusBadge = status === 'invoiced' ? 'status-badge-invoiced' : 'status-badge-draft';
-
-            // Extract contact person from row if not present in dataset
-            if (!contact && $tr.find('.contact-person').length) {
-                contact = $tr.find('.contact-person').text().trim();
-            }
+            var url         = $btn.data('url') || ('/quotations/' + quoteId + '/duplicate');
+            var csrfToken   = $('meta[name="csrf-token"]').attr('content');
 
             Swal.fire({
                 title: 'Duplicate Quotation?',
@@ -118,107 +117,28 @@ $(document).ready(function () {
             }).then(function (result) {
                 if (!result.isConfirmed) return;
 
-                // Determine next sequential quote number (D2G-XXXX / D2G-XXXXX)
-                var maxNum = 0;
-                $('#quotations-table tbody tr').each(function () {
-                    var rowText = $(this).text();
-                    var match = rowText.match(/D2G-(\d+)/g);
-                    if (match) {
-                        match.forEach(function (m) {
-                            var n = parseInt(m.replace('D2G-', ''), 10);
-                            if (n > maxNum) maxNum = n;
-                        });
+                $btn.prop('disabled', true);
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    headers: { 'X-CSRF-TOKEN': csrfToken },
+                    success: function (response) {
+                        if ($.fn.DataTable && $.fn.DataTable.isDataTable('#quotations-table')) {
+                            $('#quotations-table').DataTable().ajax.reload(null, false);
+                        }
+                        showNotification('success', response.message || 'Quotation duplicated successfully.');
+                    },
+                    error: function (xhr) {
+                        var msg = (xhr.responseJSON && xhr.responseJSON.message)
+                            ? xhr.responseJSON.message
+                            : 'Failed to duplicate quotation. Please try again.';
+                        showNotification('error', msg);
+                    },
+                    complete: function () {
+                        $btn.prop('disabled', false);
                     }
                 });
-
-                var srcMatch = String(quoteNumber).match(/(\d+)$/);
-                if (srcMatch && srcMatch[1]) {
-                    var srcNum = parseInt(srcMatch[1], 10);
-                    if (srcNum > maxNum) maxNum = srcNum;
-                }
-
-                var nextSeq = maxNum + 1;
-                var padLength = Math.max(4, String(nextSeq).length);
-                var newQuoteNumber = 'D2G-' + String(nextSeq).padStart(padLength, '0');
-
-                // Current date formatted as DD Mon YYYY (e.g. 01 Nov 2026)
-                var today = new Date();
-                var day = String(today.getDate()).padStart(2, '0');
-                var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                var month = monthNames[today.getMonth()];
-                var year = today.getFullYear();
-                var formattedDate = day + ' ' + month + ' ' + year;
-
-                var formattedAmount = '$' + (Number(amount) || 0).toLocaleString('en-US', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                });
-
-                // Generate a dummy ID for the duplicated row
-                var newId = (parseInt(quoteId, 10) || 100) + 1000 + Math.floor(Math.random() * 900);
-
-                // Replicate exact existing table cells format matching QuotationController@index
-                var quoteNumberHtml = '<a href="/quotations/' + newId + '/edit" class="quote-number-badge" title="View / Edit Quotation">' +
-                    '<i class="far fa-file-alt" aria-hidden="true"></i>' +
-                    '<span>' + newQuoteNumber + '</span>' +
-                '</a>';
-
-                var companyCellHtml = $tr.find('td:nth-child(2)').html() ||
-                    ('<div class="company-meta-cell">' +
-                        '<span class="company-name">' + company + '</span>' +
-                        (contact ? '<span class="contact-person"><i class="far fa-user mr-1" aria-hidden="true"></i>' + contact + '</span>' : '') +
-                    '</div>');
-
-                var quoteDateHtml = '<div class="quote-date-cell">' +
-                    '<i class="far fa-calendar-alt text-muted" aria-hidden="true"></i>' +
-                    '<span>' + formattedDate + '</span>' +
-                '</div>';
-
-                var actionsHtml = '<div class="quotation-actions">' +
-                    '<a href="/quotations/' + newId + '/edit" class="btn btn-sm btn-outline-primary quotation-action-btn" title="Edit Quotation">' +
-                        '<i class="fas fa-edit" aria-hidden="true"></i>' +
-                    '</a>' +
-                    '<button type="button" class="btn btn-sm btn-outline-danger quotation-action-btn js-quote-delete"' +
-                            ' data-id="' + newId + '" data-url="/quotations/' + newId + '"' +
-                            ' data-number="' + newQuoteNumber + '" title="Delete Quotation">' +
-                        '<i class="fas fa-trash" aria-hidden="true"></i>' +
-                    '</button>' +
-                    '<button type="button" class="btn btn-sm btn-outline-info quotation-action-btn js-quote-duplicate"' +
-                            ' data-id="' + newId + '"' +
-                            ' data-number="' + newQuoteNumber + '"' +
-                            ' data-company="' + company + '"' +
-                            ' data-contact="' + contact + '"' +
-                            ' data-amount="' + amount + '"' +
-                            ' data-status="' + status + '"' +
-                            ' title="Duplicate Quotation">' +
-                        '<i class="fas fa-copy" aria-hidden="true"></i>' +
-                    '</button>' +
-                '</div>';
-
-                var newRowHtml = '<tr class="table-row-highlighted" style="background-color: #f0fdf4; transition: background-color 2.5s ease;">' +
-                    '<td>' + quoteNumberHtml + '</td>' +
-                    '<td>' + companyCellHtml + '</td>' +
-                    '<td>' + quoteDateHtml + '</td>' +
-                    '<td class="quote-amount">' + formattedAmount + '</td>' +
-                    '<td><span class="status-badge ' + statusBadge + '">' + statusLabel + '</span></td>' +
-                    '<td class="text-center">' + actionsHtml + '</td>' +
-                '</tr>';
-
-                var $tbody = $('#quotations-table tbody');
-                $tbody.find('.dataTables_empty').closest('tr').remove();
-                $tbody.prepend(newRowHtml);
-
-                setTimeout(function () {
-                    $tbody.find('.table-row-highlighted').css('background-color', '');
-                }, 3000);
-
-                var $counter = $('.quotations-card-header p');
-                if ($counter.length) {
-                    var curCount = parseInt($counter.text().replace(/[^0-9]/g, ''), 10) || 0;
-                    $counter.text((curCount + 1).toLocaleString() + ' records found');
-                }
-
-                showNotification('success', 'Quotation ' + newQuoteNumber + ' duplicated successfully with ' + statusLabel + ' status.');
             });
         });
 
@@ -267,6 +187,203 @@ $(document).ready(function () {
             });
         });
     }
+
+    // -------------------------------------------------------------------------
+    // 2. Clients Directory List View (DataTable & Modal CRUD)
+    // -------------------------------------------------------------------------
+    var $clientsTable = $('#clients-table');
+
+    if ($clientsTable.length && $.fn.DataTable && !$.fn.DataTable.isDataTable('#clients-table')) {
+        var clientsAjaxUrl = $clientsTable.data('ajax-url') || '/quotations/clients';
+
+        $clientsTable.DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: clientsAjaxUrl,
+            responsive: true,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [5, 10, 25, 50],
+            order: [[0, 'desc']],
+            columns: [
+                { data: 'DT_RowIndex', name: 'id', orderable: false, searchable: false, width: '45px' },
+                { data: 'contact_person_cell', name: 'contact_person' },
+                { data: 'company_name_badge', name: 'company_name' },
+                { data: 'phone_link', name: 'phone' },
+                { data: 'email_link', name: 'email' },
+                { data: 'address_display', name: 'address' },
+                { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-center', width: '110px' }
+            ],
+            language: {
+                search: '',
+                searchPlaceholder: 'Search clients...',
+                lengthMenu: 'Show _MENU_ entries',
+                info: 'Showing _START_ to _END_ of _TOTAL_ clients',
+                infoEmpty: 'No clients found',
+                paginate: {
+                    previous: '<i class="fas fa-chevron-left"></i>',
+                    next: '<i class="fas fa-chevron-right"></i>'
+                }
+            }
+        });
+    }
+
+    // Reset Client Modal for "Add Client"
+    $(document).on('click', '[data-target="#clientProfileModal"]', function () {
+        if (!$(this).hasClass('js-client-edit')) {
+            $('#client_id, #modal_client_id').val('');
+            $('#clientModalTitleText').text('Create Client Profile');
+            $('#btn-save-client-text, #btn-modal-save-client-text').text('Save Client Profile');
+
+            var $form = $('#client-profile-form');
+            if ($form.length) {
+                $form[0].reset();
+                $form.find('.is-invalid').removeClass('is-invalid');
+                $form.find('.invalid-feedback').text('').hide();
+            }
+        }
+    });
+
+    // Populate Client Modal for Edit
+    $(document).on('click', '.js-client-edit', function (e) {
+        e.preventDefault();
+        var $btn = $(this);
+        var id = $btn.data('id');
+        var contactPerson = $btn.data('contact_person') || '';
+        var companyName = $btn.data('company_name') || '';
+        var phone = $btn.data('phone') || '';
+        var email = $btn.data('email') || '';
+        var address = $btn.data('address') || '';
+
+        $('#client_id, #modal_client_id').val(id);
+        $('#client_contact_person, #modal_contact_person').val(contactPerson);
+        $('#client_company_name, #modal_company_name').val(companyName);
+        $('#client_phone, #modal_phone').val(phone);
+        $('#client_email, #modal_email').val(email);
+        $('#client_address, #modal_address').val(address);
+
+        $('#clientModalTitleText').text('Edit Client Profile');
+        $('#btn-save-client-text, #btn-modal-save-client-text').text('Update Client Profile');
+
+        var $form = $('#client-profile-form');
+        if ($form.length) {
+            $form.find('.is-invalid').removeClass('is-invalid');
+            $form.find('.invalid-feedback').text('').hide();
+        }
+
+        $('#clientProfileModal').modal('show');
+    });
+
+    // Submit Client Profile Form (Create & Update) via AJAX
+    $(document).on('submit', '#client-profile-form', function (e) {
+        e.preventDefault();
+        var $form = $(this);
+        var $btn = $('#btn-save-client-profile');
+        var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+        var clientId = $('#client_id').val() || $('#modal_client_id').val();
+        var isUpdate = Boolean(clientId);
+
+        var url = isUpdate ? '/quotations/clients/' + clientId : '/quotations/clients';
+        var method = isUpdate ? 'PUT' : 'POST';
+
+        $form.find('.is-invalid').removeClass('is-invalid');
+        $form.find('.invalid-feedback').text('').hide();
+        $btn.prop('disabled', true);
+
+        var payload = {
+            contact_person: ($('#client_contact_person').length ? $('#client_contact_person') : $('#modal_contact_person')).val(),
+            company_name: ($('#client_company_name').length ? $('#client_company_name') : $('#modal_company_name')).val(),
+            phone: ($('#client_phone').length ? $('#client_phone') : $('#modal_phone')).val(),
+            email: ($('#client_email').length ? $('#client_email') : $('#modal_email')).val(),
+            address: ($('#client_address').length ? $('#client_address') : $('#modal_address')).val()
+        };
+
+        $.ajax({
+            url: url,
+            type: method,
+            data: payload,
+            headers: { 'X-CSRF-TOKEN': csrfToken },
+            success: function (res) {
+                $('#clientProfileModal').modal('hide');
+                $form[0].reset();
+                $('#client_id, #modal_client_id').val('');
+
+                showNotification('success', res.message || 'Client profile saved successfully.');
+
+                if ($.fn.DataTable && $.fn.DataTable.isDataTable('#clients-table')) {
+                    $('#clients-table').DataTable().ajax.reload(null, false);
+                }
+            },
+            error: function (xhr) {
+                if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
+                    var errors = xhr.responseJSON.errors;
+                    Object.keys(errors).forEach(function (field) {
+                        var $input = $('#client_' + field + ', #modal_' + field);
+                        var $feedback = $('#error-' + field + ', #error-modal-' + field);
+                        $input.addClass('is-invalid');
+                        $feedback.text(errors[field][0]).show();
+                    });
+                } else {
+                    var msg = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : 'Failed to save client profile.';
+                    showNotification('error', msg);
+                }
+            },
+            complete: function () {
+                $btn.prop('disabled', false);
+            }
+        });
+    });
+
+    $(document).on('click', '#btn-save-client-profile', function (e) {
+        var $form = $('#client-profile-form');
+        if ($form.length) {
+            $form.submit();
+        }
+    });
+
+    // Delete Client Confirmation via SweetAlert2
+    $(document).on('click', '.js-client-delete', function (e) {
+        e.preventDefault();
+        var $btn = $(this);
+        var clientId = $btn.data('id');
+        var clientName = $btn.data('name') || 'this client';
+        var url = $btn.data('url') || ('/quotations/clients/' + clientId);
+        var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+        Swal.fire({
+            title: 'Delete Client?',
+            text: 'Are you sure you want to delete ' + clientName + '? This action cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then(function (result) {
+            if (!result.isConfirmed) return;
+
+            $btn.prop('disabled', true);
+            $.ajax({
+                url: url,
+                type: 'DELETE',
+                headers: { 'X-CSRF-TOKEN': csrfToken },
+                success: function (res) {
+                    showNotification('success', res.message || 'Client deleted successfully.');
+                    if ($.fn.DataTable && $.fn.DataTable.isDataTable('#clients-table')) {
+                        $('#clients-table').DataTable().ajax.reload(null, false);
+                    }
+                },
+                error: function (xhr) {
+                    var msg = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : 'Failed to delete client.';
+                    showNotification('error', msg);
+                },
+                complete: function () {
+                    $btn.prop('disabled', false);
+                }
+            });
+        });
+    });
 
     // -------------------------------------------------------------------------
     // 2. Create / Edit Quotation Form (Dynamic Items & Real-Time Calculation)
@@ -378,55 +495,11 @@ $(document).ready(function () {
         });
 
         // ---------------------------------------------------------------------
-        // Client Phone Search & Autofill (Temporary Dummy Data)
+        // Client Phone Search & Autofill (Live AJAX from Database)
         // ---------------------------------------------------------------------
-        var dummyClients = [
-            {
-                phone: '0412345678',
-                contact_person: 'John Smith',
-                company_name: 'Acme Cleaning Co',
-                email: 'john@acmecleaning.com.au',
-                address: '123 Test Street, Sydney NSW 2000'
-            },
-            {
-                phone: '0423456789',
-                contact_person: 'Sarah Jenkins',
-                company_name: 'Prime Corporate Office',
-                email: 'sarah@primeoffice.com.au',
-                address: '45 George Street, Parramatta NSW 2150'
-            },
-            {
-                phone: '0434567890',
-                contact_person: 'Michael Wong',
-                company_name: 'Harborview Medical Clinic',
-                email: 'm.wong@harborview.com.au',
-                address: '88 Pacific Highway, North Sydney NSW 2060'
-            },
-            {
-                phone: '0445678901',
-                contact_person: 'Emma Davis',
-                company_name: '',
-                email: 'emma.davis@gmail.com',
-                address: '12 Ocean View Road, Manly NSW 2095'
-            },
-            {
-                phone: '0456789012',
-                contact_person: 'David Miller',
-                company_name: 'Miller Logistics Hub',
-                email: 'david@millerlogistics.com.au',
-                address: '10 Warehouse Way, Eastern Creek NSW 2766'
-            },
-            {
-                phone: '0426003944',
-                contact_person: 'Irfan Chowdhury',
-                company_name: 'Dust2Glow Cleaning',
-                email: 'info@dust2glowcleaning.com.au',
-                address: 'Suite 4, 150 Pitt Street, Sydney NSW 2000'
-            }
-        ];
-
         var $phoneInput = $('#phone');
         var $dropdown = $('#phone-search-dropdown');
+        var phoneSearchTimer = null;
 
         function cleanPhone(val) {
             return (val || '').replace(/[^0-9]/g, '');
@@ -466,35 +539,49 @@ $(document).ready(function () {
         }
 
         $phoneInput.on('input focus', function () {
-            // Remove any spaces from phone input
-            var raw = $(this).val().replace(/\s+/g, '');
-            if ($(this).val() !== raw) {
-                $(this).val(raw);
+            // Strictly allow numbers (0-9) and plus (+) only
+            var raw = $(this).val();
+            var cleaned = raw.replace(/[^\d+]/g, '');
+            if (cleaned.indexOf('+') > 0) {
+                cleaned = (cleaned[0] === '+' ? '+' : '') + cleaned.replace(/\+/g, '');
+            }
+            if ($(this).val() !== cleaned) {
+                $(this).val(cleaned);
             }
 
-            var cleaned = cleanPhone(raw);
+            var term = cleaned.trim();
 
-            if (cleaned.length < 1 && raw.length < 1) {
+            if (term.length < 1) {
                 $dropdown.hide().empty();
                 return;
             }
 
-            var matches = dummyClients.filter(function (c) {
-                var cClean = cleanPhone(c.phone);
-                var nameMatch = c.contact_person.toLowerCase().indexOf(raw.toLowerCase()) !== -1;
-                var emailMatch = (c.email || '').toLowerCase().indexOf(raw.toLowerCase()) !== -1;
-                var phoneMatch = cClean.indexOf(cleaned) !== -1 || c.phone.indexOf(raw) !== -1;
-                return phoneMatch || nameMatch || emailMatch;
-            });
-
-            renderClientSuggestions(matches);
+            clearTimeout(phoneSearchTimer);
+            phoneSearchTimer = setTimeout(function () {
+                $.ajax({
+                    url: '/quotations/clients/search',
+                    type: 'GET',
+                    data: { q: term },
+                    success: function (res) {
+                        var clients = res.clients || [];
+                        renderClientSuggestions(clients);
+                    },
+                    error: function () {
+                        $dropdown.hide().empty();
+                    }
+                });
+            }, 200);
         });
 
-        // Prevent any space entry in client profile modal phone fields
+        // Strictly allow numbers (0-9) and plus (+) only in client profile modal phone fields
         $(document).on('input', '#modal_phone, #client_phone', function () {
-            var raw = $(this).val().replace(/\s+/g, '');
-            if ($(this).val() !== raw) {
-                $(this).val(raw);
+            var raw = $(this).val();
+            var cleaned = raw.replace(/[^\d+]/g, '');
+            if (cleaned.indexOf('+') > 0) {
+                cleaned = (cleaned[0] === '+' ? '+' : '') + cleaned.replace(/\+/g, '');
+            }
+            if ($(this).val() !== cleaned) {
+                $(this).val(cleaned);
             }
         });
 
@@ -519,7 +606,7 @@ $(document).ready(function () {
                     $autofilled.removeClass('field-autofilled');
                 }, 1200);
 
-                showNotification('success', 'Autofilled client details for ' + client.contact_person);
+                // showNotification('success', 'Autofilled client details for ' + client.contact_person);
             }
 
             $dropdown.hide().empty();
