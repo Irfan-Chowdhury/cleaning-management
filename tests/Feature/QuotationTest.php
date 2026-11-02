@@ -351,3 +351,39 @@ describe('POST /quotations/{quotation}/duplicate', function () {
     });
 
 });
+
+// ─── Feature Tests: DataTable Search Endpoint ─────────────────────────────────
+
+describe('GET /quotations (DataTables search)', function () {
+
+    it('returns filtered records when searching by quote date in datatables ajax request', function () {
+        $admin   = getAdminUser();
+        $service = app(QuotationService::class);
+
+        $target = $service->store(validQuotationPayload([
+            'quote_date'     => '2026-11-02',
+            'contact_person' => 'Target Date Person',
+        ]));
+
+        $other = $service->store(validQuotationPayload([
+            'quote_date'     => '2025-05-15',
+            'contact_person' => 'Other Date Person',
+        ]));
+
+        $response = $this->actingAs($admin)->getJson(route('quotations.index', [
+            'draw'    => 1,
+            'columns' => [
+                ['data' => 'quote_number_link', 'name' => 'quote_number', 'searchable' => 'true'],
+                ['data' => 'company_display', 'name' => 'company_name', 'searchable' => 'true'],
+                ['data' => 'quote_date_formatted', 'name' => 'quote_date', 'searchable' => 'true'],
+                ['data' => 'total_amount', 'name' => 'total_amount', 'searchable' => 'true'],
+                ['data' => 'status_display', 'name' => 'status', 'searchable' => 'true'],
+            ],
+            'search'  => ['value' => 'Nov', 'regex' => 'false'],
+        ]), ['X-Requested-With' => 'XMLHttpRequest']);
+
+        $response->assertOk()
+            ->assertJsonStructure(['draw', 'recordsTotal', 'recordsFiltered', 'data']);
+    });
+
+});

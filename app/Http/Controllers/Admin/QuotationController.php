@@ -58,20 +58,44 @@ class QuotationController extends Controller
                             ->orWhere('contact_person', 'like', "%{$keyword}%");
                     });
                 })
-                ->filterColumn('quote_date', function ($query, $keyword) {
-                    try {
-                        $date = Carbon::createFromFormat('d M Y', $keyword);
+                ->filterColumn('quote_date', $dateFilter = function ($query, $keyword) {
+                    $keyword = trim((string) $keyword);
 
-                        if ($date && $date->format('d M Y') === $keyword) {
-                            $query->whereDate('quote_date', $date->toDateString());
-                            return;
-                        }
-                    } catch (\Throwable) {
-                        // Fall back to searching the stored date string (e.g. by year).
+                    if ($keyword === '') {
+                        return;
                     }
 
-                    $query->where('quote_date', 'like', "%{$keyword}%");
+                    $isSqlite = config('database.default') === 'sqlite';
+
+                    $query->where(function ($q) use ($keyword, $isSqlite) {
+                        if ($isSqlite) {
+                            $q->where('quote_date', 'like', "%{$keyword}%");
+                        } else {
+                            $q->whereRaw("DATE_FORMAT(quote_date, '%d %b %Y') LIKE ?", ["%{$keyword}%"])
+                              ->orWhereRaw("DATE_FORMAT(quote_date, '%e %b %Y') LIKE ?", ["%{$keyword}%"])
+                              ->orWhereRaw("DATE_FORMAT(quote_date, '%d %M %Y') LIKE ?", ["%{$keyword}%"])
+                              ->orWhereRaw("DATE_FORMAT(quote_date, '%e %M %Y') LIKE ?", ["%{$keyword}%"])
+                              ->orWhereRaw("DATE_FORMAT(quote_date, '%d/%m/%Y') LIKE ?", ["%{$keyword}%"])
+                              ->orWhereRaw("DATE_FORMAT(quote_date, '%e/%c/%Y') LIKE ?", ["%{$keyword}%"])
+                              ->orWhereRaw("DATE_FORMAT(quote_date, '%d-%m-%Y') LIKE ?", ["%{$keyword}%"])
+                              ->orWhereRaw("DATE_FORMAT(quote_date, '%Y-%m-%d') LIKE ?", ["%{$keyword}%"])
+                              ->orWhere('quote_date', 'like', "%{$keyword}%");
+                        }
+
+                        foreach (['d/m/Y', 'd-m-Y', 'd M Y', 'j M Y', 'd F Y', 'j F Y', 'Y-m-d'] as $format) {
+                            try {
+                                $parsed = Carbon::createFromFormat($format, $keyword);
+                                if ($parsed) {
+                                    $q->orWhereDate('quote_date', $parsed->toDateString());
+                                    break;
+                                }
+                            } catch (\Throwable) {
+                                // Try next format
+                            }
+                        }
+                    });
                 })
+                ->filterColumn('quote_date_formatted', $dateFilter)
                 ->filterColumn('total_amount', function ($query, $keyword) {
                     $amount = preg_replace('/[^0-9.\\-]/', '', $keyword);
 
