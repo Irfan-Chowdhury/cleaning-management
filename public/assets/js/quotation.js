@@ -686,7 +686,7 @@ $(document).ready(function () {
                     $autofilled.removeClass('field-autofilled');
                 }, 1200);
 
-                showNotification('success', 'Autofilled client details for ' + client.contact_person);
+                // showNotification('success', 'Autofilled client details for ' + client.contact_person);
             }
 
             $dropdown.hide().empty();
