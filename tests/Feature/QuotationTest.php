@@ -27,7 +27,7 @@ function validQuotationPayload(array $overrides = []): array
         'phone'          => '0412 345 678',
         'email'          => 'john@acmecleaning.com.au',
         'frequency'      => 'Weekly',
-        'shift_schedule' => 'Morning (08:00 - 12:00)',
+        'location'       => 'Sydney CBD',
         'subtotal'       => 900.00,
         'gst_amount'     => 90.00,
         'total_amount'   => 990.00,
@@ -139,7 +139,7 @@ describe('QuotationService', function () {
             'phone'          => '0422 111 222',
             'email'          => 'jane@updated.com',
             'frequency'      => 'Daily',
-            'shift_schedule' => 'Evening (18:00 - 22:00)',
+            'location'       => 'Melbourne CBD',
             'subtotal'       => 1000.00,
             'gst_amount'     => 100.00,
             'total_amount'   => 1100.00,
@@ -258,7 +258,7 @@ describe('POST /quotations (store)', function () {
             'phone',
             'email',
             'frequency',
-            'shift_schedule',
+            'location',
             'items',
         ]);
     });

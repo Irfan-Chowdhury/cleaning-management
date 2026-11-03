@@ -37,7 +37,7 @@ erDiagram
         string phone "Client phone number"
         string email "Client email address"
         string frequency "e.g. Weekly, Fortnightly"
-        string shift_schedule "e.g. Morning (08:00-12:00)"
+        string location "e.g. Sydney CBD, North Sydney"
         decimal subtotal "10,2 - Sum of item amounts (ex GST)"
         decimal gst_amount "10,2 - 10% GST on subtotal"
         decimal total_amount "10,2 - subtotal + gst_amount"
@@ -91,7 +91,7 @@ Migration: `database/migrations/2026_10_12_000001_create_quotations_table.php`
 | `phone` | VARCHAR(255) | No | None | None | Contact phone number |
 | `email` | VARCHAR(255) | No | None | None | Contact email address |
 | `frequency` | VARCHAR(255) | No | None | None | Cleaning recurrence interval |
-| `shift_schedule` | VARCHAR(255) | No | None | None | Preferred time or shift window |
+| `location` | VARCHAR(255) | No | None | None | Cleaning service location |
 | `subtotal` | DECIMAL(10,2) | No | `0.00` | None | Sum of line items ex GST |
 | `gst_amount` | DECIMAL(10,2) | No | `0.00` | None | Calculated 10% Australian GST |
 | `total_amount` | DECIMAL(10,2) | No | `0.00` | None | Gross amount including GST |
@@ -153,7 +153,7 @@ Migration: `database/migrations/2026_11_01_000001_create_quotation_clients_table
       'phone',
       'email',
       'frequency',
-      'shift_schedule',
+      'location',
       'subtotal',
       'gst_amount',
       'total_amount',
@@ -275,7 +275,7 @@ Migration: `database/migrations/2026_11_01_000001_create_quotation_clients_table
   - `quote_number`: `D2G-{SEQUENCE}` (e.g. `D2G-0001` to `D2G-9999`, and `D2G-10000`+, synced with quotation row id in `afterCreating` callback)
   - `quote_date`: Random date within past 30 days
   - `frequency`: Random of `['Daily', 'Weekly', 'Fortnightly', 'Monthly']`
-  - `shift_schedule`: Random of `['Morning (08:00–12:00)', 'Afternoon (13:00–17:00)', 'Evening (18:00–22:00)']`
+  - `location`: Random of `['Sydney CBD', 'North Sydney', 'Parramatta', 'Chatswood']`
   - `status`: Random of `['draft', 'invoiced']`
 
 ### 5.2 `QuotationSeeder`

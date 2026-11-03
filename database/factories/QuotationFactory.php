@@ -24,10 +24,11 @@ class QuotationFactory extends Factory
             'phone'          => $this->faker->phoneNumber(),
             'email'          => $this->faker->unique()->safeEmail(),
             'frequency'      => $this->faker->randomElement(['Daily', 'Weekly', 'Fortnightly', 'Monthly']),
-            'shift_schedule' => $this->faker->randomElement([
-                'Morning (08:00–12:00)',
-                'Afternoon (13:00–17:00)',
-                'Evening (18:00–22:00)',
+            'location'       => $this->faker->randomElement([
+                'Sydney CBD',
+                'North Sydney',
+                'Parramatta',
+                'Chatswood',
             ]),
             'subtotal'       => 0,
             'gst_amount'     => 0,

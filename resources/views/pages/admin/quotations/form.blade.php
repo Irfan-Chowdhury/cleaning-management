@@ -219,17 +219,17 @@
                         @enderror
                     </div>
 
-                    {{-- Shift / Schedule --}}
+                    {{-- Location --}}
                     <div class="form-group col-12 col-md-6 mb-0">
-                        <label for="shift_schedule">Shift / Schedule <span class="text-danger">*</span></label>
+                        <label for="location">Location <span class="text-danger">*</span></label>
                         <input type="text"
-                               class="form-control @error('shift_schedule') is-invalid @enderror"
-                               id="shift_schedule"
-                               name="shift_schedule"
-                               placeholder="e.g. Morning (08:00 - 12:00)"
-                               value="{{ old('shift_schedule', $quotation->shift_schedule ?? '') }}"
+                               class="form-control @error('location') is-invalid @enderror"
+                               id="location"
+                               name="location"
+                               placeholder="Enter location"
+                               value="{{ old('location', $quotation->location ?? '') }}"
                                required>
-                        @error('shift_schedule')
+                        @error('location')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>

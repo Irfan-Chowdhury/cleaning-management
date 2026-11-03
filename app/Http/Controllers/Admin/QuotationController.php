@@ -188,7 +188,7 @@ class QuotationController extends Controller
             'phone'          => '',
             'email'          => '',
             'frequency'      => '',
-            'shift_schedule' => '',
+            'location'       => '',
             'subtotal'       => 0.00,
             'gst_amount'     => 0.00,
             'total_amount'   => 0.00,

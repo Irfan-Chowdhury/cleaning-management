@@ -372,8 +372,8 @@
                         <span class="info-value">{{ $quotation->frequency }}</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">Schedule:</span>
-                        <span class="info-value">{{ $quotation->shift_schedule }}</span>
+                        <span class="info-label">Location:</span>
+                        <span class="info-value">{{ $quotation->location }}</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Valid For:</span>
