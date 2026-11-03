@@ -189,45 +189,8 @@ $(document).ready(function () {
     }
 
     // -------------------------------------------------------------------------
-    // 2. Clients Directory List View (DataTable & Modal CRUD)
+    // 2. Client Quick-Create Modal (from Quotations page)
     // -------------------------------------------------------------------------
-    var $clientsTable = $('#clients-table');
-
-    if ($clientsTable.length && $.fn.DataTable && !$.fn.DataTable.isDataTable('#clients-table')) {
-        var clientsAjaxUrl = $clientsTable.data('ajax-url') || '/quotations/clients';
-
-        $clientsTable.DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: clientsAjaxUrl,
-            responsive: true,
-            autoWidth: false,
-            pageLength: 10,
-            lengthMenu: [5, 10, 25, 50],
-            order: [[0, 'desc']],
-            columns: [
-                { data: 'DT_RowIndex', name: 'id', orderable: true, searchable: false, width: '45px' },
-                { data: 'contact_person_cell', name: 'contact_person' },
-                { data: 'company_name_badge', name: 'company_name' },
-                { data: 'phone_link', name: 'phone' },
-                { data: 'email_link', name: 'email' },
-                { data: 'address_display', name: 'address' },
-                { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-center', width: '110px' }
-            ],
-            language: {
-                search: '',
-                searchPlaceholder: 'Search clients...',
-                lengthMenu: 'Show _MENU_ entries',
-                info: 'Showing _START_ to _END_ of _TOTAL_ clients',
-                infoEmpty: 'No clients found',
-                paginate: {
-                    previous: '<i class="fas fa-chevron-left"></i>',
-                    next: '<i class="fas fa-chevron-right"></i>'
-                }
-            }
-        });
-    }
-
     // Reset Client Modal for "Add Client"
     $(document).on('click', '[data-target="#clientProfileModal"]', function () {
         if (!$(this).hasClass('js-client-edit')) {
@@ -244,37 +207,7 @@ $(document).ready(function () {
         }
     });
 
-    // Populate Client Modal for Edit
-    $(document).on('click', '.js-client-edit', function (e) {
-        e.preventDefault();
-        var $btn = $(this);
-        var id = $btn.data('id');
-        var contactPerson = $btn.data('contact_person') || '';
-        var companyName = $btn.data('company_name') || '';
-        var phone = $btn.data('phone') || '';
-        var email = $btn.data('email') || '';
-        var address = $btn.data('address') || '';
-
-        $('#client_id, #modal_client_id').val(id);
-        $('#client_contact_person, #modal_contact_person').val(contactPerson);
-        $('#client_company_name, #modal_company_name').val(companyName);
-        $('#client_phone, #modal_phone').val(phone);
-        $('#client_email, #modal_email').val(email);
-        $('#client_address, #modal_address').val(address);
-
-        $('#clientModalTitleText').text('Edit Client Profile');
-        $('#btn-save-client-text, #btn-modal-save-client-text').text('Update Client Profile');
-
-        var $form = $('#client-profile-form');
-        if ($form.length) {
-            $form.find('.is-invalid').removeClass('is-invalid');
-            $form.find('.invalid-feedback').text('').hide();
-        }
-
-        $('#clientProfileModal').modal('show');
-    });
-
-    // Submit Client Profile Form (Create & Update) via AJAX
+    // Submit Client Profile Form via AJAX (used in quick-create modal)
     $(document).on('submit', '#client-profile-form', function (e) {
         e.preventDefault();
         var $form = $(this);
@@ -303,7 +236,10 @@ $(document).ready(function () {
             url: url,
             type: method,
             data: payload,
-            headers: { 'X-CSRF-TOKEN': csrfToken },
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
             success: function (res) {
                 $('#clientProfileModal').modal('hide');
                 $form[0].reset();
@@ -332,56 +268,6 @@ $(document).ready(function () {
             complete: function () {
                 $btn.prop('disabled', false);
             }
-        });
-    });
-
-    $(document).on('click', '#btn-save-client-profile', function (e) {
-        var $form = $('#client-profile-form');
-        if ($form.length) {
-            $form.submit();
-        }
-    });
-
-    // Delete Client Confirmation via SweetAlert2
-    $(document).on('click', '.js-client-delete', function (e) {
-        e.preventDefault();
-        var $btn = $(this);
-        var clientId = $btn.data('id');
-        var clientName = $btn.data('name') || 'this client';
-        var url = $btn.data('url') || ('/quotations/clients/' + clientId);
-        var csrfToken = $('meta[name="csrf-token"]').attr('content');
-
-        Swal.fire({
-            title: 'Delete Client?',
-            text: 'Are you sure you want to delete ' + clientName + '? This action cannot be undone.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'Cancel'
-        }).then(function (result) {
-            if (!result.isConfirmed) return;
-
-            $btn.prop('disabled', true);
-            $.ajax({
-                url: url,
-                type: 'DELETE',
-                headers: { 'X-CSRF-TOKEN': csrfToken },
-                success: function (res) {
-                    showNotification('success', res.message || 'Client deleted successfully.');
-                    if ($.fn.DataTable && $.fn.DataTable.isDataTable('#clients-table')) {
-                        $('#clients-table').DataTable().ajax.reload(null, false);
-                    }
-                },
-                error: function (xhr) {
-                    var msg = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : 'Failed to delete client.';
-                    showNotification('error', msg);
-                },
-                complete: function () {
-                    $btn.prop('disabled', false);
-                }
-            });
         });
     });
 

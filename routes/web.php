@@ -169,7 +169,10 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
         Artisan::call('cache:clear');
         return 'Cache cleared successfully!';
     });
-
+    Route::get('/optimize-clear', function () {
+        Artisan::call('optimize:clear');
+        return 'Cache cleared successfully!';
+    });
     Route::get('/run-migrate', function () {
         Artisan::call('migrate', ['--force' => true]);
         return nl2br(Artisan::output());

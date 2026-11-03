@@ -161,5 +161,200 @@
     <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap4.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap4.min.js"></script>
-    <script src="{{ asset('public/assets/js/quotation.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            var clientsBaseUrl = @json(route('quotations.clients'));
+            var $clientsTable = $('#clients-table');
+            var $modal = $('#clientProfileModal');
+            var $form = $('#client-profile-form');
+            var $submitBtn = $('#btn-save-client-profile');
+            var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+            function showToast(type, message) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: type,
+                        title: message,
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                } else {
+                    alert(message);
+                }
+            }
+
+            var clientsDataTable = $clientsTable.DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: clientsBaseUrl,
+                    type: 'GET',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                },
+                responsive: true,
+                autoWidth: false,
+                pageLength: 10,
+                lengthMenu: [5, 10, 25, 50],
+                order: [[0, 'desc']],
+                columns: [
+                    { data: 'DT_RowIndex', name: 'id', orderable: true, searchable: false, width: '45px' },
+                    { data: 'contact_person_cell', name: 'contact_person' },
+                    { data: 'company_name_badge', name: 'company_name' },
+                    { data: 'phone_link', name: 'phone' },
+                    { data: 'email_link', name: 'email' },
+                    { data: 'address_display', name: 'address' },
+                    { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-center', width: '110px' }
+                ],
+                language: {
+                    search: '',
+                    searchPlaceholder: 'Search clients...',
+                    lengthMenu: 'Show _MENU_ entries',
+                    info: 'Showing _START_ to _END_ of _TOTAL_ clients',
+                    infoEmpty: 'No clients found',
+                    paginate: {
+                        previous: '<i class="fas fa-chevron-left"></i>',
+                        next: '<i class="fas fa-chevron-right"></i>'
+                    }
+                }
+            });
+
+            function resetClientModal() {
+                $form[0].reset();
+                $('#client_id').val('');
+                $form.find('.is-invalid').removeClass('is-invalid');
+                $form.find('.invalid-feedback').text('').hide();
+                $('#clientModalTitleText').text('Create Client Profile');
+                $('#btn-save-client-text').text('Save Client Profile');
+            }
+
+            $('#btn-open-create-client').on('click', function () {
+                resetClientModal();
+            });
+
+            // Edit Client Profile Modal
+            $(document).on('click', '.js-client-edit', function (e) {
+                e.preventDefault();
+                resetClientModal();
+
+                var $btn = $(this);
+                var id = $btn.data('id');
+                $('#client_id').val(id);
+                $('#client_contact_person').val($btn.data('contact_person') || '');
+                $('#client_company_name').val($btn.data('company_name') || '');
+                $('#client_phone').val($btn.data('phone') || '');
+                $('#client_email').val($btn.data('email') || '');
+                $('#client_address').val($btn.data('address') || '');
+
+                $('#clientModalTitleText').text('Edit Client Profile');
+                $('#btn-save-client-text').text('Update Client Profile');
+
+                $modal.modal('show');
+            });
+
+            // Submit Form via jQuery AJAX
+            $form.on('submit', function (e) {
+                e.preventDefault();
+
+                var clientId = $('#client_id').val();
+                var isUpdate = Boolean(clientId);
+                var targetUrl = isUpdate ? (clientsBaseUrl + '/' + clientId) : clientsBaseUrl;
+                var httpMethod = isUpdate ? 'PUT' : 'POST';
+
+                $form.find('.is-invalid').removeClass('is-invalid');
+                $form.find('.invalid-feedback').text('').hide();
+                $submitBtn.prop('disabled', true);
+
+                var payload = {
+                    contact_person: $('#client_contact_person').val(),
+                    company_name: $('#client_company_name').val(),
+                    phone: $('#client_phone').val(),
+                    email: $('#client_email').val(),
+                    address: $('#client_address').val()
+                };
+
+                $.ajax({
+                    url: targetUrl,
+                    type: httpMethod,
+                    data: payload,
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    success: function (res) {
+                        $modal.modal('hide');
+                        resetClientModal();
+                        showToast('success', res.message || 'Client profile saved successfully.');
+                        clientsDataTable.ajax.reload(null, false);
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
+                            var errors = xhr.responseJSON.errors;
+                            Object.keys(errors).forEach(function (field) {
+                                var $input = $('#client_' + field);
+                                var $feedback = $('#error-' + field);
+                                $input.addClass('is-invalid');
+                                $feedback.text(errors[field][0]).show();
+                            });
+                        } else {
+                            var msg = (xhr.responseJSON && xhr.responseJSON.message)
+                                ? xhr.responseJSON.message
+                                : 'Failed to save client profile.';
+                            showToast('error', msg);
+                        }
+                    },
+                    complete: function () {
+                        $submitBtn.prop('disabled', false);
+                    }
+                });
+            });
+
+            // Delete Client Confirmation via SweetAlert2 & AJAX DELETE
+            $(document).on('click', '.js-client-delete', function (e) {
+                e.preventDefault();
+                var $btn = $(this);
+                var clientId = $btn.data('id');
+                var clientName = $btn.data('name') || 'this client';
+                var targetUrl = $btn.data('url') || (clientsBaseUrl + '/' + clientId);
+
+                Swal.fire({
+                    title: 'Delete Client?',
+                    text: 'Are you sure you want to delete ' + clientName + '? This action cannot be undone.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
+                }).then(function (result) {
+                    if (!result.isConfirmed) return;
+
+                    $btn.prop('disabled', true);
+                    $.ajax({
+                        url: targetUrl,
+                        type: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        success: function (res) {
+                            showToast('success', res.message || 'Client deleted successfully.');
+                            clientsDataTable.ajax.reload(null, false);
+                        },
+                        error: function (xhr) {
+                            var msg = (xhr.responseJSON && xhr.responseJSON.message)
+                                ? xhr.responseJSON.message
+                                : 'Failed to delete client.';
+                            showToast('error', msg);
+                        },
+                        complete: function () {
+                            $btn.prop('disabled', false);
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 @endpush

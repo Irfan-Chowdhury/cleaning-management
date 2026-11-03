@@ -22,7 +22,7 @@ class QuotationClientController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
+        if ($request->ajax() || $request->wantsJson() || $request->has('draw')) {
             return $this->datatable();
         }
 
@@ -32,14 +32,20 @@ class QuotationClientController extends Controller
     /**
      * Store a newly created client profile in storage.
      */
-    public function store(StoreQuotationClientRequest $request): JsonResponse
+    public function store(StoreQuotationClientRequest $request)
     {
         $client = $this->clientService->store($request->validated());
 
-        return response()->json([
-            'message' => 'Client profile created successfully.',
-            'client'  => $client,
-        ], 201);
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'message' => 'Client profile created successfully.',
+                'client'  => $client,
+            ], 201);
+        }
+
+        return redirect()
+            ->route('quotations.clients')
+            ->with('success', 'Client profile created successfully.');
     }
 
     /**
@@ -55,26 +61,38 @@ class QuotationClientController extends Controller
     /**
      * Update the specified client profile in storage.
      */
-    public function update(UpdateQuotationClientRequest $request, QuotationClient $client): JsonResponse
+    public function update(UpdateQuotationClientRequest $request, QuotationClient $client)
     {
         $client = $this->clientService->update($client, $request->validated());
 
-        return response()->json([
-            'message' => 'Client profile updated successfully.',
-            'client'  => $client,
-        ]);
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'message' => 'Client profile updated successfully.',
+                'client'  => $client,
+            ]);
+        }
+
+        return redirect()
+            ->route('quotations.clients')
+            ->with('success', 'Client profile updated successfully.');
     }
 
     /**
      * Remove the specified client profile from storage.
      */
-    public function destroy(QuotationClient $client): JsonResponse
+    public function destroy(Request $request, QuotationClient $client)
     {
         $this->clientService->delete($client);
 
-        return response()->json([
-            'message' => 'Client profile deleted successfully.',
-        ]);
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'message' => 'Client profile deleted successfully.',
+            ]);
+        }
+
+        return redirect()
+            ->route('quotations.clients')
+            ->with('success', 'Client profile deleted successfully.');
     }
 
     /**
