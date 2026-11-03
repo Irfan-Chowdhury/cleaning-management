@@ -16,7 +16,7 @@ class QuotationClientService
      */
     public function query(): Builder
     {
-        return QuotationClient::query()->select([
+        return QuotationClient::query()->orderBy('id', 'desc')->select([
             'id',
             'contact_person',
             'company_name',

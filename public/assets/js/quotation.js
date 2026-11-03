@@ -206,7 +206,7 @@ $(document).ready(function () {
             lengthMenu: [5, 10, 25, 50],
             order: [[0, 'desc']],
             columns: [
-                { data: 'DT_RowIndex', name: 'id', orderable: false, searchable: false, width: '45px' },
+                { data: 'DT_RowIndex', name: 'id', orderable: true, searchable: false, width: '45px' },
                 { data: 'contact_person_cell', name: 'contact_person' },
                 { data: 'company_name_badge', name: 'company_name' },
                 { data: 'phone_link', name: 'phone' },
