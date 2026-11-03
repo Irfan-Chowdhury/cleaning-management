@@ -597,8 +597,7 @@
     width: 100% !important;
 }
 
-.quotations-table thead th,
-.clients-table thead th {
+.quotations-table thead th {
     background: #f8fafc;
     color: #475467;
     font-size: 12px;
@@ -611,13 +610,42 @@
     vertical-align: middle;
 }
 
-.quotations-table tbody td,
-.clients-table tbody td {
+.quotations-table tbody td {
     padding: 14px 18px;
     vertical-align: middle;
     color: #344054;
     font-size: 14px;
     border-top: 1px solid #f2f4f7;
+}
+
+.clients-table thead th {
+    background: #f8fafc;
+    color: #475467;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border-top: none;
+    border-bottom: 1px solid #eaecf0;
+    padding: 11px 12px !important;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.clients-table tbody td {
+    padding: 10px 12px !important;
+    vertical-align: middle;
+    color: #344054;
+    font-size: 13px;
+    border-top: 1px solid #f2f4f7;
+}
+
+.clients-address-cell {
+    display: inline-block;
+    max-width: 170px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .quote-number-badge {

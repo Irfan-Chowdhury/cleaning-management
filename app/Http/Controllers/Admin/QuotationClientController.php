@@ -137,7 +137,7 @@ class QuotationClientController extends Controller
                     . '<i class="far fa-envelope mr-1 text-muted"></i> ' . e($client->email) . '</a>';
             })
             ->addColumn('address_display', function (QuotationClient $client) {
-                return '<span class="text-truncate d-inline-block" style="max-width: 240px;" title="' . e($client->address) . '">'
+                return '<span class="clients-address-cell text-truncate d-inline-block" style="max-width: 170px;" title="' . e($client->address) . '">'
                     . e($client->address) . '</span>';
             })
             ->addColumn('actions', function (QuotationClient $client) {

@@ -6,6 +6,41 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap4.min.css">
     <link rel="stylesheet" href="{{ asset('public/assets/css/quotation.css') }}">
+    <style>
+        .clients-table thead th {
+            padding: 11px 12px !important;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        .clients-table tbody td {
+            padding: 10px 12px !important;
+            font-size: 13px;
+            vertical-align: middle;
+        }
+        .clients-table .quotation-actions {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: nowrap;
+        }
+        .clients-table .quotation-action-btn {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+        .clients-address-cell {
+            display: inline-block;
+            max-width: 170px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -45,13 +80,13 @@
             <table id="clients-table" class="table table-hover table-bordered nowrap clients-table quotations-table" style="width: 100%" data-ajax-url="{{ route('quotations.clients') }}">
                 <thead>
                     <tr>
-                        <th style="width: 45px;">#</th>
+                        <th style="width: 40px;">#</th>
                         <th>Contact Person</th>
                         <th>Company Name</th>
                         <th>Phone</th>
                         <th>Email</th>
                         <th>Address</th>
-                        <th class="text-center" style="width: 110px;">Actions</th>
+                        <th class="text-center" style="width: 95px;">Actions</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -200,13 +235,16 @@
                 lengthMenu: [5, 10, 25, 50],
                 order: [[0, 'desc']],
                 columns: [
-                    { data: 'DT_RowIndex', name: 'id', orderable: true, searchable: false, width: '45px' },
-                    { data: 'contact_person_cell', name: 'contact_person' },
-                    { data: 'company_name_badge', name: 'company_name' },
-                    { data: 'phone_link', name: 'phone' },
-                    { data: 'email_link', name: 'email' },
-                    { data: 'address_display', name: 'address' },
-                    { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-center', width: '110px' }
+                    { data: 'DT_RowIndex', name: 'id', orderable: true, searchable: false, width: '40px', responsivePriority: 2 },
+                    { data: 'contact_person_cell', name: 'contact_person', responsivePriority: 1 },
+                    { data: 'company_name_badge', name: 'company_name', responsivePriority: 4 },
+                    { data: 'phone_link', name: 'phone', responsivePriority: 2 },
+                    { data: 'email_link', name: 'email', responsivePriority: 5 },
+                    { data: 'address_display', name: 'address', responsivePriority: 6 },
+                    { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-center', width: '95px', responsivePriority: 1 }
+                ],
+                columnDefs: [
+                    { orderable: false, searchable: false, targets: [6] }
                 ],
                 language: {
                     search: '',
