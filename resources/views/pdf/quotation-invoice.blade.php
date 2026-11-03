@@ -128,6 +128,32 @@
             padding-bottom: 4px;
         }
 
+        .info-data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .info-data-table td {
+            vertical-align: top;
+            padding: 2.5px 0;
+            font-size: 11px;
+            line-height: 1.4;
+            border: none;
+        }
+
+        .info-data-table .info-label {
+            font-weight: 700;
+            color: #475569;
+            width: 1%;
+            white-space: nowrap;
+            padding-right: 6px;
+        }
+
+        .info-data-table .info-value {
+            color: #1e293b;
+            word-wrap: break-word;
+        }
+
         .info-row {
             margin-bottom: 4px;
             font-size: 11px;
@@ -136,8 +162,6 @@
         .info-label {
             font-weight: 700;
             color: #475569;
-            display: inline-block;
-            min-width: 80px;
         }
 
         .info-value {
@@ -382,59 +406,63 @@
             <td style="width: 60%; padding-right: 12px;">
                 <div class="info-box">
                     <div class="info-box-title">Prepared For</div>
-                    @if ($quotation->company_name)
-                        <div class="info-row">
-                            <span class="info-label">Company:</span>
-                            <span class="info-value">{{ $quotation->company_name }}</span>
-                        </div>
-                    @endif
-                    <div class="info-row">
-                        <span class="info-label">Contact:</span>
-                        <span class="info-value">{{ $quotation->contact_person }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Address:</span>
-                        <span class="info-value">{{ $quotation->address }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Phone:</span>
-                        <span class="info-value">{{ $quotation->phone }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Email:</span>
-                        <span class="info-value">{{ $quotation->email }}</span>
-                    </div>
-                    @if ($quotation->abn)
-                        <div class="info-row">
-                            <span class="info-label">ABN:</span>
-                            <span class="info-value">{{ $quotation->abn }}</span>
-                        </div>
-                    @endif
+                    <table class="info-data-table">
+                        @if ($quotation->company_name)
+                            <tr>
+                                <td class="info-label">Company:</td>
+                                <td class="info-value">{{ $quotation->company_name }}</td>
+                            </tr>
+                        @endif
+                        <tr>
+                            <td class="info-label">Contact:</td>
+                            <td class="info-value">{{ $quotation->contact_person }}</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">Address:</td>
+                            <td class="info-value">{{ $quotation->address }}</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">Phone:</td>
+                            <td class="info-value">{{ $quotation->phone }}</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">Email:</td>
+                            <td class="info-value">{{ $quotation->email }}</td>
+                        </tr>
+                        @if ($quotation->abn)
+                            <tr>
+                                <td class="info-label">ABN:</td>
+                                <td class="info-value">{{ $quotation->abn }}</td>
+                            </tr>
+                        @endif
+                    </table>
                 </div>
             </td>
             <td style="width: 40%;">
                 <div class="info-box">
                     <div class="info-box-title">Invoice Details</div>
-                    <div class="info-row">
-                        <span class="info-label">Invoice No:</span>
-                        <span class="info-value">{{ $quotation->quote_number }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Invoice Date:</span>
-                        <span class="info-value">{{ $quoteDateFormatted }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Due Date:</span>
-                        <span class="info-value">{{ $dueDateFormatted }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Frequency:</span>
-                        <span class="info-value">{{ $quotation->frequency }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Location:</span>
-                        <span class="info-value">{{ $quotation->location }}</span>
-                    </div>
+                    <table class="info-data-table quote-details-data-table">
+                        <tr>
+                            <td class="info-label">Invoice No:</td>
+                            <td class="info-value">{{ $quotation->quote_number }}</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">Invoice Date:</td>
+                            <td class="info-value">{{ $quoteDateFormatted }}</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">Due Date:</td>
+                            <td class="info-value">{{ $dueDateFormatted }}</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">Frequency:</td>
+                            <td class="info-value">{{ $quotation->frequency }}</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">Service Location:</td>
+                            <td class="info-value">{{ $quotation->location }}</td>
+                        </tr>
+                    </table>
                 </div>
             </td>
         </tr>
