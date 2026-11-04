@@ -370,10 +370,6 @@
                             <td class="info-value">{{ $quotation->contact_person }}</td>
                         </tr>
                         <tr>
-                            <td class="info-label">Address:</td>
-                            <td class="info-value">{{ $quotation->address }}</td>
-                        </tr>
-                        <tr>
                             <td class="info-label">Phone:</td>
                             <td class="info-value">{{ $quotation->phone }}</td>
                         </tr>
@@ -387,6 +383,11 @@
                                 <td class="info-value">{{ $quotation->abn }}</td>
                             </tr>
                         @endif
+                        <tr>
+                            <td colspan="2" class="info-value">
+                                <span class="info-label" style="display: inline; padding-right: 4px;">Address:</span><span>{{ $quotation->address }}</span>
+                            </td>
+                        </tr>
                     </table>
                 </div>
             </td>
