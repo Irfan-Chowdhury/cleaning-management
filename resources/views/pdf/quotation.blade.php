@@ -399,12 +399,13 @@
                             <td class="info-value">{{ $quotation->frequency }}</td>
                         </tr>
                         <tr>
-                            <td class="info-label">Service Location:</td>
-                            <td class="info-value">{{ $quotation->location }}</td>
-                        </tr>
-                        <tr>
                             <td class="info-label">Valid For:</td>
                             <td class="info-value">{{ $dueDateFormatted }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="info-value">
+                                <span class="info-label" style="display: inline; padding-right: 4px;">Service Location:</span><span>{{ $quotation->location }}</span>
+                            </td>
                         </tr>
                     </table>
                 </div>
