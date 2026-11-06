@@ -544,7 +544,7 @@
     {{-- ── FOOTER ── --}}
     <div class="footer">
         <div class="footer-title">Thank you for choosing Dust2Glow</div>
-        <div class="footer-message">We look forward to working with you again.</div>
+        <div class="footer-message">We look forward to working with you.</div>
     </div>
 
 </div>
