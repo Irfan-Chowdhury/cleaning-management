@@ -17,12 +17,12 @@ return new class extends Migration
             $table->date('quote_date');
             $table->string('abn')->nullable();
             $table->string('contact_person');
-            $table->string('company_name');
+            $table->string('company_name')->nullable();
             $table->text('address');
             $table->string('phone');
             $table->string('email');
             $table->string('frequency');
-            $table->string('shift_schedule');
+            $table->string('location');
             $table->decimal('subtotal', 10, 2)->default(0.00);
             $table->decimal('gst_amount', 10, 2)->default(0.00);
             $table->decimal('total_amount', 10, 2)->default(0.00);

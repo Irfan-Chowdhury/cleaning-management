@@ -7,6 +7,7 @@ use App\Http\Controllers\BookingServiceController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\QuotationClientController;
 use App\Http\Controllers\Admin\SubAdminController;
 use App\Http\Controllers\WeeklyScheduleController;
 use App\Http\Controllers\HolidayController;
@@ -111,7 +112,16 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
 
     Route::get('/wallets', [WalletController::class, 'index'])->name('wallets.index');
     Route::get('/wallets/{id}', [WalletController::class, 'show'])->name('wallets.show');
+
+    // Quotation Clients (Customer Profiles) Resource
+    Route::get('/quotations/clients/search', [QuotationClientController::class, 'search'])->name('quotations.clients.search');
+    Route::resource('quotations/clients', QuotationClientController::class)
+        ->parameters(['clients' => 'client'])
+        ->names('quotations.clients');
+    Route::get('/quotations/clients', [QuotationClientController::class, 'index'])->name('quotations.clients');
+
     Route::resource('quotations', QuotationController::class)->except('show');
+    Route::post('/quotations/{quotation}/duplicate', [QuotationController::class, 'duplicate'])->name('quotations.duplicate');
     Route::get('/quotations/{id}/download', [QuotationController::class, 'download'])->name('quotations.download');
 
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
@@ -159,7 +169,10 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
         Artisan::call('cache:clear');
         return 'Cache cleared successfully!';
     });
-
+    Route::get('/optimize-clear', function () {
+        Artisan::call('optimize:clear');
+        return 'Cache cleared successfully!';
+    });
     Route::get('/run-migrate', function () {
         Artisan::call('migrate', ['--force' => true]);
         return nl2br(Artisan::output());

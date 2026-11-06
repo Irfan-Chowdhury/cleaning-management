@@ -11,11 +11,11 @@ class QuotationFactory extends Factory
 
     public function definition(): array
     {
-        $year = now()->format('Y');
-        $sequence = $this->faker->unique()->numberBetween(1, 9999);
+        $sequence = $this->faker->unique()->numberBetween(1, 999999);
+        $padLength = max(4, strlen((string) $sequence));
 
         return [
-            'quote_number'   => "D2G-{$year}-" . str_pad((string) $sequence, 4, '0', STR_PAD_LEFT),
+            'quote_number'   => 'D2G-TMP-' . str_pad((string) $sequence, $padLength, '0', STR_PAD_LEFT),
             'quote_date'     => $this->faker->dateTimeBetween('-30 days', 'now')->format('Y-m-d'),
             'abn'            => $this->faker->numerify('## ### ### ###'),
             'contact_person' => $this->faker->name(),
@@ -24,10 +24,11 @@ class QuotationFactory extends Factory
             'phone'          => $this->faker->phoneNumber(),
             'email'          => $this->faker->unique()->safeEmail(),
             'frequency'      => $this->faker->randomElement(['Daily', 'Weekly', 'Fortnightly', 'Monthly']),
-            'shift_schedule' => $this->faker->randomElement([
-                'Morning (08:00–12:00)',
-                'Afternoon (13:00–17:00)',
-                'Evening (18:00–22:00)',
+            'location'       => $this->faker->randomElement([
+                'Sydney CBD',
+                'North Sydney',
+                'Parramatta',
+                'Chatswood',
             ]),
             'subtotal'       => 0,
             'gst_amount'     => 0,
@@ -40,10 +41,12 @@ class QuotationFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (Quotation $quotation): void {
-            $quotation->update([
-                'quote_number' => 'D2G-' . now()->format('Y') . '-' .
-                    str_pad((string) $quotation->id, 4, '0', STR_PAD_LEFT),
-            ]);
+            if (str_starts_with($quotation->quote_number, 'D2G-TMP-')) {
+                $padLength = max(4, strlen((string) $quotation->id));
+                $quotation->update([
+                    'quote_number' => 'D2G-' . str_pad((string) $quotation->id, $padLength, '0', STR_PAD_LEFT),
+                ]);
+            }
         });
     }
 }

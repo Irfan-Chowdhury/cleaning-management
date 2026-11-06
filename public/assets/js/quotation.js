@@ -82,9 +82,65 @@ $(document).ready(function () {
                         previous: '<i class="fas fa-chevron-left"></i>',
                         next: '<i class="fas fa-chevron-right"></i>'
                     }
+                },
+                drawCallback: function () {
+                    var api = this.api();
+                    var info = api.page.info();
+                    if (info && $('.quotations-card-header p').length) {
+                        $('.quotations-card-header p').text(info.recordsTotal.toLocaleString() + ' records found');
+                    }
                 }
             });
         }
+
+        // Duplicate Quotation via SweetAlert2 → real AJAX POST
+        $(document).on('click', '.js-quote-duplicate', function (e) {
+            e.preventDefault();
+            var $btn        = $(this);
+            var quoteId     = $btn.data('id');
+            var quoteNumber = $btn.data('number') || 'this quotation';
+            var status      = ($btn.data('status') || 'draft').toLowerCase();
+            var statusLabel = status === 'invoiced' ? 'Invoiced' : 'Draft';
+            var url         = $btn.data('url') || ('/quotations/' + quoteId + '/duplicate');
+            var csrfToken   = $('meta[name="csrf-token"]').attr('content');
+
+            Swal.fire({
+                title: 'Duplicate Quotation?',
+                html: 'Are you sure you want to duplicate <strong>' + quoteNumber + '</strong>?<br>' +
+                      '<span class="text-muted" style="font-size: 13px;">A new quotation will be created with today\'s date retaining the <strong>' + statusLabel + '</strong> stage.</span>',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#0066FF',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="fas fa-copy mr-1"></i> Yes, duplicate it!',
+                cancelButtonText: 'Cancel'
+            }).then(function (result) {
+                if (!result.isConfirmed) return;
+
+                $btn.prop('disabled', true);
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    headers: { 'X-CSRF-TOKEN': csrfToken },
+                    success: function (response) {
+                        if ($.fn.DataTable && $.fn.DataTable.isDataTable('#quotations-table')) {
+                            $('#quotations-table').DataTable().ajax.reload(null, false);
+                        }
+                        showNotification('success', response.message || 'Quotation duplicated successfully.');
+                    },
+                    error: function (xhr) {
+                        var msg = (xhr.responseJSON && xhr.responseJSON.message)
+                            ? xhr.responseJSON.message
+                            : 'Failed to duplicate quotation. Please try again.';
+                        showNotification('error', msg);
+                    },
+                    complete: function () {
+                        $btn.prop('disabled', false);
+                    }
+                });
+            });
+        });
 
         // Delete Confirmation via SweetAlert2 → real AJAX DELETE
         $(document).on('click', '.js-quote-delete', function (e) {
@@ -131,6 +187,89 @@ $(document).ready(function () {
             });
         });
     }
+
+    // -------------------------------------------------------------------------
+    // 2. Client Quick-Create Modal (from Quotations page)
+    // -------------------------------------------------------------------------
+    // Reset Client Modal for "Add Client"
+    $(document).on('click', '[data-target="#clientProfileModal"]', function () {
+        if (!$(this).hasClass('js-client-edit')) {
+            $('#client_id, #modal_client_id').val('');
+            $('#clientModalTitleText').text('Create Client Profile');
+            $('#btn-save-client-text, #btn-modal-save-client-text').text('Save Client Profile');
+
+            var $form = $('#client-profile-form');
+            if ($form.length) {
+                $form[0].reset();
+                $form.find('.is-invalid').removeClass('is-invalid');
+                $form.find('.invalid-feedback').text('').hide();
+            }
+        }
+    });
+
+    // Submit Client Profile Form via AJAX (used in quick-create modal)
+    $(document).on('submit', '#client-profile-form', function (e) {
+        e.preventDefault();
+        var $form = $(this);
+        var $btn = $('#btn-save-client-profile');
+        var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+        var clientId = $('#client_id').val() || $('#modal_client_id').val();
+        var isUpdate = Boolean(clientId);
+
+        var url = isUpdate ? '/quotations/clients/' + clientId : '/quotations/clients';
+        var method = isUpdate ? 'PUT' : 'POST';
+
+        $form.find('.is-invalid').removeClass('is-invalid');
+        $form.find('.invalid-feedback').text('').hide();
+        $btn.prop('disabled', true);
+
+        var payload = {
+            contact_person: ($('#client_contact_person').length ? $('#client_contact_person') : $('#modal_contact_person')).val(),
+            company_name: ($('#client_company_name').length ? $('#client_company_name') : $('#modal_company_name')).val(),
+            phone: ($('#client_phone').length ? $('#client_phone') : $('#modal_phone')).val(),
+            email: ($('#client_email').length ? $('#client_email') : $('#modal_email')).val(),
+            address: ($('#client_address').length ? $('#client_address') : $('#modal_address')).val()
+        };
+
+        $.ajax({
+            url: url,
+            type: method,
+            data: payload,
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function (res) {
+                $('#clientProfileModal').modal('hide');
+                $form[0].reset();
+                $('#client_id, #modal_client_id').val('');
+
+                showNotification('success', res.message || 'Client profile saved successfully.');
+
+                if ($.fn.DataTable && $.fn.DataTable.isDataTable('#clients-table')) {
+                    $('#clients-table').DataTable().ajax.reload(null, false);
+                }
+            },
+            error: function (xhr) {
+                if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
+                    var errors = xhr.responseJSON.errors;
+                    Object.keys(errors).forEach(function (field) {
+                        var $input = $('#client_' + field + ', #modal_' + field);
+                        var $feedback = $('#error-' + field + ', #error-modal-' + field);
+                        $input.addClass('is-invalid');
+                        $feedback.text(errors[field][0]).show();
+                    });
+                } else {
+                    var msg = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : 'Failed to save client profile.';
+                    showNotification('error', msg);
+                }
+            },
+            complete: function () {
+                $btn.prop('disabled', false);
+            }
+        });
+    });
 
     // -------------------------------------------------------------------------
     // 2. Create / Edit Quotation Form (Dynamic Items & Real-Time Calculation)
@@ -240,6 +379,166 @@ $(document).ready(function () {
                 calculateTotals();
             });
         });
+
+        // ---------------------------------------------------------------------
+        // Client Phone Search & Autofill (Live AJAX from Database)
+        // ---------------------------------------------------------------------
+        var $phoneInput = $('#phone');
+        var $dropdown = $('#phone-search-dropdown');
+        var phoneSearchTimer = null;
+
+        function cleanPhone(val) {
+            return (val || '').replace(/[^0-9]/g, '');
+        }
+
+        function renderClientSuggestions(matches) {
+            if (!$dropdown.length) return;
+
+            if (!matches.length) {
+                $dropdown.html('<div class="phone-autocomplete-empty"><i class="fas fa-info-circle mr-1"></i> No matching clients found</div>').show();
+                return;
+            }
+
+            var html = '';
+            matches.forEach(function (client) {
+                var emailBadge = client.email
+                    ? '<span class="client-email"><i class="far fa-envelope mr-1 text-muted"></i>' + $('<div>').text(client.email).html() + '</span>'
+                    : '';
+
+                var clientJson = JSON.stringify(client).replace(/"/g, '&quot;');
+
+                html += [
+                    '<div class="phone-autocomplete-item" data-client="' + clientJson + '">',
+                    '    <div class="phone-autocomplete-phone">',
+                    '        <i class="fas fa-phone-alt text-primary"></i>',
+                    '        <span>' + $('<div>').text(client.phone).html() + '</span>',
+                    '    </div>',
+                    '    <div class="phone-autocomplete-meta">',
+                    '        <span class="client-name"><i class="far fa-user mr-1 text-muted"></i>' + $('<div>').text(client.contact_person).html() + '</span>',
+                    '        ' + emailBadge,
+                    '    </div>',
+                    '</div>'
+                ].join('');
+            });
+
+            $dropdown.html(html).show();
+        }
+
+        $phoneInput.on('input focus', function () {
+            // Strictly allow numbers (0-9) and plus (+) only
+            var raw = $(this).val();
+            var cleaned = raw.replace(/[^\d+]/g, '');
+            if (cleaned.indexOf('+') > 0) {
+                cleaned = (cleaned[0] === '+' ? '+' : '') + cleaned.replace(/\+/g, '');
+            }
+            if ($(this).val() !== cleaned) {
+                $(this).val(cleaned);
+            }
+
+            var term = cleaned.trim();
+
+            if (term.length < 1) {
+                $dropdown.hide().empty();
+                return;
+            }
+
+            clearTimeout(phoneSearchTimer);
+            phoneSearchTimer = setTimeout(function () {
+                $.ajax({
+                    url: '/quotations/clients/search',
+                    type: 'GET',
+                    data: { q: term },
+                    success: function (res) {
+                        var clients = res.clients || [];
+                        renderClientSuggestions(clients);
+                    },
+                    error: function () {
+                        $dropdown.hide().empty();
+                    }
+                });
+            }, 200);
+        });
+
+        // Strictly allow numbers (0-9) and plus (+) only in client profile modal phone fields
+        $(document).on('input', '#modal_phone, #client_phone', function () {
+            var raw = $(this).val();
+            var cleaned = raw.replace(/[^\d+]/g, '');
+            if (cleaned.indexOf('+') > 0) {
+                cleaned = (cleaned[0] === '+' ? '+' : '') + cleaned.replace(/\+/g, '');
+            }
+            if ($(this).val() !== cleaned) {
+                $(this).val(cleaned);
+            }
+        });
+
+        // Click selection on a client suggestion
+        $(document).on('click', '.phone-autocomplete-item', function (e) {
+            e.preventDefault();
+            var clientData = $(this).data('client');
+
+            if (clientData) {
+                var client = typeof clientData === 'string' ? JSON.parse(clientData) : clientData;
+
+                $phoneInput.val(client.phone);
+                $('#contact_person').val(client.contact_person);
+                $('#company_name').val(client.company_name || '');
+                $('#address').val(client.address);
+                $('#email').val(client.email);
+
+                // Add visual pulse effect on the autofilled fields
+                var $autofilled = $('#contact_person, #company_name, #address, #email');
+                $autofilled.addClass('field-autofilled');
+                setTimeout(function () {
+                    $autofilled.removeClass('field-autofilled');
+                }, 1200);
+
+                // showNotification('success', 'Autofilled client details for ' + client.contact_person);
+            }
+
+            $dropdown.hide().empty();
+        });
+
+        // Close dropdown when clicking outside
+        $(document).on('click', function (e) {
+            if (!$(e.target).closest('.phone-search-wrapper').length) {
+                $dropdown.hide().empty();
+            }
+        });
+
+        // Close dropdown on Escape key
+        $(document).on('keydown', function (e) {
+            if (e.key === 'Escape') {
+                $dropdown.hide().empty();
+            }
+        });
+
+        // -------------------------------------------------------------------------
+        // Create Page: Status Radio Toggle (Draft vs Invoiced)
+        // -------------------------------------------------------------------------
+        function updateSubmitButtonLabel() {
+            var isEdit = $('#form-is-edit').val() === '1';
+            if (isEdit) {
+                return;
+            }
+
+            var selectedStatus = $('input[name="status"]:checked').val() || 'draft';
+            var $btnLabel = $('#btn-save-label');
+
+            if ($btnLabel.length) {
+                if (selectedStatus === 'invoiced') {
+                    $btnLabel.text('Save & Download Invoiced');
+                } else {
+                    $btnLabel.text('Save & Download Draft');
+                }
+            }
+        }
+
+        $(document).on('change', 'input[name="status"]', function () {
+            updateSubmitButtonLabel();
+        });
+
+        // Initialize button label on load
+        updateSubmitButtonLabel();
 
         // "Save & Download PDF" / "Update & Download PDF" Button
         // Sync hidden calculation fields then let the form submit natively (full-page POST)

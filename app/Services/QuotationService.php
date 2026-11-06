@@ -25,17 +25,17 @@ class QuotationService
                 'quote_date'     => $data['quote_date'],
                 'abn'            => $data['abn'] ?? null,
                 'contact_person' => $data['contact_person'],
-                'company_name'   => $data['company_name'],
+                'company_name'   => $data['company_name'] ?? null,
                 'address'        => $data['address'],
                 'phone'          => $data['phone'],
                 'email'          => $data['email'],
                 'frequency'      => $data['frequency'],
-                'shift_schedule' => $data['shift_schedule'],
+                'location'       => $data['location'],
                 'subtotal'       => $totals['subtotal'],
                 'gst_amount'     => $totals['gst_amount'],
                 'total_amount'   => $totals['total_amount'],
                 'terms_notes'    => $data['terms_notes'] ?? null,
-                'status'         => 'draft',
+                'status'         => in_array($data['status'] ?? 'draft', ['draft', 'invoiced'], true) ? $data['status'] : 'draft',
             ]);
 
             $this->syncItems($quotation, $data['items']);
@@ -64,12 +64,12 @@ class QuotationService
                 'quote_date'     => $data['quote_date'],
                 'abn'            => $data['abn'] ?? null,
                 'contact_person' => $data['contact_person'],
-                'company_name'   => $data['company_name'],
+                'company_name'   => $data['company_name'] ?? null,
                 'address'        => $data['address'],
                 'phone'          => $data['phone'],
                 'email'          => $data['email'],
                 'frequency'      => $data['frequency'],
-                'shift_schedule' => $data['shift_schedule'],
+                'location'       => $data['location'],
                 'subtotal'       => $totals['subtotal'],
                 'gst_amount'     => $totals['gst_amount'],
                 'total_amount'   => $totals['total_amount'],
@@ -91,6 +91,56 @@ class QuotationService
         DB::transaction(function () use ($quotation) {
             $quotation->items()->delete();
             $quotation->delete();
+        });
+    }
+
+    /**
+     * Duplicate an existing quotation and all its line items into a new record.
+     * Generates a new sequential quote number and sets the quote date to today.
+     *
+     * @param  Quotation  $quotation
+     * @return Quotation
+     */
+    public function duplicate(Quotation $quotation): Quotation
+    {
+        return DB::transaction(function () use ($quotation) {
+            $quotation->loadMissing('items');
+
+            $newQuotation = Quotation::create([
+                'quote_number'   => $this->generateSequentialQuoteNumber(),
+                'quote_date'     => Carbon::today()->toDateString(),
+                'abn'            => $quotation->abn,
+                'contact_person' => $quotation->contact_person,
+                'company_name'   => $quotation->company_name,
+                'address'        => $quotation->address,
+                'phone'          => $quotation->phone,
+                'email'          => $quotation->email,
+                'frequency'      => $quotation->frequency,
+                'location'       => $quotation->location,
+                'subtotal'       => $quotation->subtotal,
+                'gst_amount'     => $quotation->gst_amount,
+                'total_amount'   => $quotation->total_amount,
+                'terms_notes'    => $quotation->terms_notes,
+                'status'         => $quotation->status ?? 'draft',
+            ]);
+
+            $rows = [];
+            foreach ($quotation->items as $index => $item) {
+                $rows[] = [
+                    'quotation_id' => $newQuotation->id,
+                    'description'  => $item->description,
+                    'amount'       => (float) $item->amount,
+                    'sort_order'   => $item->sort_order ?? $index,
+                    'created_at'   => now(),
+                    'updated_at'   => now(),
+                ];
+            }
+
+            if (! empty($rows)) {
+                QuotationItem::insert($rows);
+            }
+
+            return $newQuotation->load('items');
         });
     }
 
@@ -120,25 +170,27 @@ class QuotationService
     }
 
     /**
-     * Generate the next sequential quote number for the current year.
-     * Format: D2G-{YEAR}-{0001}
+     * Generate the next sequential quote number based on the last row ID in the database.
+     * Format: D2G-{0001} up to D2G-{9999}, dynamically expanding to 5+ digits (e.g. D2G-10000).
      */
     public function generateSequentialQuoteNumber(): string
     {
-        $year   = Carbon::now()->format('Y');
-        $prefix = "D2G-{$year}-";
+        $prefix = 'D2G-';
 
-        $last = Quotation::where('quote_number', 'like', "{$prefix}%")
-            ->orderBy('id', 'desc')
-            ->value('quote_number');
+        // Determine the next sequence number based on the last row ID in database
+        $lastId = (int) (Quotation::max('id') ?? 0);
 
-        if ($last && preg_match('/(\d+)$/', $last, $m)) {
-            $next = (int) $m[1] + 1;
-        } else {
-            $next = 1;
+        // Also check numeric suffix of the last recorded quote number to maintain monotonicity
+        $lastQuote = Quotation::orderBy('id', 'desc')->value('quote_number');
+        $lastQuoteNum = 0;
+        if ($lastQuote && preg_match('/(\d+)$/', $lastQuote, $m)) {
+            $lastQuoteNum = (int) $m[1];
         }
 
-        return $prefix . str_pad((string) $next, 4, '0', STR_PAD_LEFT);
+        $next = max($lastId, $lastQuoteNum) + 1;
+        $padLength = max(4, strlen((string) $next));
+
+        return $prefix . str_pad((string) $next, $padLength, '0', STR_PAD_LEFT);
     }
 
 

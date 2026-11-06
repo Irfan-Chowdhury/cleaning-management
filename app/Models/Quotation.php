@@ -21,7 +21,7 @@ class Quotation extends Model
         'phone',
         'email',
         'frequency',
-        'shift_schedule',
+        'location',
         'subtotal',
         'gst_amount',
         'total_amount',

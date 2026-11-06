@@ -17,13 +17,14 @@ class StoreQuotationRequest extends FormRequest
             'quote_date'     => ['required', 'date'],
             'abn'            => ['nullable', 'string', 'max:20'],
             'contact_person' => ['required', 'string', 'max:255'],
-            'company_name'   => ['required', 'string', 'max:255'],
+            'company_name'   => ['nullable', 'string', 'max:255'],
             'address'        => ['required', 'string', 'max:500'],
             'phone'          => ['required', 'string', 'max:30'],
             'email'          => ['required', 'email', 'max:255'],
             'frequency'      => ['required', 'string', 'max:100'],
-            'shift_schedule' => ['required', 'string', 'max:100'],
+            'location'       => ['required', 'string', 'max:255'],
             'terms_notes'    => ['nullable', 'string', 'max:5000'],
+            'status'         => ['nullable', 'string', 'in:draft,invoiced'],
 
             // Line items
             'items'                  => ['required', 'array', 'min:1'],
