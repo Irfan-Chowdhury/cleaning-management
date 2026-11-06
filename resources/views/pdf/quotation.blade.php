@@ -400,7 +400,7 @@
                             <td class="info-value">{{ $quotation->frequency }}</td>
                         </tr>
                         <tr>
-                            <td class="info-label">Valid For:</td>
+                            <td class="info-label">Valid Till:</td>
                             <td class="info-value">{{ $dueDateFormatted }}</td>
                         </tr>
                         <tr>
@@ -458,7 +458,7 @@
             <ul class="terms-notes-list">
                 <li><span><strong>Scope of Work:</strong> The quoted price covers only the cleaning services listed in this quotation.</span></li>
                 <li><span><strong>Additional Work:</strong> Any extra services or changes to the agreed scope will be quoted separately and require customer approval before work begins.</span></li>
-                <li><span><strong>Quotation Validity:</strong> This quotation is valid for 7 days from the date of issue.</span></li>
+                <li><span><strong>Quotation Validity:</strong> This quotation is Valid till 7 days from the date of issue.</span></li>
                 <li><span><strong>Acceptance:</strong> Work will be scheduled once the quotation has been accepted and the booking confirmed.</span></li>
             </ul>
         </div>
@@ -467,7 +467,7 @@
     {{-- ── FOOTER ── --}}
     <div class="footer">
         <div class="footer-title">Thank you for choosing Dust2Glow</div>
-        <div class="footer-message">We look forward to working with you.</div>
+        <div class="footer-message">We look forward to working with you again.</div>
     </div>
 
 </div>
