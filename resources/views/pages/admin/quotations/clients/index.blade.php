@@ -5,7 +5,7 @@
 @push('styles')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap4.min.css">
-    <link rel="stylesheet" href="{{ asset('public/assets/css/quotation.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/assets/css/quotation.css') }}?v={{ filemtime(public_path('assets/css/quotation.css')) }}">
     <style>
         .clients-table thead th {
             padding: 11px 12px !important;
@@ -60,7 +60,7 @@
             <p class="quotations-header-sub">Manage client contact details and company profiles for quotations and proposals</p>
         </div>
         <div class="quotations-header-actions d-flex align-items-center flex-wrap">
-            <button type="button" class="btn quotations-client-btn mr-2" id="btn-open-create-client" data-toggle="modal" data-target="#clientProfileModal">
+            <button type="button" class="btn btn-dark quotations-client-btn mr-2" id="btn-open-create-client" data-toggle="modal" data-target="#clientProfileModal">
                 <i class="fas fa-user-plus" aria-hidden="true"></i>
                 <span>Add Client</span>
             </button>

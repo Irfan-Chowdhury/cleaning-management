@@ -217,7 +217,11 @@ $(document).ready(function () {
         var clientId = $('#client_id').val() || $('#modal_client_id').val();
         var isUpdate = Boolean(clientId);
 
-        var url = isUpdate ? '/quotations/clients/' + clientId : '/quotations/clients';
+        var baseClientsUrl = $form.attr('action') || (function () {
+            var match = window.location.pathname.match(/^(.*?)\/quotations/);
+            return (match ? match[1] : '') + '/quotations/clients';
+        })();
+        var url = isUpdate ? (baseClientsUrl.replace(/\/$/, '') + '/' + clientId) : baseClientsUrl;
         var method = isUpdate ? 'PUT' : 'POST';
 
         $form.find('.is-invalid').removeClass('is-invalid');
@@ -444,10 +448,18 @@ $(document).ready(function () {
 
             clearTimeout(phoneSearchTimer);
             phoneSearchTimer = setTimeout(function () {
+                var searchUrl = $('#phone').data('search-url');
+                if (!searchUrl) {
+                    var match = window.location.pathname.match(/^(.*?)\/quotations/);
+                    var basePath = match ? match[1] : '';
+                    searchUrl = basePath + '/quotations/clients/search';
+                }
+
                 $.ajax({
-                    url: '/quotations/clients/search',
+                    url: searchUrl,
                     type: 'GET',
                     data: { q: term },
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
                     success: function (res) {
                         var clients = res.clients || [];
                         renderClientSuggestions(clients);

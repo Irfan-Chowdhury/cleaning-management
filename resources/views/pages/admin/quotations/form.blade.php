@@ -4,7 +4,7 @@
 
 @push('styles')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('public/assets/css/quotation.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/assets/css/quotation.css') }}?v={{ filemtime(public_path('assets/css/quotation.css')) }}">
 @endpush
 
 @section('content')
@@ -165,6 +165,7 @@
                                        class="form-control @error('phone') is-invalid @enderror"
                                        id="phone"
                                        name="phone"
+                                       data-search-url="{{ route('quotations.clients.search') }}"
                                        placeholder="Enter or search phone number"
                                        value="{{ old('phone', $quotation->phone ?? '') }}"
                                        autocomplete="off"
@@ -409,7 +410,7 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('public/assets/js/quotation.js') }}"></script>
+    <script src="{{ asset('public/assets/js/quotation.js') }}?v={{ filemtime(public_path('assets/js/quotation.js')) }}"></script>
     @if (session('quotation_pdf_download'))
         <script>
             window.addEventListener('load', function () {

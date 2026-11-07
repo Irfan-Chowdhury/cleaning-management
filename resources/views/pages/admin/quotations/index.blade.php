@@ -5,7 +5,7 @@
 @push('styles')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap4.min.css">
-    <link rel="stylesheet" href="{{ asset('public/assets/css/quotation.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/assets/css/quotation.css') }}?v={{ filemtime(public_path('assets/css/quotation.css')) }}">
 @endpush
 
 @section('content')
@@ -17,7 +17,7 @@
             <p class="quotations-header-sub">Create, organize, and monitor cleaning service quotations and client proposals</p>
         </div>
         <div class="quotations-header-actions d-flex align-items-center flex-wrap">
-            <button type="button" class="btn quotations-client-btn mr-2" data-toggle="modal" data-target="#clientProfileModal">
+            <button type="button" class="btn btn-dark quotations-client-btn mr-2" data-toggle="modal" data-target="#clientProfileModal">
                 <i class="fas fa-user-plus" aria-hidden="true"></i>
                 <span>Add Client</span>
             </button>
@@ -215,5 +215,5 @@
     <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap4.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap4.min.js"></script>
-    <script src="{{ asset('public/assets/js/quotation.js') }}"></script>
+    <script src="{{ asset('public/assets/js/quotation.js') }}?v={{ filemtime(public_path('assets/js/quotation.js')) }}"></script>
 @endpush
