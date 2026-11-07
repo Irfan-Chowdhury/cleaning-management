@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
-use App\Services\ReferralService;
+use App\Services\CustomerReferralService;
 use Illuminate\Support\Facades\Auth;
 
 class ReferralController extends Controller
 {
-    public function __construct(private readonly ReferralService $referralService)
+    public function __construct(private readonly CustomerReferralService $customerReferralService)
     {
     }
 
@@ -17,7 +17,7 @@ class ReferralController extends Controller
      */
     public function index()
     {
-        $data = $this->referralService->getCustomerReferralData(Auth::user());
+        $data = $this->customerReferralService->getCustomerReferralData(Auth::user());
 
         return view('pages.customer.refferal.index', $data);
     }
