@@ -29,6 +29,7 @@ class PromotionService
                 'expires_at',
                 'new_customers_only',
                 'existing_customers_only',
+                'max_uses',
                 'created_by',
                 'created_at',
             ]);
@@ -66,6 +67,7 @@ class PromotionService
             'expires_at' => Carbon::parse($data['expires_at'])->format('Y-m-d H:i:s'),
             'new_customers_only' => (bool) ($data['new_customers_only'] ?? false),
             'existing_customers_only' => (bool) ($data['existing_customers_only'] ?? false),
+            'max_uses' => !empty($data['max_uses']) ? (int) $data['max_uses'] : null,
         ];
     }
 }

@@ -35,6 +35,7 @@ class StorePromotionRequest extends FormRequest
             'expires_at' => ['required', 'date', 'after:start_at'],
             'new_customers_only' => ['nullable', 'boolean'],
             'existing_customers_only' => ['nullable', 'boolean'],
+            'max_uses' => ['nullable', 'integer', 'min:1'],
         ];
     }
 

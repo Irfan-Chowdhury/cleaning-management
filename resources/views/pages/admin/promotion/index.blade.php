@@ -41,6 +41,7 @@
                         {{-- <th>Description</th> --}}
                         <th>Discount</th>
                         <th>Scope</th>
+                        <th>Limit</th>
                         <th>Start</th>
                         <th>Expires</th>
                         <th>Status</th>
@@ -130,6 +131,14 @@
                         </div>
                     </div>
 
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label for="promotion-max-uses">Max Uses / Limit <small class="text-muted">(Optional, leave empty for unlimited)</small></label>
+                            <input type="number" min="1" step="1" class="form-control" id="promotion-max-uses"
+                                   name="max_uses" placeholder="e.g. 50">
+                        </div>
+                    </div>
+
                     <div class="promotion-eligibility-row">
                         <div class="custom-control custom-radio">
                             <input type="radio" class="custom-control-input"
@@ -203,6 +212,7 @@
                 // { data: 'description_short', name: 'description', orderable: false },
                 { data: 'discount', name: 'discount_value' },
                 { data: 'customer_scope', name: 'new_customers_only', searchable: false },
+                { data: 'usage_limit', name: 'max_uses', searchable: false },
                 { data: 'start_at_formatted', name: 'start_at' },
                 { data: 'expires_at_formatted', name: 'expires_at' },
                 { data: 'status_badge', name: 'status', searchable: false },
@@ -252,6 +262,7 @@
             $('#promotion-id').val('');
             $('#promotion-form-method').val('POST');
             $('#promotion-status').val(1);
+            $('#promotion-max-uses').val('');
             $('#promotion-scope-all').prop('checked', true);
             $form.attr('action', promotionsBaseUrl);
             toggleDiscountValueField();
@@ -284,6 +295,7 @@
             $('#promotion-status').val($btn.data('status'));
             $('#promotion-start-at').val($btn.data('start_at'));
             $('#promotion-expires-at').val($btn.data('expires_at'));
+            $('#promotion-max-uses').val($btn.data('max_uses') || '');
             
             var isNew = Number($btn.data('new_customers_only')) === 1;
             var isExisting = Number($btn.data('existing_customers_only')) === 1;

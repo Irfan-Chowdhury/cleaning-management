@@ -123,6 +123,21 @@ class PromotionDiscountService
             ];
         }
 
+        // Check specific promo code max usage limit (across all bookings)
+        if (!empty($promotion->max_uses) && (int) $promotion->max_uses > 0) {
+            $totalUses = Booking::whereRaw('UPPER(promo_code) = ?', [Str::upper($code)])
+                ->when($bookingId, fn($q) => $q->where('id', '!=', $bookingId))
+                ->where('status', '!=', BookingStatus::CANCELLED->value)
+                ->count();
+
+            if ($totalUses >= (int) $promotion->max_uses) {
+                return [
+                    'valid'   => false,
+                    'message' => 'This promotional code has reached its maximum usage limit.',
+                ];
+            }
+        }
+
         // 6. Discount calculation
         $discountValue = (float) $promotion->discount_value;
         $calculatedDiscount = 0.00;

@@ -64,6 +64,7 @@ class PromotionController extends Controller
             ->addColumn('description_short', fn (Promotion $p) => $this->truncateDescription($p->description))
             ->addColumn('discount', fn (Promotion $p) => $this->discountLabel($p))
             ->addColumn('customer_scope', fn (Promotion $p) => $this->customerScope($p))
+            ->addColumn('usage_limit', fn (Promotion $p) => $p->max_uses ? $p->max_uses . ' uses' : 'Unlimited')
             ->addColumn('start_at_formatted', fn (Promotion $p) => $p->start_at?->format('d M Y h:i A') ?? '-')
             ->addColumn('expires_at_formatted', fn (Promotion $p) => $p->expires_at?->format('d M Y h:i A') ?? '-')
             ->addColumn('creator_name', fn (Promotion $p) => trim(($p->creator?->first_name ?? '') . ' ' . ($p->creator?->last_name ?? '')) ?: '-')
@@ -140,7 +141,8 @@ class PromotionController extends Controller
             . ' data-start_at="' . e($promotion->start_at?->format('Y-m-d\TH:i')) . '"'
             . ' data-expires_at="' . e($promotion->expires_at?->format('Y-m-d\TH:i')) . '"'
             . ' data-new_customers_only="' . e($promotion->new_customers_only ? 1 : 0) . '"'
-            . ' data-existing_customers_only="' . e($promotion->existing_customers_only ? 1 : 0) . '">'
+            . ' data-existing_customers_only="' . e($promotion->existing_customers_only ? 1 : 0) . '"'
+            . ' data-max_uses="' . e($promotion->max_uses ?? '') . '">'
             . '<i class="fas fa-edit" aria-hidden="true"></i>'
             . '</button>'
             . '<button type="button"'

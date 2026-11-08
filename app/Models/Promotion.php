@@ -24,6 +24,7 @@ class Promotion extends Model
         'expires_at',
         'new_customers_only',
         'existing_customers_only',
+        'max_uses',
         'created_by',
     ];
 
@@ -35,6 +36,7 @@ class Promotion extends Model
             'expires_at' => 'datetime',
             'new_customers_only' => 'boolean',
             'existing_customers_only' => 'boolean',
+            'max_uses' => 'integer',
         ];
     }
 
