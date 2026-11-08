@@ -234,6 +234,9 @@ class BookingService
             Log::error('Failed to sync payment record: ' . $e->getMessage());
         }
 
+        // Update referral status in referrals table based on booking completion and payment status
+        // $this->updateReferralStatusOnBookingUpdate($booking);
+
         // Notify customer on status changes (Approved, Processing, Completed)
         $customer = $booking->user ?? User::where('email', $booking->customer_email)->first();
 
@@ -522,6 +525,66 @@ class BookingService
             'status'     => 'Cancelled',
             'status_raw' => 'cancelled',
         ];
+    }
+
+    /**
+     * Update referral status on booking update.
+     *
+     * Scenario 1: During booking update when booking completed & paid is selected, in referrals,
+     *             first check if referred_user_id exists (if not, check if users.referred_by_code exists)
+     *             and then if status is signed_up, update the status into rewarded.
+     * Scenario 2: Revert Process - During booking update when booking not completed & paid is selected,
+     *             in referrals, first check if referred_user_id exists and update the status into signed_up again.
+     *
+     * @param Booking $booking
+     * @return void
+     */
+    protected function updateReferralStatusOnBookingUpdate(Booking $booking): void
+    {
+        $user = $booking->user ?? ($booking->user_id ? User::find($booking->user_id) : null);
+        if (!$user) {
+            return;
+        }
+
+        $statusVal = $booking->status instanceof BookingStatus ? $booking->status->value : strtolower((string) $booking->status);
+        $paymentStatusVal = strtolower((string) ($booking->payment_status ?? ''));
+
+        $isCompletedAndPaid = ($statusVal === 'completed' && $paymentStatusVal === 'paid');
+        if ($isCompletedAndPaid) {
+            // Scenario 1: Booking completed & paid
+            $referral = Referral::where('referred_user_id', $user->id)->first();
+
+            // If referred_user_id does not exist, check if users.referred_by_code exists
+            // if (!$referral && !empty($user->referred_by_code)) {
+            //     $referrer = User::where('referral_code', $user->referred_by_code)->first();
+            //     if ($referrer && $referrer->id !== $user->id) {
+            //         $referral = Referral::create([
+            //             'referrer_user_id' => $referrer->id,
+            //             'referral_code'    => $referrer->referral_code,
+            //             'recipient_email'  => $user->email,
+            //             'referred_user_id' => $user->id,
+            //             'status'           => 'signed_up',
+            //         ]);
+            //     }
+            // }
+
+            // If status is signed_up, update status to rewarded
+            if ($referral && $referral->status === 'signed_up') {
+                $referral->update([
+                    'booking_id' => $booking->id,
+                    'status'     => 'rewarded',
+                ]);
+            }
+        } else {
+            // Scenario 2: Revert Process - Booking not completed & paid
+            $referral = Referral::where('referred_user_id', $user->id)->first();
+
+            if ($referral && $referral->status === 'rewarded') {
+                $referral->update([
+                    'status' => 'signed_up',
+                ]);
+            }
+        }
     }
 
     /**

@@ -39,6 +39,7 @@ class RegistrationService
             'role'             => 2, // 2 = Customer
             'password'         => Hash::make($data['password']),
             'referred_by_code' => $refCode,
+            // 'email_verified_at' => now(), // Mark email as verified upon registration
         ]);
 
         $user->update([
