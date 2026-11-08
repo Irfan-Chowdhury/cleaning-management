@@ -109,6 +109,20 @@ class PromotionDiscountService
             ];
         }
 
+        // Check if customer has already used this promo code in another booking (one-time use)
+        $alreadyUsed = Booking::where('user_id', $user->id)
+            ->when($bookingId, fn($q) => $q->where('id', '!=', $bookingId))
+            ->whereRaw('UPPER(promo_code) = ?', [Str::upper($code)])
+            ->where('status', '!=', BookingStatus::CANCELLED->value)
+            ->exists();
+
+        if ($alreadyUsed) {
+            return [
+                'valid'   => false,
+                'message' => 'You have already used this promotional code.',
+            ];
+        }
+
         // 6. Discount calculation
         $discountValue = (float) $promotion->discount_value;
         $calculatedDiscount = 0.00;

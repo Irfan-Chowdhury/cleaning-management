@@ -297,8 +297,13 @@ class BookingService
             }
         } elseif ($offerType === 'promo' && !empty($offerCode)) {
             try {
-                app(PromotionDiscountService::class)->applyPromotionToBooking($booking, $offerCode, $user);
+                $result = app(PromotionDiscountService::class)->applyPromotionToBooking($booking, $offerCode, $user);
+                if (isset($result['success']) && !$result['success']) {
+                    throw new \InvalidArgumentException($result['message'] ?? 'Invalid promo code.');
+                }
                 $booking->refresh();
+            } catch (\InvalidArgumentException $e) {
+                throw $e;
             } catch (\Throwable $e) {
                 Log::error('Failed to apply promo code on confirmation: ' . $e->getMessage());
             }
