@@ -152,62 +152,34 @@ class BookingController extends Controller
     {
         $services = Service::where('status', 'active')->orderBy('name')->get();
 
-        $bookingModel = Booking::with(['user', 'service', 'payment', 'images'])->find($id);
+        $bookingModel = Booking::with(['user', 'service', 'payment', 'images'])->findOrFail($id);
 
-        if ($bookingModel) {
-            $booking = (object)[
-                'id'                   => $bookingModel->id,
-                'user_id'              => $bookingModel->user_id,
-                'customer_name'        => $bookingModel->customer_name ?: ($bookingModel->user ? trim($bookingModel->user->first_name . ' ' . $bookingModel->user->last_name) : 'N/A'),
-                'customer_email'       => $bookingModel->customer_email ?: ($bookingModel->user->email ?? 'N/A'),
-                'customer_phone'       => $bookingModel->customer_phone ?: ($bookingModel->user->phone ?? 'N/A'),
-                'customer_address'     => $bookingModel->customer_address ?: ($bookingModel->user->address ?? 'N/A'),
-                'unit_suite_floor'     => $bookingModel->unit_suite_floor ?? 'N/A',
-                'suburb'               => $bookingModel->suburb ?? 'N/A',
-                'postcode'             => $bookingModel->postcode ?? 'N/A',
-                'special_instructions' => $bookingModel->special_instructions ?? 'None',
-                'service_notes'        => $bookingModel->service_notes ?? 'None',
-                'customer_gender'      => $bookingModel->user->gender ?? 'N/A',
-                'customer_avatar'      => 'https://ui-avatars.com/api/?name=' . urlencode($bookingModel->customer_name ?: 'Customer') . '&background=0D8ABC&color=fff&size=128',
-                'service_id'           => $bookingModel->service_id,
-                'service_name'         => $bookingModel->service?->name ?? 'N/A',
-                'date'                 => $bookingModel->booking_date ?? $bookingModel->created_at->format('Y-m-d'),
-                'slot'                 => $bookingModel->start_time ?? '09:00 AM',
-                'amount'               => (float) $bookingModel->total_amount,
-                'status'               => $bookingModel->status instanceof BookingStatus ? $bookingModel->status->value : (string) $bookingModel->status,
-                'payment_status'       => strtolower($bookingModel->payment_status ?? $bookingModel->payment?->payment_status ?? 'pending'),
-                'payment_method'       => $bookingModel->payment_method ?? $bookingModel->payment?->payment_method ?? 'pending',
-                'answers'              => is_array($bookingModel->answers) ? $bookingModel->answers : [],
-                'images'               => $bookingModel->images ?? collect([]),
-                'model'                => $bookingModel,
-            ];
-        } else {
-            $booking = (object)[
-                'id'                   => $id,
-                'user_id'              => null,
-                'customer_name'        => 'Alice Johnson',
-                'customer_email'       => 'alice@example.com',
-                'customer_phone'       => '+1 (555) 234-5678',
-                'customer_address'     => '123 Main Street, Suite 400, Sydney NSW 2000',
-                'unit_suite_floor'     => 'Unit 5, Floor 2',
-                'suburb'               => 'Sydney',
-                'postcode'             => '2000',
-                'special_instructions' => 'Please focus on kitchen and bathrooms.',
-                'service_notes'        => 'Eco-friendly supplies preferred.',
-                'customer_gender'      => 'Female',
-                'customer_avatar'      => 'https://ui-avatars.com/api/?name=Alice+Johnson&background=0D8ABC&color=fff&size=128',
-                'service_id'           => 1,
-                'service_name'         => 'Deep Home Cleaning',
-                'date'                 => '2026-08-20',
-                'slot'                 => '07:00 AM',
-                'amount'               => 180.00,
-                'status'               => 'pending',
-                'payment_status'       => 'pending',
-                'payment_method'       => 'pending',
-                'images'               => collect([]),
-                'model'                => null,
-            ];
-        }
+        $booking = (object)[
+            'id'                   => $bookingModel->id,
+            'user_id'              => $bookingModel->user_id,
+            'customer_name'        => $bookingModel->customer_name ?: ($bookingModel->user ? trim($bookingModel->user->first_name . ' ' . $bookingModel->user->last_name) : 'N/A'),
+            'customer_email'       => $bookingModel->customer_email ?: ($bookingModel->user->email ?? 'N/A'),
+            'customer_phone'       => $bookingModel->customer_phone ?: ($bookingModel->user->phone ?? 'N/A'),
+            'customer_address'     => $bookingModel->customer_address ?: ($bookingModel->user->address ?? 'N/A'),
+            'unit_suite_floor'     => $bookingModel->unit_suite_floor ?? 'N/A',
+            'suburb'               => $bookingModel->suburb ?? 'N/A',
+            'postcode'             => $bookingModel->postcode ?? 'N/A',
+            'special_instructions' => $bookingModel->special_instructions ?? 'None',
+            'service_notes'        => $bookingModel->service_notes ?? 'None',
+            'customer_gender'      => $bookingModel->user->gender ?? 'N/A',
+            'customer_avatar'      => 'https://ui-avatars.com/api/?name=' . urlencode($bookingModel->customer_name ?: 'Customer') . '&background=0D8ABC&color=fff&size=128',
+            'service_id'           => $bookingModel->service_id,
+            'service_name'         => $bookingModel->service?->name ?? 'N/A',
+            'date'                 => $bookingModel->booking_date ?? $bookingModel->created_at->format('Y-m-d'),
+            'slot'                 => $bookingModel->start_time ?? '09:00 AM',
+            'amount'               => (float) $bookingModel->total_amount,
+            'status'               => $bookingModel->status instanceof BookingStatus ? $bookingModel->status->value : (string) $bookingModel->status,
+            'payment_status'       => strtolower($bookingModel->payment_status ?? $bookingModel->payment?->payment_status ?? 'pending'),
+            'payment_method'       => $bookingModel->payment_method ?? $bookingModel->payment?->payment_method ?? 'pending',
+            'answers'              => is_array($bookingModel->answers) ? $bookingModel->answers : [],
+            'images'               => $bookingModel->images ?? collect([]),
+            'model'                => $bookingModel,
+        ];
 
         return view('pages.admin.bookings.edit', compact('booking', 'services'));
     }
