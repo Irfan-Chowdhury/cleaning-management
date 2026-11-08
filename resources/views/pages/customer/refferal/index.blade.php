@@ -249,8 +249,8 @@
                             <th>Email</th>
                             <th>Created At</th>
                             <th>Status</th>
-                            <th>Booking</th>
-                            <th>Referral Reward Amount</th>
+                            {{-- <th>Booking</th>
+                            <th>Referral Reward Amount</th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -296,7 +296,7 @@
                                         {{ ucfirst($item->status) }}
                                     </span>
                                 </td>
-                                <td>
+                                {{-- <td>
                                     @if ($item->booking_id)
                                         <span class="booking-id-tag">{{ $item->booking_id }}</span>
                                     @else
@@ -309,7 +309,7 @@
                                     @else
                                         <span class="text-muted">$0.00</span>
                                     @endif
-                                </td>
+                                </td> --}}
                             </tr>
                         @endforeach
                     </tbody>
