@@ -250,7 +250,7 @@
                             <th>Created At</th>
                             <th>Status</th>
                             <th>Booking</th>
-                            <th>Reward Amount</th>
+                            <th>Referral Reward Amount</th>
                         </tr>
                     </thead>
                     <tbody>
