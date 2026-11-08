@@ -20,12 +20,27 @@ class CustomerReferralService
      */
     public function getCustomerReferralData(User $user): array
     {
-        // 1. Ensure referral code exists for customer
+        // Check if the user has any completed and paid bookings
+        $hasCompletedPaidBooking = $this->hasCompletedPaidBooking($user);
+
+        // Display-1. My Referral Code
         $referralCode = $user->referral_code;
 
+        // Display-2. My Referral Link
         $referralLink = url('/register?ref=' . $referralCode);
+
         $setting = Setting::first();
         $configuredReward = (float) ($setting?->referral_reward > 0 ? $setting->referral_reward : 00.00);
+
+        // Display-4. Completed Booking Count (for referral bonus rewards)
+        $completedBookingCount = WalletTransaction::where('user_id', $user->id)
+            ->where('source', 'referral_bonus')
+            ->count();
+
+        // Display-5. Wallet rewards credited for referral bonuses
+        $myTotalRewards = (float) WalletTransaction::where('user_id', $user->id)
+            ->where('source', 'referral_bonus')
+            ->sum('amount');
 
         // Fetch bookings where this user's referral code was used
         $referralBookings = Booking::with('user')
@@ -34,33 +49,6 @@ class CustomerReferralService
             ->where('payment_status', 'paid')
             ->latest()
             ->get();
-
-        // Dynamic Metric Calculations
-        $totalReferrals = $referralBookings->pluck('user_id')->unique()->count();
-        if ($totalReferrals === 0) {
-            $totalReferrals = $referralBookings->count();
-        }
-
-        $pendingReferrals = $referralBookings->filter(function ($b) {
-            $status = strtolower((string) ($b->status->value ?? $b->status));
-            $paymentStatus = strtolower((string) ($b->payment_status ?? 'pending'));
-
-            if (in_array($status, ['completed'])) {
-                return $paymentStatus !== 'paid';
-            }
-
-            return in_array($status, ['pending', 'confirmed', 'processing', 'approved']);
-        })->count();
-
-        // Wallet rewards credited for referral bonuses
-        $totalRewards = (float) WalletTransaction::where('user_id', $user->id)
-            ->where('source', 'referral_bonus')
-            ->sum('amount');
-
-        $completedBookingCount = WalletTransaction::where('user_id', $user->id)
-            ->where('source', 'referral_bonus')
-            ->count();
-
         // Map referral items for view
         $bookingReferralsList = $referralBookings->map(function ($booking) use ($configuredReward) {
             $referredUser = $booking->user;
@@ -101,30 +89,35 @@ class CustomerReferralService
         // Merge invited or signed_up records from referrals table using dedicated method
         $referrals = $this->mergeReferralsTableData($user, $bookingReferralsList);
 
+        // Display-3. Total Referrals (including invited, signed_up, rewarded, completed)
         $totalReferrals = $referrals->count();
-        $pendingReferrals = $referrals->filter(function ($item) {
-            $st = strtolower((string) $item->status);
-            return in_array($st, ['pending', 'invited', 'signed_up','signed up']);
-        })->count();
 
-        $hasCompletedPaidBooking = Booking::where('user_id', $user->id)
+        return [
+            'hasCompletedPaidBooking' => $hasCompletedPaidBooking,
+            'referralCode'            => $referralCode,
+            'referralLink'            => $referralLink,
+            'totalReferrals'          => $totalReferrals,
+            'completedBookingCount'   => $completedBookingCount,
+            'myTotalRewards'          => $myTotalRewards,
+            'referrals'               => $referrals,
+        ];
+    }
+
+    /**
+     * Check if a customer has at least one completed and paid booking.
+     *
+     * @param User $user
+     * @return bool
+     */
+    public function hasCompletedPaidBooking(User $user): bool
+    {
+        return Booking::where('user_id', $user->id)
             ->get()
             ->contains(function ($b) {
                 $status = $b->status instanceof BookingStatus ? $b->status->value : strtolower((string) $b->status);
                 $paymentStatus = strtolower((string) $b->payment_status);
                 return $status === 'completed' && $paymentStatus === 'paid';
             });
-
-        return [
-            'referralCode'            => $referralCode,
-            'referralLink'            => $referralLink,
-            'totalReferrals'          => $totalReferrals,
-            'pendingReferrals'        => $pendingReferrals,
-            'completedBookingCount'   => $completedBookingCount,
-            'totalRewards'            => $totalRewards,
-            'referrals'               => $referrals,
-            'hasCompletedPaidBooking' => $hasCompletedPaidBooking,
-        ];
     }
 
     /**
@@ -134,7 +127,8 @@ class CustomerReferralService
     {
         $referralRecords = Referral::with(['referredUser'])
             ->where('referrer_user_id', $user->id)
-            ->whereIn('status', ['invited', 'signed_up'])
+            // ->whereIn('status', ['invited', 'signed_up'])
+            ->whereIn('status', ['invited', 'signed_up', 'rewarded', 'completed'])
             ->latest()
             ->get();
 
@@ -162,6 +156,9 @@ class CustomerReferralService
             $joinedDate = $ref->created_at ? $ref->created_at->format('Y-m-d') : now()->format('Y-m-d');
             $statusRaw = strtolower(trim((string) $ref->status));
             $status = match ($statusRaw) {
+                // 'signed_up', 'signed up' => 'Signed Up',
+                // default                  => 'Invited',
+                'rewarded', 'completed'  => 'Rewarded',
                 'signed_up', 'signed up' => 'Signed Up',
                 default                  => 'Invited',
             };

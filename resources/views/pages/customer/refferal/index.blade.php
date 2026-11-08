@@ -201,17 +201,7 @@
             </div>
 
             <!-- Pending Referrals -->
-            <!-- <div class="col-md-4 mb-3 mb-md-0">
-                <div class="referral-metric-card d-flex align-items-center justify-content-between">
-                    <div>
-                        <span class="text-muted text-uppercase font-weight-bold d-block mb-1" style="font-size: 12px; letter-spacing: 0.5px;">Pending</span>
-                        <h3 class="font-weight-bold mb-0 text-warning">{{ $pendingReferrals }}</h3>
-                    </div>
-                    <div class="referral-icon-box referral-icon-pending">
-                        <i class="fas fa-user-clock" aria-hidden="true"></i>
-                    </div>
-                </div>
-            </div> -->
+
 
             <!-- Completed Booking Count -->
             <div class="col-md-4 mb-3 mb-md-0">
@@ -231,8 +221,8 @@
             <div class="col-md-4">
                 <div class="referral-metric-card d-flex align-items-center justify-content-between">
                     <div>
-                        <span class="text-muted text-uppercase font-weight-bold d-block mb-1" style="font-size: 12px; letter-spacing: 0.5px;">Total Rewards</span>
-                        <h3 class="font-weight-bold mb-0 text-success">${{ number_format($totalRewards, 2) }}</h3>
+                        <span class="text-muted text-uppercase font-weight-bold d-block mb-1" style="font-size: 12px; letter-spacing: 0.5px;">My Total Rewards</span>
+                        <h3 class="font-weight-bold mb-0 text-success">${{ number_format($myTotalRewards, 2) }}</h3>
                     </div>
                     <div class="referral-icon-box referral-icon-reward">
                         <i class="fas fa-gift" aria-hidden="true"></i>
