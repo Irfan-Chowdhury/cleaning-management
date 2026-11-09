@@ -139,7 +139,7 @@
                         </div>
                     </div>
 
-                    <div class="promotion-eligibility-row">
+                    {{-- <div class="promotion-eligibility-row">
                         <div class="custom-control custom-radio">
                             <input type="radio" class="custom-control-input"
                                    id="promotion-scope-all" name="customer_eligibility" value="all" checked>
@@ -157,7 +157,7 @@
                                    id="promotion-scope-existing" name="customer_eligibility" value="existing">
                             <label class="custom-control-label" for="promotion-scope-existing">Existing customers only</label>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
 
                 <div class="modal-footer promotion-modal-actions">
@@ -296,7 +296,7 @@
             $('#promotion-start-at').val($btn.data('start_at'));
             $('#promotion-expires-at').val($btn.data('expires_at'));
             $('#promotion-max-uses').val($btn.data('max_uses') || '');
-            
+
             var isNew = Number($btn.data('new_customers_only')) === 1;
             var isExisting = Number($btn.data('existing_customers_only')) === 1;
 
