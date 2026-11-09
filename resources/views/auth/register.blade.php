@@ -287,7 +287,7 @@
                         <input type="checkbox" class="custom-control-input @error('terms') is-invalid @enderror" id="terms" name="terms" {{ old('terms') ? 'checked' : '' }}>
                         <label class="custom-control-label text-muted" for="terms">
                             I agree to the
-                            <a href="https://dust2glowcleaning.com.au/refferal" target="_blank" rel="noopener noreferrer">Terms and Privacy Policy</a>.
+                            <a href="https://dust2glowcleaning.com.au/cleaning-referral-program/" target="_blank" rel="noopener noreferrer">Terms and Privacy Policy</a>.
                         </label>
                         @error('terms')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
