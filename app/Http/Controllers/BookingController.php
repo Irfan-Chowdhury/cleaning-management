@@ -22,40 +22,22 @@ class BookingController extends Controller
     {
         $dbBookings = Booking::with(['user', 'service', 'payment'])->orderBy('id', 'desc')->get();
 
-        if ($dbBookings->isNotEmpty()) {
-            $bookings = $dbBookings->map(function ($b) {
-                return (object) [
-                    'id'              => $b->id,
-                    'booking_id'       => 'BK-' . sprintf('%03d', $b->id),
-                    'customer_name'   => $b->customer_name ?: ($b->user ? trim($b->user->first_name . ' ' . $b->user->last_name) : 'Guest Customer'),
-                    'customer_email'  => $b->customer_email ?: ($b->user->email ?? 'N/A'),
-                    'customer_avatar' => 'https://ui-avatars.com/api/?name=' . urlencode($b->customer_name ?: 'Customer') . '&background=0D8ABC&color=fff&size=128',
-                    'service_name'    => $b->service?->name ?? 'Cleaning Service',
-                    'date'            => $b->booking_date ?? $b->created_at->format('Y-m-d'),
-                    'slot'            => $b->start_time ?? '09:00 AM',
-                    'amount'          => (float) $b->total_amount,
-                    'status'          => $b->status instanceof BookingStatus ? $b->status->value : (string) $b->status,
-                    'payment_status'  => strtolower($b->payment_status ?? $b->payment?->payment_status ?? 'pending'),
-                    'payment_method'  => $b->payment_method ?? $b->payment?->payment_method ?? 'pending',
-                ];
-            });
-        } else {
-            $bookings = collect([
-                (object)[
-                    'id'              => 1,
-                    'customer_name'   => 'Alice Johnson',
-                    'customer_email'  => 'alice@example.com',
-                    'customer_avatar' => 'https://ui-avatars.com/api/?name=Alice+Johnson&background=0D8ABC&color=fff&size=128',
-                    'service_name'    => 'Deep Home Cleaning',
-                    'date'            => '2026-08-20',
-                    'slot'            => '07:00 AM',
-                    'amount'          => 180.00,
-                    'status'          => 'pending',
-                    'payment_status'  => 'pending',
-                    'payment_method'  => 'pending',
-                ]
-            ]);
-        }
+        $bookings = $dbBookings->map(function ($b) {
+            return (object) [
+                'id'              => $b->id,
+                'booking_id'      => 'BK-' . sprintf('%03d', $b->id),
+                'customer_name'   => $b->customer_name ?: ($b->user ? trim($b->user->first_name . ' ' . $b->user->last_name) : 'Guest Customer'),
+                'customer_email'  => $b->customer_email ?: ($b->user->email ?? 'N/A'),
+                'customer_avatar' => 'https://ui-avatars.com/api/?name=' . urlencode($b->customer_name ?: 'Customer') . '&background=0D8ABC&color=fff&size=128',
+                'service_name'    => $b->service?->name ?? 'Cleaning Service',
+                'date'            => $b->booking_date ?? $b->created_at->format('Y-m-d'),
+                'slot'            => $b->start_time ?? '09:00 AM',
+                'amount'          => (float) $b->total_amount,
+                'status'          => $b->status instanceof BookingStatus ? $b->status->value : (string) $b->status,
+                'payment_status'  => strtolower($b->payment_status ?? $b->payment?->payment_status ?? 'pending'),
+                'payment_method'  => $b->payment_method ?? $b->payment?->payment_method ?? 'pending',
+            ];
+        });
 
         return view('pages.admin.bookings.index', compact('bookings'));
     }

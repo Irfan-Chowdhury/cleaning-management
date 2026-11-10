@@ -41,7 +41,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($bookings as $booking)
+                        @foreach ($bookings as $booking)
                             <tr>
                                 <td>
                                     <span class="booking-id-tag" style="font-family: monospace; font-weight: 700; font-size: 13px; color: #0866e8; background: #f0f6fe; padding: 3px 8px; border-radius: 6px;">
@@ -107,14 +107,7 @@
                                     </div>
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="9" class="text-center py-4 text-muted">
-                                    <i class="far fa-calendar-times fa-2x mb-2 d-block" aria-hidden="true"></i>
-                                    No bookings found.
-                                </td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -138,6 +131,8 @@
                 language: {
                     search: 'Search bookings:',
                     lengthMenu: 'Show _MENU_ entries',
+                    emptyTable: '<i class="far fa-calendar-times fa-2x mb-2 d-block text-muted" aria-hidden="true"></i> No bookings found.',
+                    zeroRecords: 'No matching bookings found.'
                 }
             });
         });
