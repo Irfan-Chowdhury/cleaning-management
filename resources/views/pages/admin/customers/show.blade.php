@@ -85,11 +85,22 @@
                 <!-- Customer Avatar & Top Banner -->
                 <div class="text-center pb-3 mb-3 border-bottom">
                     <img src="{{ $avatarUrl }}" alt="{{ $fullName }}" class="customer-avatar mb-2" style="width: 80px; height: 80px; border-width: 3px; object-fit: cover;">
-                    <h3 class="font-weight-bold text-dark mb-0">{{ $fullName }}</h3>
+                    <h3 class="font-weight-bold text-dark mb-1">{{ $fullName }}</h3>
+                    <div class="mt-1">
+                        <span class="badge badge-light" style="font-family: monospace; font-size: 13px; font-weight: 700; color: #0866e8; background: #ebf3ff; border: 1px solid #cce1ff; padding: 4px 10px; border-radius: 6px;">#{{ $customer->id }}</span>
+                    </div>
                 </div>
 
                 <!-- Customer Details List -->
                 <ul class="customer-info-list">
+                    <!-- Customer ID -->
+                    <li class="customer-info-item">
+                        <span class="customer-info-label"><i class="fas fa-hashtag mr-2 text-primary"></i> Customer ID</span>
+                        <span class="customer-info-value">
+                            <span class="badge badge-light" style="font-family: monospace; font-size: 13px; font-weight: 700; color: #0866e8; background: #ebf3ff; border: 1px solid #cce1ff; padding: 4px 10px; border-radius: 6px;">#{{ $customer->id }}</span>
+                        </span>
+                    </li>
+
                     <!-- 1. Email -->
                     <li class="customer-info-item">
                         <span class="customer-info-label"><i class="fas fa-envelope mr-2 text-primary"></i> Email</span>
