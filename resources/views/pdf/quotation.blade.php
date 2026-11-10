@@ -326,6 +326,7 @@
                          src="{{ public_path($setting->company_logo) }}"
                          alt="{{ $setting->company_name ?? 'Company' }}">
                 @endif
+                <div class="company-sub">Dust2Glow Group Pty Ltd. ABN – 85 696 469 851</div>
                 @if ($setting?->address)
                     <div class="company-sub">{{ $setting->address }}</div>
                 @endif
@@ -335,9 +336,7 @@
                 @if ($setting?->email)
                     <div class="company-sub">{{ $setting->email }}</div>
                 @endif
-                @if ($setting?->abn)
-                    <div class="company-sub">ABN: {{ $setting->abn }}</div>
-                @endif
+                <div class="company-sub">www.dust2glowcleaning.com.au</div>
             </td>
             <td class="quote-title-box">
                 <div class="quote-title">{{ $documentTitle }}</div>

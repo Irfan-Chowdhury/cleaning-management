@@ -330,6 +330,8 @@
         $companyEmail = $setting?->email ?: 'support@dust2glow.com';
         $companyPhone = $setting?->phone ?: '+61 (0) 400 000 000';
         $companyAddress = $setting?->address ?: 'Sydney, NSW, Australia';
+        $companyDetails = "Dust2Glow Group Pty Ltd. ABN – 85 696 469 851";
+        $companyWebsite = "www.dust2glowcleaning.com.au";
 
         // Base64 Logo Encoding
         $logoPath = null;
@@ -374,8 +376,11 @@
                     @if (!empty($logoBase64))
                         <img src="{{ $logoBase64 }}" class="company-logo-img" alt="Company Logo">
                     @endif
+                    <div class="company-sub">{{ $companyDetails }}</div>
                     <div class="company-sub">{{ $companyAddress }}</div>
-                    <div class="company-sub">Phone: {{ $companyPhone }} | Email: {{ $companyEmail }}</div>
+                    <div class="company-sub">Phone: {{ $companyPhone }} </div>
+                    <div class="company-sub">{{ $companyEmail }}</div>
+                    <div class="company-sub">{{ $companyWebsite }}</div>
                 </td>
                 <td style="width: 45%; text-align: right;">
                     <div class="invoice-title">INVOICE</div>
