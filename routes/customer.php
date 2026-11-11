@@ -9,8 +9,9 @@ use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\Customer\GoogleReviewController as CustomerGoogleReviewController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Middleware\EnsureGoogleReviewEnabled;
+use App\Http\Middleware\EnsureAccountIsActive;
 
-Route::middleware(['auth', 'can:customer', 'verified'])->group(function () {
+Route::middleware(['auth', 'can:customer', 'verified', EnsureAccountIsActive::class])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/dashboard/send-invite', [DashboardController::class, 'sendInvite'])->name('customer.dashboard.send-invite');
     Route::get('/my-bookings', [BookingController::class, 'index'])->name('customer.bookings.index');

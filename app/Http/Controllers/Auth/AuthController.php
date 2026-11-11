@@ -32,15 +32,23 @@ class AuthController extends Controller
         $remember = $request->boolean('remember');
 
         if (Auth::attempt($credentials, $remember)) {
-            $request->session()->regenerate();
+            if (! auth()->user()->is_active) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
 
+                return back()->withErrors([
+                    'email' => 'Your account has been deactivated. Please contact support.',
+                ])->onlyInput('email', 'remember');
+            }
+
+            $request->session()->regenerate();
 
             if (auth()->user()->role == 1) {
                 return redirect()->route('admin.dashboard')->with('success', 'Logged in successfully!');
             }
 
             return redirect()->route('dashboard')->with('success', 'Logged in successfully!');
-
         }
 
         return back()->withErrors([
