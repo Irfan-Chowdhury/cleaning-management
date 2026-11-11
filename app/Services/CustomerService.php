@@ -2,10 +2,14 @@
 
 namespace App\Services;
 
+use App\Models\Setting;
 use App\Models\User;
+use App\Models\WalletTransaction;
+use App\Notifications\WelcomeBonusNotification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class CustomerService
@@ -47,7 +51,44 @@ class CustomerService
             ])->save();
         }
 
+        // Grant welcome bonus credit if enabled in settings
+        $this->grantWelcomeBonus($customer);
+
         return $customer->refresh();
+    }
+
+    /**
+     * Grant welcome registration bonus credit to customer if enabled in settings.
+     */
+    protected function grantWelcomeBonus(User $customer): void
+    {
+        try {
+            $setting = Setting::first();
+            if ($setting && $setting->welcome_credit_enabled && (float) $setting->welcome_credit > 0) {
+                $alreadyCredited = WalletTransaction::where('user_id', $customer->id)
+                    ->where('source', 'welcome_bonus')
+                    ->exists();
+
+                if (! $alreadyCredited) {
+                    $bonusAmount = (float) $setting->welcome_credit;
+                    WalletTransaction::create([
+                        'user_id'     => $customer->id,
+                        'type'        => 'credit',
+                        'amount'      => $bonusAmount,
+                        'source'      => 'welcome_bonus',
+                        'description' => 'Welcome Registration Bonus Credit',
+                    ]);
+
+                    try {
+                        $customer->notify(new WelcomeBonusNotification($bonusAmount));
+                    } catch (\Throwable $e) {
+                        Log::error('Failed to send welcome bonus notification on customer create: ' . $e->getMessage());
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            Log::error('Failed to grant welcome bonus on customer create: ' . $e->getMessage());
+        }
     }
 
     public function update(User $customer, array $data): User
